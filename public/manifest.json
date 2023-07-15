@@ -19,9 +19,14 @@
          "extension-interface.js"
        ],
        "matches": ["*://*/*"]
-
-     }
-   ],
+     },
+     {
+      "resources": [
+        "form-render-inject.html"
+      ],
+      "matches": ["*://*/*"]
+    }
+  ],
    "content_scripts": [
      {
        "matches": [
@@ -32,6 +37,7 @@
        ]
      }
    ],
+   
    "permissions": [
      "activeTab",
      "debugger",

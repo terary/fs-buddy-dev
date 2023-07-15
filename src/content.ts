@@ -4,7 +4,7 @@ function getFormIdFromLocation({ pathname }: Location = location) {
   return regExp.exec(pathname)?.groups?.formId || null;
 }
 
-const devDebugFieldIds = [
+let devDebugFieldIds = [
   "148136237",
   "147462595",
   "147462596",
@@ -15,7 +15,55 @@ const devDebugFieldIds = [
   "148136234",
 ];
 
-function getFormHtml() {
+function getChildFrameHtml() {
+  const url = chrome.runtime.getURL("form-render-inject.html");
+
+  return fetch(url).then((response) => {
+    return response.text();
+  }); //assuming file contains json
+  // .then((text) => {
+  //   console.log(text);
+  // });
+}
+
+function getFormAsJson() {
+  const fetchTreeFormId = getFormIdFromLocation();
+  if (fetchTreeFormId) {
+    chrome.runtime.sendMessage(
+      {
+        type: "GetFormAsJson",
+        fetchFormId: fetchTreeFormId,
+        apiKey: "cc17435f8800943cc1abd3063a8fe44f",
+      },
+      async (apiFormJson) => {
+        const childFrameHtmlX = await getChildFrameHtml();
+        console.log({ childFrameHtmlX });
+        const iframe = document.createElement("iframe");
+        iframe.id = "theFrame";
+        iframe.style.width = "500px";
+        iframe.style.height = "1500px";
+        iframe.style.zIndex = "1001";
+        iframe.style.top = "50px";
+        iframe.style.right = "0px";
+        // iframe.style.left = "0px";
+        iframe.style.position = "absolute";
+        iframe.style.backgroundColor = "green";
+
+        iframe.srcdoc = childFrameHtmlX + apiFormJson.html;
+        const theBody = document.querySelector("body");
+        theBody?.prepend(iframe);
+        devDebugFieldIds = [];
+        (apiFormJson?.fields || []).map((field: any) => {
+          devDebugFieldIds.push(field.id);
+        });
+      }
+    );
+  } else {
+    console.log("Failed to fetchTree, could not get formId from url");
+  }
+}
+
+function x_getFormHtml() {
   const fetchTreeFormId = getFormIdFromLocation();
   if (fetchTreeFormId) {
     chrome.runtime.sendMessage(
@@ -39,6 +87,10 @@ function getFormHtml() {
         iframe.srcdoc = childFrameHtml + apiFormHtml;
         const theBody = document.querySelector("body");
         theBody?.prepend(iframe);
+        devDebugFieldIds = [];
+        (apiFormHtml?.fields || []).map((field: any) => {
+          devDebugFieldIds.push(field.id);
+        });
       }
     );
   } else {
@@ -71,6 +123,7 @@ function addCssClassFsBuddyBlue() {
   // @ts-ignore - contentWindow not an element of...
   theIFrame?.contentWindow?.postMessage(message, "*");
 }
+
 function addCssClass() {
   const fieldIds = devDebugFieldIds;
   const theIFrame = document.getElementById("theFrame");
@@ -124,6 +177,23 @@ function removeCssClass() {
   theIFrame?.contentWindow?.postMessage(message, "*");
 }
 
+const factoryStatusMessage = (fieldId: string) => {
+  const statusMessages = ["error", "warn", "info", "debug"].map((severity) => {
+    return {
+      severity: severity,
+      message: `The ${severity} message`,
+      fieldId: fieldId,
+      relatedFieldIds: ["147738154", "148111228", "147738157"],
+    };
+  });
+
+  return {
+    [fieldId]: {
+      statusMessages,
+    },
+  };
+};
+
 function displayFieldStatuses() {
   /**
  *  [fieldId]:{
@@ -136,6 +206,7 @@ function displayFieldStatuses() {
  
  * 
  */
+
   const fieldStatusMessages = {
     "126381023": [
       {
@@ -193,10 +264,18 @@ function displayFieldStatuses() {
   };
 
   const theIFrame = document.getElementById("theFrame");
+  const fieldStatusMessage = devDebugFieldIds.reduce(
+    (prev, current, cIdx, ary) => {
+      return { ...factoryStatusMessage(current), ...prev };
+    },
+    {}
+  );
+
   const message = {
     messageType: "getFieldStatuses",
     payload: {
-      fieldStatusResponse: fieldStatusMessages,
+      statusMessages: fieldStatusMessage,
+      // fieldStatusResponse: fieldStatusMessages,
     },
   };
 
@@ -231,7 +310,7 @@ formId &&
       const fsBodyControlPanelGetFormHtmlButton =
         document.createElement("button");
       fsBodyControlPanelGetFormHtmlButton.innerText = "Get Form HTML";
-      fsBodyControlPanelGetFormHtmlButton.onclick = getFormHtml;
+      fsBodyControlPanelGetFormHtmlButton.onclick = getFormAsJson;
 
       const removeFormHtmlButton = document.createElement("button");
       removeFormHtmlButton.innerText = "Remove Form HTML";
@@ -285,79 +364,6 @@ formId &&
       theBody && theBody.appendChild(fsBodyControlPanel);
     }
   );
-
-function getFieldBuildContainer(fieldId: string) {
-  const queryString = `${fieldId}-editButton`;
-  const fieldEditButton = document.getElementById(queryString);
-  if (fieldEditButton?.parentElement?.parentElement) {
-    return fieldEditButton?.parentElement?.parentElement;
-  }
-
-  if (fieldEditButton?.parentElement) {
-    return fieldEditButton?.parentElement;
-  }
-
-  return fieldEditButton;
-}
-
-// statusMessages: {fieldId, statusMessage, priority}[]
-//   priority: 'debug' | 'info' | 'warn' | 'error'
-function wrapFieldStatusMessage(statusMessages: any[]) {
-  const table = document.createElement("table");
-  statusMessages
-    .map((message: any) => {
-      const tr = document.createElement("tr");
-      ["fieldId", "statusMessage", "priority"].forEach((messageProp) => {
-        const td = document.createElement("td");
-        td.innerHTML = message[messageProp];
-        tr.appendChild(td);
-      });
-      return tr;
-    })
-    .forEach((row) => [table.appendChild(row)]);
-
-  return table;
-}
-
-function appendFieldStatusMessage({ fieldId }: { fieldId: string }) {
-  const targetFieldBuilderContainer = getFieldBuildContainer(fieldId);
-  if (!targetFieldBuilderContainer) {
-    console.log(`Failed to get parent for fieldId: '${fieldId}'`);
-    return;
-  }
-  const fsBuddyFieldMessageContainer = document.createElement("div");
-  fsBuddyFieldMessageContainer.style.width = "100%";
-
-  const h3 = document.createElement("h3");
-  h3.innerHTML = "FS Buddy Field Messages";
-  h3.style.color = "black";
-  fsBuddyFieldMessageContainer.append(h3);
-
-  const statusMessageAsHtmlTable = wrapFieldStatusMessage([
-    {
-      fieldId: "xxxx",
-      priority: "info",
-      statusMessage: "This is a message",
-    },
-    {
-      fieldId: "y",
-      priority: "warn",
-      statusMessage: "This is a different message",
-    },
-  ]);
-  fsBuddyFieldMessageContainer.append(statusMessageAsHtmlTable);
-  targetFieldBuilderContainer?.parentElement?.parentElement?.prepend(
-    fsBuddyFieldMessageContainer
-  );
-}
-
-function processFsBuddyFormDescription(formAsJson: any) {
-  console.log({ formAsJson });
-  formAsJson.fields.forEach((field: any) => {
-    console.log({ field });
-    appendFieldStatusMessage({ fieldId: field.id });
-  });
-}
 
 const childFrameHtml = `
 <html>
@@ -468,6 +474,16 @@ const childFrameHtml = `
         500: 'debug',
       }
 
+      const collapseAllFsBuddyStatusItems = ()=>{
+        const statusContainers = document.querySelectorAll('.fsBuddy_statusRow')
+        statusContainers.forEach(container=>container.classList.add('fsBuddy_statusRow_hidden'))
+      }
+    
+      const expandAllFsBuddyStatusItems = ()=>{
+          const statusContainers = document.querySelectorAll('.fsBuddy_statusRow')
+          statusContainers.forEach(container=>container.classList.remove('fsBuddy_statusRow_hidden'))
+      }
+    
       const toggleExpandCollapseStatusItems  = (fieldId)=>{
         const containerId = \`fsBuddy_statusContainer_\${fieldId}\`;
         const fieldContainer = document.getElementById(containerId);
@@ -498,22 +514,32 @@ const childFrameHtml = `
         const statusContainers = document.querySelectorAll('.fsBuddy_statusContainer')
         statusContainers.forEach(container=>container.remove())
       }
-  
-      const appendStatusContainer = (fieldId, statusMessages)=>{
+
+      const getFieldContainer = (fieldId)=>{
+        // I think all fields are in a section, 
+        // but a section does not always contain fields - maybe
         const containerId =\`fsCell\${fieldId}\`;
-        const fieldContainer = document.getElementById(containerId);
+        const sectionId =\`fsSection\${fieldId}\`;
+        
+        return document.getElementById(containerId) || document.getElementById(sectionId);
+        //fsSection126381010
+
+      }
+      
+      const appendFieldStatusContainer = (fieldId, statusMessages)=>{
+        const containerId =\`fsCell\${fieldId}\`;
+        const fieldContainer = getFieldContainer(fieldId);
+
+        // document.getElementById(containerId);
 
         const collectionSeverity = getMessageCollectionSeverity(statusMessages);
+
+
 
 
         const statusContainer = document.createElement('div');
         statusContainer.id = \`fsBuddy_statusContainer_\${fieldId}\`;
         statusContainer.classList.add('fsBuddy_statusContainer');
-
-        const removeFsBuddyFieldStatusContainersButton = document.createElement('button');
-        removeFsBuddyFieldStatusContainersButton.innerText = 'Remove Status Containers';
-        removeFsBuddyFieldStatusContainersButton.onclick = ()=>{removeFsBuddyStatusContainers()};
-        statusContainer.appendChild(removeFsBuddyFieldStatusContainersButton);
 
         const divStatusHeadRow = document.createElement('div');
         divStatusHeadRow.classList.add(\`fsBuddy_statusRowHeader\`);
@@ -550,18 +576,65 @@ const childFrameHtml = `
             })
             statusContainer.appendChild(divStatusRow)
         })
-
-        if (fieldContainer.parentElement) {
+        
+        if(statusContainer.querySelector('.fsRow')) {
+          // its not a section
+          if (fieldContainer.parentElement) {
             fieldContainer.parentElement.prepend(statusContainer)
+          } else {
+              fieldContainer.prepend(statusContainer)
+          }
+  
         } else {
-            fieldContainer.appendChild(statusContainer)
+          // its a section         
+          fieldContainer.appendChild(statusContainer)
         }
+        
+        
+
       }
 
 // -----------------------------------
-      const processFieldStatuses = (fieldStatusResponse)=>{
-        Object.entries(fieldStatusResponse).forEach(([fieldId, statusMessages])=>{
-            appendStatusContainer(fieldId, statusMessages);
+      const processFieldStatuses = (statusMessages)=>{
+        document.getElementById('fsBuddyFieldStatusesContainer') && document.getElementById('fsBuddyFieldStatusesContainer').remove()
+
+        const theBody = document.querySelector('body');
+
+        const fsBuddyFieldStatusesContainer = document.createElement('div');
+        fsBuddyFieldStatusesContainer.id='fsBuddyFieldStatusesContainer'
+        theBody.prepend(fsBuddyFieldStatusesContainer);
+
+        const removeFsBuddyFieldStatusContainersButton = document.createElement('button');
+        removeFsBuddyFieldStatusContainersButton.innerText = 'Remove Status Containers';
+        removeFsBuddyFieldStatusContainersButton.onclick = (e)=>{
+          e.stopPropagation();
+          removeFsBuddyStatusContainers();
+          return false;
+        };
+        fsBuddyFieldStatusesContainer.prepend(removeFsBuddyFieldStatusContainersButton);
+
+        const expandFsBuddyFieldStatusItemsButton = document.createElement('button');
+        expandFsBuddyFieldStatusItemsButton.innerText = 'Expand Field Status Items';
+        expandFsBuddyFieldStatusItemsButton.onclick = (e)=>{
+                e.stopPropagation();
+                expandAllFsBuddyStatusItems();
+                return false;
+        };
+        fsBuddyFieldStatusesContainer.prepend(expandFsBuddyFieldStatusItemsButton);
+
+        const collapseFsBuddyFieldStatusItemsButton = document.createElement('button');
+        collapseFsBuddyFieldStatusItemsButton.innerText = 'Collapse Field Status Items';
+        collapseFsBuddyFieldStatusItemsButton.onclick = (e)=>{
+                e.stopPropagation();
+                collapseAllFsBuddyStatusItems();
+                return false;
+        };
+        fsBuddyFieldStatusesContainer.prepend(collapseFsBuddyFieldStatusItemsButton);
+
+
+
+        Object.entries(statusMessages).forEach(([fieldId, statusMessages])=>{
+          appendFieldStatusContainer(fieldId, statusMessages.statusMessages)
         })
      }
     
@@ -577,7 +650,7 @@ const childFrameHtml = `
             removeAllCssName(e.data.payload.cssClassName)
             break;
           case 'getFieldStatuses':
-            processFieldStatuses(e.data.payload.fieldStatusResponse)
+            processFieldStatuses(e.data.payload.statusMessages)
             break;
         }
 			  console.log({'messageReceived': e})

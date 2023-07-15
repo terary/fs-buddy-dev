@@ -101,6 +101,20 @@ chrome.runtime.onMessage.addListener(function (
         console.log(e);
         senderResponse(e);
       });
+  } else if (message.type === "GetFormAsJson") {
+    const { apiKey, fetchFormId } = message;
+    getFormJsonFromApi({
+      apiKey,
+      fetchFormId,
+    })
+      .then((treeJson: any) => {
+        senderResponse(treeJson);
+      })
+      .catch((e) => {
+        console.log("Failed to GetFormAsJson");
+        console.log(e);
+        senderResponse(e);
+      });
   }
 
   return true;

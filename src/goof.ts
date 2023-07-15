@@ -1,29 +1,34 @@
-let pseudoLocation: Partial<Location> = {
-  // ancestorOrigins: {},
-  href: "https://www.formstack.com/admin/form/builder/5350841/build",
-  origin: "https://www.formstack.com",
-  protocol: "https:",
-  host: "www.formstack.com",
-  hostname: "www.formstack.com",
-  port: "",
-  pathname: "/admin/form/builder/5350841/build",
-  search: "",
-  hash: "",
+const factoryStatusMessageX = (fieldId: string) => {
+  const severity = Math.random() > 0.5 ? "error" : "warn";
+  return {
+    [fieldId]: {
+      severity: severity,
+      message: `The ${severity} message`,
+      fieldId: fieldId,
+      relatedFieldIds: ["147738154", "148111228", "147738157"],
+    },
+  };
 };
-// function getFormIdFromLocation({ pathname }: Location = location) {
-function xgetFormIdFromLocation({ pathname }: Location) {
-  const regExp = /\/admin\/form\/builder\/(?<formId>\d+)\/build(\/*)+/g;
-  return regExp.exec(pathname)?.groups?.formId || null;
-}
-// const x = getFormIdFromLocation(pseudoLocation);
-// const x = getFormIdFromLocation({ pathname: "/some/other/path" });
-console.log({
-  //@ts-ignore
-  formId: getFormIdFromLocation(pseudoLocation),
-  //@ts-ignore
-  nonBuilderPath: getFormIdFromLocation({ pathname: "/some/other/path" }),
-  //@ts-ignore
-  builderPathWithFieldId: getFormIdFromLocation({
-    pathname: "/admin/form/builder/5350841/build/field/147366617",
-  }),
-});
+
+let devDebugFieldIdsX = [
+  "148136237",
+  "147462595",
+  "147462596",
+  "147462597",
+  "147462598",
+  "147462600",
+  "148135962",
+  "148136234",
+];
+
+const fieldStatusMessage = devDebugFieldIdsX.reduce(
+  (prev, current, cIdx, ary) => {
+    return { ...factoryStatusMessageX(current), ...prev };
+  },
+  {}
+);
+console.log({ fieldStatusMessage });
+// const allFieldStatusMessage = {};
+// devDebugFieldIds.reduce();
+// devDebugFieldIds;
+// factoryStatusMessage;
