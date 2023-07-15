@@ -191,6 +191,19 @@ if (!formId) {
   console.log(`Working with formId; '${formId}'.`);
 }
 
+const createElementButton = ({
+  label,
+  onclick,
+}: {
+  label: string;
+  onclick: (ev: MouseEvent) => void | null;
+}) => {
+  const button = document.createElement("button");
+  button.innerHTML = label;
+  button.onclick = onclick;
+  return button;
+};
+
 // content script
 formId &&
   chrome.runtime.sendMessage(
@@ -208,38 +221,45 @@ formId &&
       fsBodyControlPanelHead.innerHTML = "FS Buddy Control Panel";
       fsBodyControlPanelHead.style.color = "black";
 
-      const fsBodyControlPanelGetFormHtmlButton =
-        document.createElement("button");
-      fsBodyControlPanelGetFormHtmlButton.innerText = "Get Form HTML";
-      fsBodyControlPanelGetFormHtmlButton.onclick = getFormAsJson;
+      const fsBodyControlPanelGetFormHtmlButton = createElementButton({
+        label: "Get Form HTML",
+        onclick: getFormAsJson,
+      });
 
-      const removeFormHtmlButton = document.createElement("button");
-      removeFormHtmlButton.innerText = "Remove Form HTML";
-      removeFormHtmlButton.onclick = removeFormHtml;
+      const removeFormHtmlButton = createElementButton({
+        label: "Remove Form HTML",
+        onclick: removeFormHtml,
+      });
 
-      const addCssClassButton = document.createElement("button");
-      addCssClassButton.innerText = "Add Css";
-      addCssClassButton.onclick = addCssClass;
+      const addCssClassButton = createElementButton({
+        label: "Add Css",
+        onclick: addCssClass,
+      });
 
-      const removeCssClassButton = document.createElement("button");
-      removeCssClassButton.innerText = "remove Css";
-      removeCssClassButton.onclick = removeCssClass;
+      const removeCssClassButton = createElementButton({
+        label: "remove Css",
+        onclick: removeCssClass,
+      });
 
-      const addCssClassFsBuddyBlueButton = document.createElement("button");
-      addCssClassFsBuddyBlueButton.innerText = "Add Css fsBuddyBlue";
-      addCssClassFsBuddyBlueButton.onclick = addCssClassFsBuddyBlue;
+      const addCssClassFsBuddyBlueButton = createElementButton({
+        label: "Add Css fsBuddyBlue",
+        onclick: addCssClassFsBuddyBlue,
+      });
 
-      const removeAllCssClassFsBuddyButton = document.createElement("button");
-      removeAllCssClassFsBuddyButton.innerText = "Remove All FsBuddy";
-      removeAllCssClassFsBuddyButton.onclick = removeAllCssClass_allFsBuddy;
+      const removeAllCssClassFsBuddyButton = createElementButton({
+        label: "Remove All FsBuddy",
+        onclick: removeAllCssClass_allFsBuddy,
+      });
 
-      const removeAllCssClassFsHiddenButton = document.createElement("button");
-      removeAllCssClassFsHiddenButton.innerText = "Remove FsHidden";
-      removeAllCssClassFsHiddenButton.onclick = removeAllCssClassFsHidden;
+      const removeAllCssClassFsHiddenButton = createElementButton({
+        label: "Remove FsHidden",
+        onclick: removeAllCssClassFsHidden,
+      });
 
-      const displayFieldStatusButton = document.createElement("button");
-      displayFieldStatusButton.innerText = "Display Field Status";
-      displayFieldStatusButton.onclick = displayFieldStatuses;
+      const displayFieldStatusButton = createElementButton({
+        label: "Display Field Status",
+        onclick: displayFieldStatuses,
+      });
 
       const fsBodyControlPanel = document.createElement("div");
       fsBodyControlPanel.appendChild(fsBodyControlPanelHead);

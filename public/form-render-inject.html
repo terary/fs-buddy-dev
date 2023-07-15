@@ -74,17 +74,19 @@
       const addCssClassToFields = (cssClassName, fieldIds) => {
         console.log({function:'addCssClassToFields', cssClassName, fieldIds})
           fieldIds.forEach(fieldId=>{
-              const containerId =`fsCell${fieldId}`;
-              const fieldContainer = document.getElementById(containerId);
-              fieldContainer.parentElement.classList.add(cssClassName);        
+              const fieldContainer =  getFieldContainer(fieldId);
+              if(fieldContainer.parentElement) {
+                fieldContainer.parentElement.classList.add(cssClassName);        
+              } else { // hack, this is likely a "section" field
+                fieldContainer.classList.add(cssClassName);        
+              }
           });
       }
 
       const removeCssClassFromFields = (cssClassName, fieldIds) => {
         console.log({function:'removeCssClassFromFields', cssClassName, fieldIds})
           fieldIds.forEach(fieldId=>{
-              const containerId =`fsCell${fieldId}`;
-              const fieldContainer = document.getElementById(containerId);
+              const fieldContainer =  getFieldContainer(fieldId);
               fieldContainer.parentElement.classList.remove(cssClassName);        
               fieldContainer.classList.remove(cssClassName);        
           });
