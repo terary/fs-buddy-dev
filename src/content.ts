@@ -50,7 +50,6 @@ function removeFormHtml() {
   const theIFrame = document.getElementById("theFrame");
   if (theIFrame) {
     theIFrame.remove();
-    //parentElement?.remove(theIFrame)
   }
 }
 
@@ -125,6 +124,86 @@ function removeCssClass() {
   theIFrame?.contentWindow?.postMessage(message, "*");
 }
 
+function displayFieldStatuses() {
+  /**
+ *  [fieldId]:{
+     statusMessages[]
+ }
+ 
+ statusMessages:{
+  'severity', 'message', 'fieldId', 'relatedFieldIds'   
+ }
+ 
+ * 
+ */
+  const fieldStatusMessages = {
+    "126381023": [
+      {
+        severity: "debug",
+        message: "The debug message",
+        fieldId: "126381023",
+        relatedFieldIds: ["147738154", "148111228", "147738157"],
+      },
+      {
+        severity: "debug",
+        message: "The info message",
+        fieldId: "126381023",
+        relatedFieldIds: ["147738154", "148111228", "147738157"],
+      },
+      {
+        severity: "debug",
+        message: "The warn message",
+        fieldId: "126381023",
+        relatedFieldIds: ["147738154", "148111228", "147738157"],
+      },
+      {
+        severity: "debug",
+        message: "The error message",
+        fieldId: "126381023",
+        relatedFieldIds: ["147738154", "148111228", "147738157"],
+      },
+    ],
+
+    "126384418": [
+      {
+        severity: "debug",
+        message: "The debug message",
+        fieldId: "126384418",
+        relatedFieldIds: ["147738154", "148111228", "147738157"],
+      },
+      {
+        severity: "info",
+        message: "The info message",
+        fieldId: "126384418",
+        relatedFieldIds: ["147738154", "148111228", "147738157"],
+      },
+      {
+        severity: "warn",
+        message: "The warn message",
+        fieldId: "126384418",
+        relatedFieldIds: ["147738154", "148111228", "147738157"],
+      },
+      {
+        severity: "error",
+        message: "The error message",
+        fieldId: "126384418",
+        relatedFieldIds: ["147738154", "148111228", "147738157"],
+      },
+    ],
+  };
+
+  const theIFrame = document.getElementById("theFrame");
+  const message = {
+    messageType: "getFieldStatuses",
+    payload: {
+      fieldStatusResponse: fieldStatusMessages,
+    },
+  };
+
+  // @ts-ignore - contentWindow not an element of...
+  theIFrame?.contentWindow?.postMessage(message, "*");
+}
+
 const formId = getFormIdFromLocation();
 if (!formId) {
   console.log("Failed to get formId from url.");
@@ -178,6 +257,10 @@ formId &&
       removeAllCssClassFsHiddenButton.innerText = "Remove FsHidden";
       removeAllCssClassFsHiddenButton.onclick = removeAllCssClassFsHidden;
 
+      const displayFieldStatusButton = document.createElement("button");
+      displayFieldStatusButton.innerText = "Display Field Status";
+      displayFieldStatusButton.onclick = displayFieldStatuses;
+
       const fsBodyControlPanel = document.createElement("div");
       fsBodyControlPanel.appendChild(fsBodyControlPanelHead);
       fsBodyControlPanel.appendChild(fsBodyControlPanelGetFormHtmlButton);
@@ -187,6 +270,7 @@ formId &&
       fsBodyControlPanel.appendChild(addCssClassFsBuddyBlueButton);
       fsBodyControlPanel.appendChild(removeAllCssClassFsBuddyButton);
       fsBodyControlPanel.appendChild(removeAllCssClassFsHiddenButton);
+      fsBodyControlPanel.appendChild(displayFieldStatusButton);
 
       fsBodyControlPanel.style.backgroundColor = "#FFFFFF";
       fsBodyControlPanel.style.border = "1px black solid";
@@ -290,6 +374,62 @@ const childFrameHtml = `
           opacity: 0.5;
           background-color: lightgreen;
       }
+      /* ----------------------------------------------------- */
+
+      .fsBuddy_statusContainer {
+          opacity: 0.5;
+      }
+  
+  
+      .fsBuddy_statusRowHeader
+      {
+          /*padding-left: 2em;*/
+      }
+  
+      .fsBuddy_statusRow
+      {
+          padding-left: 1em;
+      }
+  
+      .fsBuddy_statusRow_hidden
+      {
+          display: none;
+      }
+  
+      .fsBuddy_statusMessateCell_
+      {}
+      .fsBuddy_statusMessateCell_severity,
+      .fsBuddy_statusMessateCell_message {
+          display: inline
+      }
+  
+      .fsBuddy_statusMessateCell_fieldId, 
+      .fsBuddy_statusMessateCell_relatedFieldIds {
+          display: none;
+      }
+  
+      .fsBuddy_statusMessate_severity_debug {
+          background-color: pink;
+      }
+  
+      .fsBuddy_statusMessate_severity_info{
+          background-color: lightblue;
+      }
+  
+      .fsBuddy_statusMessate_severity_warn{
+          background-color: yellow;
+      }
+  
+      .fsBuddy_statusMessate_severity_error {
+          background-color: red;
+      }
+  
+      .fsBuddy_statusMessate_link {
+          color: blue;
+          /*background-color: red;*/
+          text-decoration: underline;
+      }
+  
     </style>
   <script>
 
@@ -316,18 +456,129 @@ const childFrameHtml = `
             el.classList.remove(cssClassName);
         })    
       }
+// -----------------------------------
+      const SEVERITIES = {
+        error: 0,
+        warn: 50,
+        info: 100,
+        debug: 500,
+        0: 'error',
+        50: 'warn',
+        100: 'info',
+        500: 'debug',
+      }
 
+      const toggleExpandCollapseStatusItems  = (fieldId)=>{
+        const containerId = \`fsBuddy_statusContainer_\${fieldId}\`;
+        const fieldContainer = document.getElementById(containerId);
+        const hiddenRows = fieldContainer.querySelectorAll('.fsBuddy_statusRow_hidden');
+
+        if(hiddenRows.length===0){
+            fieldContainer.querySelectorAll('.fsBuddy_statusRow').forEach(row=>{
+                row.classList.add('fsBuddy_statusRow_hidden')
+            })
+        } else {
+            hiddenRows.forEach(row=>{
+                row.classList.remove('fsBuddy_statusRow_hidden')
+            })
+        }
+      }
+
+      const getMessageCollectionSeverity = (statusMessages) => {
+        let collectionSeverity = SEVERITIES['debug'];
+        (statusMessages || []).forEach(message=>{
+            if(SEVERITIES[message.severity] <  collectionSeverity) {
+                collectionSeverity = SEVERITIES[message.severity];
+            }
+        })
+        return SEVERITIES[collectionSeverity];
+      }
+  
+      const removeFsBuddyStatusContainers = ()=>{
+        const statusContainers = document.querySelectorAll('.fsBuddy_statusContainer')
+        statusContainers.forEach(container=>container.remove())
+      }
+  
+      const appendStatusContainer = (fieldId, statusMessages)=>{
+        const containerId =\`fsCell\${fieldId}\`;
+        const fieldContainer = document.getElementById(containerId);
+
+        const collectionSeverity = getMessageCollectionSeverity(statusMessages);
+
+
+        const statusContainer = document.createElement('div');
+        statusContainer.id = \`fsBuddy_statusContainer_\${fieldId}\`;
+        statusContainer.classList.add('fsBuddy_statusContainer');
+
+        const removeFsBuddyFieldStatusContainersButton = document.createElement('button');
+        removeFsBuddyFieldStatusContainersButton.innerText = 'Remove Status Containers';
+        removeFsBuddyFieldStatusContainersButton.onclick = ()=>{removeFsBuddyStatusContainers()};
+        statusContainer.appendChild(removeFsBuddyFieldStatusContainersButton);
+
+        const divStatusHeadRow = document.createElement('div');
+        divStatusHeadRow.classList.add(\`fsBuddy_statusRowHeader\`);
+        divStatusHeadRow.classList.add(\`fsBuddy_statusMessate_severity_\${collectionSeverity}\`);
+        
+        
+        const aExpandCollapseItemsLink = document.createElement('a');
+        aExpandCollapseItemsLink.innerHTML = \`<a>expand/collapse</a> fieldId: \${fieldId} FS Buddy (\${statusMessages.length})\`;
+        aExpandCollapseItemsLink.onclick = ()=>{toggleExpandCollapseStatusItems(fieldId)}
+        aExpandCollapseItemsLink.classList.add('fsBuddy_statusMessate_link');
+
+        divStatusHeadRow.appendChild(aExpandCollapseItemsLink)
+        statusContainer.appendChild(divStatusHeadRow)
+        
+      //        {severity:'debug', message: 'The debug message', fieldId: '148111228',  relatedFieldIds:['147738154', '148111228', '147738157']},
+        statusMessages.forEach(message=>{
+            const divStatusRow = document.createElement('div');
+            divStatusRow.classList.add(\`fsBuddy_statusRow\`);
+            divStatusRow.classList.add(\`fsBuddy_statusMessate_severity_\${message['severity']}\`);
+            ['severity', 'message', 'fieldId', 'relatedFieldIds'].forEach(messagePart=>{
+                const divMessagePart = document.createElement('div');
+                switch(messagePart){
+                    case "severity":
+                        divMessagePart.classList.add(\`fsBuddy_statusMessateCell_severity\`);
+                        divMessagePart.innerHTML = \`<span>(\${message[messagePart]})</span>\`;
+                    break;
+                    default:
+                        divMessagePart.classList.add(\`fsBuddy_statusMessateCell_\${messagePart}\`);
+                        divMessagePart.innerHTML = \`<span>\${message[messagePart]}</span>\`;
+                    break; // <-- never stops being funny
+                    
+                }
+                divStatusRow.appendChild(divMessagePart);
+            })
+            statusContainer.appendChild(divStatusRow)
+        })
+
+        if (fieldContainer.parentElement) {
+            fieldContainer.parentElement.prepend(statusContainer)
+        } else {
+            fieldContainer.appendChild(statusContainer)
+        }
+      }
+
+// -----------------------------------
+      const processFieldStatuses = (fieldStatusResponse)=>{
+        Object.entries(fieldStatusResponse).forEach(([fieldId, statusMessages])=>{
+            appendStatusContainer(fieldId, statusMessages);
+        })
+     }
+    
       window.onmessage = function(e) {
         switch(e.data.messageType) {
-        case 'addCssClassToFieldIdList':
-          addCssClassToFields(e.data.payload.cssClassName, e.data.payload.fieldIds)
-          break;
-        case 'removeClassFromFieldIdList':
-          removeCssClassFromFields(e.data.payload.cssClassName, e.data.payload.fieldIds)
-          break;
-        case 'removeAllClassName':
-          removeAllCssName(e.data.payload.cssClassName)
-          break;
+          case 'addCssClassToFieldIdList':
+            addCssClassToFields(e.data.payload.cssClassName, e.data.payload.fieldIds)
+            break;
+          case 'removeClassFromFieldIdList':
+            removeCssClassFromFields(e.data.payload.cssClassName, e.data.payload.fieldIds)
+            break;
+          case 'removeAllClassName':
+            removeAllCssName(e.data.payload.cssClassName)
+            break;
+          case 'getFieldStatuses':
+            processFieldStatuses(e.data.payload.fieldStatusResponse)
+            break;
         }
 			  console.log({'messageReceived': e})
   		};
