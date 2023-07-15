@@ -1,33 +1,6 @@
 alert('Hell from content.js')
-// const inject = () => {
-//     var r = document.createElement('script');
-//     // r.setAttribute('src', 'chrome-extension://' + chrome.runtime.id + '/extension-interface');
-//     r.setAttribute('src', 'extension-interface');
-//     (document.head || document.documentElement).appendChild(r);
-//   };
-// inject();
 
-function fetchTree(){
-    chrome.runtime.sendMessage({ 
-        type: 'GetDependancyList',
-        fetchFormId: '5358471',
-        apiKey: "cc17435f8800943cc1abd3063a8fe44f", 
-    }, response => {
-        console.log('fetch tree response')
-        console.log(response);
-    })
-}
-function refreshFsFormGet(){
-    chrome.runtime.sendMessage({ 
-        type: 'RequestGetForm',
-        fetchFormId: '5358471',
-        apiKey: "cc17435f8800943cc1abd3063a8fe44f", 
-    }, response => {
-        console.log('refresh response:')
-        console.log(response);
-        processFsBuddyFormDescription(response)
-    })   
-}
+
 // content script
 chrome.runtime.sendMessage({ 
         type: 'RequestGetForm',
@@ -75,6 +48,46 @@ chrome.runtime.sendMessage({
 })
 
 
+// chrome.runtime.sendMessage({ 
+//         type: 'RequestGetForm',
+//         fetchFormId: '5358471',
+//         apiKey: "cc17435f8800943cc1abd3063a8fe44f", 
+//     }, response => {
+//   console.log(response);
+//   const theBody = document.querySelector('body');
+
+//   const fsBodyControlPanelHead = document.createElement('h3');
+//   fsBodyControlPanelHead.innerHTML ='FS Buddy Control Panel';
+//   fsBodyControlPanelHead.style.color = 'black';
+
+
+//   const fsBodyControlPanelRefreshButton = document.createElement('button');
+//   fsBodyControlPanelRefreshButton.innerText = 'Refresh';
+//   fsBodyControlPanelRefreshButton.onclick = refreshFsFormGet;
+
+//   const fsBodyControlPanelDisplayLogicButton = document.createElement('button');
+//   fsBodyControlPanelDisplayLogicButton.innerText = 'Display Logic';
+//   fsBodyControlPanelDisplayLogicButton.onclick = displayLogicChain;
+
+//   const fsBodyControlPanel = document.createElement('div');
+//   fsBodyControlPanel.appendChild(fsBodyControlPanelHead)
+//   fsBodyControlPanel.appendChild(fsBodyControlPanelRefreshButton)
+//   fsBodyControlPanel.appendChild(fsBodyControlPanelDisplayLogicButton)
+
+
+//   fsBodyControlPanel.style.backgroundColor = '#FFFFFF';
+//   fsBodyControlPanel.style.border = '1px black solid';
+
+// //   fsBodyControlPanel.style.height = '500px';
+//   fsBodyControlPanel.style.width = '500px';
+//   fsBodyControlPanel.style.zIndex = 1000;
+//   fsBodyControlPanel.style.top = '0px';
+//   fsBodyControlPanel.style.left = '0px';
+//   fsBodyControlPanel.style.position = 'absolute'
+  
+//   theBody.appendChild(fsBodyControlPanel)
+// })
+
 function getFieldBuildContainer(fieldId){
     const queryString = `fieldRequiredStatus-${fieldId}`
     const fieldRequreStatusButton = document.getElementById(queryString)
@@ -101,7 +114,28 @@ function wrapFieldStatusMessage(statusMessages){
     return table;
 }
 
+function refreshFsFormGet(){
+    chrome.runtime.sendMessage({ 
+        type: 'RequestGetForm',
+        fetchFormId: '5358471',
+        apiKey: "cc17435f8800943cc1abd3063a8fe44f", 
+    }, response => {
+        console.log('refresh response:')
+        console.log(response);
+        processFsBuddyFormDescription(response)
+    })   
+}
 
+function fetchTree(){
+    chrome.runtime.sendMessage({ 
+        type: 'GetDependancyList',
+        fetchFormId: '5358471',
+        apiKey: "cc17435f8800943cc1abd3063a8fe44f", 
+    }, response => {
+        console.log('fetch tree response')
+        console.log(response);
+    })
+}
 
 /**
  * 

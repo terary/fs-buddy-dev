@@ -143,12 +143,15 @@ class FsFormAsDirectedGraph extends AbstractDirectedGraph<TFieldLogic> {
         formTree._childFields[field.id].rootNodeId,
         convertFieldRootNode(field)
       );
-      field.logic.checks.forEach((logicTerm) => {
-        formTree._childFields[field.id].appendChildNodeWithContent(
-          formTree._childFields[field.id].rootNodeId,
-          convertFieldLogicCheck(logicTerm)
-        );
-      });
+
+      if (field.logic && field.logic.checks) {
+        field.logic.checks.forEach((logicTerm) => {
+          formTree._childFields[field.id].appendChildNodeWithContent(
+            formTree._childFields[field.id].rootNodeId,
+            convertFieldLogicCheck(logicTerm)
+          );
+        });
+      }
     });
 
     return formTree;
@@ -159,7 +162,7 @@ const convertFieldRootNode = (field: any): TFieldLogic => {
   const fieldId = field.id;
   const logic = field.logic;
 
-  const { action, conditional } = logic;
+  const { action = null, conditional = null } = logic || {};
   return {
     isRoot: true,
     subjectId: fieldId,

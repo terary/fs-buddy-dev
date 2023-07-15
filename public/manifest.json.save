@@ -1,0 +1,57 @@
+{
+    "name": "Stack Buddy",
+    "description": "The power of Formstack - offline",
+    "version": "1.0",
+    "manifest_version": 3,
+    "action": {
+      "default_popup": "extension-ui.html",
+      "default_title": "Open the popup"
+    },
+    "background": {
+      "service_worker": "background.js"
+    },
+    "host_permissions": [
+      "<all_urls>"
+    ],
+    "web_accessible_resources": [
+      {
+        "resources": [
+          "web_accessible.js"
+        ],
+        "matches": [
+          "<all_urls>"
+        ]
+      }
+    ],
+    "content_scripts": [
+      {
+        "matches": [
+          "https://*.formstack.com/admin/form/builder/*"
+        ],
+        "js": [
+          "content.js"
+        ]
+      }
+    ],
+    "permissions": [
+      "activeTab",
+      "debugger",
+      "declarativeContent",
+      "declarativeNetRequest",
+      "declarativeNetRequestFeedback",
+      "downloads",
+      "nativeMessaging",
+      "pageCapture",
+      "tabCapture",
+      "tabs",
+      "scripting",
+      "storage",
+      "webNavigation",
+      "webRequest"
+    ],
+    "icons": {
+      "16": "logo192.png",
+      "48": "logo192.png",
+      "128": "logo192.png"
+    }
+  }
