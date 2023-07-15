@@ -4,6 +4,17 @@ function getFormIdFromLocation({ pathname }: Location = location) {
   return regExp.exec(pathname)?.groups?.formId || null;
 }
 
+const devDebugFieldIds = [
+  "148136237",
+  "147462595",
+  "147462596",
+  "147462597",
+  "147462598",
+  "147462600",
+  "148135962",
+  "148136234",
+];
+
 function getFormHtml() {
   const fetchTreeFormId = getFormIdFromLocation();
   if (fetchTreeFormId) {
@@ -14,7 +25,6 @@ function getFormHtml() {
         apiKey: "cc17435f8800943cc1abd3063a8fe44f",
       },
       (apiFormHtml) => {
-        // let frame = document.getElementById("theFrame");
         const iframe = document.createElement("iframe");
         iframe.id = "theFrame";
         iframe.style.width = "500px";
@@ -26,27 +36,7 @@ function getFormHtml() {
         iframe.style.position = "absolute";
         iframe.style.backgroundColor = "green";
 
-        // @ts-ignore
-        // iframe.contentDocument.addEventListener("DOMContentLoaded", () => {
-        //   alert("IFrame Loaded");
-        // });
-        // @ts-ignore
-        // iframe.contentWindow?.onmessage = (e) => {
-        //   console.log({ receivedMessage: e });
-        // };
-        // iframe.srcdoc = childFrameHtml;
         iframe.srcdoc = childFrameHtml + apiFormHtml;
-        // iframe.src =
-        //   "https://www.formstack.com/forms/?form=5358471&viewkey=S1K62mLR6o";
-        //          "https://www.formstack.com/forms/?form=5358471&viewkey=S1K62mLR6o";
-        //
-        //          "https://www.formstack.com/forms/?form=5350841&viewkey=uAsNGfWScT";
-        //          "https://terarychambers.formstack.com/forms/predicate_tree_take1";
-
-        // const childContentDiv = document.createElement("div");
-        // childContentDiv.innerHTML = childFrameHtml;
-        // iframe.innerHTML = childContentDiv + iframe.innerHTML;
-
         const theBody = document.querySelector("body");
         theBody?.prepend(iframe);
       }
@@ -55,21 +45,21 @@ function getFormHtml() {
     console.log("Failed to fetchTree, could not get formId from url");
   }
 }
+
+function removeFormHtml() {
+  const theIFrame = document.getElementById("theFrame");
+  if (theIFrame) {
+    theIFrame.remove();
+    //parentElement?.remove(theIFrame)
+  }
+}
+
 window.onmessage = function (e) {
   console.log({ receivedMessage: e });
 };
 
 function addCssClassFsBuddyBlue() {
-  const fieldIds = [
-    "148136237",
-    "147462595",
-    "147462596",
-    "147462597",
-    "147462598",
-    "147462600",
-    "148135962",
-    "148136234",
-  ];
+  const fieldIds = devDebugFieldIds;
   const theIFrame = document.getElementById("theFrame");
   const message = {
     messageType: "addCssClassToFieldIdList",
@@ -83,16 +73,7 @@ function addCssClassFsBuddyBlue() {
   theIFrame?.contentWindow?.postMessage(message, "*");
 }
 function addCssClass() {
-  const fieldIds = [
-    "148136237",
-    "147462595",
-    "147462596",
-    "147462597",
-    "147462598",
-    "147462600",
-    "148135962",
-    "148136234",
-  ];
+  const fieldIds = devDebugFieldIds;
   const theIFrame = document.getElementById("theFrame");
   const message = {
     messageType: "addCssClassToFieldIdList",
@@ -130,21 +111,11 @@ function removeAllCssClass(cssClassName: string) {
 }
 
 function removeCssClass() {
-  const fieldIds = [
-    "148136237",
-    "147462595",
-    "147462596",
-    "147462597",
-    "147462598",
-    "147462600",
-    "148135962",
-    "148136234",
-  ];
+  const fieldIds = devDebugFieldIds;
   const theIFrame = document.getElementById("theFrame");
   const message = {
     messageType: "removeClassFromFieldIdList",
     payload: {
-      // cssClassName: "fsBuddy_lightblue",
       cssClassName: "fsHidden",
       fieldIds,
     },
@@ -154,22 +125,13 @@ function removeCssClass() {
   theIFrame?.contentWindow?.postMessage(message, "*");
 }
 
-// function pingChildFrame() {
-//   const theIFrame = document.getElementById("theFrame");
-//   const message = {
-//     messageTarget: "theFunctionToCall",
-//     someOtherValue: "goes here",
-//   };
-//   // @ts-ignore - contentWindow not an element of...
-//   theIFrame?.contentWindow?.postMessage(message, "*");
-// }
-
 const formId = getFormIdFromLocation();
 if (!formId) {
   console.log("Failed to get formId from url.");
 } else {
   console.log(`Working with formId; '${formId}'.`);
 }
+
 // content script
 formId &&
   chrome.runtime.sendMessage(
@@ -187,18 +149,14 @@ formId &&
       fsBodyControlPanelHead.innerHTML = "FS Buddy Control Panel";
       fsBodyControlPanelHead.style.color = "black";
 
-      // const fsBodyControlPanelRefreshButton = document.createElement("button");
-      // fsBodyControlPanelRefreshButton.innerText = "Refresh";
-      // fsBodyControlPanelRefreshButton.onclick = refreshFsFormGet;
-
       const fsBodyControlPanelGetFormHtmlButton =
         document.createElement("button");
       fsBodyControlPanelGetFormHtmlButton.innerText = "Get Form HTML";
       fsBodyControlPanelGetFormHtmlButton.onclick = getFormHtml;
 
-      // const pingChildFrameButton = document.createElement("button");
-      // pingChildFrameButton.innerText = "Ping Child Frame";
-      // pingChildFrameButton.onclick = pingChildFrame;
+      const removeFormHtmlButton = document.createElement("button");
+      removeFormHtmlButton.innerText = "Remove Form HTML";
+      removeFormHtmlButton.onclick = removeFormHtml;
 
       const addCssClassButton = document.createElement("button");
       addCssClassButton.innerText = "Add Css";
@@ -222,9 +180,8 @@ formId &&
 
       const fsBodyControlPanel = document.createElement("div");
       fsBodyControlPanel.appendChild(fsBodyControlPanelHead);
-      // fsBodyControlPanel.appendChild(fsBodyControlPanelRefreshButton);
       fsBodyControlPanel.appendChild(fsBodyControlPanelGetFormHtmlButton);
-      // fsBodyControlPanel.appendChild(pingChildFrameButton);
+      fsBodyControlPanel.appendChild(removeFormHtmlButton);
       fsBodyControlPanel.appendChild(addCssClassButton);
       fsBodyControlPanel.appendChild(removeCssClassButton);
       fsBodyControlPanel.appendChild(addCssClassFsBuddyBlueButton);
@@ -277,26 +234,6 @@ function wrapFieldStatusMessage(statusMessages: any[]) {
 
   return table;
 }
-
-// function refreshFsFormGet() {
-//   const refreshFormId = getFormIdFromLocation();
-//   if (refreshFormId) {
-//     chrome.runtime.sendMessage(
-//       {
-//         type: "RequestGetForm",
-//         fetchFormId: refreshFormId,
-//         apiKey: "cc17435f8800943cc1abd3063a8fe44f",
-//       },
-//       (response) => {
-//         console.log("refresh response:");
-//         // console.log(response);
-//         processFsBuddyFormDescription(response);
-//       }
-//     );
-//   } else {
-//     console.log("Failed to refresh, could not get formId from url");
-//   }
-// }
 
 function appendFieldStatusMessage({ fieldId }: { fieldId: string }) {
   const targetFieldBuilderContainer = getFieldBuildContainer(fieldId);
