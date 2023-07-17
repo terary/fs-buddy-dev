@@ -1,48 +1,16 @@
 import form5350841 from "./fs-form/form5350841.json";
 import form5353031 from "./fs-form/form5353031.json";
-import type { TFieldLogic, TFieldDependancyList } from "./types";
-
+import type { TFieldLogic, TFieldDependencyList } from "./types";
 import { FsFormAsDirectedGraph } from "./FsFormAsDirectedGraph";
-const formTree = FsFormAsDirectedGraph.fromFormJson(form5353031);
 
-// const subFieldTrees = formTree.getChildFields();
-// Object.values(subFieldTrees).forEach((subjectField) => {
-//   Object.values(subFieldTrees).forEach((targetField) => {
-//     if (subjectField.rootFieldId === targetField.rootFieldId) {
-//       return; // of course two fields will have identical dependancies
-//     }
-
-//     if (
-//       subjectField.isDependancyOf(targetField) &&
-//       targetField.isDependancyOf(subjectField)
-//     ) {
-//       console.log(
-//         `fieldId: ${subjectField.rootFieldId} and fieldId: ${targetField.rootFieldId} are interdependant`
-//       );
-//     } else if (subjectField.isDependancyOf(targetField)) {
-//       console.log(
-//         `fieldId: ${subjectField.rootFieldId} is a dependancy of ${targetField.rootFieldId}`
-//       );
-//     } else if (targetField.isDependancyOf(subjectField)) {
-//       console.log(
-//         `fieldId: ${targetField.rootFieldId} is a dependancy of ${subjectField.rootFieldId}`
-//       );
-//     } else {
-//       console.log(
-//         `fieldId: ${subjectField.rootFieldId} and fieldId: ${targetField.rootFieldId} are mutually exclusive`
-//       );
-//     }
-//   });
-// });
-
-const getDependacyStatuses = (
+const getDependencyStatuses = (
   tree: FsFormAsDirectedGraph
-): TFieldDependancyList => {
-  const dependancyStatusList: TFieldDependancyList = {};
+): TFieldDependencyList => {
+  const dependencyStatusList: TFieldDependencyList = {};
 
   Object.values(tree.getChildFields()).forEach((subjectField) => {
-    dependancyStatusList[subjectField.rootFieldId] = {
-      interdependant: [],
+    dependencyStatusList[subjectField.rootFieldId] = {
+      interdependent: [],
       parents: [],
       children: [],
       mutuallyExclusive: [],
@@ -53,43 +21,43 @@ const getDependacyStatuses = (
       }
 
       if (
-        subjectField.isDependancyOf(targetField) &&
-        targetField.isDependancyOf(subjectField)
+        subjectField.isDependencyOf(targetField) &&
+        targetField.isDependencyOf(subjectField)
       ) {
-        dependancyStatusList[subjectField.rootFieldId].interdependant.push(
+        dependencyStatusList[subjectField.rootFieldId].interdependent.push(
           targetField.rootFieldId
         );
       }
-      if (subjectField.isDependancyOf(targetField)) {
-        dependancyStatusList[subjectField.rootFieldId].parents.push(
+      if (subjectField.isDependencyOf(targetField)) {
+        dependencyStatusList[subjectField.rootFieldId].parents.push(
           targetField.rootFieldId
         );
       }
-      if (targetField.isDependancyOf(subjectField)) {
-        dependancyStatusList[subjectField.rootFieldId].children.push(
+      if (targetField.isDependencyOf(subjectField)) {
+        dependencyStatusList[subjectField.rootFieldId].children.push(
           targetField.rootFieldId
         );
       }
 
       if (
-        !subjectField.isDependancyOf(targetField) &&
-        !targetField.isDependancyOf(subjectField)
+        !subjectField.isDependencyOf(targetField) &&
+        !targetField.isDependencyOf(subjectField)
       ) {
-        dependancyStatusList[subjectField.rootFieldId].mutuallyExclusive.push(
+        dependencyStatusList[subjectField.rootFieldId].mutuallyExclusive.push(
           targetField.rootFieldId
         );
       }
     });
   });
 
-  return dependancyStatusList;
+  return dependencyStatusList;
 };
 
-const getDependacyList = (tree: FsFormAsDirectedGraph): any => {
+const getDependancyList = (tree: FsFormAsDirectedGraph): any => {
   const theList: any = {};
   console.log(theList);
   Object.values(tree.getChildFields()).forEach((field) => {
-    theList[field.rootFieldId] = field.getDependancyFieldIds();
+    theList[field.rootFieldId] = field.getDependencyFieldIds();
   });
 
   return theList;
@@ -99,9 +67,14 @@ const treeUtilities = (treeJson: any) => {
   const formTree = FsFormAsDirectedGraph.fromFormJson(treeJson);
 
   return {
-    getDependacyList: getDependacyList(formTree),
-    getDependacyStatuses: getDependacyStatuses(formTree),
+    getDependancyList: getDependancyList(formTree),
+    getDependancyStatuses: getDependencyStatuses(formTree),
   };
 };
+
+(async () => {
+  const formTree = FsFormAsDirectedGraph.fromFormJson(form5353031);
+  treeUtilities(formTree).getDependancyList();
+})();
 
 export { treeUtilities };

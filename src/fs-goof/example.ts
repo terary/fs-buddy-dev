@@ -1,43 +1,29 @@
 import form5350841 from "./fs-form/form5350841.json";
 import form5353031 from "./fs-form/form5353031.json";
-import type { TFieldLogic, TFieldDependancyList } from "./types";
+import type { TFieldLogic, TFieldDependencyList } from "./types";
 
 import { FsFormAsDirectedGraph } from "./FsFormAsDirectedGraph";
 const formTree = FsFormAsDirectedGraph.fromFormJson(form5353031);
-
-// type TFieldDependcyStatus =
-//   | "interdependant"
-//   | "mutually-exclusive"
-//   | "dependant";
-// type TFieldDependcyStatusList = {
-//   [K in TFieldDependcyStatus]?: string[];
-// };
-// type TFieldDepnencyList = { [fieldId: string]: TFieldDependcyStatusList[] };
-// type TFieldList = {
-//   [fieldId: string]: {
-//     [status: string]: TFieldDependcyStatusList[];
-//   };
-// };
 
 const subFieldTrees = formTree.getChildFields();
 Object.values(subFieldTrees).forEach((subjectField) => {
   Object.values(subFieldTrees).forEach((targetField) => {
     if (subjectField.rootFieldId === targetField.rootFieldId) {
-      return; // of course two fields will have identical dependancies
+      return; // of course two fields will have identical dependencies
     }
 
     if (
-      subjectField.isDependancyOf(targetField) &&
-      targetField.isDependancyOf(subjectField)
+      subjectField.isDependencyOf(targetField) &&
+      targetField.isDependencyOf(subjectField)
     ) {
       console.log(
-        `fieldId: ${subjectField.rootFieldId} and fieldId: ${targetField.rootFieldId} are interdependant`
+        `fieldId: ${subjectField.rootFieldId} and fieldId: ${targetField.rootFieldId} are interdependent`
       );
-    } else if (subjectField.isDependancyOf(targetField)) {
+    } else if (subjectField.isDependencyOf(targetField)) {
       console.log(
         `fieldId: ${subjectField.rootFieldId} is a dependancy of ${targetField.rootFieldId}`
       );
-    } else if (targetField.isDependancyOf(subjectField)) {
+    } else if (targetField.isDependencyOf(subjectField)) {
       console.log(
         `fieldId: ${targetField.rootFieldId} is a dependancy of ${subjectField.rootFieldId}`
       );
@@ -49,22 +35,14 @@ Object.values(subFieldTrees).forEach((subjectField) => {
   });
 });
 
-// type TFieldDependcyStatus =
-//   | "interdependant"
-//   | "mutually-exclusive"
-//   | "dependant";
-// type TFieldDependcyStatusList = {
-//   [K in TFieldDependcyStatus]?: string[];
-// };
-
-const getDependacyStatuses = (
+const getDependancyStatuses = (
   tree: FsFormAsDirectedGraph
-): TFieldDependancyList => {
-  const dependancyStatusList: TFieldDependancyList = {};
+): TFieldDependencyList => {
+  const dependancyStatusList: TFieldDependencyList = {};
 
   Object.values(tree.getChildFields()).forEach((subjectField) => {
     dependancyStatusList[subjectField.rootFieldId] = {
-      interdependant: [],
+      interdependent: [],
       parents: [],
       children: [],
       mutuallyExclusive: [],
@@ -75,27 +53,27 @@ const getDependacyStatuses = (
       }
 
       if (
-        subjectField.isDependancyOf(targetField) &&
-        targetField.isDependancyOf(subjectField)
+        subjectField.isDependencyOf(targetField) &&
+        targetField.isDependencyOf(subjectField)
       ) {
-        dependancyStatusList[subjectField.rootFieldId].interdependant.push(
+        dependancyStatusList[subjectField.rootFieldId].interdependent.push(
           targetField.rootFieldId
         );
       }
-      if (subjectField.isDependancyOf(targetField)) {
+      if (subjectField.isDependencyOf(targetField)) {
         dependancyStatusList[subjectField.rootFieldId].parents.push(
           targetField.rootFieldId
         );
       }
-      if (targetField.isDependancyOf(subjectField)) {
+      if (targetField.isDependencyOf(subjectField)) {
         dependancyStatusList[subjectField.rootFieldId].children.push(
           targetField.rootFieldId
         );
       }
 
       if (
-        !subjectField.isDependancyOf(targetField) &&
-        !targetField.isDependancyOf(subjectField)
+        !subjectField.isDependencyOf(targetField) &&
+        !targetField.isDependencyOf(subjectField)
       ) {
         dependancyStatusList[subjectField.rootFieldId].mutuallyExclusive.push(
           targetField.rootFieldId
@@ -107,11 +85,11 @@ const getDependacyStatuses = (
   return dependancyStatusList;
 };
 
-const getDependacyList = (tree: FsFormAsDirectedGraph): any => {
+const getDependancyList = (tree: FsFormAsDirectedGraph): any => {
   const theList: any = {};
   console.log(theList);
   Object.values(tree.getChildFields()).forEach((field) => {
-    theList[field.rootFieldId] = field.getDependancyFieldIds();
+    theList[field.rootFieldId] = field.getDependencyFieldIds();
   });
 
   return theList;
@@ -120,10 +98,10 @@ const getDependacyList = (tree: FsFormAsDirectedGraph): any => {
 console.log("Thats all folks");
 
 console.log({
-  fieldHasDependancy: formTree.getFieldLogicDependancyList("147462595"),
+  fieldHasDependancy: formTree.getFieldLogicDependencyList("147462595"),
 });
 
 console.log({
-  getDependacyList: getDependacyList(formTree),
+  getDependacyList: getDependancyList(formTree),
 });
 console.log(JSON.stringify(formTree.getDependencyStatuses(), null, 2));

@@ -17,14 +17,14 @@ type TFieldLogic = {
   value?: string; // options created by form creator
 };
 
-type TFieldDependcyStatus =
+type TFieldDependencyStatus =
   | "mutuallyExclusive"
-  | "interdependant"
+  | "interdependent"
   | "children"
-  | "parents"; // should be only one except for circular dependancy
+  | "parents"; // should be only one except for circular dependency
 
-type TFieldDependancyList = {
-  [fieldId: string]: { [K in TFieldDependcyStatus]: string[] };
+type TFieldDependencyList = {
+  [fieldId: string]: { [K in TFieldDependencyStatus]: string[] };
 };
 
-export type { TFieldLogic, TFieldDependancyList };
+export type { TFieldLogic, TFieldDependencyList };

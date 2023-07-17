@@ -5,8 +5,8 @@ module.exports = {
    // devtool: "source-map",
    devtool: "inline-source-map",
    entry: {
-      background: path.resolve(__dirname, "..", "src", "background.ts"),
-      content: path.resolve(__dirname, "..", "src", "content.ts"),
+      background: path.resolve(__dirname, "..", "src", "chrome-extension", "background.ts"),
+      content: path.resolve(__dirname, "..", "src", "chrome-extension", "content.ts"),
    },
    output: {
       path: path.join(__dirname, "../dist"),
@@ -26,7 +26,8 @@ module.exports = {
    },
    plugins: [
       new CopyPlugin({
-         patterns: [{from: ".", to: ".", context: "public"}]
+         patterns: [{from: ".", to: ".", context: path.resolve(__dirname, "..", "src", "chrome-extension", "public")}]
+         // patterns: [{from: ".", to: ".", context: "public"}]
       }),
    ],
 };

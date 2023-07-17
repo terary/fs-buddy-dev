@@ -33,7 +33,7 @@ const convertFieldLogicCheck = (check: any): TFieldLogic => {
 
 class TestAbstractDirectedGraph extends AbstractDirectedGraph<TFieldLogic> {
   private _rootFieldId!: string;
-  private _dependancyFieldIds: string[] = [];
+  private _dependencyFieldIds: string[] = [];
   public getParentNodeId(nodeId: string): string {
     return super.getParentNodeId(nodeId);
   }
@@ -45,25 +45,25 @@ class TestAbstractDirectedGraph extends AbstractDirectedGraph<TFieldLogic> {
     if (nodeId === this.rootNodeId) {
       this._rootFieldId = (nodeContent as TFieldLogic).fieldId;
     } else {
-      this._dependancyFieldIds.push((nodeContent as TFieldLogic).fieldId);
+      this._dependencyFieldIds.push((nodeContent as TFieldLogic).fieldId);
     }
     super.replaceNodeContent(nodeId, nodeContent);
   }
 
-  get dependancyFieldIds() {
-    return this._dependancyFieldIds.slice();
+  get dependencyFieldIds() {
+    return this._dependencyFieldIds.slice();
   }
 
-  getDeepDependancyFieldIds(): string[] {
-    const allDependancyIds: string[] = this._dependancyFieldIds;
+  getDeepDependencyFieldIds(): string[] {
+    const allDependencyIds: string[] = this._dependencyFieldIds;
     const subtreeIds = this.getSubtreeIdsAt();
     subtreeIds.forEach((subtreeId) => {
       const subtree = this.getChildContentAt(
         subtreeId
       ) as TestAbstractDirectedGraph;
-      allDependancyIds.push(...subtree.dependancyFieldIds);
+      allDependencyIds.push(...subtree.dependencyFieldIds);
     });
-    return allDependancyIds;
+    return allDependencyIds;
   }
 
   get rootFieldId(): string {
@@ -74,14 +74,14 @@ class TestAbstractDirectedGraph extends AbstractDirectedGraph<TFieldLogic> {
     parentNodeId: string,
     nodeContent: TGenericNodeContent<TFieldLogic>
   ): string {
-    this._dependancyFieldIds.push((nodeContent as TFieldLogic).fieldId);
+    this._dependencyFieldIds.push((nodeContent as TFieldLogic).fieldId);
     return super.appendChildNodeWithContent(parentNodeId, nodeContent);
     // can never append root
   }
 
-  isDependancyOf(otherField: TestAbstractDirectedGraph): boolean {
+  isDependencyOf(otherField: TestAbstractDirectedGraph): boolean {
     const o = otherField.rootFieldId;
-    return this._dependancyFieldIds.includes(otherField.rootFieldId);
+    return this._dependencyFieldIds.includes(otherField.rootFieldId);
   }
 }
 
@@ -138,21 +138,21 @@ form5353031.fields.forEach((field) => {
 Object.values(subFieldTrees).forEach((subjectField) => {
   Object.values(subFieldTrees).forEach((targetField) => {
     if (subjectField.rootFieldId === targetField.rootFieldId) {
-      return; // of course two fields will have identical dependancies
+      return; // of course two fields will have identical dependencies
     }
 
     if (
-      subjectField.isDependancyOf(targetField) &&
-      targetField.isDependancyOf(subjectField)
+      subjectField.isDependencyOf(targetField) &&
+      targetField.isDependencyOf(subjectField)
     ) {
       console.log(
-        `fieldId: ${subjectField.rootFieldId} and fieldId: ${targetField.rootFieldId} are interdependant`
+        `fieldId: ${subjectField.rootFieldId} and fieldId: ${targetField.rootFieldId} are interdependent`
       );
-    } else if (subjectField.isDependancyOf(targetField)) {
+    } else if (subjectField.isDependencyOf(targetField)) {
       console.log(
         `fieldId: ${subjectField.rootFieldId} is a dependancy of ${targetField.rootFieldId}`
       );
-    } else if (targetField.isDependancyOf(subjectField)) {
+    } else if (targetField.isDependencyOf(subjectField)) {
       console.log(
         `fieldId: ${targetField.rootFieldId} is a dependancy of ${subjectField.rootFieldId}`
       );
