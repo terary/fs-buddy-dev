@@ -3,10 +3,10 @@ import {
   IExpressionTree,
   TGenericNodeContent,
 } from "predicate-tree-advanced-poc/dist/src";
-import { TFsFieldAnyJson, TFsNode } from "../types";
-import { AbstractFsTreeGeneric } from "../AbstractFsTreeGeneric";
-import { TFsFieldLogic, TFsFieldLogicCheck } from "../../type.field";
-import type { TLogicNode } from "./types";
+import { TFsFieldAnyJson, TFsNode } from "../../types";
+import { AbstractFsTreeGeneric } from "../../AbstractFsTreeGeneric";
+import { TFsFieldLogic, TFsFieldLogicCheck } from "../../../type.field";
+import type { TLogicNode } from "../types";
 class FsTreeLogic extends AbstractFsTreeGeneric<TLogicNode> {
   private _dependantFieldIds: string[] = [];
 

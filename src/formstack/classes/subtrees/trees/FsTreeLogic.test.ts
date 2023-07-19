@@ -1,6 +1,6 @@
 import { FsTreeLogic } from "./FsTreeLogic";
-import { AbstractFsTreeGeneric } from "../AbstractFsTreeGeneric";
-import { TFsFieldAnyJson } from "../types";
+import { AbstractFsTreeGeneric } from "../../AbstractFsTreeGeneric";
+import { TFsFieldAnyJson } from "../../types";
 
 describe("FsTreeLogic", () => {
   describe("Creation", () => {

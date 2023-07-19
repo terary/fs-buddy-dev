@@ -2,11 +2,11 @@ import {
   AbstractExpressionTree,
   IExpressionTree,
 } from "predicate-tree-advanced-poc/dist/src";
-import { TFsFieldAnyJson, TFsNode } from "../types";
+import { TFsFieldAnyJson, TFsNode } from "../../types";
 import { FsTreeCalcString } from "./FsTreeCalcString";
 import { FsTreeLogic } from "./FsTreeLogic";
-import { FsFieldRootNode } from "./FsFieldRootNode";
-import { FsFieldLinkNode } from "./FsFieldLinkNode";
+import { FsFieldRootNode } from "./nodes/FsFieldRootNode";
+import { FsFieldLinkNode } from "./nodes/FsFieldLinkNode";
 
 // need to find the correct class for 'field'.  Define the tree in terms of
 // FieldNode should have something in root leaf? {operator: $and}?

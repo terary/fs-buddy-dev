@@ -2,9 +2,9 @@ import {
   IExpressionTree,
   TGenericNodeContent,
 } from "predicate-tree-advanced-poc/dist/src";
-import { TFsFieldAnyJson, TFsNode } from "../types";
-import { AbstractFsTreeGeneric } from "../AbstractFsTreeGeneric";
-import type { TFsArithmeticNode } from "./types";
+import { TFsFieldAnyJson, TFsNode } from "../../types";
+import { AbstractFsTreeGeneric } from "../../AbstractFsTreeGeneric";
+import type { TFsArithmeticNode } from "../types";
 class FsTreeCalcString extends AbstractFsTreeGeneric<TFsArithmeticNode> {
   private _dependantFieldIds: string[] = [];
 

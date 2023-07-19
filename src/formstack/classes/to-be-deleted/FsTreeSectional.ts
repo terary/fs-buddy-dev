@@ -1,2 +1,0 @@
-class FsTreeSectional {}
-export { FsTreeSectional };

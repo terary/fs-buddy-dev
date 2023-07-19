@@ -1,8 +1,8 @@
 import { AbstractExpressionTree } from "predicate-tree-advanced-poc/dist/src";
 import { TFsFieldAnyJson } from "../types";
-import { FsTreeCalcString } from "./FsTreeCalcString";
-import { FsTreeLogic } from "./FsTreeLogic";
-import { FsTreeField } from "./FsTreeField";
+import { FsTreeCalcString } from "./trees/FsTreeCalcString";
+import { FsTreeLogic } from "./trees/FsTreeLogic";
+import { FsTreeField } from "./trees/FsTreeField";
 const INCLUDE_SUBTREES = true;
 // This tree would actually consist of node types:
 //      Junction: '*', '+', '-', ...
@@ -49,6 +49,8 @@ class FsTreeFieldCollection extends AbstractExpressionTree<FsTreeField> {
     return this._dependantFieldIds.slice();
   }
 
+  // This doesn't make sense here
+  // This should create TreeField and TreeField should call the calc/logic subtree stuff
   static fromFieldJson(fieldsJson: TFsFieldAnyJson[]): FsTreeFieldCollection {
     const tree = new FsTreeFieldCollection("_FORM_ID_");
 

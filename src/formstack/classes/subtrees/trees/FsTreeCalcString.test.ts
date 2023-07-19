@@ -1,7 +1,6 @@
-import { IExpressionTree } from "predicate-tree-advanced-poc/dist/src";
 import { FsTreeCalcString } from "./FsTreeCalcString";
-import { AbstractFsTreeGeneric } from "../AbstractFsTreeGeneric";
-import { TFsFieldAnyJson } from "../types";
+import { AbstractFsTreeGeneric } from "../../AbstractFsTreeGeneric";
+import { TFsFieldAnyJson } from "../../types";
 
 describe("FsTreeCalcString", () => {
   describe("Creation", () => {

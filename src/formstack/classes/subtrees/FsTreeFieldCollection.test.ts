@@ -1,6 +1,6 @@
 import { FsTreeFieldCollection } from "./FsTreeFieldCollection";
 import { TFsFieldAnyJson } from "../types";
-import { FsTreeField } from "./FsTreeField";
+import { FsTreeField } from "./trees/FsTreeField";
 
 describe("FsTreeFieldCollection", () => {
   describe("Creation", () => {

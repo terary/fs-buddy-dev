@@ -1,6 +1,6 @@
 import { TApiFormJson } from "../type.form";
-import { FsTreeField } from "./subtrees/FsTreeField";
-import { FsTreeFieldCollection } from "./FsTreeFieldCollection";
+import { FsTreeField } from "./subtrees/trees/FsTreeField";
+import { FsTreeFieldCollection } from "./subtrees/FsTreeFieldCollection";
 
 const INCLUDE_SUBTREES = true;
 
@@ -20,7 +20,7 @@ class FsFormTreeContainer {
     return form;
   }
 
-  getFieldTreeByFieldId(fieldId: string): FsTreeField {
+  getFieldTreeByFieldId(fieldId: string): FsTreeField | undefined {
     return this._fieldCollection.getFieldTreeByFieldId(fieldId);
   }
 
