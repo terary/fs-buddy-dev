@@ -14,12 +14,14 @@ import type {
 } from "./type.field";
 import { FsStringCalculationTree } from "./FsStringCalculationTree";
 import { TFieldLogic } from "../fs-goof/types";
-export type TFsNode = {
-  fieldId: string;
-  sectionChildren: string[];
-  sectionParents: string[];
-  fieldJson: Partial<TFsFieldAny>;
-};
+import { TFsNode } from "./classes/types";
+
+// export type TFsNode = {
+//   fieldId: string;
+//   sectionChildren: string[];
+//   sectionParents: string[];
+//   fieldJson: Partial<TFsFieldAny>;
+// };
 class FSExpressionTree extends AbstractExpressionTree<TFsNode> {
   //
   createSubtreeFromCalcStringAt(

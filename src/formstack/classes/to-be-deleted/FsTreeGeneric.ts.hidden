@@ -1,0 +1,10 @@
+import { IExpressionTree } from "predicate-tree-advanced-poc/dist/src";
+import { AbstractFsTreeGeneric } from "./AbstractFsTreeGeneric";
+import { TFsNode } from "../FSExpressionTree";
+
+class FsTreeGeneric extends AbstractFsTreeGeneric {
+  createSubtreeAt(targetNodeId: string): IExpressionTree<TFsNode> {
+    return new FsTreeGeneric();
+  }
+}
+export { FsTreeGeneric };

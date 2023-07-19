@@ -3,7 +3,6 @@ import {
   IExpressionTree,
 } from "predicate-tree-advanced-poc/dist/src";
 import { Incrementor } from "predicate-tree-advanced-poc/dist/src/DirectedGraph/Incrementor";
-import { ResolvedTypeReferenceDirectiveWithFailedLookupLocations } from "typescript";
 import { TFsFieldAny } from "./type.field";
 import { TFsNode } from "./FSExpressionTree";
 
