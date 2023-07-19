@@ -1,4 +1,5 @@
 import { TApiFormJson } from "../type.form";
+import { FsTreeField } from "./subtrees/FsTreeField";
 import { FsTreeFieldCollection } from "./FsTreeFieldCollection";
 
 const INCLUDE_SUBTREES = true;
@@ -6,9 +7,11 @@ const INCLUDE_SUBTREES = true;
 class FsFormTreeContainer {
   private _formId!: string;
   private _fieldCollection!: FsTreeFieldCollection;
+  private _editUrl!: string;
   static fromJson(formJson: TApiFormJson) {
     const form = new FsFormTreeContainer();
     form._formId = formJson.id;
+    form._editUrl = formJson.edit_url || "MISSING edit_url";
     // FsTreeFieldCollection
     form._fieldCollection = FsTreeFieldCollection.fromFieldJson(
       formJson.fields
@@ -16,9 +19,11 @@ class FsFormTreeContainer {
 
     return form;
   }
+
   getFieldTreeByFieldId(fieldId: string): FsTreeField {
-    const fieldTree = this._fieldCollection.getFieldTreeByFieldId(fieldId);
+    return this._fieldCollection.getFieldTreeByFieldId(fieldId);
   }
+
   getFieldCount() {
     return this._fieldCollection.getChildrenNodeIdsOf(
       this._fieldCollection.rootNodeId,

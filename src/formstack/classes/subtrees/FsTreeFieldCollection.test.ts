@@ -1,13 +1,6 @@
-import {
-  AbstractExpressionTree,
-  IExpressionTree,
-} from "predicate-tree-advanced-poc/dist/src";
 import { FsTreeFieldCollection } from "./FsTreeFieldCollection";
-import { AbstractFsTreeGeneric } from "./AbstractFsTreeGeneric";
-import { TFsFieldAnyJson } from "./types";
-import { TApiFormJson } from "../type.form";
+import { TFsFieldAnyJson } from "../types";
 import { FsTreeField } from "./FsTreeField";
-import { nodeModuleNameResolver } from "typescript";
 
 describe("FsTreeFieldCollection", () => {
   describe("Creation", () => {
@@ -17,7 +10,7 @@ describe("FsTreeFieldCollection", () => {
         // fields: [TEST_JSON_FIELD_LOGIC],
         TEST_JSON_FIELDS as TFsFieldAnyJson[]
       );
-      expect(tree).toBeInstanceOf(AbstractExpressionTree);
+      expect(tree).toBeInstanceOf(FsTreeFieldCollection);
 
       // tree has 3 child nodes, 2 calc and 1 logic;
       // It should have two nodes Fields 1 and 2

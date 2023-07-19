@@ -7,34 +7,6 @@ import { AbstractFsTreeGeneric } from "./AbstractFsTreeGeneric";
 import { TFsFieldAnyJson } from "./types";
 import { TApiFormJson } from "../type.form";
 
-describe("FsFormTreeContainer", () => {
-  describe("Creation", () => {
-    it("Should be awesome", () => {
-      const tree = FsFormTreeContainer.fromJson({
-        id: "_form_id",
-        // fields: [TEST_JSON_FIELD_CALC_STRING],
-        // fields: [TEST_JSON_FIELD_LOGIC],
-        fields: TEST_JSON_FIELDS,
-      } as unknown as TApiFormJson);
-      expect(tree).toBeInstanceOf(FsFormTreeContainer);
-
-      expect(tree.getFieldCount()).toStrictEqual(2);
-    });
-  });
-  describe('.getFieldTreeByFieldId(...)', ()=>{
-    it("Should be awesome", () => {
-      const tree = FsFormTreeContainer.fromJson({
-        id: "_form_id",
-        // fields: [TEST_JSON_FIELD_CALC_STRING],
-        // fields: [TEST_JSON_FIELD_LOGIC],
-        fields: TEST_JSON_FIELDS,
-      } as unknown as TApiFormJson);
-
-      tree.getFieldTreeByFieldId(TEST_JSON_FIELDS[0].id)
-
-  })
-});
-
 //  "calculation":"[148149774] + [148149776] * 5"
 const TEST_JSON_FIELD_LOGIC = {
   id: "147462596",
@@ -82,7 +54,33 @@ const TEST_JSON_FIELD_LOGIC = {
   section_text: "<p>The check boxes prevent this from showing.</p>",
   text_editor: "wysiwyg",
 } as unknown;
+describe("FsFormTreeContainer", () => {
+  describe("Creation", () => {
+    it("Should be awesome", () => {
+      const tree = FsFormTreeContainer.fromJson({
+        id: "_form_id",
+        // fields: [TEST_JSON_FIELD_CALC_STRING],
+        // fields: [TEST_JSON_FIELD_LOGIC],
+        fields: TEST_JSON_FIELDS,
+      } as unknown as TApiFormJson);
+      expect(tree).toBeInstanceOf(FsFormTreeContainer);
 
+      expect(tree.getFieldCount()).toStrictEqual(2);
+    });
+  });
+  describe(".getFieldTreeByFieldId(...)", () => {
+    it("Should be awesome", () => {
+      const tree = FsFormTreeContainer.fromJson({
+        id: "_form_id",
+        // fields: [TEST_JSON_FIELD_CALC_STRING],
+        // fields: [TEST_JSON_FIELD_LOGIC],
+        fields: TEST_JSON_FIELDS,
+      } as unknown as TApiFormJson);
+
+      tree.getFieldTreeByFieldId(TEST_JSON_FIELDS[0].id + "");
+    });
+  });
+});
 const TEST_JSON_FIELD_CALC_STRING = {
   id: "147462596",
   label: "",
@@ -105,4 +103,7 @@ const TEST_JSON_FIELD_CALC_STRING = {
   text_editor: "wysiwyg",
 } as unknown;
 
-const TEST_JSON_FIELDS = [TEST_JSON_FIELD_CALC_STRING, TEST_JSON_FIELD_LOGIC] as TFsFieldAnyJson[];
+const TEST_JSON_FIELDS = [
+  TEST_JSON_FIELD_CALC_STRING,
+  TEST_JSON_FIELD_LOGIC,
+] as TFsFieldAnyJson[];
