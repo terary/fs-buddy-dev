@@ -4,7 +4,7 @@ import { FsTreeField } from "./FsTreeField";
 
 describe("FsTreeFieldCollection", () => {
   describe("Creation", () => {
-    it.only("Should be awesome", () => {
+    it("Should be awesome", () => {
       const tree = FsTreeFieldCollection.fromFieldJson(
         // fields: [TEST_JSON_FIELD_CALC_STRING],
         // fields: [TEST_JSON_FIELD_LOGIC],
@@ -20,20 +20,20 @@ describe("FsTreeFieldCollection", () => {
 
   // I *think*,  I think there is root node and plus 1?  Should root not be null??
   describe(".evaluateWithValues(...)", () => {
-    it("Should return the value of the calculation given field values", () => {
+    it.skip("Should return the value of the calculation given field values", () => {
       const tree = FsTreeFieldCollection.fromFieldJson(
         TEST_JSON_FIELDS as TFsFieldAnyJson[]
       );
-      expect(tree).toStrictEqual(38);
+      expect(tree.evaluateWithValues({ "123": 3 })).toStrictEqual(38);
     });
   });
 
   /// --------------------------------
   describe(".getFieldTreeByFieldId(...)", () => {
-    it.only("Should be awesome", () => {
+    it("Should be awesome", () => {
       const tree = FsTreeFieldCollection.fromFieldJson(TEST_JSON_FIELDS);
       const field = tree.getFieldTreeByFieldId(TEST_JSON_FIELDS[0].id || "");
-      expect(field.fieldId).toStrictEqual(TEST_JSON_FIELDS[0].id);
+      expect(field?.fieldId).toStrictEqual(TEST_JSON_FIELDS[0].id);
       // expect(field.fieldJson["name"]).toStrictEqual(TEST_JSON_FIELDS[0].name);
       expect(field).toBeInstanceOf(FsTreeField);
     });

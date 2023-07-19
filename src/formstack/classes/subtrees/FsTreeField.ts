@@ -3,10 +3,8 @@ import {
   IExpressionTree,
 } from "predicate-tree-advanced-poc/dist/src";
 import { TFsFieldAnyJson, TFsNode } from "../types";
-import { TApiFormJson } from "../../type.form";
 import { FsTreeCalcString } from "./FsTreeCalcString";
 import { FsTreeLogic } from "./FsTreeLogic";
-import { FSExpressionTree } from "../../FSExpressionTree";
 import { FsFieldRootNode } from "./FsFieldRootNode";
 import { FsFieldLinkNode } from "./FsFieldLinkNode";
 
@@ -51,9 +49,11 @@ type TFsFieldTreeNodeTypes =
 class FsTreeField extends AbstractExpressionTree<TFsFieldTreeNodeTypes> {
   private _fieldId!: string;
   private _dependantFieldIds: string[] = [];
-  createSubtreeAt<FSExpressionTree>(
+
+  // ---
+  createSubtreeAt(
     targetNodeId: string
-  ): IExpressionTree<TFsNode> {
+  ): IExpressionTree<TFsFieldTreeNodeTypes> {
     const subtree = new FsTreeField("_subtree_");
 
     const subtreeParentNodeId = this.appendChildNodeWithContent(
@@ -61,7 +61,7 @@ class FsTreeField extends AbstractExpressionTree<TFsFieldTreeNodeTypes> {
       subtree
     );
 
-    AbstractExpressionTree.reRootTreeAt<TFsNode>(
+    AbstractExpressionTree.reRootTreeAt<TFsFieldTreeNodeTypes>(
       subtree,
       subtree.rootNodeId,
       subtreeParentNodeId
@@ -69,7 +69,7 @@ class FsTreeField extends AbstractExpressionTree<TFsFieldTreeNodeTypes> {
     subtree._rootNodeId = subtreeParentNodeId;
     subtree._incrementor = this._incrementor;
 
-    return subtree as IExpressionTree<TFsNode>;
+    return subtree; // as IExpressionTree<TFsFieldTreeNodeTypes>;
   }
 
   evaluateWithValues<T>(values: { [fieldId: string]: any }): T {
@@ -83,80 +83,6 @@ class FsTreeField extends AbstractExpressionTree<TFsFieldTreeNodeTypes> {
   get fieldId() {
     return this._fieldId;
   }
-
-  // get fieldJson() {
-  //   return this._fieldJson;
-  // }
-
-  static x_fromFieldJson(formJson: TApiFormJson): FsTreeField {
-    const rootNode = {
-      fieldId: null,
-      fieldJson: formJson as TFsFieldAnyJson,
-    } as unknown as TFsNode;
-    const tree = new FsTreeField("_FORM_ID_");
-
-    (formJson.fields || []).forEach((fieldJson) => {
-      let field = new FsTreeField(fieldJson.id);
-      field._fieldId = fieldJson.id;
-      // field._fieldJson = fieldJson;
-      /**
-       *
-       * I think this is all dead code. FsTreeFieldCollection creates the fields.
-       *
-       */
-      // this should be subtree not tree as a node
-      if (fieldJson.calculation) {
-        const subtreeConstructor = (
-          rootNodeSeed: string,
-          // static fromFieldJson(fieldJson: TFsFieldAnyJson): FsTreeCalcString {
-          fieldJson: TFsFieldAnyJson
-        ) => {
-          return FsTreeCalcString.fromFieldJson(
-            fieldJson
-          ) as unknown as FSExpressionTree;
-        };
-
-        const calcSubtree = FsTreeField.createSubtreeFromFieldJson(
-          field,
-          // tree,
-          tree.rootNodeId,
-          fieldJson,
-          subtreeConstructor
-        ) as FsTreeField;
-      }
-      if (fieldJson.logic) {
-        // const f = FsTreeLogic.fromFieldJson(fieldJson);
-        // tree.appendChildNodeWithContent(tree.rootNodeId, f);
-
-        const subtreeConstructor = (
-          rootNodeSeed: string,
-          // static fromFieldJson(fieldJson: TFsFieldAnyJson): FsTreeCalcString {
-          fieldJson: TFsFieldAnyJson
-        ) => {
-          return FsTreeLogic.fromFieldJson(fieldJson);
-        };
-        const logicSubtree = FsTreeField.createSubtreeFromFieldJson(
-          field,
-          tree.rootNodeId,
-          fieldJson,
-          subtreeConstructor
-        ) as FsTreeField;
-
-        console.log({ logicSubtree });
-      }
-
-      tree.appendChildNodeWithContent(tree.rootNodeId, field);
-    });
-
-    // const tree = new FsTreeField(formJson.id, rootNode);
-    // // tree._fieldId = fieldJson.id || "_MISSING_ID_";
-    // // tree._fieldJson = fieldJson;
-    // tree.replaceNodeContent(tree.rootNodeId, rootNode);
-
-    return tree;
-  }
-
-  // static createSubtreeFromFieldJson();
 
   static createSubtreeFromFieldJson<T>(
     rootTree: FsTreeField,

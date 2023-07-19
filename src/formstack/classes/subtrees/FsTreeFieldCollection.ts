@@ -12,6 +12,8 @@ const INCLUDE_SUBTREES = true;
 class FsTreeFieldCollection extends AbstractExpressionTree<FsTreeField> {
   private _dependantFieldIds: string[] = [];
 
+  // types should
+
   // --
   createSubtreeAt(targetNodeId: string): FsTreeFieldCollection {
     const subtree = new FsTreeFieldCollection("_subtree_");
@@ -32,11 +34,11 @@ class FsTreeFieldCollection extends AbstractExpressionTree<FsTreeField> {
     return subtree;
   }
 
-  getFieldTreeByFieldId(fieldId: string): FsTreeField {
+  getFieldTreeByFieldId(fieldId: string): FsTreeField | undefined {
     return this.getSubtreeIdsAt(this.rootNodeId)
       .map((nodeId) => this.getChildContentAt(nodeId) as FsTreeField)
       .filter((fieldTree) => fieldTree && fieldTree.fieldId === fieldId)
-      .pop() as FsTreeField;
+      .pop();
   }
 
   evaluateWithValues<T>(values: { [fieldId: string]: any }): T {
@@ -82,17 +84,14 @@ class FsTreeFieldCollection extends AbstractExpressionTree<FsTreeField> {
           rootNodeSeed: string,
           fieldJson: TFsFieldAnyJson
         ) => {
-          return FsTreeLogic.fromFieldJson(
-            fieldJson
-            // @ts-ignore
-          ) as unknown as FSExpressionTree;
+          return FsTreeLogic.fromFieldJson(fieldJson);
         };
         const logicSubtree = FsTreeField.createSubtreeFromFieldJson(
           field,
           field.rootNodeId,
           fieldJson,
           subtreeConstructor
-        ) as FsTreeFieldCollection;
+        );
 
         console.log({ logicSubtree });
       }
