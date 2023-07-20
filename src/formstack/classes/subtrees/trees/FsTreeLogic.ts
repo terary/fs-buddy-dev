@@ -1,49 +1,98 @@
-import {
-  AbstractExpressionTree,
-  IExpressionTree,
-  TGenericNodeContent,
-} from "predicate-tree-advanced-poc/dist/src";
-import { TFsFieldAnyJson, TFsNode } from "../../types";
-import { AbstractFsTreeGeneric } from "../../AbstractFsTreeGeneric";
-import { TFsFieldLogic, TFsFieldLogicCheck } from "../../../type.field";
-import type { TLogicNode } from "../types";
-class FsTreeLogic extends AbstractFsTreeGeneric<TLogicNode> {
+import { IExpressionTree } from "predicate-tree-advanced-poc/dist/src";
+import { TFsFieldAnyJson } from "../../types";
+import { AbstractFsTreeGeneric } from "./AbstractFsTreeGeneric";
+import type {
+  TFsFieldLogicCheckLeaf,
+  TFsFieldLogicCheckLeafJson,
+  TFsFieldLogicJunction,
+  TFsFieldLogicJunctionJson,
+  TFsLogicNode,
+  TFsLogicNodeJson,
+} from "../types";
+
+const andReducer = (prev: boolean, cur: boolean) => {
+  return prev && cur;
+};
+
+const orReducer = (prev: boolean, cur: boolean) => {
+  return prev || cur;
+};
+
+class FsTreeLogic extends AbstractFsTreeGeneric<TFsLogicNode> {
   private _dependantFieldIds: string[] = [];
 
-  // not sure this is appropriate.  Should not be able to create
-  // logic subtree in given context.  Eg: Formstack does not have a
-  // user for this currently. (they're max depth is 1)
-  createSubtreeAt(targetNodeId: string): IExpressionTree<TFsNode> {
+  createSubtreeAt(nodeId: string): IExpressionTree<TFsLogicNode> {
+    // *tmc* needs to make this a real thing, I guess: or add it to the abstract?
     return new FsTreeLogic();
   }
 
-  evaluateWithValues<T>(values: { [fieldId: string]: any }): T {
-    let calcString = this._fieldJson.calculation || "";
-    this._dependantFieldIds.forEach((fieldId) => {
-      calcString = calcString.replace(`[${fieldId}]`, `${values[fieldId]}`);
+  evaluateWithValues<T>(values: { [fieldId: string]: any }): T | undefined {
+    // We can get away with not doing a full descend because FS doesn't
+    // branch at this point (though a full branch would be good)
+    // -------
+    // We *should* be doing getField('...').evaluate({}) === inputValue  -- this may spawn into bunches of stuff.  Maybe best not use getField().evaluate
+    //     or evaluateNoSpawn() ? getField().evaluate spawn because it's 'fieldTree' we need another thing that getFieldNode(...) which should not spawn
+    //     the evaluate is important because the field maybe produce and or dropdown, the fields - knows the rules to evaluate itself
+    const parent = this.getChildContentAt(
+      this.rootNodeId
+    ) as TFsFieldLogicJunction;
+    const { conditional } = parent;
+
+    const children = this.getChildrenContentOf(
+      this.rootNodeId
+    ) as TFsFieldLogicCheckLeaf[];
+
+    const evaluatedChildren = children.map((child) => {
+      switch (child.condition) {
+        case "equals":
+          return values[child.fieldId] === child.option;
+        case "greaterThan":
+          // guard against null/undefined
+          return child.option && values[child.fieldId] > child.option;
+      }
     });
-    return eval(calcString);
+
+    if (conditional === "all") {
+      return evaluatedChildren.reduce(andReducer, true) as T;
+    }
+    if (conditional === "any") {
+      return evaluatedChildren.reduce(orReducer, false) as T;
+    }
+
+    // we'll return undefined if something goes wrong
   }
 
   getDependantFields(): string[] {
     return this._dependantFieldIds.slice();
   }
   static fromFieldJson(fieldJson: TFsFieldAnyJson): FsTreeLogic {
-    const rootNode = {
-      fieldId: fieldJson.id || "_MISSING_ID_",
-      fieldJson: fieldJson.logic as TFsFieldLogic, // not sure TFsLogic or TFsLogicCheck
+    // we should be receiving fieldJson.logic, but the Abstract._fieldJson is not typed properly
+    // const logicJson: TFsLogicNodeJson = fieldJson.logic;
+    // or maybe always get the whole json?
+
+    const logicJson: TFsLogicNodeJson =
+      fieldJson.logic as TFsFieldLogicJunctionJson;
+    const { action, conditional } = logicJson;
+    const rootNode: TFsFieldLogicJunctionJson = {
+      action,
+      conditional,
+      fieldJson: logicJson,
+      checks: undefined, // we won't use this,  this becomes children
     };
 
-    const tree = new FsTreeLogic(fieldJson.id || "_calc_tree_", rootNode);
-    // tree._fieldId = fieldJson.id || "_MISSING_ID_";
-    tree._fieldJson = fieldJson;
-    tree.replaceNodeContent(tree.rootNodeId, rootNode);
+    const tree = new FsTreeLogic(
+      fieldJson.id || "_calc_tree_",
+      rootNode as TFsLogicNode
+    );
+    // @ts-ignore - this needs to get fixed in the Abstract
+    tree._fieldJson = logicJson;
+    const { leafExpressions } = transformLogicLeafJsonToLogicLeafs(
+      tree.fieldJson as TFsFieldLogicJunctionJson
+    );
 
-    const { nodeContent, childrenLeafExpressions } =
-      transformLogicExpressionJsonToNodeAndLeafs(fieldJson);
-    tree.replaceNodeContent(tree.rootNodeId, nodeContent as TFsNode);
-    childrenLeafExpressions.forEach((childNode: any) => {
+    leafExpressions.forEach((childNode: any) => {
       tree.appendChildNodeWithContent(tree.rootNodeId, childNode);
+      // should this be done at a different level. I mean calculated?
       tree._dependantFieldIds.push(childNode.fieldId);
     });
 
@@ -67,10 +116,10 @@ class FsTreeLogic extends AbstractFsTreeGeneric<TLogicNode> {
   }
 }
 
-const transformLogicExpressionJsonToNodeAndLeafs = (
-  fieldJson: Partial<TFsFieldAnyJson>
+const transformLogicLeafJsonToLogicLeafs = (
+  logicJson: TFsFieldLogicJunctionJson
 ) => {
-  const { action, conditional, checks } = fieldJson.logic || {};
+  const { action, conditional, checks } = logicJson || {};
   const op = conditional === "all" ? "$and" : "$or";
 
   const leafExpressions = (checks || []).map((check) => {
@@ -79,30 +128,23 @@ const transformLogicExpressionJsonToNodeAndLeafs = (
       fieldId: field + "" || "__MISSING_ID__",
       fieldJson: check,
       //   condition: convertFsOperatorToOp(check),
-      operator: convertFsOperatorToOp(check),
+      // operator: convertFsOperatorToOp(check),
+      condition: convertFsOperatorToOp(check),
       option,
     };
   });
-  return {
-    // *tmc* down and dirty, it would be better to use some sort of filter (joi or similar)
-    nodeContent: {
-      fieldJson: { action, conditional, ...fieldJson },
-      fieldId: fieldJson.id || "__MISSING_ID__",
-      operator: op,
-      //   const op = conditional === "all" ? "$and" : "$or";
-    },
-    childrenLeafExpressions: leafExpressions,
-  };
+  return { leafExpressions };
 };
+
 export { FsTreeLogic };
 
-const convertFsOperatorToOp = (check: TFsFieldLogicCheck) => {
-  if (check.condition === "equals") {
-    return "$eq";
-  }
-  if (check.condition === "greaterThan") {
-    return "$gt";
-  }
+const convertFsOperatorToOp = (check: TFsFieldLogicCheckLeafJson) => {
+  // if (check.condition === "equals") {
+  //   return "$eq";
+  // }
+  // if (check.condition === "greaterThan") {
+  //   return "$gt";
+  // }
 
   return check.condition;
 };

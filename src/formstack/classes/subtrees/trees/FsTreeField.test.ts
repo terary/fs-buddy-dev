@@ -1,30 +1,28 @@
-import { FsTreeCalcString } from "./FsTreeCalcString";
-import { AbstractFsTreeGeneric } from "./AbstractFsTreeGeneric";
+import { FsTreeField } from "./FsTreeField";
 import { TFsFieldAnyJson } from "../../types";
 
-describe("FsTreeCalcString", () => {
+describe("FsTreeField", () => {
+  let field: FsTreeField;
+  beforeEach(() => {
+    field = FsTreeField.fromFieldJson(TEST_JSON_FIELD as TFsFieldAnyJson);
+  });
   describe("Creation", () => {
     it("Should be awesome", () => {
-      const tree = FsTreeCalcString.fromFieldJson(
-        TEST_JSON_FIELD as TFsFieldAnyJson
-      );
-      expect(tree).toBeInstanceOf(AbstractFsTreeGeneric);
-      expect(tree.getDependantFields()).toEqual(["148149774", "148149776"]);
-      expect(tree.fieldJson).toStrictEqual(TEST_JSON_FIELD.calculation);
-      expect(tree.getDependantFields()).toStrictEqual([
-        "148149774",
-        "148149776",
-      ]);
+      expect(field).toBeInstanceOf(FsTreeField);
+
+      // fieldLogic can/should have fieldId, maybe modified? "fieldId-logic"?
+      // expect(tree.fieldId).toEqual("147462596");
+      expect(field.fieldJson).toStrictEqual(TEST_JSON_FIELD);
     });
   });
-  describe(".evaluateWithValues(...)", () => {
-    it("Should return the value of the calculation given field values", () => {
-      const tree = FsTreeCalcString.fromFieldJson(
-        TEST_JSON_FIELD as TFsFieldAnyJson
-      );
+  describe("evaluateWithValues({...values})", () => {
+    it("Should return the value of the property matching fieldId (values.fieldId)", () => {
       expect(
-        tree.evaluateWithValues({ "148149774": 3, "148149776": 7 })
-      ).toStrictEqual(38);
+        field.evaluateWithValues({ "147462596": "Hello World" })
+      ).toStrictEqual("Hello World");
+    });
+    it("Should returned if no property matches.", () => {
+      expect(field.evaluateWithValues({})).toBeUndefined();
     });
   });
 });
@@ -75,4 +73,4 @@ const TEST_JSON_FIELD = {
   default: "",
   section_text: "<p>The check boxes prevent this from showing.</p>",
   text_editor: "wysiwyg",
-} as unknown as TFsFieldAnyJson;
+} as unknown;

@@ -7,38 +7,8 @@ import { FsTreeCalcString } from "./FsTreeCalcString";
 import { FsTreeLogic } from "./FsTreeLogic";
 import { FsFieldRootNode } from "./nodes/FsFieldRootNode";
 import { FsFieldLinkNode } from "./nodes/FsFieldLinkNode";
+import { AbstractFsTreeGeneric } from "./AbstractFsTreeGeneric";
 
-// need to find the correct class for 'field'.  Define the tree in terms of
-// FieldNode should have something in root leaf? {operator: $and}?
-// LogicNode
-// FieldNode ("field" is getting over used)
-// CalclNode
-
-// Does LogicNode, CalcNode, LinkNode have special rootNodetypes?
-// {
-//   value({submissionData})
-//   evaluate({submissionData})
-//   fieldId is ok but maybe not
-
-//   The problem is with 'tree', the nodeContent can get moved and therefore
-//   maybe  not always at root node.
-
-//   However the 'tree' can have 'calculate' or 'evaluate';
-
-//   LogicTree.evaluate({submissionData})
-//   should return true| false
-//   isHidden should be a function tree.evaluate && 'action' ? 'hide' : 'show'
-
-//   Standard field Node without any modifier
-//   .evaluate({submissionData}) should return the value of the submissionData
-
-// }
-
-// With the correct tree refine the Type Tree<Types> from "field" "logic" "calc"
-
-// This tree would actually consist of node types:
-//      Junction: '*', '+', '-', ...
-//      Leaf: number | [fieldId]
 type TSubtrees = FsTreeCalcString | FsTreeLogic;
 
 type TFsFieldTreeNodeTypes =
@@ -46,7 +16,7 @@ type TFsFieldTreeNodeTypes =
   | FsTreeCalcString
   | FsTreeLogic
   | FsFieldLinkNode;
-class FsTreeField extends AbstractExpressionTree<TFsFieldTreeNodeTypes> {
+class FsTreeField extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
   private _fieldId!: string;
   private _dependantFieldIds: string[] = [];
 
@@ -72,16 +42,57 @@ class FsTreeField extends AbstractExpressionTree<TFsFieldTreeNodeTypes> {
     return subtree; // as IExpressionTree<TFsFieldTreeNodeTypes>;
   }
 
+  get fieldJson() {
+    return this._fieldJson;
+  }
+
+  get fieldId() {
+    return this._fieldId;
+  }
+
   evaluateWithValues<T>(values: { [fieldId: string]: any }): T {
-    return {} as T;
+    // maybe in real life this would do a little more formatting.
+    return values[this.fieldId];
   }
 
   getDependantFields(): string[] {
     return this._dependantFieldIds.slice();
   }
 
-  get fieldId() {
-    return this._fieldId;
+  static fromFieldJson(fieldJson: TFsFieldAnyJson): FsTreeField {
+    const field = new FsTreeField("_FIELD_ID_", {
+      filedId: fieldJson.id,
+      label: fieldJson.label,
+      fieldJson: fieldJson,
+    });
+
+    field._fieldId = fieldJson.id || "_MISSING_ID_";
+    field._fieldJson = fieldJson;
+
+    if (fieldJson.calculation) {
+      const subtreeConstructor = (fieldJson: TFsFieldAnyJson) =>
+        FsTreeCalcString.fromFieldJson(fieldJson);
+
+      FsTreeField.createSubtreeFromFieldJson(
+        field,
+        field.rootNodeId,
+        fieldJson,
+        subtreeConstructor
+      );
+    }
+
+    if (fieldJson.logic) {
+      const subtreeConstructor = (fieldJson: TFsFieldAnyJson) =>
+        FsTreeLogic.fromFieldJson(fieldJson);
+
+      FsTreeField.createSubtreeFromFieldJson(
+        field,
+        field.rootNodeId,
+        fieldJson,
+        subtreeConstructor
+      );
+    }
+    return field;
   }
 
   static createSubtreeFromFieldJson<T>(
@@ -92,14 +103,11 @@ class FsTreeField extends AbstractExpressionTree<TFsFieldTreeNodeTypes> {
     targetRootId: string,
     fieldJson: TFsFieldAnyJson,
     subtreeConstructor?:
-      | ((
-          rootIdSeed: string,
-          fieldJson: TFsFieldAnyJson
-        ) => TFsFieldTreeNodeTypes)
+      | ((fieldJson: TFsFieldAnyJson) => TFsFieldTreeNodeTypes)
       | undefined
   ): T {
     const subtree = subtreeConstructor
-      ? subtreeConstructor(targetRootId, fieldJson)
+      ? subtreeConstructor(fieldJson)
       : new FsTreeField(targetRootId);
 
     /// --------------------
@@ -110,10 +118,9 @@ class FsTreeField extends AbstractExpressionTree<TFsFieldTreeNodeTypes> {
       subtree
     );
 
-    // need to work out these types
-    AbstractExpressionTree.reRootTreeAt<TFsFieldTreeNodeTypes>(
-      subtree as AbstractExpressionTree<any>,
-      (subtree as AbstractExpressionTree<any>).rootNodeId,
+    AbstractExpressionTree.reRootTreeAt<TSubtrees>(
+      subtree as AbstractExpressionTree<TSubtrees>,
+      (subtree as AbstractExpressionTree<TSubtrees>).rootNodeId,
       subtreeParentNodeId
     );
     (subtree as FsTreeField)._rootNodeId = subtreeParentNodeId;

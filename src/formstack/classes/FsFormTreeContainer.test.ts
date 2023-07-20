@@ -3,7 +3,7 @@ import {
   IExpressionTree,
 } from "predicate-tree-advanced-poc/dist/src";
 import { FsFormTreeContainer } from "./FsFormTreeContainer";
-import { AbstractFsTreeGeneric } from "./AbstractFsTreeGeneric";
+import { AbstractFsTreeGeneric } from "./subtrees/trees/AbstractFsTreeGeneric";
 import { TFsFieldAnyJson } from "./types";
 import { TApiFormJson } from "../type.form";
 

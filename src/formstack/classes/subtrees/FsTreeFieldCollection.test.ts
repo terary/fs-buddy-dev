@@ -14,7 +14,7 @@ describe("FsTreeFieldCollection", () => {
 
       // tree has 3 child nodes, 2 calc and 1 logic;
       // It should have two nodes Fields 1 and 2
-      //    Field should have tree(s) logic and/or cals
+      //    Field should have tree(s) logic and/or calls
     });
   });
 
@@ -32,10 +32,13 @@ describe("FsTreeFieldCollection", () => {
   describe(".getFieldTreeByFieldId(...)", () => {
     it("Should be awesome", () => {
       const tree = FsTreeFieldCollection.fromFieldJson(TEST_JSON_FIELDS);
-      const field = tree.getFieldTreeByFieldId(TEST_JSON_FIELDS[0].id || "");
-      expect(field?.fieldId).toStrictEqual(TEST_JSON_FIELDS[0].id);
+      const field_0 = tree.getFieldTreeByFieldId(TEST_JSON_FIELDS[0].id || "");
+      const field_1 = tree.getFieldTreeByFieldId(TEST_JSON_FIELDS[1].id || "");
+      expect(field_0?.fieldId).toStrictEqual(TEST_JSON_FIELDS[0].id);
+      expect(field_1?.fieldId).toStrictEqual(TEST_JSON_FIELDS[1].id);
       // expect(field.fieldJson["name"]).toStrictEqual(TEST_JSON_FIELDS[0].name);
-      expect(field).toBeInstanceOf(FsTreeField);
+      expect(field_0).toBeInstanceOf(FsTreeField);
+      expect(field_1).toBeInstanceOf(FsTreeField);
     });
   });
 

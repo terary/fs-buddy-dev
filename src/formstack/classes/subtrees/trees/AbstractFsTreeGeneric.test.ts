@@ -1,16 +1,34 @@
 import { IExpressionTree } from "predicate-tree-advanced-poc/dist/src";
 import { AbstractFsTreeGeneric } from "./AbstractFsTreeGeneric";
-import { TFsFieldAny } from "../type.field";
-import { TFsNode, TFsFieldAnyJson } from "./types";
+import { TFsFieldAny } from "../../../type.field";
+import { TFsNode, TFsFieldAnyJson } from "../../types";
 
 // import { FsTreeGeneric } from "./FsTreeGeneric";
-
-class TestAbstractFsTreeGeneric extends AbstractFsTreeGeneric {
+const fieldJsonToNodeContent = (json: Partial<TFsFieldAny>): TFsFieldAny => {
+  return {
+    // @ts-ignore - this isn't part of TFsFieldAny - but we're testing only *tmc*
+    fieldId: json.id || "__MISSING_ID__",
+    fieldJson: json,
+  };
+};
+class TestAbstractFsTreeGeneric extends AbstractFsTreeGeneric<TFsFieldAnyJson> {
+  // fieldId?: string;
+  // fieldJson?: any;
   constructor(rootNodeSeed?: string, fieldJson?: TFsFieldAnyJson) {
     super();
   }
-  createSubtreeAt(targetNodeId: string): IExpressionTree<TFsNode> {
+  createSubtreeAt(nodeId: string): IExpressionTree<TFsFieldAnyJson> {
     return new TestAbstractFsTreeGeneric();
+  }
+
+  static fromFieldJson(
+    fieldJson: Partial<TFsFieldAny>
+  ): TestAbstractFsTreeGeneric {
+    const tree = new TestAbstractFsTreeGeneric(
+      fieldJson.id,
+      fieldJsonToNodeContent(fieldJson)
+    );
+    return tree;
   }
 }
 
@@ -30,12 +48,11 @@ describe("AbstractFsTreeGeneric", () => {
       const subtreeConstructor = (
         rootNodeId: string,
         fieldJson: TFsFieldAnyJson
-        // nodeContent?: TFsNode
       ) => {
         return new TestAbstractFsTreeGeneric(
           rootNodeId,
           fieldJson
-        ) as AbstractFsTreeGeneric;
+        ) as AbstractFsTreeGeneric<TFsFieldAnyJson>;
       };
       const subtree = tree.createSubtreeFromFieldJson(
         tree.rootNodeId,
@@ -47,21 +64,7 @@ describe("AbstractFsTreeGeneric", () => {
       expect(subtree).toBeInstanceOf(TestAbstractFsTreeGeneric);
     });
   });
-  describe(".fromJson(...)", () => {
-    it("Should be awesome", () => {
-      const tree = AbstractFsTreeGeneric.fromFieldJson(fieldJson);
-      expect(tree.fieldId).toEqual(TEST_JSON_FIELD.id);
-    });
-  });
 });
-// createSubtreeFromFieldJson<T extends AbstractFsTreeGeneric = AbstractFsTreeGeneric>(
-// targetRootId: string,
-// fieldJson: TFsFieldAnyJson,
-// subtreeConstructor?: (
-//   rootIdSeed: string,
-//   fieldJson: TFsFieldAnyJson
-// ) => T
-// ): T {
 
 const TEST_JSON_FIELD = {
   id: "147462596",

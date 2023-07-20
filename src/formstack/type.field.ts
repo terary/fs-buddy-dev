@@ -9,6 +9,8 @@
  *
  */
 
+import { TFsFieldLogicJunction } from "./classes/subtrees/types";
+
 type TFsFieldType =
   | "address"
   | "checkbox"
@@ -31,17 +33,6 @@ type TFsFieldType =
   | "rating"
   | "richtext";
 
-type TFsFieldLogicCheck = {
-  field: string; // fieldId
-  condition: "equals" | "greaterThan"; // not sure greaterThan is valid. Need to find all valid
-  option: "Show"; // values of the target field (not the same as TFsFieldLogic.action)
-};
-type TFsFieldLogic = {
-  action: "show";
-  conditional: "all" | "any";
-  checks: null | TFsFieldLogicCheck[];
-};
-
 type TFsBaseFieldType = {
   id: string;
   label: string;
@@ -62,7 +53,8 @@ type TFsBaseFieldType = {
   readonly: boolean;
   colspan: number;
   sort: number; //  something like field-on-form order
-  logic: TFsFieldLogic; // ?
+
+  logic: TFsFieldLogicJunction; // ?
   calculation: null | string; // ?  probably never an object
   // calculation: null | object; // ?  not sure of the shape
   workflow_access: "write"; //  what other possibilities
@@ -262,8 +254,8 @@ export type {
   TFsFieldEmail,
   TFsFieldEmbed,
   TFsFieldFile,
-  TFsFieldLogicCheck,
-  TFsFieldLogic,
+  // TFsFieldLogicCheck,
+  // TFsFieldLogic,
   TFsFieldMatrix,
   TFsFieldName,
   TFsFieldNumber,

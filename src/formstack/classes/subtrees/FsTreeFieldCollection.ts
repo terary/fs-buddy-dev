@@ -49,62 +49,13 @@ class FsTreeFieldCollection extends AbstractExpressionTree<FsTreeField> {
     return this._dependantFieldIds.slice();
   }
 
-  // This doesn't make sense here
-  // This should create TreeField and TreeField should call the calc/logic subtree stuff
   static fromFieldJson(fieldsJson: TFsFieldAnyJson[]): FsTreeFieldCollection {
     const tree = new FsTreeFieldCollection("_FORM_ID_");
 
     (fieldsJson || []).forEach((fieldJson) => {
-      let field = new FsTreeField("_FIELD_ID_", {
-        filedId: fieldJson.id,
-        label: fieldJson.label,
-        fieldJson: fieldJson,
-      });
-
-      // @ts-ignore
-      // is private and can only be access as FsTreeField
-      field._fieldId = fieldJson.id || "_MISSING_ID_";
-
-      if (fieldJson.calculation) {
-        const subtreeConstructor = (
-          rootNodeSeed: string,
-          fieldJson: TFsFieldAnyJson
-        ) => {
-          return FsTreeCalcString.fromFieldJson(fieldJson) as FsTreeCalcString;
-        };
-
-        const calcSubtree = FsTreeField.createSubtreeFromFieldJson(
-          field,
-          field.rootNodeId,
-          fieldJson,
-          subtreeConstructor
-        ) as FsTreeField;
-        console.log({ calcSubtree });
-      }
-      if (fieldJson.logic) {
-        const subtreeConstructor = (
-          rootNodeSeed: string,
-          fieldJson: TFsFieldAnyJson
-        ) => {
-          return FsTreeLogic.fromFieldJson(fieldJson);
-        };
-        const logicSubtree = FsTreeField.createSubtreeFromFieldJson(
-          field,
-          field.rootNodeId,
-          fieldJson,
-          subtreeConstructor
-        );
-
-        console.log({ logicSubtree });
-      }
-
+      const field = FsTreeField.fromFieldJson(fieldJson);
       tree.appendChildNodeWithContent(tree.rootNodeId, field);
     });
-
-    // const tree = new FsTreeFieldCollection(formJson.id, rootNode);
-    // // tree._fieldId = fieldJson.id || "_MISSING_ID_";
-    // // tree._fieldJson = fieldJson;
-    // tree.replaceNodeContent(tree.rootNodeId, rootNode);
 
     return tree;
   }
