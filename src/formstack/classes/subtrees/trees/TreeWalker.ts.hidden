@@ -1,0 +1,125 @@
+import { TFsLogicNode } from "../types";
+import { FsTreeField } from "./FsTreeField";
+import { FsTreeLogic } from "./FsTreeLogic";
+import fifthDegreeBadCircuitFormJson from "../../../../test-dev-resources/form-json/5375703.json";
+import { TFsFieldAnyJson } from "../../types";
+import { TFsFieldLogicJunction } from "../types";
+import { TFsFieldLogicCheckLeaf } from "../types";
+type DependantRecord = {
+  fieldId: string;
+  dependantList: string[];
+};
+
+type TSimpleDictionary<T> = {
+  [key: string]: T;
+};
+
+class TreeWalker {
+  private _dependantDictionary: TSimpleDictionary<DependantRecord> = {};
+  private _fields: TSimpleDictionary<FsTreeField> = {};
+  private _fullPaths: string[] = [];
+  private _fullPathIndex: TSimpleDictionary<string[]> = {};
+
+  constructor(fields: TSimpleDictionary<FsTreeField>) {
+    this._fields = fields;
+
+    this.indexDependents();
+  }
+
+  private indexDependents() {
+    Object.entries(this._fields).forEach(([fieldId, field]) => {
+      if (fieldId === "148509465") {
+        console.log("We got a live one");
+      }
+      const dList = this.buildExtendedDependentsChain(field);
+      this.addToFullPathIndex(fieldId, dList);
+      console.log({ fieldId, dList });
+    });
+  }
+
+  getDependentsChain(fieldId: string) {
+    return this._fullPathIndex[fieldId];
+  }
+  // TreeWalkerLogic
+
+  private buildExtendedDependentsChainByFieldId(
+    fieldId: string,
+    dependentChain?: string[]
+  ) {
+    const field = this._fields[fieldId];
+    return this.buildExtendedDependentsChain(field, dependentChain);
+  }
+
+  get fullPaths() {
+    return this._fullPaths.slice();
+  }
+
+  addToFullPathIndex(fieldId: string, path: string[]) {
+    this._fullPathIndex[fieldId] = path;
+  }
+
+  getFullPathIndex() {
+    return this._fullPathIndex;
+  }
+
+  addFullToPaths(...paths: string[]) {
+    paths.forEach((path) => {
+      this._fullPaths.push(path);
+    });
+  }
+
+  buildExtendedDependentsChain(
+    field: FsTreeField,
+    dependentChain: string[] = []
+  ) {
+    //
+    if (dependentChain.includes(field.fieldId)) {
+      // I *think* circular is also if fieldId in dependantChain
+
+      dependentChain.push(`{circular:${field.fieldId}}`);
+      this._fullPaths.push(
+        `${dependentChain.join("/")}/{CIRCULAR:${field.fieldId}}`
+      );
+
+      return dependentChain; // circular logic
+    }
+
+    //
+    dependentChain.push(field.fieldId);
+    const logicTree = field.getLogicTree();
+    if (logicTree === null) {
+      this.addToFullPathIndex(field.fieldId, [`{LEAF:${field.fieldId}}`]);
+      this._fullPaths.push(`${dependentChain.join("/")}:LEAF:${field.fieldId}`);
+      return dependentChain; // this is the leaf
+    }
+
+    const childrenContent = logicTree.getChildrenContentOf(
+      logicTree.rootNodeId
+    ) as TFsFieldLogicCheckLeaf[]; // this could also be ITree
+
+    childrenContent.forEach((childContent) => {
+      const depPath = this.buildExtendedDependentsChainByFieldId(
+        childContent.fieldId,
+        dependentChain
+      );
+      this.addToFullPathIndex(childContent.fieldId, depPath);
+    });
+    // -----
+    // const depChain = this.buildExtendedDependentsChain(this._fields[fieldId]);
+    // if (depChain.join("").includes("{circular:")) {
+    //   this.addToFullPathIndex(fieldId, depChain.slice(1).join("/"));
+    //   return depChain;
+    // }
+    // const toIndexChain = depChain.slice();
+    // let path;
+    // while ((path = toIndexChain.shift())) {
+    //   this.addToFullPathIndex(path, toIndexChain.join("/"));
+    // }
+    // return depChain;
+
+    /// ----
+    return dependentChain;
+  }
+}
+
+export { TreeWalker };

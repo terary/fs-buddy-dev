@@ -1,6 +1,7 @@
 import { FsTreeLogic } from "./FsTreeLogic";
 import { AbstractFsTreeGeneric } from "./AbstractFsTreeGeneric";
 import { TFsFieldAnyJson } from "../../types";
+import fifthDegreeBadCircuitFormJson from "../../../../test-dev-resources/form-json/5375703.json";
 
 describe("FsTreeLogic", () => {
   describe("Creation", () => {
@@ -17,13 +18,69 @@ describe("FsTreeLogic", () => {
       expect(tree.fieldJson).toStrictEqual(
         (TEST_JSON_FIELD as TFsFieldAnyJson).logic
       );
-      expect(tree.getDependantFields().sort()).toStrictEqual(
+      expect(tree.getDependantFieldIds().sort()).toStrictEqual(
         ["147462595", "147462597", "147462598", "147462600"].sort()
       );
     });
   });
+  describe(".fieldJson", () => {
+    let tree: FsTreeLogic;
+    beforeEach(() => {
+      tree = FsTreeLogic.fromFieldJson(TEST_JSON_FIELD as TFsFieldAnyJson);
+    });
+
+    it("Should be segment of the original json", () => {
+      expect(tree.fieldJson).toStrictEqual(TEST_JSON_FIELD.logic);
+
+      const childrenContent = tree.getChildrenContentOf(tree.rootNodeId);
+      // maybe should sort this?
+      expect(childrenContent).toStrictEqual([
+        {
+          fieldId: "147462595",
+          fieldJson: {
+            field: "147462595",
+            condition: "equals",
+            option: "True",
+          },
+          condition: "equals",
+          option: "True",
+        },
+        {
+          fieldId: "147462598",
+          fieldJson: {
+            field: 147462598,
+            condition: "equals",
+            option: "True",
+          },
+          condition: "equals",
+          option: "True",
+        },
+        {
+          fieldId: "147462600",
+          fieldJson: {
+            field: 147462600,
+            condition: "equals",
+            option: "True",
+          },
+          condition: "equals",
+          option: "True",
+        },
+        {
+          fieldId: "147462597",
+          fieldJson: {
+            field: 147462597,
+            condition: "equals",
+            option: "True",
+          },
+          condition: "equals",
+          option: "True",
+        },
+      ]);
+    });
+  });
+
   describe(".evaluateWithValues(...)", () => {
-    it("Should return the value of the calculation given field values", () => {
+    it("Should return true when all conditions are true.", () => {
       const valueJson = {
         "147462595": "True",
         "147462598": "True",
@@ -61,6 +118,56 @@ describe("FsTreeLogic", () => {
       );
       expect(tree.evaluateWithValues(valueJson)).toStrictEqual(true);
     });
+    describe(".evaluateShowHide(...)", () => {
+      let tree: FsTreeLogic;
+      const valueJson = {
+        "147462595": "True",
+        "147462598": "True",
+        "147462600": "True",
+        "147462597": "True",
+      };
+      Object.freeze(valueJson);
+      beforeEach(() => {
+        const tree = FsTreeLogic.fromFieldJson(
+          TEST_JSON_FIELD as TFsFieldAnyJson
+        );
+      });
+
+      it('Should return "show" given all logic evaluates to true and action="show".', () => {
+        const tree = FsTreeLogic.fromFieldJson(
+          TEST_JSON_FIELD as TFsFieldAnyJson
+        );
+        expect(tree.evaluateWithValues(valueJson)).toStrictEqual(true);
+        expect(tree.evaluateShowHide(valueJson)).toStrictEqual("show");
+      });
+      it('Should return "show" given all logic evaluates to true and action="hide".', () => {
+        const hideLogicJson = { ...TEST_JSON_FIELD };
+        hideLogicJson.logic.action = "hide";
+        const tree = FsTreeLogic.fromFieldJson(
+          hideLogicJson as TFsFieldAnyJson
+        );
+        expect(tree.evaluateWithValues(valueJson)).toStrictEqual(true);
+        expect(tree.evaluateShowHide(valueJson)).toStrictEqual("hide");
+      });
+      it("Should return null given logic evaluates to false.", () => {
+        // *tmc* - verify that FS 'logic' should return null if logic evaluates false
+        //        I guess, make sure it's not supposed to return the opposite show|hide
+        //
+        // confirmed!
+        //  the 'action' only happens if the logic evaluates to true
+        //  if logic evaluates to false - nothing happens
+        //
+
+        const falseValues = {
+          ...valueJson,
+          ...{ "147462595": "False" },
+        };
+        const tree = FsTreeLogic.fromFieldJson(TEST_JSON_FIELD);
+        expect(tree.evaluateWithValues(falseValues)).toStrictEqual(false);
+        expect(tree.evaluateShowHide(falseValues)).toStrictEqual(null);
+      });
+    });
+
     it("Should return false if all condition evaluates to false.", () => {
       const valueJson = {
         "147462595": "_NOT_TRUE_",
@@ -73,6 +180,24 @@ describe("FsTreeLogic", () => {
         TEST_JSON_FIELD_OR as TFsFieldAnyJson
       );
       expect(tree.evaluateWithValues(valueJson)).toStrictEqual(false);
+    });
+  });
+  describe("Typical Use-case", () => {
+    it.only("Should create interdependencies.", () => {
+      const fields =
+        fifthDegreeBadCircuitFormJson.fields as unknown as TFsFieldAnyJson[];
+      const logicTrees = fields
+        .map((fieldJson) => {
+          if (fieldJson.logic) {
+            return {
+              [fieldJson.id || "_FIELD_ID"]:
+                FsTreeLogic.fromFieldJson(fieldJson),
+            };
+          }
+        })
+        .filter((field) => field); // removed the undefined
+
+      console.log(logicTrees);
     });
   });
 });
@@ -123,7 +248,7 @@ const TEST_JSON_FIELD = {
   default: "",
   section_text: "<p>The check boxes prevent this from showing.</p>",
   text_editor: "wysiwyg",
-} as unknown;
+} as unknown as TFsFieldAnyJson;
 
 const TEST_JSON_FIELD_OR = {
   id: "147462596",

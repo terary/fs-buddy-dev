@@ -24,7 +24,7 @@ class FsTreeCalcString extends AbstractFsTreeGeneric<TFsArithmeticNode> {
     return eval(calcString);
   }
 
-  getDependantFields(): string[] {
+  getDependantFieldIds(): string[] {
     return this._dependantFieldIds.slice();
   }
 

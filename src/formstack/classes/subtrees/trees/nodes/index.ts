@@ -1,2 +1,2 @@
-export { FsFieldLinkNode } from "./FsFieldLinkNode";
+export { FsFieldVisibilityLinkNode } from "./FsFieldVisibilityLinkNode";
 export { FsFieldRootNode } from "./FsFieldRootNode";

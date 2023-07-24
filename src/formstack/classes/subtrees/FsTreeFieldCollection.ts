@@ -3,15 +3,21 @@ import { TFsFieldAnyJson } from "../types";
 import { FsTreeCalcString } from "./trees/FsTreeCalcString";
 import { FsTreeLogic } from "./trees/FsTreeLogic";
 import { FsTreeField } from "./trees/FsTreeField";
+import { TFsFieldAny } from "../../type.field";
+import { FsFieldVisibilityLinkNode } from "./trees/nodes";
 const INCLUDE_SUBTREES = true;
 // This tree would actually consist of node types:
 //      Junction: '*', '+', '-', ...
 //      Leaf: number | [fieldId]
 // FsTreeField
 // const x:FsTreeField
-class FsTreeFieldCollection extends AbstractExpressionTree<FsTreeField> {
+type TTreeFieldNode = {
+  fieldId: string;
+  field: FsTreeField;
+};
+class FsTreeFieldCollection extends AbstractExpressionTree<TTreeFieldNode> {
   private _dependantFieldIds: string[] = [];
-
+  private _fieldIdNodeMap: { [fieldId: string]: FsTreeField } = {};
   // types should
 
   // --
@@ -23,7 +29,7 @@ class FsTreeFieldCollection extends AbstractExpressionTree<FsTreeField> {
       subtree
     );
 
-    AbstractExpressionTree.reRootTreeAt<FsTreeField>(
+    AbstractExpressionTree.reRootTreeAt<TTreeFieldNode>(
       subtree,
       subtree.rootNodeId,
       subtreeParentNodeId
@@ -35,10 +41,9 @@ class FsTreeFieldCollection extends AbstractExpressionTree<FsTreeField> {
   }
 
   getFieldTreeByFieldId(fieldId: string): FsTreeField | undefined {
-    return this.getSubtreeIdsAt(this.rootNodeId)
-      .map((nodeId) => this.getChildContentAt(nodeId) as FsTreeField)
-      .filter((fieldTree) => fieldTree && fieldTree.fieldId === fieldId)
-      .pop();
+    // I wounder if a look-up table wouldn't be better
+    //  also you're filtering after map, if possible the other order would be preferred
+    return this._fieldIdNodeMap[fieldId];
   }
 
   evaluateWithValues<T>(values: { [fieldId: string]: any }): T {
@@ -49,17 +54,94 @@ class FsTreeFieldCollection extends AbstractExpressionTree<FsTreeField> {
     return this._dependantFieldIds.slice();
   }
 
+  getFieldsBySection(section: FsTreeField) {
+    const childrenFieldNodes = this.getChildrenContentOf(
+      this.rootNodeId
+    ) as TTreeFieldNode[];
+
+    const sectionChildren = childrenFieldNodes
+      .filter((fieldNode) => {
+        const { fieldId, field } = fieldNode;
+        if (fieldId === "148509721") {
+          console.log("Here we go");
+        }
+
+        const x = field.getVisibilityNode();
+        // return x?.parentNode?.fieldId === section.fieldId;
+
+        return Object.is(x?.parentNode, section);
+      })
+      .map((fieldNode) => fieldNode.field);
+    return sectionChildren;
+  }
+
   static fromFieldJson(fieldsJson: TFsFieldAnyJson[]): FsTreeFieldCollection {
     const tree = new FsTreeFieldCollection("_FORM_ID_");
 
     (fieldsJson || []).forEach((fieldJson) => {
       const field = FsTreeField.fromFieldJson(fieldJson);
-      tree.appendChildNodeWithContent(tree.rootNodeId, field);
+      tree.appendChildNodeWithContent(tree.rootNodeId, {
+        fieldId: field.fieldId,
+        field,
+      });
     });
+    tree.getChildrenContentOf(tree.rootNodeId).forEach((childContent) => {
+      const { fieldId, field } = childContent as TTreeFieldNode;
+      tree._fieldIdNodeMap[fieldId] = field;
+    });
+
+    const childrenNodeContent = tree.getChildrenContentOf(
+      tree.rootNodeId
+    ) as TTreeFieldNode[];
+
+    const sortedNodes = childrenNodeContent.sort(sortBySortProperty);
+
+    let currentSection: FsTreeField | null = null;
+    for (let childNode of sortedNodes) {
+      // order is necessary
+      const { fieldId, field } = childNode;
+      const { type: fieldType } = field?.fieldJson as TFsFieldAnyJson;
+
+      if (fieldType && fieldType === "section") {
+        currentSection = field;
+      } else if (currentSection instanceof FsTreeField) {
+        const isUltimatelyVisible = (values: {
+          [fieldId: string]: any;
+        }): boolean => {
+          // @ts-ignore - current section may be null
+          return currentSection.evaluateWithValues(values) || false;
+        };
+
+        field.appendChildNodeWithContent(
+          field.rootNodeId,
+          new FsFieldVisibilityLinkNode(isUltimatelyVisible, currentSection)
+        );
+      }
+    }
 
     return tree;
   }
-
-  // static createSubtreeFromFieldJson();
 }
 export { FsTreeFieldCollection };
+
+const sortBySortProperty = (
+  fieldNodeA: TTreeFieldNode,
+  fieldNodeB: TTreeFieldNode
+) => {
+  const fieldAJson = fieldNodeA.field.fieldJson as TFsFieldAnyJson;
+  const fieldBJson = fieldNodeB.field.fieldJson as TFsFieldAnyJson;
+
+  if (fieldAJson.sort === undefined || fieldBJson.sort === undefined) {
+    return 1;
+  }
+  const sortA = parseInt(fieldAJson.sort + "");
+  const sortB = parseInt(fieldBJson.sort + "");
+
+  if (sortA > sortB) {
+    return 1;
+  }
+  if (sortA < sortB) {
+    return -1;
+  }
+  return 0;
+};

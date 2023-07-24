@@ -1,0 +1,238 @@
+import { TFsFieldAnyJson } from "../../types";
+import { FsTreeLogic } from "./FsTreeLogic";
+import {
+  TFsFieldLogicCheckLeafJson,
+  TFsFieldLogicJunctionJson,
+  TFsLogicNode,
+  TFsLogicNodeJson,
+  TSimpleDictionary,
+} from "../types";
+import { FsTreeField } from "./FsTreeField";
+import {
+  AbstractExpressionTree,
+  ITree,
+} from "predicate-tree-advanced-poc/dist/src";
+import { TFsFieldAny } from "../../../type.field";
+import { FsCircularDependencyNode } from "./nodes/FsCircularDependencyNode";
+type TFsFieldTreeNodeTypes =
+  //   | FsFieldRootNode
+  //   | FsTreeCalcString
+  FsTreeLogic;
+//   | FsFieldVisibilityLinkNode;
+class LogicManager {
+  private _fieldIdToTreeMap: TSimpleDictionary<FsTreeLogic> = {};
+  private _fields: TSimpleDictionary<FsTreeField>;
+  constructor(fields: TSimpleDictionary<FsTreeField>) {
+    this._fields = fields;
+    this._indexLogicTrees(fields);
+    const x = Object.keys(this._fieldIdToTreeMap);
+    console.log({ x });
+  }
+  private _indexLogicTrees(fields: TSimpleDictionary<FsTreeField>) {
+    // Object.entries(fields).forEach(([fieldId, field]) => {
+    Object.entries({ "148456734": fields["148456734"] }).forEach(
+      ([fieldId, field]) => {
+        //@ts-ignore
+        if (field.fieldJson?.logic) {
+          // this._fieldIdToTreeMap[fieldId] = FsTreeLogic.fromFieldJson(
+          //   field.fieldJson as TFsFieldAnyJson
+          // );
+          const tree = this.createLogicTreeFromJson(
+            field.fieldJson as TFsFieldAnyJson
+          );
+        }
+      }
+    );
+
+    console.log(this._fieldIdToTreeMap);
+  }
+
+  public getLogicTreeByFieldId(fieldId: string) {
+    return this._fieldIdToTreeMap[fieldId];
+  }
+
+  private setFieldIdTreeMapping(tree: FsTreeLogic) {
+    if (tree.ownerFieldId === undefined) {
+      throw new Error(
+        `"tree.ownerFieldId" not defined: '${JSON.stringify(tree)}'  `
+      );
+    }
+
+    if (this._fieldIdToTreeMap[tree.ownerFieldId] !== undefined) {
+      throw new Error(
+        `Attempt to overwrite FsTreeLogic/fieldId mapping.  This is possibly a circular logic condition. fieldId: '${tree.ownerFieldId}'`
+      );
+    }
+
+    this._fieldIdToTreeMap[tree.ownerFieldId] = tree;
+  }
+
+  private createLogicTreeFromJson(fieldJson: TFsFieldAnyJson) {
+    const logicJson: TFsLogicNodeJson =
+      fieldJson.logic as TFsFieldLogicJunctionJson;
+    const { action, conditional } = logicJson;
+    const rootNode: TFsFieldLogicJunctionJson = {
+      action,
+      conditional,
+      fieldJson: logicJson,
+      checks: undefined, // we won't use this,  this becomes children
+    };
+    const tree = new FsTreeLogic(
+      fieldJson.id || "_calc_tree_",
+      rootNode as TFsLogicNode
+    );
+    tree.setActionAndOwnerFieldIDAndJson(
+      action,
+      logicJson,
+      fieldJson.id || "_SUBTREE_FIELD_ID_"
+    );
+
+    if (!this.getLogicTreeByFieldId(tree.ownerFieldId)) {
+      // circular reference - if there already exists
+      // I *think* I want to create CircularReferenceNode but not sure where it goes
+      //
+      this.setFieldIdTreeMapping(tree);
+    }
+
+    // tree.setActionAndJson(action, logicJson);
+    // tree._action = action || null;
+    // tree._fieldJson = logicJson;
+    //
+    const { leafExpressions } = transformLogicLeafJsonToLogicLeafs(
+      tree.fieldJson as TFsFieldLogicJunctionJson
+    );
+
+    leafExpressions.forEach((childNode) => {
+      const { fieldId: childFieldId } = childNode;
+
+      // @ts-ignore - logic doesn't exist on ...
+      const { logic: subtreeLogic } = this._fields[childFieldId]?.fieldJson;
+      if (subtreeLogic) {
+        // branches (subtrees)
+        console.log("Build Subtree");
+        const subtree = this.createSubtree(
+          tree,
+          this._fields[childFieldId]?.fieldJson as TFsFieldAnyJson
+        );
+
+        if (!this.getLogicTreeByFieldId(subtree.ownerFieldId)) {
+          this.setFieldIdTreeMapping(subtree);
+        } else {
+          // or this should be an error?
+          tree.replaceNodeContent(
+            subtree.rootNodeId,
+            new FsCircularDependencyNode(
+              tree.ownerFieldId,
+              subtree.ownerFieldId
+            )
+          );
+          // right now this is hard coded to rootNodeId, this will need to change
+          // also this probably not the intended use ofr ownerFieldId,
+        }
+        console.log({ subtree });
+      } else {
+        // leaves
+        tree.appendChildNodeWithContent(
+          tree.rootNodeId,
+          // this should be leafJson
+          childNode as TFsLogicNode // as TFsFieldLogicCheckLeafJson
+        );
+      }
+    });
+
+    return tree;
+  }
+
+  createSubtree(tree: FsTreeLogic, fieldJson: TFsFieldAnyJson): FsTreeLogic {
+    const self = this;
+
+    const subtreeConstructor = (fieldJson: TFsFieldAnyJson) => {
+      // is this the right constructor?
+      const subtree = FsTreeLogic.fromFieldJson(
+        fieldJson
+      ) as unknown as AbstractExpressionTree<FsTreeLogic>; // this type doesn't make sense (or is this an ExpressionTree?),
+
+      if (!self.getLogicTreeByFieldId(tree.ownerFieldId)) {
+        self.setFieldIdTreeMapping(subtree as unknown as FsTreeLogic);
+      }
+      return subtree;
+    };
+
+    const subtree = FsTreeLogic.createSubtreeFromFieldJson<FsTreeLogic>(
+      tree,
+      tree.rootNodeId,
+      fieldJson as TFsFieldAnyJson,
+      subtreeConstructor
+    );
+
+    this.setFieldIdTreeMapping(subtree);
+
+    subtree.getChildrenNodeIdsOf(subtree.rootNodeId).forEach((nodeId) => {
+      // this is a hack until code clean-up.
+      // ideally subtree gets built with subtree spawning
+      //   however, currently we're creating json leaves
+      subtree.getChildContentAt(nodeId);
+      subtree.removeNodeAt(nodeId);
+      const fieldJson = this._fields[subtree.ownerFieldId]
+        .fieldJson as TFsFieldAny;
+
+      if (this.getLogicTreeByFieldId(fieldJson.id) === undefined) {
+        const childSubtree = this.createSubtree(
+          subtree,
+          fieldJson
+          // this._fields[subtree.ownerFieldId].fieldJson as TFsFieldAny
+        );
+        this.setFieldIdTreeMapping(childSubtree);
+      }
+    });
+
+    // subtree.getChildrenContentOf(subtree.rootNodeId).forEach((childField) => {
+    //   this._fields["fieldId"];
+    //   // the fieldJson from the field with the ide of childField
+    //   const fieldJson = this._fields[subtree.ownerFieldId]
+    //     .fieldJson as TFsFieldAny;
+
+    //   if (this.getLogicTreeByFieldId(fieldJson.id) === undefined) {
+    //     const childSubtree = this.createSubtree(
+    //       subtree,
+    //       fieldJson
+    //       // this._fields[subtree.ownerFieldId].fieldJson as TFsFieldAny
+    //     );
+    //     this.setFieldIdTreeMapping(childSubtree);
+    //   }
+    // });
+    console.log({ subtree });
+    return subtree;
+  }
+}
+
+const transformLogicLeafJsonToLogicLeafs = (
+  logicJson: TFsFieldLogicJunctionJson
+) => {
+  const { action, conditional, checks } = logicJson || {};
+  const op = conditional === "all" ? "$and" : "$or";
+
+  const leafExpressions = (checks || []).map((check) => {
+    const { condition, field, option } = check;
+    return {
+      fieldId: field + "" || "__MISSING_ID__",
+      fieldJson: check,
+      condition: convertFsOperatorToOp(check),
+      option,
+    };
+  });
+  return { leafExpressions };
+};
+
+const convertFsOperatorToOp = (check: TFsFieldLogicCheckLeafJson) => {
+  // if (check.condition === "equals") {
+  //   return "$eq";
+  // }
+  // if (check.condition === "greaterThan") {
+  //   return "$gt";
+  // }
+
+  return check.condition;
+};
+
+export { LogicManager };

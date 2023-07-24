@@ -3,18 +3,23 @@ import { AbstractFsTreeGeneric } from "./AbstractFsTreeGeneric";
 import { TFsFieldAnyJson } from "../../types";
 
 describe("FsTreeCalcString", () => {
+  let tree: FsTreeCalcString;
+  beforeEach(() => {
+    tree = FsTreeCalcString.fromFieldJson(TEST_JSON_FIELD as TFsFieldAnyJson);
+  });
   describe("Creation", () => {
     it("Should be awesome", () => {
-      const tree = FsTreeCalcString.fromFieldJson(
-        TEST_JSON_FIELD as TFsFieldAnyJson
-      );
       expect(tree).toBeInstanceOf(AbstractFsTreeGeneric);
-      expect(tree.getDependantFields()).toEqual(["148149774", "148149776"]);
       expect(tree.fieldJson).toStrictEqual(TEST_JSON_FIELD.calculation);
-      expect(tree.getDependantFields()).toStrictEqual([
+      expect(tree.getDependantFieldIds()).toStrictEqual([
         "148149774",
         "148149776",
       ]);
+    });
+  });
+  describe(".fieldJson", () => {
+    it("Should be segment of the original json", () => {
+      expect(tree.fieldJson).toStrictEqual(TEST_JSON_FIELD.calculation);
     });
   });
   describe(".evaluateWithValues(...)", () => {
@@ -25,6 +30,12 @@ describe("FsTreeCalcString", () => {
       expect(
         tree.evaluateWithValues({ "148149774": 3, "148149776": 7 })
       ).toStrictEqual(38);
+    });
+  });
+  describe("getDependantFieldIds", () => {
+    it("should return all dependant field IDs of the calculation.", () => {
+      expect(tree.getDependantFieldIds()).toEqual(["148149774", "148149776"]);
+      //
     });
   });
 });

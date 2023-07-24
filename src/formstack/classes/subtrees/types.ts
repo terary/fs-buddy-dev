@@ -15,10 +15,14 @@ type TLogicLeaf = {
   value?: number | string | Date | null;
 };
 
+type TFsVisibilityModes = "Show" | "Hide" | null; // null indicates the logic evaluated to false,
+// therefore do not return the visibility, this is where default values need to get figured out.
+//
+
 type TFsFieldLogicCheckLeaf = {
   fieldId: string; // fieldId
   condition: "equals" | "greaterThan"; // not sure greaterThan is valid. Need to find all valid
-  option: "Show"; // values of the target field (not the same as TFsFieldLogic.action)
+  option: TFsVisibilityModes; // values of the target field (not the same as TFsFieldLogic.action)
 };
 
 // because - we refer to it as fieldId - not field
@@ -29,7 +33,7 @@ type TFsFieldLogicCheckLeafJson = Omit<
 
 type TFsFieldLogicJunction = {
   fieldJson: any;
-  action: "show";
+  action: TFsVisibilityModes;
   conditional: "all" | "any";
   // checks: null | TFsFieldLogicCheckLeaf[];
 };
@@ -38,8 +42,15 @@ type TFsFieldLogicJunctionJson = Partial<TFsFieldLogicJunction> & {
   checks: null | undefined | "" | TFsFieldLogicCheckLeafJson[];
 };
 
-type TFsLogicNode = TFsFieldLogicJunction | TFsFieldLogicCheckLeaf;
+type TFsLogicNode =
+  | TFsFieldLogicJunction
+  | TFsFieldLogicCheckLeaf
+  | FsCircularDependencyNode;
 type TFsLogicNodeJson = TFsFieldLogicJunctionJson | TFsFieldLogicCheckLeafJson;
+
+type TSimpleDictionary<T> = {
+  [key: string]: T;
+};
 
 export type {
   TFsArithmeticNode,
@@ -49,6 +60,8 @@ export type {
   TFsFieldLogicJunctionJson,
   TFsLogicNode,
   TFsLogicNodeJson,
+  TFsVisibilityModes,
+  TSimpleDictionary,
   // TLogicNode,
   // TLogicNodeJson,
 };

@@ -1,3 +1,0 @@
-class FsFieldLinkNode {}
-
-export { FsFieldLinkNode };

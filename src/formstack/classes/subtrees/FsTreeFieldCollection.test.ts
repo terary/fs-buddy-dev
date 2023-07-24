@@ -1,6 +1,8 @@
 import { FsTreeFieldCollection } from "./FsTreeFieldCollection";
 import { TFsFieldAnyJson } from "../types";
 import { FsTreeField } from "./trees/FsTreeField";
+import circularAndInterdependentJson from "../../../test-dev-resources/form-json/5375703.json";
+import { TFsFieldAny } from "../../type.field";
 
 describe("FsTreeFieldCollection", () => {
   describe("Creation", () => {
@@ -41,6 +43,44 @@ describe("FsTreeFieldCollection", () => {
       expect(field_1).toBeInstanceOf(FsTreeField);
     });
   });
+
+  describe(".getRelations()", () => {
+    it("Should be awesome", () => {
+      const tree = FsTreeFieldCollection.fromFieldJson(
+        circularAndInterdependentJson.fields as unknown as TFsFieldAnyJson[]
+      );
+      const byFieldId = tree.getChildrenContentOf(tree.rootNodeId);
+
+      console.log({ tree });
+    });
+  });
+  describe(".getFieldsBySection()", () => {
+    it.only("Should be awesome", () => {
+      const tree = FsTreeFieldCollection.fromFieldJson(
+        circularAndInterdependentJson.fields as unknown as TFsFieldAnyJson[]
+      );
+      const sectionField = tree.getFieldTreeByFieldId(
+        "148509465"
+      ) as FsTreeField;
+      const fieldsInSection = tree.getFieldsBySection(sectionField);
+      const fieldIdsInSection = fieldsInSection.map((field) => field.fieldId);
+      expect(fieldIdsInSection.sort()).toStrictEqual(
+        [
+          "148509470",
+          "148509474",
+          "148509475",
+          "148509476",
+          "148509477",
+          "148509478",
+          "148509721",
+        ].sort()
+      );
+      console.log({ tree, fieldsInSection });
+    });
+  });
+
+  now you need to figure-out a away to make the dependency accumulative
+
 
   /// ---------------------------------
 });

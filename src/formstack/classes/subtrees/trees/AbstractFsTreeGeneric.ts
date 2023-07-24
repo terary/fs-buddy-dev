@@ -5,18 +5,21 @@ import {
 import type { TFsFieldAny } from "../../../type.field";
 
 import { TFsNode, TFsFieldAnyJson } from "../../types";
-const fieldJsonToNodeContent = (json: Partial<TFsFieldAny>): TFsNode => {
-  return {
-    fieldId: json.id || "__MISSING_ID__",
-    fieldJson: json,
-  } as TFsNode;
-};
+import {
+  TFsFieldLogicCheckLeafJson,
+  TFsFieldLogicJunctionJson,
+} from "../types";
 
 abstract class AbstractFsTreeGeneric<
   T extends object
 > extends AbstractExpressionTree<T> {
-  protected _fieldJson!: Partial<TFsFieldAny> | string | null;
-  getDependantFields(): string[] {
+  protected _fieldJson!:
+    | Partial<TFsFieldAny>
+    | TFsFieldLogicJunctionJson
+    | TFsFieldLogicCheckLeafJson
+    | string
+    | null;
+  getDependantFieldIds(): string[] {
     return [];
   }
 

@@ -1,0 +1,191 @@
+import { TFsFieldAnyJson } from "../../types";
+import { FsTreeLogic } from "./FsTreeLogic";
+import {
+  TFsFieldLogicCheckLeafJson,
+  TFsFieldLogicJunctionJson,
+  TSimpleDictionary,
+} from "../types";
+import { FsTreeField } from "./FsTreeField";
+import { TFsFieldAny } from "../../../type.field";
+import { AbstractExpressionTree } from "predicate-tree-advanced-poc/dist/src";
+import { FsCircularDependencyNode } from "./nodes/FsCircularDependencyNode";
+import { CircularDependencyError } from "../../../errors/CircularDependencyError";
+type TFsFieldTreeNodeTypes =
+  //   | FsFieldRootNode
+  //   | FsTreeCalcString
+  FsTreeLogic;
+//   | FsFieldVisibilityLinkNode;
+class LogicManager2 {
+  private _fieldIdToTreeMap: TSimpleDictionary<FsTreeLogic | null> = {};
+  private _fields: TSimpleDictionary<FsTreeField>;
+  constructor(fields: TSimpleDictionary<FsTreeField>) {
+    this._fields = fields;
+    this._indexLogicTrees(fields);
+    const x = Object.keys(this._fieldIdToTreeMap);
+    console.log({ x });
+  }
+  private _indexLogicTrees(fields: TSimpleDictionary<FsTreeField>) {
+    // Object.entries(fields).forEach(([fieldId, field]) => {
+    Object.entries({ "148456734": fields["148456734"] }).forEach(
+      ([fieldId, field]) => {
+        //@ts-ignore
+        if (field.fieldJson?.logic) {
+          const fieldTree = FsTreeLogic.fromFieldJson(
+            field.fieldJson as TFsFieldAnyJson
+          );
+          this.setFieldIdTreeMapping(fieldTree);
+          fieldTree
+            .getChildrenNodeIdsOf(fieldTree.rootNodeId)
+            .forEach((childNodeId) => {
+              const childContent = fieldTree.getChildContentAt(childNodeId);
+              if (!this.getLogicTreeByFieldId(childContent.fieldId)) {
+                fieldTree.removeNodeAt(childNodeId); // remove child content only if it is non-leaf ???? This could be a problem
+                const childSubtree = this.createSubtree(
+                  fieldTree,
+                  fieldTree.rootNodeId,
+                  childContent.fieldId
+                );
+
+                try {
+                  this.setFieldIdTreeMapping(childSubtree);
+                } catch (e) {
+                  if (e instanceof CircularDependencyError) {
+                    fieldTree.replaceNodeContent(
+                      childSubtree.rootNodeId,
+                      new FsCircularDependencyNode("src", "tar")
+                    );
+                  } else {
+                    throw e;
+                  }
+                }
+
+                console.log({ childSubtree });
+              } else {
+                // create circular ref node
+              }
+            });
+        }
+      }
+    );
+
+    console.log(this._fieldIdToTreeMap);
+  }
+
+  private createSubtree(
+    superTree: FsTreeLogic,
+    superTreeParentId: string,
+    jsonFieldId: string
+  ) {
+    const fieldJson = this._fields[jsonFieldId].fieldJson as TFsFieldAnyJson;
+
+    const subtree = FsTreeLogic.createSubtreeFromFieldJson<FsTreeLogic>(
+      superTree,
+      superTreeParentId,
+      fieldJson
+    );
+    subtree.ownerFieldId = fieldJson?.id || "_FIELD_ID_";
+
+    try {
+      this.setFieldIdTreeMapping(subtree);
+    } catch (e) {
+      if (e instanceof CircularDependencyError) {
+        superTree.replaceNodeContent(
+          subtree.rootNodeId,
+          new FsCircularDependencyNode("src", "tar")
+        );
+      } else {
+        throw e;
+      }
+    }
+    subtree.getChildrenNodeIdsOf(subtree.rootNodeId).forEach((childNodeId) => {
+      const childContent = subtree.getChildContentAt(childNodeId);
+      subtree.removeNodeAt(childNodeId); // remove child content only if it is non-leaf ???? This could be a problem
+      if (!this.getLogicTreeByFieldId(childContent.fieldId)) {
+        const childSubtree = this.createSubtree(
+          subtree,
+          subtree.rootNodeId,
+          childContent.fieldId
+        );
+        try {
+          this.setFieldIdTreeMapping(childSubtree);
+        } catch (e) {
+          if (e instanceof CircularDependencyError) {
+            subtree.replaceNodeContent(
+              childSubtree.rootNodeId,
+              new FsCircularDependencyNode("src", "tar")
+            );
+          } else {
+            throw e;
+          }
+        }
+        console.log({ childSubtree });
+      } else {
+        // create circular ref node
+      }
+
+      console.log(`
+        You can catch the error error here and replace with circular ref node
+
+        you can require setFieldIdTreeMapping has the super parent and necessary fieldId 
+      
+      
+      
+      `);
+    });
+    // -----------
+
+    return subtree;
+  }
+
+  public getLogicTreeByFieldId(fieldId: string) {
+    return this._fieldIdToTreeMap[fieldId];
+  }
+
+  private setNullFieldIdTreeMapping(fieldId: string) {
+    this._fieldIdToTreeMap[fieldId] = null;
+  }
+
+  private replaceNullFieldIdTreeMapping(fieldId: string, tree: FsTreeLogic) {
+    // does this need to have guards around it?
+    this._fieldIdToTreeMap[fieldId] = tree;
+  }
+
+  private setFieldIdTreeMapping(tree: FsTreeLogic) {
+    if (tree.ownerFieldId === undefined) {
+      throw new Error(
+        `"tree.ownerFieldId" not defined: '${JSON.stringify(tree)}'  `
+      );
+    }
+
+    if (this._fieldIdToTreeMap[tree.ownerFieldId] !== undefined) {
+      throw new CircularDependencyError(
+        `Circular Reference: fieldId: '${tree.ownerFieldId}'`
+      );
+      // throw new Error(
+      //   `Attempt to overwrite FsTreeLogic/fieldId mapping.  This is possibly a circular logic condition. fieldId: '${tree.ownerFieldId}'`
+      // );
+    }
+
+    this._fieldIdToTreeMap[tree.ownerFieldId] = tree;
+  }
+}
+
+const transformLogicLeafJsonToLogicLeafs = (
+  logicJson: TFsFieldLogicJunctionJson
+) => {
+  const { action, conditional, checks } = logicJson || {};
+  const op = conditional === "all" ? "$and" : "$or";
+
+  const leafExpressions = (checks || []).map((check) => {
+    const { condition, field, option } = check;
+    return {
+      fieldId: field + "" || "__MISSING_ID__",
+      fieldJson: check,
+      condition: check.condition,
+      option,
+    };
+  });
+  return { leafExpressions };
+};
+
+export { LogicManager2 };
