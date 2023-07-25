@@ -9,6 +9,7 @@ import {
   TFsFieldLogicCheckLeafJson,
   TFsFieldLogicJunctionJson,
 } from "../types";
+import { MultipleLogicTreeError } from "../../../errors/MultipleLogicTreeError";
 
 abstract class AbstractFsTreeGeneric<
   T extends object
@@ -25,6 +26,17 @@ abstract class AbstractFsTreeGeneric<
 
   get fieldJson() {
     return this._fieldJson;
+  }
+
+  protected findAllNodesOfType<T>(objectType: any): T[] {
+    const nodeIds = this.getTreeNodeIdsAt(this.rootNodeId);
+    const logicTrees = nodeIds
+      .filter(
+        (nodeId: any) => this.getChildContentAt(nodeId) instanceof objectType
+      )
+      .map((nodeId) => this.getChildContentAt(nodeId)) as T[];
+
+    return logicTrees;
   }
 
   // is this being used?

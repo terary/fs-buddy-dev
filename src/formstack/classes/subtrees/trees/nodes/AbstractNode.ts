@@ -1,0 +1,2 @@
+class AbstractNode {}
+export { AbstractNode };

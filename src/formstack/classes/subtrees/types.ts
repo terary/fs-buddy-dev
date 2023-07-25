@@ -1,10 +1,12 @@
+import { FsCircularDependencyNode } from "./trees/nodes/FsCircularDependencyNode";
+import { FsMaxDepthExceeded } from "./trees/nodes/FsMaxDepthExceeded";
+
 type TFsArithmeticOperator = { operator: "+" | "*" | "-" | "/" };
 type TFsArithmeticLeaf = {
   operand: string | number | Date; // dates can be used?
   isFieldReference: boolean;
 };
 type TFsArithmeticNode = TFsArithmeticLeaf | TFsArithmeticOperator;
-
 type TFsLogicOperators = "any" | "all";
 type TLogicJunctionOperators = "$and" | "$or"; // maybe not?
 type TLogicLeafOperators = "$eq" | "$gt" | "$lt"; // maybe not?,  I think *not* gets encoded? '$ne' not($gt) == $lte ?
@@ -45,7 +47,8 @@ type TFsFieldLogicJunctionJson = Partial<TFsFieldLogicJunction> & {
 type TFsLogicNode =
   | TFsFieldLogicJunction
   | TFsFieldLogicCheckLeaf
-  | FsCircularDependencyNode;
+  | FsCircularDependencyNode
+  | FsMaxDepthExceeded;
 type TFsLogicNodeJson = TFsFieldLogicJunctionJson | TFsFieldLogicCheckLeafJson;
 
 type TSimpleDictionary<T> = {

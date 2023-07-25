@@ -1,0 +1,2 @@
+class FsMaxDepthExceeded {}
+export { FsMaxDepthExceeded };

@@ -11,6 +11,7 @@ import { AbstractFsTreeGeneric } from "./AbstractFsTreeGeneric";
 import { TFsVisibilityModes } from "../types";
 import { MultipleLogicTreeError } from "../../../errors/MultipleLogicTreeError";
 import { FsCircularDependencyNode } from "./nodes/FsCircularDependencyNode";
+import { AbstractNode } from "./nodes/AbstractNode";
 type TSubtrees = FsTreeCalcString | FsTreeLogic;
 
 type TFsFieldTreeNodeTypes =
@@ -54,9 +55,9 @@ class FsTreeField extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
     return this._fieldId;
   }
 
-  private getSingleTreeOfType<T extends AbstractFsTreeGeneric<any>>(
-    objectType: any
-  ): T | null {
+  private getSingleTreeOfType<
+    T extends AbstractFsTreeGeneric<any> | AbstractNode
+  >(objectType: any): T | null {
     const subtreeIds = this.getSubtreeIdsAt(this.rootNodeId);
     const logicTrees = subtreeIds
       .filter(
@@ -74,29 +75,12 @@ class FsTreeField extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
     return (logicTrees.pop() as unknown as T) || null;
   }
 
-  private getSingleNodeOfType<T>(objectType: any): T | null {
-    const nodeIds = this.getChildrenNodeIdsOf(this.rootNodeId);
-    const matchingNodes = nodeIds
-      .filter(
-        (nodeId: any) => this.getChildContentAt(nodeId) instanceof objectType
-      )
-      .map((subtreeId) => this.getChildContentAt(subtreeId)) as FsTreeField[];
-
-    if (matchingNodes.length > 1) {
-      throw new MultipleLogicTreeError(
-        `field with id: '${this.fieldId}' appears to have multiple nodes of type '${objectType}'.`
-      );
-    }
-
-    return (matchingNodes.pop() as unknown as T) || null;
-  }
-
   public getLogicTree(): FsTreeLogic | null {
     return this.getSingleTreeOfType<FsTreeLogic>(FsTreeLogic);
   }
 
   public getVisibilityNode(): FsFieldVisibilityLinkNode | null {
-    return this.getSingleNodeOfType<FsFieldVisibilityLinkNode>(
+    return this.getSingleTreeOfType<FsFieldVisibilityLinkNode>(
       FsFieldVisibilityLinkNode
     );
   }
@@ -156,6 +140,10 @@ class FsTreeField extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
     // return interDependentFieldIds;
   }
 
+  isLeaf(): boolean {
+    // I think this should also include linkNode
+    return this.getLogicTree() === null;
+  }
   isInterdependentOf(subjectField: FsTreeField) {
     return this.getInterdependentFieldIdsOf(subjectField).length > 0;
   }

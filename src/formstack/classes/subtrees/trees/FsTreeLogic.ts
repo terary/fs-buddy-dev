@@ -13,6 +13,7 @@ import type {
   TFsLogicNodeJson,
   TFsVisibilityModes,
 } from "../types";
+import { FsCircularDependencyNode } from "./nodes/FsCircularDependencyNode";
 
 const andReducer = (prev: boolean | null, cur: boolean | null) => {
   return prev && cur;
@@ -26,6 +27,7 @@ class FsTreeLogic extends AbstractFsTreeGeneric<TFsLogicNode> {
   private _dependantFieldIds: string[] = [];
   private _action!: TFsVisibilityModes;
   private _ownerFieldId!: string;
+  public _debug_visitedFieldIds: string[] = []; // this maybe better as getChildren(filter)
   createSubtreeAt(nodeId: string): IExpressionTree<TFsLogicNode> {
     // *tmc* needs to make this a real thing, I guess: or add it to the abstract?
     return new FsTreeLogic();
@@ -69,6 +71,12 @@ class FsTreeLogic extends AbstractFsTreeGeneric<TFsLogicNode> {
 
   evaluateShowHide(values: { [fieldId: string]: any }): TFsVisibilityModes {
     return this.evaluateWithValues<boolean>(values) ? this.action : null;
+  }
+
+  getCircularLogicNodes(): FsCircularDependencyNode[] {
+    return this.findAllNodesOfType<FsCircularDependencyNode>(
+      FsCircularDependencyNode
+    );
   }
 
   get action(): TFsVisibilityModes {
