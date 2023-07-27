@@ -79,9 +79,6 @@ describe("FsTreeFieldCollection", () => {
     });
   });
 
-  now you need to figure-out a away to make the dependency accumulative
-
-
   /// ---------------------------------
 });
 

@@ -27,7 +27,9 @@ type TTreeFieldNode = {
   fieldId: string;
   field: FsTreeField;
 };
+
 class FieldCollectionGoof extends AbstractExpressionTree<TTreeFieldNode> {
+  private static MAX_DEPTH = 50; // we'll want to change this
   private _dependantFieldIds: string[] = [];
   private _fieldIdNodeMap: { [fieldId: string]: FsTreeField } = {};
   // types should
@@ -55,206 +57,51 @@ class FieldCollectionGoof extends AbstractExpressionTree<TTreeFieldNode> {
   getFormFieldsCount() {
     return Object.keys(this._fieldIdNodeMap).length;
   }
-  x_getExtendedTree(exTree: FsTreeLogic, atNodeId: string, field: FsTreeField) {
-    // const exTree = new FsTreeLogic("agLogicTree", {
-    //   action: "Show",
-    //   conditional: "any",
-    //   fieldJson: null,
-    //   // something: "goes here",
-    // });
-    // exTree.ownerFieldId = fieldId;
 
-    // this should be called only if it is known fieldId is a branch?
-    // should this return leaf or tree?
-    // const field = this.getFieldTreeByFieldId(fieldId);
-    const logicTree = field?.getLogicTree();
-    if (!logicTree) {
-      console.log("No Logic Tree");
-      return null;
-    }
-
-    const rootNodeContent = logicTree?.getChildContentAt(
-      logicTree.rootNodeId
-    ) as TFsLogicNode;
-
-    // maybe this should append null?
-    const firstChildId = exTree.appendChildNodeWithContent(
-      atNodeId,
-      rootNodeContent
-    );
-
-    logicTree.getChildrenNodeIdsOf(logicTree.rootNodeId).forEach((childId) => {
-      const childContent = logicTree.getChildContentAt(
-        childId
-      ) as TFsFieldLogicCheckLeaf;
-
-      const childFieldId = childContent?.fieldId;
-
-      const childField = this.getFieldTreeByFieldId(
-        childFieldId
-      ) as FsTreeField;
-
-      if (
-        exTree.ownerFieldId === childField.fieldId ||
-        exTree._debug_visitedFieldIds.includes(childField.fieldId)
-      ) {
-        exTree.appendChildNodeWithContent(
-          firstChildId,
-          new FsCircularDependencyNode(
-            exTree.ownerFieldId,
-            field.fieldId,
-            exTree._debug_visitedFieldIds
-          )
-        );
-      } else if (childField?.isLeaf()) {
-        exTree._debug_visitedFieldIds.push(childFieldId);
-        const { fieldId, condition, option } = childContent;
-        exTree.appendChildNodeWithContent(
-          firstChildId,
-          new FsLogicLeafNode(fieldId, condition, option)
-        );
-      } else if (
-        exTree.countGreatestDepthOf(exTree.rootNodeId) >
-        this.getFormFieldsCount() * 2
-      ) {
-        exTree._debug_visitedFieldIds.push(childFieldId);
-        exTree.appendChildNodeWithContent(
-          firstChildId,
-          new FsMaxDepthExceeded()
-        );
-      } else {
-        exTree._debug_visitedFieldIds.push(childFieldId);
-        this.getExtendedTree(exTree, firstChildId, childField); //(childFieldId)
-      }
-    });
-
-    return exTree;
-  }
-
-  getExtendedTree(exTree: FsTreeLogic, atNodeId: string, field: FsTreeField) {
-    const logicTree = field?.getLogicTree();
-    if (!logicTree) {
-      return null;
-    }
-
-    const rootNodeContent = logicTree?.getChildContentAt(
-      // is this going to be a problem for fields with many logic terms
-      // are the correct nodeContents being copied over (logicTree.rootNodeId every times)
-
-      logicTree.rootNodeId
-    ) as TFsLogicNode;
-
-    let branchNodeId: string;
-    if (exTree.rootNodeId === atNodeId) {
-      exTree.replaceNodeContent(atNodeId, rootNodeContent);
-      branchNodeId = atNodeId;
-    } else {
-      branchNodeId = exTree.appendChildNodeWithContent(
-        atNodeId,
-        rootNodeContent
-      );
-    }
-    exTree._debug_visitedFieldIds.push(field.fieldId);
-    // exTree._debug_visitedFieldIds.push(field.fieldId);
-
-    logicTree.getChildrenNodeIdsOf(logicTree.rootNodeId).forEach((childId) => {
-      //
-      const childContent = logicTree.getChildContentAt(
-        childId
-      ) as TFsFieldLogicCheckLeaf;
-
-      const childFieldId = childContent?.fieldId;
-
-      const childField = this.getFieldTreeByFieldId(
-        childFieldId
-      ) as FsTreeField;
-
-      if (
-        exTree.ownerFieldId === childField.fieldId ||
-        exTree._debug_visitedFieldIds.includes(childField.fieldId)
-      ) {
-        exTree._debug_visitedFieldIds.push(childFieldId);
-        exTree.appendChildNodeWithContent(
-          branchNodeId,
-          new FsCircularDependencyNode(
-            exTree.ownerFieldId,
-            field.fieldId,
-            exTree._debug_visitedFieldIds
-          )
-        );
-      } else if (childField?.isLeaf()) {
-        // exTree._debug_visitedFieldIds.push(childFieldId);
-        const { fieldId, condition, option } = childContent;
-        exTree.appendChildNodeWithContent(
-          branchNodeId,
-          new FsLogicLeafNode(fieldId, condition, option)
-        );
-      } else if (
-        exTree.countGreatestDepthOf(exTree.rootNodeId) >
-        this.getFormFieldsCount() * 2
-      ) {
-        // exTree._debug_visitedFieldIds.push(childFieldId);
-        exTree.appendChildNodeWithContent(
-          branchNodeId,
-          new FsMaxDepthExceeded()
-        );
-      } else {
-        // exTree._debug_visitedFieldIds.push(childFieldId);
-        this.getExtendedTree(exTree, branchNodeId, childField); //(childFieldId)
-      }
-    });
-
-    return exTree;
-  }
-  getExtendedTree2(
-    atNodeId: string,
+  getExtendedTree<T extends FsTreeLogic = FsTreeLogic>(
     field: FsTreeField,
+    atNodeId: string,
     extendedTree?: FsTreeLogic
-  ) {
-    const logicTree = field.getLogicTree();
-    if (!logicTree) {
-      // this field has no logic
-      return null;
-    }
-
+  ): T {
+    const logicTree = field.getLogicTree() as FsTreeLogic;
     const rootNodeContent = logicTree.getChildContentAt(
       logicTree.rootNodeId //
     ) as TFsLogicNode;
 
     let exTree: FsTreeLogic;
-    let branchNodeId: string = atNodeId;
+    let branchNodeId: string = atNodeId; // this is goofy, pick one and stick with it.  Make atNodeId optional
+
+    const { conditional, action, fieldJson } =
+      rootNodeContent as TFsFieldLogicJunctionJson;
+    const newBranchNode = new FsLogicBranchNode(
+      field.fieldId,
+      conditional,
+      action || null,
+      fieldJson
+    );
+
     if (extendedTree === undefined) {
       const { conditional, action, fieldJson } =
         rootNodeContent as TFsFieldLogicJunctionJson;
 
-      exTree = new FsTreeLogic(
-        field.fieldId,
-        new FsLogicBranchNode(
-          field.fieldId,
-          conditional,
-          action || null,
-          fieldJson
-        )
-      );
+      exTree = new FsTreeLogic(field.fieldId, newBranchNode);
+      exTree.ownerFieldId = field.fieldId;
       atNodeId = exTree.rootNodeId;
     } else {
       exTree = extendedTree;
-      const { conditional, action, fieldJson } =
-        rootNodeContent as TFsFieldLogicJunctionJson;
-
-      branchNodeId = exTree.appendChildNodeWithContent(
-        atNodeId,
-        new FsLogicBranchNode(
-          field.fieldId,
-          conditional,
-          action || null,
-          fieldJson
-        )
-      );
+      branchNodeId = exTree.appendChildNodeWithContent(atNodeId, newBranchNode);
       atNodeId = branchNodeId;
     }
     exTree._debug_visitedFieldIds.push(field.fieldId);
 
+    if (
+      // this should be more intelligent
+      exTree.getTreeNodeIdsAt(exTree.rootNodeId).length >
+      FieldCollectionGoof.MAX_DEPTH
+    ) {
+      exTree.appendChildNodeWithContent(atNodeId, new FsMaxDepthExceeded());
+      return exTree as T;
+    }
     // technically logicTree should always have children but in reality it's sometimes missing.
 
     logicTree
@@ -289,36 +136,18 @@ class FieldCollectionGoof extends AbstractExpressionTree<TTreeFieldNode> {
             new FsLogicLeafNode(fieldId, condition, option)
           );
         } else {
-          this.getExtendedTree2(atNodeId, childField, exTree); //(childFieldId)
+          this.getExtendedTree(childField, atNodeId, exTree); //(childFieldId)
         }
       });
 
-    return exTree;
+    return exTree as T;
   }
 
   aggregateLogicTree(fieldId: string): FsTreeLogic | null {
     const field = this.getFieldTreeByFieldId(fieldId) as FsTreeField;
 
-    // should there be a guard here, if !field, then no field or bad fieldId?
-    const logicTree = field.getLogicTree();
-    if (!logicTree) {
-      return null; // this has no logic, eg leaf
-    }
-    const rootNodeContent = logicTree.getChildContentAt(
-      logicTree.rootNodeId
-    ) as TFsLogicNode;
-    // const exTree = new FsTreeLogic(fieldId, rootNodeContent);
-    const exTree = new FsTreeLogic(fieldId);
-    // const exTree = new FsTreeLogic("agLogicTree", {
-    //   action: "Show",
-    //   conditional: "any",
-    //   fieldJson: null,
-    //   // something: "goes here",
-    // });
-    exTree.ownerFieldId = fieldId;
-
     //@ts-ignore
-    return this.getExtendedTree2(undefined, field);
+    return this.getExtendedTree(field, undefined);
   }
 
   getFieldTreeByFieldId(fieldId: string): FsTreeField | undefined {
