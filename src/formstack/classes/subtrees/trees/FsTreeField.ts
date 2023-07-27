@@ -55,6 +55,18 @@ class FsTreeField extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
     return this._fieldId;
   }
 
+  private getNodesOfType<T extends AbstractFsTreeGeneric<any> | AbstractNode>(
+    objectType: any
+  ): T[] | null {
+    const nodeIds = this.getTreeNodeIdsAt(this.rootNodeId);
+    return nodeIds
+      .filter(
+        (subtreeId: any) =>
+          this.getChildContentAt(subtreeId) instanceof objectType
+      )
+      .map((subtreeId) => this.getChildContentAt(subtreeId)) as T[];
+  }
+
   private getSingleTreeOfType<
     T extends AbstractFsTreeGeneric<any> | AbstractNode
   >(objectType: any): T | null {
@@ -80,9 +92,17 @@ class FsTreeField extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
   }
 
   public getVisibilityNode(): FsFieldVisibilityLinkNode | null {
-    return this.getSingleTreeOfType<FsFieldVisibilityLinkNode>(
+    const visibilityNodes = this.getNodesOfType<FsFieldVisibilityLinkNode>(
       FsFieldVisibilityLinkNode
     );
+
+    if (!visibilityNodes || visibilityNodes?.length === 0) {
+      return null;
+    }
+    if (visibilityNodes && visibilityNodes?.length > 1) {
+      return null;
+    }
+    return visibilityNodes.pop() || null;
   }
 
   protected getCalcStringTree(): FsTreeCalcString | null {

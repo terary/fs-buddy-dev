@@ -3,6 +3,8 @@ import { TFsFieldAnyJson } from "../types";
 import { FsTreeField } from "./trees/FsTreeField";
 import circularAndInterdependentJson from "../../../test-dev-resources/form-json/5375703.json";
 import { TFsFieldAny } from "../../type.field";
+import { FsTreeLogic } from "./trees/FsTreeLogic";
+import { FsCircularDependencyNode } from "./trees/nodes/FsCircularDependencyNode";
 
 describe("FsTreeFieldCollection", () => {
   describe("Creation", () => {
@@ -55,7 +57,7 @@ describe("FsTreeFieldCollection", () => {
     });
   });
   describe(".getFieldsBySection()", () => {
-    it.only("Should be awesome", () => {
+    it("Should be awesome", () => {
       const tree = FsTreeFieldCollection.fromFieldJson(
         circularAndInterdependentJson.fields as unknown as TFsFieldAnyJson[]
       );
@@ -76,6 +78,85 @@ describe("FsTreeFieldCollection", () => {
         ].sort()
       );
       console.log({ tree, fieldsInSection });
+    });
+  });
+  describe("aggregateLogicTree", () => {
+    it("Should return the full tree.", () => {
+      // two leafs
+      const tree = FsTreeFieldCollection.fromFieldJson(
+        circularAndInterdependentJson.fields as unknown as TFsFieldAnyJson[]
+      );
+
+      const agInterdependentSection = tree.aggregateLogicTree(
+        "148509465"
+      ) as FsTreeLogic;
+
+      const agTreeCircularRefA = tree.aggregateLogicTree(
+        "148456734"
+      ) as FsTreeLogic;
+
+      const agTreeCircularRefB = tree.aggregateLogicTree(
+        "148456742"
+      ) as FsTreeLogic;
+
+      const agBigDipper = tree.aggregateLogicTree("148604161") as FsTreeLogic;
+      const agLittleDipperCircular = tree.aggregateLogicTree(
+        "148604236"
+      ) as FsTreeLogic;
+
+      // // These are not getting loaded in correctly.
+      // // the logic . checks are never internalized, its always the same rootNodeContent
+
+      const circularRefNodesA = agTreeCircularRefA.getCircularLogicNodes();
+      expect(circularRefNodesA.length).toEqual(1);
+      expect(circularRefNodesA[0]).toBeInstanceOf(FsCircularDependencyNode);
+      expect(circularRefNodesA[0]._dependentChainFieldIds).toStrictEqual([
+        "148456734",
+        "148456742",
+        "148456741",
+        "148456740",
+        "148456739",
+        "148456734",
+      ]);
+      const circularRefNodesB = agTreeCircularRefB.getCircularLogicNodes();
+      expect(circularRefNodesB[0]._dependentChainFieldIds).toStrictEqual([
+        "148456742",
+        "148456741",
+        "148456740",
+        "148456739",
+        "148456734",
+        "148456742",
+      ]);
+
+      const agBigDipperCircularRefNodes = agBigDipper.getCircularLogicNodes();
+      expect(
+        agBigDipperCircularRefNodes[0]._dependentChainFieldIds
+      ).toStrictEqual([
+        "148604161", // it's here in the list because big dipper's handle is 148604161
+        "148604236",
+        "148604235",
+        "148604234",
+        "148604236",
+      ]);
+
+      const agLittleDipperCircularRefNodes =
+        agLittleDipperCircular.getCircularLogicNodes();
+      expect(
+        agLittleDipperCircularRefNodes[0]._dependentChainFieldIds
+      ).toStrictEqual([
+        // "148604161", not in the list because chain starts after the handle
+        "148604236",
+        "148604235",
+        "148604234",
+        "148604236",
+      ]);
+
+      console.log({
+        agBigDipper,
+        agLittleDipperCircular,
+        agTreeCircularRefA,
+        agTreeCircularRefB,
+      });
     });
   });
 
