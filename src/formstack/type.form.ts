@@ -1,5 +1,6 @@
 type TNumberiBoolean = "0" | "1";
 import type { TFsFieldAny } from "./type.field";
+
 type TApiFormJson = {
   created: string; //"2023-07-04 06:04:24";
   db: number; // "1";

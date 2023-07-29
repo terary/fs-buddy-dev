@@ -1,7 +1,7 @@
 // aka service worker
 
 console.log("hello from background.js");
-import { treeUtilities } from "../fs-goof/extension-interface";
+import { treeUtilities } from "../chrome-extension-interface/extension-interface";
 import { TreeManager } from "../common/TreeManager";
 // @ts-ignore 'oninstall' not on Window
 // self.oninstall = () => {
@@ -25,6 +25,21 @@ chrome.runtime.onMessage.addListener(function (
         .getTree(apiKey, fetchFormId)
         .then((treeJson: any) => {
           senderResponse(treeJson);
+        })
+        .catch((e) => {
+          console.log("Failed to GetFormAsJson");
+          console.log(e);
+          senderResponse(e);
+        });
+      break;
+    case "GetFieldIdsWithLogic":
+      TreeManager.getInstance()
+        .getTree(apiKey, fetchFormId)
+        .then((treeJson: any) => {
+          const fieldIdsWithLogic = TreeManager.getInstance()
+            .getFieldLogicService()
+            .getFieldIdsWithLogic();
+          senderResponse({ fieldIdsWithLogic });
         })
         .catch((e) => {
           console.log("Failed to GetFormAsJson");

@@ -1,5 +1,9 @@
 import { ITree } from "predicate-tree-advanced-poc/dist/src";
-const getFormJsonFromApi = async (message: any) => {
+import { FsTreeFieldCollection } from "../formstack";
+import { TApiFormJson } from "../formstack/type.form";
+import { FormstackBuddy } from "../FormstackBuddy/FormstackBuddy";
+import { FieldLogicService } from "../FormstackBuddy/FieldLogicService";
+const getFormJsonFromApi = async (message: any): Promise<TApiFormJson> => {
   const { apiKey, formId } = message;
 
   return new Promise((resolve, reject) => {
@@ -36,24 +40,34 @@ const getFormJsonFromApi = async (message: any) => {
   });
 };
 
-type TFsFormJson = any;
+type x_TFsFormJson = any;
 
 class TreeManager {
   static #instance: TreeManager;
 
-  private _formTrees: { [formId: string]: TFsFormJson } = {};
+  private _formTrees: { [formId: string]: TApiFormJson } = {};
+  private _fieldLogicService!: FieldLogicService;
   private constructor() {}
 
-  addTree(fieldId: string, formJson: TFsFormJson) {
+  addTree(fieldId: string, formJson: TApiFormJson) {
     this._formTrees[fieldId] = formJson;
   }
 
-  async getTree(apiKey: string, formId: string): Promise<TFsFormJson> {
+  getFieldLogicService() {
+    return this._fieldLogicService;
+  }
+
+  async getTree(apiKey: string, formId: string): Promise<TApiFormJson> {
     if (this._formTrees[formId]) {
       return Promise.resolve(this._formTrees[formId]);
     } else {
       const formJson = await getFormJsonFromApi({ apiKey, formId });
       this._formTrees[formId] = formJson;
+      this._fieldLogicService =
+        FormstackBuddy.getInstance().getFieldLogicService(
+          formJson.fields || []
+        );
+
       return this._formTrees[formId];
     }
   }

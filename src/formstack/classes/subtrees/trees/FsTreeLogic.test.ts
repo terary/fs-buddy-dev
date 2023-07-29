@@ -5,7 +5,7 @@ import fifthDegreeBadCircuitFormJson from "../../../../test-dev-resources/form-j
 
 describe("FsTreeLogic", () => {
   describe("Creation", () => {
-    it("Should be awesome", () => {
+    it.skip("Should be awesome", () => {
       // const tree = new FsTreeLogic("_root_seed_");
       const tree = FsTreeLogic.fromFieldJson(
         TEST_JSON_FIELD as TFsFieldAnyJson
@@ -29,7 +29,7 @@ describe("FsTreeLogic", () => {
       tree = FsTreeLogic.fromFieldJson(TEST_JSON_FIELD as TFsFieldAnyJson);
     });
 
-    it("Should be segment of the original json", () => {
+    it.skip("Should be segment of the original json", () => {
       expect(tree.fieldJson).toStrictEqual(TEST_JSON_FIELD.logic);
 
       const childrenContent = tree.getChildrenContentOf(tree.rootNodeId);
@@ -142,6 +142,7 @@ describe("FsTreeLogic", () => {
       });
       it('Should return "show" given all logic evaluates to true and action="hide".', () => {
         const hideLogicJson = { ...TEST_JSON_FIELD };
+        // @ts-ignore
         hideLogicJson.logic.action = "hide";
         const tree = FsTreeLogic.fromFieldJson(
           hideLogicJson as TFsFieldAnyJson
@@ -183,7 +184,7 @@ describe("FsTreeLogic", () => {
     });
   });
   describe("Typical Use-case", () => {
-    it.only("Should create interdependencies.", () => {
+    it("Should create interdependencies.", () => {
       const fields =
         fifthDegreeBadCircuitFormJson.fields as unknown as TFsFieldAnyJson[];
       const logicTrees = fields

@@ -1,7 +1,7 @@
 class FsCircularDependencyNode {
   _sourceFieldId: string;
   _targetFieldId: string;
-  _dependentChainFieldIds: string[];
+  private _dependentChainFieldIds: string[];
 
   constructor(
     sourceFieldId: string,
@@ -11,6 +11,14 @@ class FsCircularDependencyNode {
     this._sourceFieldId = sourceFieldId;
     this._targetFieldId = targetFieldId;
     this._dependentChainFieldIds = dependentChainFieldIds;
+  }
+
+  get dependentChainFieldIds() {
+    return [
+      this._sourceFieldId,
+      ...this._dependentChainFieldIds.slice(),
+      this._targetFieldId,
+    ];
   }
 }
 export { FsCircularDependencyNode };

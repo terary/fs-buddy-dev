@@ -1,5 +1,5 @@
 import { TFsFieldAny } from "./type.field";
-import { FieldTreeCollection } from "./FieldTreeCollection";
+import { FsTreeFieldCollection } from "./classes/subtrees";
 import type { TApiFormJson } from "./type.form";
 class FormAsTree {
   #viewKey!: string;
@@ -10,7 +10,7 @@ class FormAsTree {
   #is_workflow_form!: boolean;
   #has_approvers!: boolean;
   #edit_url!: string;
-  #fields!: FieldTreeCollection;
+  #fields!: FsTreeFieldCollection;
 
   get name() {
     return this.#name;
@@ -20,19 +20,20 @@ class FormAsTree {
     return this.#name;
   }
 
-  static fromJson(json: Partial<TApiFormJson>): FormAsTree {
-    const formTree = new FormAsTree();
-    formTree.#edit_url = json.edit_url || "";
-    formTree.#fields = FieldTreeCollection.fromJson(json.fields || []);
-    formTree.#has_approvers = json.has_approvers || false;
-    formTree.#id = json.id || "";
-    formTree.#is_workflow_form = json.is_workflow_form || false;
-    formTree.#name = json.name || "";
-    formTree.#should_display_one_question_at_a_time =
-      json.should_display_one_question_at_a_time || false;
-    formTree.#url = json.url || "";
-    formTree.#viewKey = json.viewkey || "";
+  static fromJson(json: Partial<TApiFormJson>): FsTreeFieldCollection {
+    return FsTreeFieldCollection.fromFieldJson(json.fields || []);
+    // const formTree = new FormAsTree();
+    // formTree.#edit_url = json.edit_url || "";
+    // formTree.#fields = FsTreeFieldCollection.fromJson(json.fields || []);
+    // formTree.#has_approvers = json.has_approvers || false;
+    // formTree.#id = json.id || "";
+    // formTree.#is_workflow_form = json.is_workflow_form || false;
+    // formTree.#name = json.name || "";
+    // formTree.#should_display_one_question_at_a_time =
+    //   json.should_display_one_question_at_a_time || false;
+    // formTree.#url = json.url || "";
+    // formTree.#viewKey = json.viewkey || "";
 
-    return formTree;
+    // return formTree;
   }
 }

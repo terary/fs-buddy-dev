@@ -3,7 +3,6 @@ import {
   IExpressionTree,
 } from "predicate-tree-advanced-poc/dist/src";
 import { TFsFieldAnyJson } from "../../types";
-import { AbstractFsTreeGeneric } from "./AbstractFsTreeGeneric";
 import type {
   TFsFieldLogicCheckLeaf,
   TFsFieldLogicCheckLeafJson,
@@ -13,7 +12,7 @@ import type {
   TFsLogicNodeJson,
   TFsVisibilityModes,
 } from "../types";
-import { FsCircularDependencyNode } from "./nodes/FsCircularDependencyNode";
+import { AbstractFsTreeLogic } from "./AbstractFsTreeLogic";
 
 const andReducer = (prev: boolean | null, cur: boolean | null) => {
   return prev && cur;
@@ -23,23 +22,15 @@ const orReducer = (prev: boolean | null, cur: boolean | null) => {
   return prev || cur;
 };
 
-class FsTreeLogic extends AbstractFsTreeGeneric<TFsLogicNode> {
-  private _dependantFieldIds: string[] = [];
-  private _action!: TFsVisibilityModes;
-  private _ownerFieldId!: string;
+class FsTreeLogic extends AbstractFsTreeLogic<TFsLogicNode> {
   public _debug_visitedFieldIds: string[] = []; // this maybe better as getChildren(filter)
+
   createSubtreeAt(nodeId: string): IExpressionTree<TFsLogicNode> {
     // *tmc* needs to make this a real thing, I guess: or add it to the abstract?
     return new FsTreeLogic();
   }
 
   evaluateWithValues<T>(values: { [fieldId: string]: any }): T | undefined {
-    // We can get away with not doing a full descend because FS doesn't
-    // branch at this point (though a full branch would be good)
-    // -------
-    // We *should* be doing getField('...').evaluate({}) === inputValue  -- this may spawn into bunches of stuff.  Maybe best not use getField().evaluate
-    //     or evaluateNoSpawn() ? getField().evaluate spawn because it's 'fieldTree' we need another thing that getFieldNode(...) which should not spawn
-    //     the evaluate is important because the field maybe produce and or dropdown, the fields - knows the rules to evaluate itself
     const parent = this.getChildContentAt(
       this.rootNodeId
     ) as TFsFieldLogicJunction;
@@ -73,26 +64,7 @@ class FsTreeLogic extends AbstractFsTreeGeneric<TFsLogicNode> {
     return this.evaluateWithValues<boolean>(values) ? this.action : null;
   }
 
-  getCircularLogicNodes(): FsCircularDependencyNode[] {
-    return this.findAllNodesOfType<FsCircularDependencyNode>(
-      FsCircularDependencyNode
-    );
-  }
-
-  get action(): TFsVisibilityModes {
-    // FS
-    return this._action;
-  }
-
-  set ownerFieldId(value: string) {
-    this._ownerFieldId = value;
-  }
-
-  get ownerFieldId() {
-    return this._ownerFieldId;
-  }
-
-  setActionAndOwnerFieldIDAndJson(
+  x_setActionAndOwnerFieldIDAndJson(
     action: TFsVisibilityModes = "Show",
     fieldJson: TFsFieldLogicJunctionJson,
     ownerFieldId: string
@@ -103,9 +75,6 @@ class FsTreeLogic extends AbstractFsTreeGeneric<TFsLogicNode> {
     this._fieldJson = fieldJson;
     this._ownerFieldId = ownerFieldId;
   }
-  getDependantFieldIds(): string[] {
-    return this._dependantFieldIds.slice();
-  }
 
   static fromFieldJson(fieldJson: TFsFieldAnyJson): FsTreeLogic {
     // we should be receiving fieldJson.logic, but the Abstract._fieldJson is not typed properly
@@ -115,11 +84,11 @@ class FsTreeLogic extends AbstractFsTreeGeneric<TFsLogicNode> {
     const logicJson: TFsLogicNodeJson =
       fieldJson.logic as TFsFieldLogicJunctionJson;
     const { action, conditional } = logicJson;
-    const rootNode: TFsFieldLogicJunctionJson = {
-      action,
+    const rootNode = {
+      fieldId: fieldJson.id || "__MISSING_ID__",
       conditional,
-      fieldJson: logicJson,
-      checks: undefined, // we won't use this,  this becomes children
+      action: action || "Show", // *tmc* shouldn't be implementing business logic here
+      logicJson,
     };
 
     const tree = new FsTreeLogic(
@@ -134,10 +103,11 @@ class FsTreeLogic extends AbstractFsTreeGeneric<TFsLogicNode> {
       tree.fieldJson as TFsFieldLogicJunctionJson
     );
 
-    leafExpressions.forEach((childNode: any) => {
-      tree.appendChildNodeWithContent(tree.rootNodeId, childNode);
-      // should this be done at a different level. I mean calculated?
-      tree._dependantFieldIds.push(childNode.fieldId);
+    leafExpressions.forEach((childNode: TFsLogicNode) => {
+      const { condition, fieldId, option } =
+        childNode as TFsFieldLogicCheckLeaf;
+      const leafNode = { fieldId, condition, option };
+      tree.appendChildNodeWithContent(tree.rootNodeId, leafNode);
     });
 
     return tree;
@@ -145,9 +115,6 @@ class FsTreeLogic extends AbstractFsTreeGeneric<TFsLogicNode> {
 
   static createSubtreeFromFieldJson<T>(
     rootTree: FsTreeLogic,
-
-    // rootTree: FsTreeFieldCollection,
-
     targetRootId: string,
     fieldJson: TFsFieldAnyJson,
     subtreeConstructor?:
@@ -162,7 +129,6 @@ class FsTreeLogic extends AbstractFsTreeGeneric<TFsLogicNode> {
 
     const { action, conditional } = logicJson;
 
-    // ----------------
     (subtree as FsTreeLogic)._action = action || null;
     (subtree as FsTreeLogic)._fieldJson = logicJson;
 
@@ -172,13 +138,13 @@ class FsTreeLogic extends AbstractFsTreeGeneric<TFsLogicNode> {
       fieldJson: logicJson,
       checks: undefined, // we won't use this,  this becomes children
     };
+
     subtree.replaceNodeContent(
       subtree.rootNodeId,
       // @ts-ignore Junction not a node type
       rootNode as TFsFieldLogicJunction
     );
 
-    // ----------------
     const subtreeParentNodeId = rootTree.appendChildNodeWithContent(
       targetRootId,
       subtree as FsTreeLogic
@@ -200,27 +166,9 @@ class FsTreeLogic extends AbstractFsTreeGeneric<TFsLogicNode> {
 
     leafExpressions.forEach((childNode: any) => {
       subtree.appendChildNodeWithContent(subtree.rootNodeId, childNode);
-      // this shouldn't be necessary any more
-      // subtree._dependantFieldIds.push(childNode.fieldId);
     });
 
     return subtree as T;
-  }
-
-  static x_createSubtreeFromFieldJson<FsTreeCalcString>(
-    targetRootId: string,
-    fieldJson: TFsFieldAnyJson,
-    subtreeConstructor?:
-      | ((rootIdSeed: string, fieldJson: TFsFieldAnyJson) => FsTreeCalcString)
-      | undefined
-  ): FsTreeLogic {
-    // before you fix this....
-    // I *think* this should be in a super class and shared with 'calcString' subtree
-    const tree = FsTreeLogic.fromFieldJson(fieldJson);
-
-    // this isn't a subtree
-
-    return tree;
   }
 }
 

@@ -1,5 +1,6 @@
+import { FsTreeField } from "./trees";
 import { FsCircularDependencyNode } from "./trees/nodes/FsCircularDependencyNode";
-import { FsMaxDepthExceeded } from "./trees/nodes/FsMaxDepthExceeded";
+import { FsMaxDepthExceededNode } from "./trees/nodes/FsMaxDepthExceededNode";
 
 type TFsArithmeticOperator = { operator: "+" | "*" | "-" | "/" };
 type TFsArithmeticLeaf = {
@@ -37,7 +38,12 @@ type TFsFieldLogicJunction = {
   fieldJson: any;
   action: TFsVisibilityModes;
   conditional: "all" | "any";
+  ownerFieldId: string;
   // checks: null | TFsFieldLogicCheckLeaf[];
+};
+type TTreeFieldNode = {
+  fieldId: string;
+  field: FsTreeField;
 };
 
 type TFsFieldLogicJunctionJson = Partial<TFsFieldLogicJunction> & {
@@ -48,7 +54,7 @@ type TFsLogicNode =
   | TFsFieldLogicJunction
   | TFsFieldLogicCheckLeaf
   | FsCircularDependencyNode
-  | FsMaxDepthExceeded;
+  | FsMaxDepthExceededNode;
 type TFsLogicNodeJson = TFsFieldLogicJunctionJson | TFsFieldLogicCheckLeafJson;
 
 type TSimpleDictionary<T> = {
@@ -65,6 +71,7 @@ export type {
   TFsLogicNodeJson,
   TFsVisibilityModes,
   TSimpleDictionary,
+  TTreeFieldNode,
   // TLogicNode,
   // TLogicNodeJson,
 };

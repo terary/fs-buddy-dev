@@ -70,6 +70,81 @@
   
     </style>
   <script>
+    window.onmessage = function(e) {
+    // listen/receive message  
+      switch(e.data.messageType) {
+        case 'addCssClassToFieldIdList':
+          addCssClassToFields(e.data.payload.cssClassName, e.data.payload.fieldIds)
+          break;
+        case 'removeClassFromFieldIdList':
+          removeCssClassFromFields(e.data.payload.cssClassName, e.data.payload.fieldIds)
+          break;
+          
+        case 'getFieldStatusesResponse': 
+          handelGetFieldStatusesResponse(e.data.payload)
+        break;
+
+
+        case 'pong':
+          console.log({ping:'pong', message: e.data.payload});
+          break;
+
+        case 'removeAllClassName':
+          removeAllCssName(e.data.payload.cssClassName)
+          break;
+        // case 'getFieldStatuses':
+        //   processFieldStatuses(e.data.payload.statusMessages)
+        //   break;
+        case 'getFieldsWithLogicResponse':
+          handleGetFieldsWithLogicResponse(e.data.payload)
+          break;
+        case 'getFieldLogicDependentsResponse':
+          handleGetFieldLogicDependentsResponse(e.data.payload)
+          break;
+
+          
+      }
+      console.log({'messageReceived': e})
+    };
+
+    function sendMessageToParent(messageType, payload){
+      let message;
+      switch(messageType){
+        case 'getFieldsWithLogicRequest':
+            message = {
+              messageType: "getFieldsWithLogicRequest",
+              payload: 'ping'
+            }
+          break;
+          
+          case 'removeFsBuddyRequest':
+            message = {
+              messageType: "removeFsBuddyRequest",
+              payload:  null
+            }
+          break;
+//getFieldStatuses
+          case 'getFieldStatusesRequest':
+            message = {
+              messageType: "getFieldStatusesRequest",
+              payload: payload || null
+            }
+          break;
+          case 'getFieldLogicDependentsRequest':
+            message = {
+              messageType: "getFieldLogicDependentsRequest",
+              payload: payload || null
+            }
+          break;
+        default:
+          message = {
+            messageType: "ping",
+            payload: 'ping'
+          }
+      }
+
+      window.top.postMessage(message, '*')
+		}
 
       const addCssClassToFields = (cssClassName, fieldIds) => {
         console.log({function:'addCssClassToFields', cssClassName, fieldIds})
@@ -91,11 +166,47 @@
               fieldContainer.classList.remove(cssClassName);        
           });
       }
+
+
+
+      const handleGetFieldStatusClick = ()=>{
+        sendMessageToParent('getFieldStatusesRequest', {})
+      }
+
+      const handleFieldIdSelected = (selectElementId, selectedValue)=>{
+        console.log({selectElementId, selectedValue})
+        sendMessageToParent('getFieldLogicDependentsRequest', {fieldId: selectedValue})
+      }
+ 
+      const handleGetFieldsWithLogicResponse = (fieldIds) => {
+        const divWithSelect = optionListToSelectElement('selectFieldIdWithLogic', handleFieldIdSelected, fieldIds.fieldIds)
+        const logicBuddyContainer = document.getElementById('fsBuddyControlPanelLogic');
+        logicBuddyContainer.appendChild(divWithSelect);
+        console.log('Load FieldIds'); 
+        console.log({fieldIds});
+      }
+
       const removeAllCssName = (cssClassName) => {
         document.querySelectorAll(`.${cssClassName}`).forEach(el=>{
             el.classList.remove(cssClassName);
         })    
       }
+
+      const handleGetFieldLogicDependentsResponse = (payload)=>{
+        removeAllCssName('fsHidden')
+        removeAllCssName('fsBuddy_lightblue')
+        addCssClassToFields('fsBuddy_lightblue', payload.fieldIds)
+
+        console.log({message: 'show these, hide others', payload})
+      }
+
+      const handelGetFieldStatusesResponse = (payload)=>{
+        const {statusMessages} = payload || {};
+        Object.entries(statusMessages).forEach(([fieldId, statusMessages])=>{
+          appendFieldStatusContainer(fieldId, statusMessages.statusMessages)
+        })
+      }
+
 // -----------------------------------
       const SEVERITIES = {
         error: 0,
@@ -228,8 +339,37 @@
 
       }
 
+      function optionListToSelectElement(elementId, onSelectHandler, options){
+        if(!Array.isArray(options)) {
+          console.log({message: 'options not an array', options});
+          return
+        }
+
+
+        const div = document.createElement('div');
+        div.id = `${elementId}-container`;
+        const selectHandlerWrapper = (evt)=>{
+            onSelectHandler(evt.target.id, evt.target.value)
+        }
+            
+        const theSelect = document.createElement('select');
+        (options || []).forEach(option=>{
+            const theOption = document.createElement('option');
+            theOption.value = option.value;
+            theOption.innerText = option.label;
+            theSelect.appendChild(theOption);
+        })
+        theSelect.onchange = selectHandlerWrapper;
+        theSelect.id = elementId;
+        div.appendChild(theSelect)
+        return div;
+      }
+
+
 // -----------------------------------
-      const processFieldStatuses = (statusMessages)=>{
+// this creates the window?
+
+      const buildFsBuddyControlPanel = ()=>{
         document.getElementById('fsBuddyFieldStatusesContainer') && document.getElementById('fsBuddyFieldStatusesContainer').remove()
 
         const theBody = document.querySelector('body');
@@ -238,68 +378,98 @@
         fsBuddyFieldStatusesContainer.id='fsBuddyFieldStatusesContainer'
         theBody.prepend(fsBuddyFieldStatusesContainer);
 
-        const removeFsBuddyFieldStatusContainersButton = document.createElement('button');
-        removeFsBuddyFieldStatusContainersButton.innerText = 'Remove Status Containers';
-        removeFsBuddyFieldStatusContainersButton.onclick = (e)=>{
-          e.stopPropagation();
-          removeFsBuddyStatusContainers();
-          return false;
-        };
-        fsBuddyFieldStatusesContainer.prepend(removeFsBuddyFieldStatusContainersButton);
+        // const removeFsBuddyFieldStatusContainersButton = document.createElement('button');
+        // removeFsBuddyFieldStatusContainersButton.innerText = 'Remove Status Containers';
+        // removeFsBuddyFieldStatusContainersButton.onclick = (e)=>{
+        //   e.stopPropagation();
+        //   removeFsBuddyStatusContainers();
+        //   return false;
+        // };
+        // fsBuddyFieldStatusesContainer.prepend(removeFsBuddyFieldStatusContainersButton);
 
-        const expandFsBuddyFieldStatusItemsButton = document.createElement('button');
-        expandFsBuddyFieldStatusItemsButton.innerText = 'Expand Field Status Items';
-        expandFsBuddyFieldStatusItemsButton.onclick = (e)=>{
-                e.stopPropagation();
-                expandAllFsBuddyStatusItems();
-                return false;
-        };
-        fsBuddyFieldStatusesContainer.prepend(expandFsBuddyFieldStatusItemsButton);
+        // const expandFsBuddyFieldStatusItemsButton = document.createElement('button');
+        // expandFsBuddyFieldStatusItemsButton.innerText = 'Expand Field Status Items';
+        // expandFsBuddyFieldStatusItemsButton.onclick = (e)=>{
+        //         e.stopPropagation();
+        //         expandAllFsBuddyStatusItems();
+        //         return false;
+        // };
+        // fsBuddyFieldStatusesContainer.prepend(expandFsBuddyFieldStatusItemsButton);
 
-        const collapseFsBuddyFieldStatusItemsButton = document.createElement('button');
-        collapseFsBuddyFieldStatusItemsButton.innerText = 'Collapse Field Status Items';
-        collapseFsBuddyFieldStatusItemsButton.onclick = (e)=>{
-                e.stopPropagation();
-                collapseAllFsBuddyStatusItems();
-                return false;
-        };
-        fsBuddyFieldStatusesContainer.prepend(collapseFsBuddyFieldStatusItemsButton);
+        // const collapseFsBuddyFieldStatusItemsButton = document.createElement('button');
+        // collapseFsBuddyFieldStatusItemsButton.innerText = 'Collapse Field Status Items';
+        // collapseFsBuddyFieldStatusItemsButton.onclick = (e)=>{
+        //         e.stopPropagation();
+        //         collapseAllFsBuddyStatusItems();
+        //         return false;
+        // };
+        // fsBuddyFieldStatusesContainer.prepend(collapseFsBuddyFieldStatusItemsButton);
 
+        // const fieldsWithLogicButton = document.createElement('button');
+        // fieldsWithLogicButton.innerText = 'Get Fields With Logic';
+        // fieldsWithLogicButton.onclick = (e)=>{
+        //     sendMessageToParent('getFieldsWithLogicRequest')
+        //     console.log('Get Field IDs of fields With Logic.')
+        //       // e.stopPropagation();
+        //         // collapseAllFsBuddyStatusItems();
+        //         return false;
+        // };
+        // fsBuddyFieldStatusesContainer.prepend(fieldsWithLogicButton);
+      }
 
-
-        Object.entries(statusMessages).forEach(([fieldId, statusMessages])=>{
-          appendFieldStatusContainer(fieldId, statusMessages.statusMessages)
-        })
-     }
+    //   const processFieldStatuses = (statusMessages)=>{
+    //     Object.entries(statusMessages).forEach(([fieldId, statusMessages])=>{
+    //       appendFieldStatusContainer(fieldId, statusMessages.statusMessages)
+    //     })
+    //  }
     
-      window.onmessage = function(e) {
-        switch(e.data.messageType) {
-          case 'addCssClassToFieldIdList':
-            addCssClassToFields(e.data.payload.cssClassName, e.data.payload.fieldIds)
-            break;
-          case 'removeClassFromFieldIdList':
-            removeCssClassFromFields(e.data.payload.cssClassName, e.data.payload.fieldIds)
-            break;
-          case 'removeAllClassName':
-            removeAllCssName(e.data.payload.cssClassName)
-            break;
-          case 'getFieldStatuses':
-            processFieldStatuses(e.data.payload.statusMessages)
-            break;
-        }
-			  console.log({'messageReceived': e})
-  		};
+     document.addEventListener("DOMContentLoaded",()=>{
+      buildFsBuddyControlPanel()
+     })
 
-    function sendMessageToParent(){
-			const response={
-				thePayload: 'goes here',
-				anything: 'will do'
-			}
-			window.top.postMessage(response, '*')
-		}
-		</script>
+
+     function removeFsBuddy(){
+      sendMessageToParent('removeFsBuddyRequest')
+     }
+
+    function showOnly(showPanelId){
+      [
+        'fsBuddyControlPanelLogic', 
+        'fsBuddyControlPanelFieldStatus'
+      ].forEach(panelId=>{
+        document.getElementById(panelId).style.display = "none";
+      })
+        document.getElementById(showPanelId).style.display = "block";
+          
+          
+    }
+	</script>
 	</head>
-	<body>The Child	
-		<button onclick="sendMessageToParent()">Send Message to Parent</button>
+	<body>
+    <div id="fsBuddyControllPannel">
+      FS Buddy Control Panel
+      <button onclick="removeFsBuddy()">Remove FS Buddy</button>
+      <button onclick="showOnly('fsBuddyControlPanelLogic')">Work with Logic</button>
+      <button onclick="showOnly('fsBuddyControlPanelFieldStatus')">Work with Field Messages</button>
+  
+      <div id='fsBuddyControlPanelLogic'>
+            <h3>Logic</h3>
+            Put some logic stuff in here<br />
+            <button onclick="sendMessageToParent('getFieldsWithLogicRequest')">Get Fields With Logic</button>
+
+      </div>
+      <div id='fsBuddyControlPanelFieldStatus'>
+            <h3>Field Status</h3>
+            Put some field status in here<br />
+            <button onclick="handleGetFieldStatusClick()">Get Field Statuses</button>&nbsp;&nbsp;&nbsp;
+            <button onclick="collapseAllFsBuddyStatusItems()">Collapse Statuses</button>&nbsp;&nbsp;&nbsp;
+            <button onclick="expandAllFsBuddyStatusItems()">Expand Statuses</button><br />
+            <button onclick="removeFsBuddyStatusContainers()">Remove Status Containers</button><br />
+            
+            <button onclick="removeAllCssName('fsHidden')">Remove All fsHidden</button><br />
+            <button onclick="removeAllCssName('fsBuddy_obscure'); removeAllCssName('fsBuddy_lightblue');removeAllCssName('fsBuddy_lightgreen');">Remove All fsBuddy</button><br />
+      </div>
+    </div>
+    
 	</body>
 </html>

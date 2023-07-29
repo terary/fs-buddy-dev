@@ -1,0 +1,47 @@
+<html>
+    <head>
+
+
+        <script>
+            const optionList = [
+                {value: 1, label: "One"},
+                {value: 2, label: "Two"},
+                {value: 3, label: "Three"}
+            ]
+
+            function optionListToSelectElement(elementId, onSelectHandler, options){
+                const div = document.createElement('div');
+                div.id = `${elementId}-container`;
+                const selectHandlerWrapper = (evt)=>{
+                    onSelectHandler(evt.target.id, evt.target.value)
+                }
+                    
+                const theSelect = document.createElement('select');
+                (options || []).forEach(option=>{
+                    const theOption = document.createElement('option');
+                    theOption.value = option.value;
+                    theOption.innerText = option.label;
+                    theSelect.appendChild(theOption);
+                })
+                theSelect.onchange = selectHandlerWrapper;
+                theSelect.id = elementId;
+                div.appendChild(theSelect)
+                return div;
+            }
+
+            function handleSelect(selectElementId, selectedValue){
+                console.log({selectElementId, selectedValue})
+            }
+
+            function onLoadWindow(){
+                const theBody = document.querySelector('body');
+                theBody.appendChild(optionListToSelectElement('theSelectElement', handleSelect, optionList))
+            }
+            window.addEventListener('DOMContentLoaded', onLoadWindow);
+        </script>
+        
+
+    </head>
+    <body></body>
+</html>
+

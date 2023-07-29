@@ -153,7 +153,7 @@ class FsFormAsDirectedGraph extends AbstractDirectedGraph<TFieldLogic> {
     fields: { id: string; logic: { checks: any[] } }[];
   }): FsFormAsDirectedGraph {
     const formTree = new FsFormAsDirectedGraph();
-    formJson.fields.forEach((field) => {
+    (formJson.fields || []).forEach((field) => {
       formTree._childFields[field.id] =
         formTree.createSubtreeAt<FsFormAsDirectedGraph>(formTree.rootNodeId);
 

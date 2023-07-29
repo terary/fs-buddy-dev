@@ -5,17 +5,16 @@ import {
 import { TFsFieldAnyJson, TFsNode } from "../../types";
 import { FsTreeCalcString } from "./FsTreeCalcString";
 import { FsTreeLogic } from "./FsTreeLogic";
-import { FsFieldRootNode } from "./nodes/FsFieldRootNode";
 import { FsFieldVisibilityLinkNode } from "./nodes/FsFieldVisibilityLinkNode";
 import { AbstractFsTreeGeneric } from "./AbstractFsTreeGeneric";
 import { TFsVisibilityModes } from "../types";
 import { MultipleLogicTreeError } from "../../../errors/MultipleLogicTreeError";
 import { FsCircularDependencyNode } from "./nodes/FsCircularDependencyNode";
 import { AbstractNode } from "./nodes/AbstractNode";
+import { TFsFieldAny, TFsFieldSection } from "../../../type.field";
 type TSubtrees = FsTreeCalcString | FsTreeLogic;
 
 type TFsFieldTreeNodeTypes =
-  | FsFieldRootNode
   | FsTreeCalcString
   | FsTreeLogic
   | FsFieldVisibilityLinkNode
@@ -53,6 +52,18 @@ class FsTreeField extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
 
   get fieldId() {
     return this._fieldId;
+  }
+
+  get fieldType() {
+    return (this._fieldJson as TFsFieldAny)["type"];
+  }
+
+  get section_heading() {
+    return (this._fieldJson as TFsFieldSection)["section_heading"];
+  }
+
+  get label() {
+    return (this._fieldJson as Partial<TFsFieldAny>)["label"];
   }
 
   private getNodesOfType<T extends AbstractFsTreeGeneric<any> | AbstractNode>(
@@ -147,17 +158,6 @@ class FsTreeField extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
     }
     const thisLogic = this.getLogicTree();
     return [];
-    // - get all of my dependent
-    // - get all of my viewLink's dependents (this could create circular reference)
-    // const foreignDependentFieldIds = subjectField.getDependantFieldIds();
-    // const thisDependentFieldIds = [
-    //   this.fieldId,
-    //   ...this.getDependantFieldIds(),
-    // ];
-    // const interDependentFieldIds = thisDependentFieldIds.filter((fieldId) =>
-    //   foreignDependentFieldIds.includes(fieldId)
-    // );
-    // return interDependentFieldIds;
   }
 
   isLeaf(): boolean {
@@ -176,13 +176,14 @@ class FsTreeField extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
 
   static fromFieldJson(fieldJson: TFsFieldAnyJson): FsTreeField {
     const field = new FsTreeField("_FIELD_ID_", {
-      filedId: fieldJson.id,
+      // @ts-ignore
+      fieldId: fieldJson.id,
       label: fieldJson.label,
-      fieldJson: fieldJson,
+      fieldJson: fieldJson as TFsFieldAny,
     });
 
     field._fieldId = fieldJson.id || "_MISSING_ID_";
-    field._fieldJson = fieldJson;
+    field._fieldJson = fieldJson as TFsFieldAny;
 
     if (fieldJson.calculation) {
       const subtreeConstructor = (fieldJson: TFsFieldAnyJson) =>

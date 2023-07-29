@@ -46,18 +46,8 @@ describe("FsTreeFieldCollection", () => {
     });
   });
 
-  describe(".getRelations()", () => {
-    it("Should be awesome", () => {
-      const tree = FsTreeFieldCollection.fromFieldJson(
-        circularAndInterdependentJson.fields as unknown as TFsFieldAnyJson[]
-      );
-      const byFieldId = tree.getChildrenContentOf(tree.rootNodeId);
-
-      console.log({ tree });
-    });
-  });
   describe(".getFieldsBySection()", () => {
-    it("Should be awesome", () => {
+    it.only("Should be awesome", () => {
       const tree = FsTreeFieldCollection.fromFieldJson(
         circularAndInterdependentJson.fields as unknown as TFsFieldAnyJson[]
       );
@@ -86,23 +76,25 @@ describe("FsTreeFieldCollection", () => {
       const tree = FsTreeFieldCollection.fromFieldJson(
         circularAndInterdependentJson.fields as unknown as TFsFieldAnyJson[]
       );
+      const agInterdependentSection = tree.aggregateLogicTree("148509465");
+      const agTreeCircularRefA = tree.aggregateLogicTree("148456734");
+      const agTreeCircularRefB = tree.aggregateLogicTree("148456742");
 
-      const agInterdependentSection = tree.aggregateLogicTree(
-        "148509465"
-      ) as FsTreeLogic;
+      const agBigDipper = tree.aggregateLogicTree("148604161");
+      const agLittleDipperCircular = tree.aggregateLogicTree("148604236");
 
-      const agTreeCircularRefA = tree.aggregateLogicTree(
-        "148456734"
-      ) as FsTreeLogic;
+      // This matched the internal field dependencyIds
+      // there is a null to be resolve
+      // this *needs* to be subclassed maybe facade
+      // this requires stricter typing to work properly (intensive use of instance of)
+      const counts = {
+        agInterdependentSection: agInterdependentSection.getDependantFieldIds(),
+        agTreeCircularRefA: agTreeCircularRefA.getDependantFieldIds(),
+        agTreeCircularRefB: agTreeCircularRefB.getDependantFieldIds(),
+        agBigDipper: agBigDipper.getDependantFieldIds(),
+      };
 
-      const agTreeCircularRefB = tree.aggregateLogicTree(
-        "148456742"
-      ) as FsTreeLogic;
-
-      const agBigDipper = tree.aggregateLogicTree("148604161") as FsTreeLogic;
-      const agLittleDipperCircular = tree.aggregateLogicTree(
-        "148604236"
-      ) as FsTreeLogic;
+      console.log(counts);
 
       // // These are not getting loaded in correctly.
       // // the logic . checks are never internalized, its always the same rootNodeContent
@@ -110,7 +102,7 @@ describe("FsTreeFieldCollection", () => {
       const circularRefNodesA = agTreeCircularRefA.getCircularLogicNodes();
       expect(circularRefNodesA.length).toEqual(1);
       expect(circularRefNodesA[0]).toBeInstanceOf(FsCircularDependencyNode);
-      expect(circularRefNodesA[0]._dependentChainFieldIds).toStrictEqual([
+      expect(circularRefNodesA[0].dependentChainFieldIds).toStrictEqual([
         "148456734",
         "148456742",
         "148456741",
@@ -119,7 +111,7 @@ describe("FsTreeFieldCollection", () => {
         "148456734",
       ]);
       const circularRefNodesB = agTreeCircularRefB.getCircularLogicNodes();
-      expect(circularRefNodesB[0]._dependentChainFieldIds).toStrictEqual([
+      expect(circularRefNodesB[0].dependentChainFieldIds).toStrictEqual([
         "148456742",
         "148456741",
         "148456740",
@@ -130,7 +122,7 @@ describe("FsTreeFieldCollection", () => {
 
       const agBigDipperCircularRefNodes = agBigDipper.getCircularLogicNodes();
       expect(
-        agBigDipperCircularRefNodes[0]._dependentChainFieldIds
+        agBigDipperCircularRefNodes[0].dependentChainFieldIds
       ).toStrictEqual([
         "148604161", // it's here in the list because big dipper's handle is 148604161
         "148604236",
@@ -142,7 +134,7 @@ describe("FsTreeFieldCollection", () => {
       const agLittleDipperCircularRefNodes =
         agLittleDipperCircular.getCircularLogicNodes();
       expect(
-        agLittleDipperCircularRefNodes[0]._dependentChainFieldIds
+        agLittleDipperCircularRefNodes[0].dependentChainFieldIds
       ).toStrictEqual([
         // "148604161", not in the list because chain starts after the handle
         "148604236",

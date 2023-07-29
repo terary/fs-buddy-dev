@@ -1,8 +1,8 @@
 import { TFsFieldAny } from "../type.field";
-import { TLogicNodeJson } from "./subtrees/types";
+import type { TFsLogicNode } from "./subtrees/types";
 
 type TFsFieldAnyJson = Omit<Partial<TFsFieldAny>, "logic"> & {
-  logic: TLogicNodeJson;
+  logic: TFsLogicNode;
 };
 
 type TFsNode = {
