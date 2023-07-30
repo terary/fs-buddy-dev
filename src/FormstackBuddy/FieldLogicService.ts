@@ -60,6 +60,26 @@ class FieldLogicService {
     );
   }
 
+  getFieldIdsWithCircularReferences() {
+    return this._fieldCollection.getFieldIdsWithCircularLogic();
+  }
+
+  getCircularReferenceNodes(fieldId: string) {
+    return this._fieldCollection
+      .aggregateLogicTree(fieldId)
+      .getCircularLogicNodes();
+  }
+
+  getCircularReferenceFieldIds(fieldId: string) {
+    return this._fieldCollection
+      .aggregateLogicTree(fieldId)
+      .getCircularLogicNodes()
+      .map((circularNode) => circularNode.dependentChainFieldIds.slice(-2))
+      .reduce((prev, cur, i, a) => {
+        return [...prev, ...cur];
+      }, []);
+  }
+
   getFieldIdsExtendedLogicOf(fieldId: string): string[] {
     return this._fieldCollection
       .aggregateLogicTree(fieldId)

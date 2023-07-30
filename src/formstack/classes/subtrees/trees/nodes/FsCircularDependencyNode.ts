@@ -13,6 +13,9 @@ class FsCircularDependencyNode {
     this._dependentChainFieldIds = dependentChainFieldIds;
   }
 
+  getLastVisitedFieldId() {
+    return this._targetFieldId;
+  }
   get dependentChainFieldIds() {
     return [
       this._sourceFieldId,

@@ -89,6 +89,10 @@
         case 'removeAllClassName':
           removeAllCssName(e.data.payload.cssClassName)
           break;
+          
+        case 'getFieldsWithCircularLogicResponse':
+          handleGetFieldsWithCircularLogicResponse(e.data.payload)
+          break;
         case 'getFieldsWithLogicResponse':
           handleGetFieldsWithLogicResponse(e.data.payload)
           break;
@@ -115,7 +119,8 @@
               payload: 'ping'
             }
             break;
-          case 'getAllFieldInfoRequest':
+            
+            case 'getAllFieldInfoRequest':
             message = {
               messageType: "getAllFieldInfoRequest",
               payload: 'ping'
@@ -173,25 +178,31 @@
         // console.log({fieldIds});
         removeAllCssName('fsHidden'); // show all fields
       }
+      // const handleGetFieldsWithCircularLogicResponse = (fieldIds) => {
+      //   const divWithSelect = optionListToSelectElement('selectFieldIdWithCircularLogic', handleFieldIdSelected, fieldIds.fieldIds)
+      //   const logicBuddyContainer = document.getElementById('fsBuddyControlPanelLogic');
+      //   logicBuddyContainer.appendChild(divWithSelect);
+      //   removeAllCssName('fsHidden'); // show all fields
+      // }
 
       const handleGetFieldLogicDependentsResponse = (payload)=>{
         const dependentsByFieldId = payload;
        //     payload: { [fieldId]: { dependentFieldIds: fieldIds } },
         removeAllCssName('fsBuddy_lightblue')
         removeAllCssName('fsBuddy_obscure')
+        removeAllCssName('fsBuddy_statusMessage_severity_error')
 
-        Object.entries(dependentsByFieldId).forEach(([fieldId, {dependentFieldIds}])=>{
+        Object.entries(dependentsByFieldId).forEach(([fieldId, {dependentFieldIds, interdependentFieldIds}])=>{
          
           const nonDependentFieldIds = fsBuddyHelper.getAllFieldIds()
               .filter( (childFieldId)=>{
-                return !dependentFieldIds.includes(childFieldId) && fieldId !== childFieldId
+                return !dependentFieldIds.includes(childFieldId) && fieldId !== childFieldId && !interdependentFieldIds.includes(childFieldId)
               }); 
-        
             addCssClassToFields('fsBuddy_lightblue', dependentFieldIds)
             addCssClassToFields('fsBuddy_obscure', nonDependentFieldIds)
+            addCssClassToFields('fsBuddy_statusMessage_severity_error', interdependentFieldIds)
+            
         })
-
-        
         console.log({message: 'show these, hide others', payload})
       }
 
@@ -222,11 +233,6 @@
 
 
       // ------------------  css/layout related
-      // const setUserMessages= (messages)=>{
-      //   const userMessageDiv = document.getElementById('fsBuddyUserMessagesDiv');
-      //   userMessageDiv.innerHTML = messages.join('<br />')
-      // }
-
       const prependUserMessages= (...messages)=>{
         const cssClassBySeverity = {
           debug: 'fsBuddy_statusMessage_severity_debug',
@@ -240,7 +246,7 @@
         messages.forEach(message=>{
           if(message.severity) {
             let decoratedMessage = `<span class=${cssClassBySeverity[message.severity]}>`;
-              decoratedMessage += `(${message.severity}) ${message.message}, related fields: ${message?.relatedFieldIds.join(', ')}`;
+              decoratedMessage += `(${message.severity}) ${message.message}, related fields: ${message?.relatedFieldIds?.join(', ')}`;
               decoratedMessage += "</span>"
             userMessageDiv.innerHTML = decoratedMessage + '<br />' + userMessageDiv.innerHTML;
 
@@ -252,10 +258,6 @@
           }
 
         })
-
-
-
-
       }
 
       const addCssClassToFields = (cssClassName, fieldIds) => {
@@ -461,8 +463,6 @@
     document.addEventListener("DOMContentLoaded",()=>{
         buildFsBuddyControlPanel();
         showOnly('fsBuddyControlPanelFieldStatus');
-        prependUserMessages(...userMessages)
-        //setUserMessages(userMessages);
         sendMessageToParent('getAllFieldInfoRequest')
      })
      const fsBuddyHelper = {}
@@ -529,6 +529,5 @@
             <div style="height: 300px; overflow-y: auto;" id="fsBuddyUserMessagesDiv"></div>
       </div>
     </div>
-    
 	</body>
 </html>

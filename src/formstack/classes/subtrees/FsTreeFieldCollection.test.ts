@@ -5,6 +5,7 @@ import circularAndInterdependentJson from "../../../test-dev-resources/form-json
 import { TFsFieldAny } from "../../type.field";
 import { FsTreeLogic } from "./trees/FsTreeLogic";
 import { FsCircularDependencyNode } from "./trees/nodes/FsCircularDependencyNode";
+import { FsLogicLeafNode } from "./trees/nodes/FsLogicLeafNode";
 
 describe("FsTreeFieldCollection", () => {
   describe("Creation", () => {
@@ -47,7 +48,7 @@ describe("FsTreeFieldCollection", () => {
   });
 
   describe(".getFieldsBySection()", () => {
-    it.only("Should be awesome", () => {
+    it("Should be awesome", () => {
       const tree = FsTreeFieldCollection.fromFieldJson(
         circularAndInterdependentJson.fields as unknown as TFsFieldAnyJson[]
       );
@@ -70,7 +71,36 @@ describe("FsTreeFieldCollection", () => {
       console.log({ tree, fieldsInSection });
     });
   });
+
+  describe(".getFieldIdsWithCircularLogic()", () => {
+    it("Should return fieldIds that have circular logic", () => {
+      const tree = FsTreeFieldCollection.fromFieldJson(
+        circularAndInterdependentJson.fields as unknown as TFsFieldAnyJson[]
+      );
+      expect(tree.getFieldIdsWithCircularLogic()).toStrictEqual([
+        "148456734",
+        "148456739",
+        "148456740",
+        "148456741",
+        "148456742",
+        "148604161",
+        "148604234",
+        "148604235",
+        "148604236",
+      ]);
+    });
+  });
   describe("aggregateLogicTree", () => {
+    it("Should return tree with one leaf node if there is no logic.", () => {
+      const tree = FsTreeFieldCollection.fromFieldJson(
+        circularAndInterdependentJson.fields as unknown as TFsFieldAnyJson[]
+      );
+      const noLogicField = tree.aggregateLogicTree("148456700");
+      expect(noLogicField.getTreeContentAt().length).toBe(1);
+      expect(
+        noLogicField.getChildContentAt(noLogicField.rootNodeId)
+      ).toBeInstanceOf(FsLogicLeafNode);
+    });
     it("Should return the full tree.", () => {
       // two leafs
       const tree = FsTreeFieldCollection.fromFieldJson(

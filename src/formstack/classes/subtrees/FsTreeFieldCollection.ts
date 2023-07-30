@@ -57,6 +57,26 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
     extendedTree?: FsTreeLogicDeep
   ): T {
     const logicTree = field.getLogicTree() as FsTreeLogic;
+    if (logicTree === null) {
+      if (extendedTree !== undefined) {
+        extendedTree.appendChildNodeWithContent(
+          atNodeId || extendedTree.rootNodeId,
+          // if a field has no logic do we return ExtendTree with 1 and 1 one node?
+          //@ts-ignore
+          new FsLogicLeafNode(field.fieldId, "condition", "option")
+        );
+        return extendedTree as T;
+      } else {
+        const t = new FsTreeLogicDeep(
+          field.fieldId,
+          // @ts-ignore
+          new FsLogicLeafNode(field.fieldId, "condition", "option")
+        );
+        t.ownerFieldId = field.fieldId;
+        return t as T;
+      }
+    }
+
     const rootNodeContent = logicTree.getChildContentAt(
       logicTree.rootNodeId //
     ) as TFsLogicNode;
@@ -141,13 +161,22 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
     const field = this.getFieldTreeByFieldId(fieldId) as FsTreeField;
 
     //@ts-ignore
-    return this.getExtendedTree(field, undefined);
+    return this.getExtendedTree(field);
   }
 
   getFieldTreeByFieldId(fieldId: string): FsTreeField | undefined {
     // I wounder if a look-up table wouldn't be better
     //  also you're filtering after map, if possible the other order would be preferred
     return this._fieldIdNodeMap[fieldId];
+  }
+
+  getFieldIdsWithCircularLogic(): string[] {
+    const allFieldIds = Object.keys(this._fieldIdNodeMap);
+    return allFieldIds.filter((fieldId) => {
+      return (
+        this.aggregateLogicTree(fieldId).getCircularLogicNodes().length > 0
+      );
+    });
   }
 
   evaluateWithValues<T>(values: { [fieldId: string]: any }): T {

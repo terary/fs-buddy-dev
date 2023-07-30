@@ -90,8 +90,38 @@ describe("FieldLogicService", () => {
     });
   });
 
+  describe(".getCircularReferenceFieldIds()", () => {
+    it.only("Should return an array of field ids with circular logic", () => {
+      const fieldLogicService = new FieldLogicService(
+        circularAndInterdependentJson.fields as unknown as TFsFieldAnyJson[]
+      );
+      expect(
+        fieldLogicService.getCircularReferenceFieldIds("148456739")
+      ).toStrictEqual(["148456740", "148456739"]);
+    });
+  });
+  describe(".getFieldIdsWithCircularReferences()", () => {
+    it("Should return an array of field ids with circular logic", () => {
+      const fieldLogicService = new FieldLogicService(
+        circularAndInterdependentJson.fields as unknown as TFsFieldAnyJson[]
+      );
+      expect(
+        fieldLogicService.getFieldIdsWithCircularReferences()
+      ).toStrictEqual([
+        "148456734",
+        "148456739",
+        "148456740",
+        "148456741",
+        "148456742",
+        "148604161",
+        "148604234",
+        "148604235",
+        "148604236",
+      ]);
+    });
+  });
   describe(".wrapFieldIdsIntoLabelOptionList(...)", () => {
-    it.only("Should return a list of value/label pairs.", () => {
+    it("Should return a list of value/label pairs.", () => {
       const fieldLogic = new FieldLogicService(
         circularAndInterdependentJson.fields as unknown as TFsFieldAnyJson[]
       );

@@ -8,6 +8,16 @@ function getFormIdFromLocation({ pathname }: Location = location) {
 }
 let fieldLogicService: FieldLogicService | null = null;
 
+type TStatusRecord = {
+  fieldId?: string | null;
+  severity: "error" | "warn" | "info" | "debug";
+  message: string;
+  relatedFieldIds?: string[] | null;
+};
+type TFieldStatusMessages = {
+  [fieldId: string]: TStatusRecord[];
+};
+
 let devDebugFieldIds = [
   "148136237",
   "147462595",
@@ -85,18 +95,25 @@ function handleGetFieldStatusesRequest(
     (severity) => {
       return {
         severity,
-        message: `The ${severity} message. This message should be long enough to cause "wrap" effect if applicable. Now I am just added text to make sure it's long enough`,
+        message:
+          `The ${severity} message. This message should be long enough to cause "wrap" effect if applicable. Now I am just added text to make sure it's long enough. ` +
+          Math.random(),
         relatedFieldIds: ["147738154", "148111228", "147738157"],
-      };
+      } as TStatusRecord;
     }
   );
-
+  formStatusMessages.push({
+    severity: "info",
+    message: `Status Retrieved At: '${new Date().toUTCString()}'.`,
+    // fieldId: null,
+    relatedFieldIds: null,
+  });
   caller.postMessage({
     messageType: "getFieldStatusesResponse",
 
     payload: {
-      formStatusMessages,
-      fieldStatusMessages: fieldStatusMessage,
+      formStatusMessages: formStatusMessages as TStatusRecord[],
+      fieldStatusMessages: fieldStatusMessage as TFieldStatusMessages,
     },
   });
 }
@@ -105,12 +122,18 @@ function handleGetFieldLogicDependentsRequest(
   caller: MessageEventSource,
   payload: any
 ) {
-  /// getFieldIdsExtendedLogicOf
   const { fieldId } = payload;
   const fieldIds = fieldLogicService?.getFieldIdsExtendedLogicOf(fieldId);
+  const interdependentFieldIds =
+    fieldLogicService?.getCircularReferenceFieldIds(fieldId);
   caller.postMessage({
     messageType: "getFieldLogicDependentsResponse",
-    payload: { [fieldId]: { dependentFieldIds: fieldIds } },
+    payload: {
+      [fieldId]: {
+        dependentFieldIds: fieldIds,
+        interdependentFieldIds: interdependentFieldIds,
+      },
+    },
   });
 }
 
@@ -129,6 +152,7 @@ function handleGetAllFieldInfoRequest(
 }
 
 function getFieldsWithLogicResponse(caller: MessageEventSource) {
+  fieldLogicService?.getFieldIdsWithLogic;
   const fieldIds = fieldLogicService?.wrapFieldIdsIntoLabelOptionList(
     fieldLogicService?.getFieldIdsWithLogic()
   );
@@ -137,6 +161,17 @@ function getFieldsWithLogicResponse(caller: MessageEventSource) {
     payload: { fieldIds },
   });
 }
+
+// function getFieldsWithCircularLogicResponse(caller: MessageEventSource) {
+//   fieldLogicService?.getFieldIdsWithLogic;
+//   const fieldIds = fieldLogicService?.wrapFieldIdsIntoLabelOptionList(
+//     fieldLogicService?.getFieldIdsWithCircularReferences()
+//   );
+//   caller.postMessage({
+//     messageType: "getFieldsWithCircularLogicResponse",
+//     payload: { fieldIds },
+//   });
+// }
 
 function removeFormHtml() {
   const theIFrame = document.getElementById("theFrame");
@@ -154,6 +189,10 @@ window.onmessage = function (e) {
       });
       break;
 
+    // case "getFieldsWithCircularLogicRequest":
+    //   e.source && getFieldsWithCircularLogicResponse(e.source);
+    //   !e.source && console.log("No Source of message received.");
+    //   break;
     case "getFieldsWithLogicRequest":
       e.source && getFieldsWithLogicResponse(e.source);
       !e.source && console.log("No Source of message received.");
@@ -199,7 +238,6 @@ const factoryStatusMessage = (fieldId: string) => {
       relatedFieldIds: ["147738154", "148111228", "147738157"],
     };
   });
-
   return {
     [fieldId]: {
       statusMessages,
