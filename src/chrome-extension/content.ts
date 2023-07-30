@@ -34,10 +34,20 @@ function getChildFrameHtml() {
 
   return fetch(url).then((response) => {
     return response.text();
-  }); //assuming file contains json
-  // .then((text) => {
-  //   console.log(text);
-  // });
+  });
+}
+
+function buildIframe(iframeId: string): HTMLIFrameElement {
+  const iframe = document.createElement("iframe");
+  iframe.id = iframeId;
+  iframe.style.width = "50%";
+  iframe.style.height = "1500px";
+  iframe.style.zIndex = "1001";
+  iframe.style.top = "50px";
+  iframe.style.right = "0px";
+  iframe.style.position = "absolute";
+  iframe.style.backgroundColor = "green";
+  return iframe;
 }
 
 function getFormAsJson() {
@@ -51,17 +61,7 @@ function getFormAsJson() {
       },
       async (apiFormJson) => {
         const childFrameHtml = await getChildFrameHtml();
-        const iframe = document.createElement("iframe");
-        iframe.id = "theFrame";
-        // iframe.style.width = "500px";
-        iframe.style.width = "50%";
-        iframe.style.height = "1500px";
-        iframe.style.zIndex = "1001";
-        iframe.style.top = "50px";
-        iframe.style.right = "0px";
-        iframe.style.position = "absolute";
-        iframe.style.backgroundColor = "green";
-
+        const iframe = buildIframe("theFrame");
         iframe.srcdoc = childFrameHtml + apiFormJson.html;
         const theBody = document.querySelector("body");
         theBody?.prepend(iframe);
@@ -161,18 +161,6 @@ function getFieldsWithLogicResponse(caller: MessageEventSource) {
     payload: { fieldIds },
   });
 }
-
-// function getFieldsWithCircularLogicResponse(caller: MessageEventSource) {
-//   fieldLogicService?.getFieldIdsWithLogic;
-//   const fieldIds = fieldLogicService?.wrapFieldIdsIntoLabelOptionList(
-//     fieldLogicService?.getFieldIdsWithCircularReferences()
-//   );
-//   caller.postMessage({
-//     messageType: "getFieldsWithCircularLogicResponse",
-//     payload: { fieldIds },
-//   });
-// }
-
 function removeFormHtml() {
   const theIFrame = document.getElementById("theFrame");
   if (theIFrame) {
@@ -188,11 +176,6 @@ window.onmessage = function (e) {
         payload: "pong",
       });
       break;
-
-    // case "getFieldsWithCircularLogicRequest":
-    //   e.source && getFieldsWithCircularLogicResponse(e.source);
-    //   !e.source && console.log("No Source of message received.");
-    //   break;
     case "getFieldsWithLogicRequest":
       e.source && getFieldsWithLogicResponse(e.source);
       !e.source && console.log("No Source of message received.");
@@ -217,19 +200,8 @@ window.onmessage = function (e) {
   }
 };
 
-function removeAllCssClass(cssClassName: string) {
-  const theIFrame = document.getElementById("theFrame");
-  const message = {
-    messageType: "removeAllClassName",
-    payload: {
-      cssClassName: cssClassName,
-    },
-  };
-  // @ts-ignore - contentWindow not an element of...
-  theIFrame?.contentWindow?.postMessage(message, "*");
-}
-
 const factoryStatusMessage = (fieldId: string) => {
+  // dev/debug utility
   const statusMessages = ["error", "warn", "info", "debug"].map((severity) => {
     return {
       severity: severity,
@@ -273,12 +245,12 @@ const initializeFsBuddyControlPanel = () => {
   fsBodyControlPanelHead.style.color = "black";
 
   const fsBodyControlPanelGetFormHtmlButton = createElementButton({
-    label: "Get Form HTML",
+    label: "Open FS Buddy",
     onclick: getFormAsJson,
   });
 
   const removeFormHtmlButton = createElementButton({
-    label: "Remove Form HTML",
+    label: "Close FS Buddy",
     onclick: removeFormHtml,
   });
 
