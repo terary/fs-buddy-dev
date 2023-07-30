@@ -21,6 +21,21 @@ class FieldLogicService {
     }) as TTreeFieldNode[]; //ts is not smart enough to pick-up on the fact we're filtering-out non TTreeFieldNode(s)
   }
 
+  getAllFieldSummary() {
+    const fieldSummaries: any = {};
+    const nodes = this.getAllFieldNodes();
+    nodes.forEach((node) => {
+      const fieldId = node.fieldId;
+      fieldSummaries[fieldId] = {
+        fieldId: fieldId,
+        label: node.field.label,
+        type: node.field.fieldType,
+      };
+    });
+
+    return fieldSummaries;
+  }
+
   getFieldIdsWithLogic(): string[] {
     return this.getAllFieldNodes()
       .filter((fieldNode) => {
