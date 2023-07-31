@@ -264,7 +264,7 @@ const initializeFsBuddyControlPanel = () => {
   fsBodyControlPanel.style.border = "1px black solid";
 
   //   fsBodyControlPanel.style.height = '500px';
-  fsBodyControlPanel.style.width = "50%";
+  // fsBodyControlPanel.style.width = "50%";
   // fsBodyControlPanel.style.width = "500px";
   fsBodyControlPanel.style.zIndex = "1000";
   fsBodyControlPanel.style.top = "0px";

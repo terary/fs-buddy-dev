@@ -15,12 +15,6 @@
    ],
    "web_accessible_resources": [
      {
-       "resources": [
-         "extension-interface.js"
-       ],
-       "matches": ["*://*/*"]
-     },
-     {
       "resources": [
         "form-render-inject.html"
       ],
