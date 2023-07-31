@@ -8,7 +8,7 @@
      "default_title": "Open the popup"
    },
    "background": {
-     "service_worker": "background.js"
+     "service_worker": "formstackApi.js"
    },
    "host_permissions": [
      "<all_urls>"

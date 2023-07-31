@@ -5,7 +5,7 @@ module.exports = {
    // devtool: "source-map",
    devtool: "inline-source-map",
    entry: {
-      background: path.resolve(__dirname, "..", "src", "chrome-extension", "background.ts"),
+      formstackApi: path.resolve(__dirname, "..", "src", "chrome-extension", "formstackApi.ts"),
       content: path.resolve(__dirname, "..", "src", "chrome-extension", "content.ts"),
    },
    output: {

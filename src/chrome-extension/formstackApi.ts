@@ -10,11 +10,6 @@ import { TreeManager } from "../common/TreeManager";
 //   tryImport("lib/extension-interface.js");
 // };
 
-// Need to clean-up
-// I am pretty sure the only purpose this serves is api-proxy
-// we're making 2 calls (1 now, 1 planned). There should be
-// no unrelated stuff in this file
-
 chrome.runtime.onMessage.addListener(function (
   message,
   sender,
