@@ -5,15 +5,19 @@ import {
 import assert from "assert";
 
 import { TFsFieldAnyJson } from "../types";
-import { FsTreeCalcString } from "./trees/FsTreeCalcString";
 import { FsTreeLogicDeep } from "./trees/FsTreeLogicDeep";
 import { FsTreeField } from "./trees/FsTreeField";
 import { TFsFieldAny } from "../../type.field";
+import { transformers } from "../../transformers";
+
 import { FsFieldVisibilityLinkNode, FsFormRootNode } from "./trees/nodes";
 import {
   TFsFieldLogicCheckLeaf,
+  TFsFieldLogicJunction,
   TFsFieldLogicJunctionJson,
   TFsLogicNode,
+  TFsLogicNodeJson,
+  TLogicJunctionOperators,
   TTreeFieldNode,
 } from "./types";
 import { FsLogicLeafNode } from "./trees/nodes/FsLogicLeafNode";
@@ -79,22 +83,22 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
 
     const rootNodeContent = logicTree.getChildContentAt(
       logicTree.rootNodeId //
-    ) as TFsLogicNode;
+    ) as TFsFieldLogicJunction<TLogicJunctionOperators>;
 
     let exTree: FsTreeLogicDeep;
     let currentBranchNodeId: string;
-    const { conditional, action, fieldJson } =
-      rootNodeContent as TFsFieldLogicJunctionJson;
+    const { conditional, action, fieldJson } = rootNodeContent;
     const newBranchNode = new FsLogicBranchNode(
       field.fieldId,
-      conditional,
+      // @ts-ignore - doesn't like '$in'
+      (conditional || "$and") as TLogicJunctionOperators,
       action || null,
       fieldJson
     );
 
     if (extendedTree === undefined) {
       const { conditional, action, fieldJson } =
-        rootNodeContent as TFsFieldLogicJunctionJson;
+        rootNodeContent as TFsFieldLogicJunction<TLogicJunctionOperators>;
 
       exTree = new FsTreeLogicDeep(field.fieldId, newBranchNode);
       exTree.ownerFieldId = field.fieldId;
@@ -195,9 +199,6 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
     const sectionChildren = childrenFieldNodes
       .filter((fieldNode) => {
         const { fieldId, field } = fieldNode;
-        if (fieldId === "148509478") {
-          console.log("Here we go");
-        }
 
         const visibilityNode = field.getVisibilityNode();
         // return x?.parentNode?.fieldId === section.fieldId;
@@ -215,7 +216,11 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
     const tree = new FsTreeFieldCollection(formId, new FsFormRootNode(formId));
 
     (fieldsJson || []).forEach((fieldJson) => {
-      const field = FsTreeField.fromFieldJson(fieldJson);
+      const field = FsTreeField.fromFieldJson(
+        transformers.fieldJson(fieldJson)
+      );
+
+      // this doesn't belong in the loop ??
       tree.appendChildNodeWithContent(tree.rootNodeId, {
         fieldId: field.fieldId,
         field,

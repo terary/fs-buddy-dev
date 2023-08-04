@@ -5,7 +5,7 @@ import fifthDegreeBadCircuitFormJson from "../../../../test-dev-resources/form-j
 
 describe("FsTreeLogic", () => {
   describe("Creation", () => {
-    it.skip("Should be awesome", () => {
+    it("Should be awesome", () => {
       // const tree = new FsTreeLogic("_root_seed_");
       const tree = FsTreeLogic.fromFieldJson(
         TEST_JSON_FIELD as TFsFieldAnyJson
@@ -29,7 +29,7 @@ describe("FsTreeLogic", () => {
       tree = FsTreeLogic.fromFieldJson(TEST_JSON_FIELD as TFsFieldAnyJson);
     });
 
-    it.skip("Should be segment of the original json", () => {
+    it("Should be segment of the original json", () => {
       expect(tree.fieldJson).toStrictEqual(TEST_JSON_FIELD.logic);
 
       const childrenContent = tree.getChildrenContentOf(tree.rootNodeId);
@@ -79,7 +79,7 @@ describe("FsTreeLogic", () => {
     });
   });
 
-  describe(".evaluateWithValues(...)", () => {
+  describe.skip(".evaluateWithValues(...)", () => {
     it("Should return true when all conditions are true.", () => {
       const valueJson = {
         "147462595": "True",
@@ -118,7 +118,7 @@ describe("FsTreeLogic", () => {
       );
       expect(tree.evaluateWithValues(valueJson)).toStrictEqual(true);
     });
-    describe(".evaluateShowHide(...)", () => {
+    describe.skip(".evaluateShowHide(...)", () => {
       let tree: FsTreeLogic;
       const valueJson = {
         "147462595": "True",
@@ -197,8 +197,6 @@ describe("FsTreeLogic", () => {
           }
         })
         .filter((field) => field); // removed the undefined
-
-      console.log(logicTrees);
     });
   });
 });

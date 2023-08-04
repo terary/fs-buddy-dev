@@ -5,6 +5,9 @@ import { MultipleLogicTreeError } from "../../../errors/MultipleLogicTreeError";
 import { FsTreeCalcString } from "./FsTreeCalcString";
 import badCircuitFormJson from "../../../../test-dev-resources/form-json/5353031.json"; // 5353031
 import fifthDegreeBadCircuitFormJson from "../../../../test-dev-resources/form-json/5375703.json"; // 5353031
+import manyCalcLogicOperators from "../../../../test-dev-resources/form-json/5389250.json"; // 5353031
+import { transform } from "typescript";
+import { transformers } from "../../../transformers";
 type RelationshipCategoryTypes =
   | "Dependency"
   | "mutualExclusive"
@@ -47,7 +50,9 @@ const getDependencyAudit = (fields: FsTreeField[]): RelationAuditReport => {
 describe("FsTreeField", () => {
   let field: FsTreeField;
   beforeEach(() => {
-    field = FsTreeField.fromFieldJson(TEST_JSON_FIELD as TFsFieldAnyJson);
+    field = FsTreeField.fromFieldJson(
+      transformers.fieldJson(TEST_JSON_FIELD as TFsFieldAnyJson)
+    );
   });
   describe("Smoke Test", () => {
     it("Should be awesome", () => {
@@ -61,11 +66,25 @@ describe("FsTreeField", () => {
   describe(".fieldJson", () => {
     let tree: FsTreeField;
     beforeEach(() => {
-      tree = FsTreeField.fromFieldJson(TEST_JSON_FIELD as TFsFieldAnyJson);
+      tree = FsTreeField.fromFieldJson(
+        transformers.fieldJson(TEST_JSON_FIELD as TFsFieldAnyJson)
+        // TEST_JSON_FIELD as TFsFieldAnyJson
+      );
     });
 
     it("Should be segment of the original json", () => {
       expect(tree.fieldJson).toStrictEqual(TEST_JSON_FIELD);
+    });
+    it.only("Should transform proper operators", () => {
+      const complexTree = FsTreeField.fromFieldJson(
+        transformers.fieldJson(
+          manyCalcLogicOperators.fields[0] as unknown as TFsFieldAnyJson // this needs "transform", stringBoolean numericBoolean ,  etc
+        )
+      );
+
+      //
+
+      // should be awesome
     });
   });
 
@@ -97,7 +116,7 @@ describe("FsTreeField", () => {
       const fields = badCircuitFormJson.fields
         .map((fieldJson) => {
           const f = FsTreeField.fromFieldJson(
-            fieldJson as unknown as TFsFieldAnyJson
+            transformers.fieldJson(fieldJson as unknown as TFsFieldAnyJson)
           );
           return f;
         })
@@ -119,11 +138,11 @@ describe("FsTreeField", () => {
     });
 
     //fifthDegreeBadCircuitFormJson
-    it.only("Should Determine Fifth Degree Interdependency.", () => {
+    it("Should Determine Fifth Degree Interdependency.", () => {
       const fields = fifthDegreeBadCircuitFormJson.fields
         .map((fieldJson) => {
           const f = FsTreeField.fromFieldJson(
-            fieldJson as unknown as TFsFieldAnyJson
+            transformers.fieldJson(fieldJson as unknown as TFsFieldAnyJson)
           );
           return f;
         })
@@ -167,14 +186,14 @@ describe("FsTreeField", () => {
     });
     it("return null if there are no logic trees.", () => {
       const tree = TestFsTreeField.fromFieldJson(
-        TEST_JSON_FIELD as TFsFieldAnyJson
+        transformers.fieldJson(TEST_JSON_FIELD as TFsFieldAnyJson)
       ) as TestFsTreeField;
 
       expect(tree.getLogicTree()).toBeInstanceOf(FsTreeLogic);
     });
     it("Throw error if there is more than one logic tree.", () => {
       const extraLogicTree = TestFsTreeField.fromFieldJson(
-        TEST_JSON_FIELD as TFsFieldAnyJson
+        transformers.fieldJson(TEST_JSON_FIELD as TFsFieldAnyJson)
       );
 
       const subtreeConstructor = (fieldJson: TFsFieldAnyJson) =>
@@ -183,13 +202,13 @@ describe("FsTreeField", () => {
       FsTreeField.createSubtreeFromFieldJson(
         extraLogicTree,
         extraLogicTree.rootNodeId,
-        TEST_JSON_FIELD as TFsFieldAnyJson,
+        transformers.fieldJson(TEST_JSON_FIELD as TFsFieldAnyJson),
         subtreeConstructor
       );
       FsTreeField.createSubtreeFromFieldJson(
         extraLogicTree,
         extraLogicTree.rootNodeId,
-        TEST_JSON_FIELD as TFsFieldAnyJson,
+        transformers.fieldJson(TEST_JSON_FIELD as TFsFieldAnyJson),
         subtreeConstructor
       );
 
@@ -216,14 +235,14 @@ describe("FsTreeField", () => {
     });
     it("return null if there are no logic trees.", () => {
       const tree = TestFsTreeField.fromFieldJson(
-        TEST_JSON_FIELD as TFsFieldAnyJson
+        transformers.fieldJson(TEST_JSON_FIELD as TFsFieldAnyJson)
       ) as TestFsTreeField;
 
       expect(tree.getCalcStringTree()).toBeInstanceOf(FsTreeCalcString);
     });
     it("Throw error if there is more than one logic tree.", () => {
       const extraLogicTree = TestFsTreeField.fromFieldJson(
-        TEST_JSON_FIELD as TFsFieldAnyJson
+        transformers.fieldJson(TEST_JSON_FIELD as TFsFieldAnyJson)
       );
 
       const subtreeConstructor = (fieldJson: TFsFieldAnyJson) =>
@@ -232,13 +251,13 @@ describe("FsTreeField", () => {
       FsTreeField.createSubtreeFromFieldJson(
         extraLogicTree,
         extraLogicTree.rootNodeId,
-        TEST_JSON_FIELD as TFsFieldAnyJson,
+        transformers.fieldJson(TEST_JSON_FIELD as TFsFieldAnyJson),
         subtreeConstructor
       );
       FsTreeField.createSubtreeFromFieldJson(
         extraLogicTree,
         extraLogicTree.rootNodeId,
-        TEST_JSON_FIELD as TFsFieldAnyJson,
+        transformers.fieldJson(TEST_JSON_FIELD as TFsFieldAnyJson),
         subtreeConstructor
       );
 

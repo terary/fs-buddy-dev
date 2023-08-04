@@ -20,6 +20,7 @@ abstract class AbstractFsTreeGeneric<
     | TFsFieldLogicCheckLeafJson
     | string
     | null;
+
   getDependantFieldIds(): string[] {
     return [];
   }

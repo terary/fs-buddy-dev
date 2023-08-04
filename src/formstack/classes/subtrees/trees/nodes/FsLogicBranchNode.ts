@@ -3,13 +3,18 @@ import type {
   TFsFieldLogicJunctionJson,
   TFsVisibilityModes,
   TFsFieldLogicJunction,
+  TLogicJunctionOperators,
 } from "../../types";
 import { AbstractNode } from "./AbstractNode";
 
 //TFsFieldLogicJunction
-class FsLogicBranchNode extends AbstractNode implements TFsFieldLogicJunction {
+class FsLogicBranchNode
+  extends AbstractNode
+  implements TFsFieldLogicJunction<TLogicJunctionOperators>
+{
+  //<TLogicJunctionOperators>
   private _ownerFieldId: string;
-  private _conditional: "all" | "any";
+  private _conditional: "$and" | "$or";
   private _action: TFsVisibilityModes;
   private _fieldJson: TFsFieldLogicJunctionJson;
   // private _option: TFsVisibilityModes;
@@ -17,7 +22,7 @@ class FsLogicBranchNode extends AbstractNode implements TFsFieldLogicJunction {
   // option: TFsVisibilityModes; // values of the target field (not the same as TFsFieldLogic.action)
   constructor(
     ownerFieldId: string,
-    conditional: "all" | "any" = "all", // bad idea to implement business logic here
+    conditional: "$and" | "$or" = "$and", // bad idea to implement business logic here
     action: TFsVisibilityModes,
     fieldJson: any
   ) {

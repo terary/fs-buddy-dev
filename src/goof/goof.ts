@@ -3,7 +3,8 @@ import { FsFormAsDirectedGraph } from "./FsFormAsDirectedGraph";
 import { ApiCacheManager } from "../common/ApiManager";
 const apiKey = "cc17435f8800943cc1abd3063a8fe44f";
 // const formId = "5368371";
-const formId = "5375703";
+// const formId = "5375703";  // different logic (big dipper, interdependant)
+const formId = "5389250"; // calc/logic operators
 
 const getDependancyList = (tree: FsFormAsDirectedGraph): any => {
   const theList: any = {};

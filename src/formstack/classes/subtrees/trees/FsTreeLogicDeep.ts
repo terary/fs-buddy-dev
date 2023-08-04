@@ -4,9 +4,11 @@ import {
 } from "predicate-tree-advanced-poc/dist/src";
 import { TFsFieldAnyJson } from "../../types";
 import {
+  TFsFieldLogicJunction,
   TFsFieldLogicJunctionJson,
   TFsLogicNode,
   TFsLogicNodeJson,
+  TLogicJunctionOperators,
 } from "../types";
 import { AbstractFsTreeLogic } from "./AbstractFsTreeLogic";
 import { FsCircularDependencyNode } from "./nodes/FsCircularDependencyNode";
@@ -14,6 +16,7 @@ import { FsLogicBranchNode } from "./nodes/FsLogicBranchNode";
 import { FsLogicLeafNode } from "./nodes/FsLogicLeafNode";
 import { FsMaxDepthExceededNode } from "./nodes/FsMaxDepthExceededNode";
 import { FsTreeField } from "./FsTreeField";
+import { TFsFieldAny } from "../../../type.field";
 
 type LogicTreeNodeTypes = // we choose to export this, we should give it a different name
 
@@ -86,23 +89,27 @@ class FsTreeLogicDeep extends AbstractFsTreeLogic<LogicTreeNodeTypes> {
     return super.appendChildNodeWithContent(parentNodeId, nodeContent);
   }
 
-  static fromFieldJson(fieldJson: TFsFieldAnyJson): FsTreeLogicDeep {
+  static fromFieldJson(fieldJson: TFsFieldAny): FsTreeLogicDeep {
     // we should be receiving fieldJson.logic, but the Abstract._fieldJson is not typed properly
     // const logicJson: TFsLogicNodeJson = fieldJson.logic;
     // or maybe always get the whole json?
 
-    const logicJson: TFsLogicNodeJson =
-      fieldJson.logic as TFsFieldLogicJunctionJson;
-    const { action, conditional } = logicJson; // as TFsFieldLogicJunctionJson
+    const logicJson: TFsFieldLogicJunction<TLogicJunctionOperators> =
+      // @ts-ignore - what is this supposed to be ?
+      fieldJson.logic as TFsFieldLogicJunction<TLogicJunctionOperators>;
+
+    const { action, conditional } = logicJson;
 
     const rootNode = new FsLogicBranchNode(
       fieldJson.id || "__MISSING_ID__",
-      conditional,
+      // @ts-ignore - maybe doesn't like '$in' potentially $and/$or
+      conditional as TLogicJunctionOperators,
       action || "Show", // *tmc* shouldn't be implementing business logic here
       logicJson
     );
     const tree = new FsTreeLogicDeep(fieldJson.id || "_calc_tree_", rootNode);
     tree._action = action || null;
+    // @ts-ignore - this should resolve once I figured out the other typing issues
     tree._fieldJson = logicJson;
     tree._ownerFieldId = fieldJson.id || "_calc_tree_";
 

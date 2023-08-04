@@ -8,9 +8,23 @@ type TFsArithmeticLeaf = {
   isFieldReference: boolean;
 };
 type TFsArithmeticNode = TFsArithmeticLeaf | TFsArithmeticOperator;
-type TFsLogicOperators = "any" | "all";
-type TLogicJunctionOperators = "$and" | "$or"; // maybe not?
-type TLogicLeafOperators = "$eq" | "$gt" | "$lt"; // maybe not?,  I think *not* gets encoded? '$ne' not($gt) == $lte ?
+type TLogicJunctionOperators = "$and" | "$or" | "$in"; // maybe not?
+type TLogicLeafOperators = "$eq" | "$ne" | "$gt" | "$lt"; // maybe not?,  I think *not* gets encoded? '$ne' not($gt) == $lte ?
+type TFsLeafOperators =
+  // these probably need to be confirmed
+  | "lt" // numeric operators
+  | "gt" // numeric operators
+  | "==" // numeric operators
+  | "!=" // numeric operators
+  | "dateIsEqual"
+  | "dateIsNotEqual"
+  | "dateAfter"
+  | "dateBefore"
+  | "dateIsNotBetween" // (range)
+  | "dateIsBetween"; // (range);
+
+type TFsJunctionOperators = "any" | "all"; /// these may actually be any/or
+
 type TLogicJunction = { operator: TLogicJunctionOperators };
 type TLogicLeaf = {
   fieldId: string;
@@ -18,14 +32,12 @@ type TLogicLeaf = {
   value?: number | string | Date | null;
 };
 
-type TFsVisibilityModes = "Show" | "Hide" | null; // null indicates the logic evaluated to false,
-// therefore do not return the visibility, this is where default values need to get figured out.
-//
+type TFsVisibilityModes = "Show" | "Hide" | null; // null indicates the logic failed to evaluated (circular reference or similar error)
 
 type TFsFieldLogicCheckLeaf = {
   fieldId: string; // fieldId
-  condition: "equals" | "greaterThan"; // not sure greaterThan is valid. Need to find all valid
-  option: TFsVisibilityModes; // values of the target field (not the same as TFsFieldLogic.action)
+  condition: TFsLeafOperators;
+  option: TFsVisibilityModes;
 };
 
 // because - we refer to it as fieldId - not field
@@ -34,24 +46,28 @@ type TFsFieldLogicCheckLeafJson = Omit<
   "fieldId"
 > & { field: string | undefined };
 
-type TFsFieldLogicJunction = {
+type TFsFieldLogicJunction<C> = {
   fieldJson: any;
   action: TFsVisibilityModes;
-  conditional: "all" | "any";
-  ownerFieldId: string;
-  // checks: null | TFsFieldLogicCheckLeaf[];
+  conditional: C; // TLogicJunctionOperators;
+  // 'ownerFieldId', doesn't belong here, because the json version will not have it.
+  ownerFieldId: string; // all logic is has a field it belongs to
 };
+
 type TTreeFieldNode = {
   fieldId: string;
   field: FsTreeField;
 };
 
-type TFsFieldLogicJunctionJson = Partial<TFsFieldLogicJunction> & {
-  checks: null | undefined | "" | TFsFieldLogicCheckLeafJson[];
+// *tmc* does this actually override?
+type TFsFieldLogicJunctionJson = Partial<
+  TFsFieldLogicJunction<TFsJunctionOperators>
+> & {
+  checks?: null | "" | TFsFieldLogicCheckLeafJson[];
 };
 
 type TFsLogicNode =
-  | TFsFieldLogicJunction
+  | TFsFieldLogicJunction<TLogicJunctionOperators>
   | TFsFieldLogicCheckLeaf
   | FsCircularDependencyNode
   | FsMaxDepthExceededNode;
@@ -67,11 +83,12 @@ export type {
   TFsFieldLogicCheckLeafJson,
   TFsFieldLogicJunction,
   TFsFieldLogicJunctionJson,
+  TFsJunctionOperators,
+  TFsLeafOperators,
   TFsLogicNode,
   TFsLogicNodeJson,
   TFsVisibilityModes,
+  TLogicJunctionOperators,
   TSimpleDictionary,
   TTreeFieldNode,
-  // TLogicNode,
-  // TLogicNodeJson,
 };

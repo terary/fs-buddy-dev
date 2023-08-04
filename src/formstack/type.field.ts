@@ -9,7 +9,10 @@
  *
  */
 
-import { TFsFieldLogicJunction } from "./classes/subtrees/types";
+import {
+  TFsFieldLogicJunction,
+  TFsJunctionOperators,
+} from "./classes/subtrees/types";
 
 type TFsFieldType =
   | "address"
@@ -54,13 +57,13 @@ type TFsBaseFieldType = {
   colspan: number;
   sort: number; //  something like field-on-form order
 
-  logic: TFsFieldLogicJunction; // ?
+  logic: TFsFieldLogicJunction<TFsJunctionOperators>; // ?
+
   calculation: null | string; // ?  probably never an object
   // calculation: null | object; // ?  not sure of the shape
   workflow_access: "write"; //  what other possibilities
   default: string | object; // matrix use options array
 };
-
 type TFsFieldAddress = TFsBaseFieldType & {
   text_size: number;
   visible_subfields: string[]; // example ["address", ..., "zip"]

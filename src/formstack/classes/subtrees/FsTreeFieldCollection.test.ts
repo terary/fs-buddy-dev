@@ -68,7 +68,6 @@ describe("FsTreeFieldCollection", () => {
           "148509721",
         ].sort()
       );
-      console.log({ tree, fieldsInSection });
     });
   });
 
@@ -124,8 +123,6 @@ describe("FsTreeFieldCollection", () => {
         agBigDipper: agBigDipper.getDependantFieldIds(),
       };
 
-      console.log(counts);
-
       // // These are not getting loaded in correctly.
       // // the logic . checks are never internalized, its always the same rootNodeContent
 
@@ -172,13 +169,6 @@ describe("FsTreeFieldCollection", () => {
         "148604234",
         "148604236",
       ]);
-
-      console.log({
-        agBigDipper,
-        agLittleDipperCircular,
-        agTreeCircularRefA,
-        agTreeCircularRefB,
-      });
     });
   });
 
