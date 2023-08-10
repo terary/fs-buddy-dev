@@ -1,5 +1,5 @@
 /**
- * Probably not producation quality
+ * Probably not production quality
  *  - probably some field types are missing properties
  *  - field value datatypes are known to have issues from the source
  *         eg: things like option array can be a list of options [...], empty list ([]), null, or empty string
@@ -35,6 +35,12 @@ type TFsFieldType =
   | "radio"
   | "rating"
   | "richtext";
+
+type TSelectOption = {
+  value: string;
+  label: string;
+  // maybe imageUrl or similar ?
+};
 
 type TFsBaseFieldType = {
   id: string;
@@ -77,6 +83,7 @@ type TFsFieldAddress = TFsBaseFieldType & {
 };
 
 type TFsFieldCheckbox = TFsBaseFieldType & {
+  options: TSelectOption[];
   option_layout: "vertical"; // probably others
   option_other: boolean; // example 0 | 1;
   randomize_options: boolean; // example 0 | 1;
@@ -189,10 +196,16 @@ type TFsFieldRichText = TFsBaseFieldType & {
   section_text: string;
   text_editor: "wysiwyg"; // probably other options
 };
-type TFFieldSelect = TFsBaseFieldType & {
+type TFsFieldSelect = TFsBaseFieldType & {
   // drop down list
+  options: TSelectOption[];
   select_size: number;
 };
+
+type TFsFieldRadio = TFsBaseFieldType & {
+  options: TSelectOption[];
+};
+
 type TFsFieldSection = TFsBaseFieldType & {
   num_columns: number;
   label_position: "default";
@@ -240,9 +253,10 @@ type TFsFieldAny =
   | TFsFieldNumber
   | TFsFieldPhone
   | TFsFieldProduct
+  | TFsFieldRadio
   | TFsFieldRating
   | TFsFieldRichText
-  | TFFieldSelect
+  | TFsFieldSelect
   | TFsFieldSection
   | TFsFieldTextArea
   | TFsFieldText
@@ -264,11 +278,13 @@ export type {
   TFsFieldNumber,
   TFsFieldPhone,
   TFsFieldProduct,
+  TFsFieldRadio,
   TFsFieldRating,
   TFsFieldRichText,
-  TFFieldSelect,
+  TFsFieldSelect,
   TFsFieldSection,
   TFsFieldTextArea,
   TFsFieldText,
+  TFsFieldType,
   TFsBaseFieldType,
 };

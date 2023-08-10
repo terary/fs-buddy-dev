@@ -11,7 +11,18 @@ import { TFsVisibilityModes } from "../types";
 import { MultipleLogicTreeError } from "../../../errors/MultipleLogicTreeError";
 import { FsCircularDependencyNode } from "./nodes/FsCircularDependencyNode";
 import { AbstractNode } from "./nodes/AbstractNode";
-import { TFsFieldAny, TFsFieldSection } from "../../../type.field";
+import {
+  TFsFieldAny,
+  TFsFieldCheckbox,
+  TFsFieldRadio,
+  TFsFieldSection,
+  TFsFieldSelect,
+} from "../../../type.field";
+import { InvalidEvaluation } from "../../InvalidEvaluation";
+import { Evaluator } from "../../Evaluator";
+
+type TSelectFields = TFsFieldRadio | TFsFieldSelect | TFsFieldCheckbox;
+
 type TSubtrees = FsTreeCalcString | FsTreeLogic;
 
 type TFsFieldTreeNodeTypes =
@@ -143,10 +154,56 @@ class FsTreeField extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
     //   : null;
   }
 
-  evaluateWithValues<T>(values: { [fieldId: string]: any }): T {
+  evaluateWithValues<T>(values: { [fieldId: string]: any }): {
+    [fieldId: string]: T | InvalidEvaluation; // this null should be instance of class 'InvalidEvaluation' (broken field)
+  } {
     // maybe in real life this would do a little more formatting.
     // also what about dependant factors? (isHidden)
+    if (this.getLogicTree() === null) {
+      const evaluator = Evaluator.getEvaluatorWithFieldJson(
+        this.fieldJson as TFsFieldAny
+      );
+      return evaluator.evaluateWithValues<T>(values);
+      // return this.evaluateByFieldType<T>(values);
+      // private evaluateByFieldType<T>(values: { [fieldId: string]: any }): {
+      //   [fieldId: string]: T | InvalidEvaluation;
+      // } {
+      //   const evaluator = Evaluator.getEvaluatorWithFieldJson(
+      //     this.fieldJson as TFsFieldAny
+      //   );
+      //   return evaluator.evaluateWithValues<T>(values);
+      // }
+    }
     return values[this.fieldId];
+  }
+
+  private evaluateMultiSelect<T>(values: { [fieldId: string]: any }): {
+    [fieldId: string]: T | InvalidEvaluation;
+  } {
+    const options = (this.fieldJson as TSelectFields).options || [];
+    const selectedOption = options.find(
+      (option) => option.value === values[this.fieldId]
+    );
+
+    if (selectedOption === undefined) {
+      return {
+        [this.fieldId]: new InvalidEvaluation("Selected option not found.", {
+          options,
+          searchValue: values[this.fieldId],
+        }),
+      };
+    } else {
+      return { [this.fieldId]: selectedOption.value as T };
+    }
+  }
+
+  private x_evaluateByFieldType<T>(values: { [fieldId: string]: any }): {
+    [fieldId: string]: T | InvalidEvaluation;
+  } {
+    const evaluator = Evaluator.getEvaluatorWithFieldJson(
+      this.fieldJson as TFsFieldAny
+    );
+    return evaluator.evaluateWithValues<T>(values);
   }
 
   private getVisibilityLogicChain() {}

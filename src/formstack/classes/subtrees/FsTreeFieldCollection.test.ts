@@ -25,11 +25,16 @@ describe("FsTreeFieldCollection", () => {
 
   // I *think*,  I think there is root node and plus 1?  Should root not be null??
   describe(".evaluateWithValues(...)", () => {
-    it.skip("Should return the value of the calculation given field values", () => {
-      const tree = FsTreeFieldCollection.fromFieldJson(
-        TEST_JSON_FIELDS as TFsFieldAnyJson[]
-      );
-      expect(tree.evaluateWithValues({ "123": 3 })).toStrictEqual(38);
+    it.only("Should return the value of the calculation given field values", () => {
+      const tree = FsTreeFieldCollection.fromFieldJson([
+        TEST_JSON_FIELD_SIMPLE,
+      ] as TFsFieldAnyJson[]);
+      const values = {
+        // "147462596": "fieldLogic",
+        // "147462597": "calc",
+        "148136237": "Show",
+      };
+      expect(tree.evaluateWithValues(values)).toStrictEqual(38);
     });
   });
 
@@ -243,6 +248,35 @@ const TEST_JSON_FIELD_CALC_STRING = {
   default: "",
   section_text: "<p>The check boxes prevent this from showing.</p>",
   text_editor: "wysiwyg",
+} as unknown;
+
+const TEST_JSON_FIELD_SIMPLE = {
+  id: "148136237",
+  label: "ShowHide",
+  hide_label: "0",
+  description: "",
+  name: "showhide",
+  type: "select",
+  options: [
+    { label: "Hide", value: "Hide", imageUrl: null },
+    { label: "Show", value: "Show", imageUrl: null },
+  ],
+  required: "0",
+  uniq: "0",
+  hidden: "0",
+  readonly: "0",
+  colspan: "1",
+  sort: "2",
+  logic: null,
+  calculation: "",
+  workflow_access: "write",
+  default: "",
+  select_size: 1,
+  option_layout: "vertical",
+  option_other: 0,
+  randomize_options: 0,
+  option_store: "value",
+  option_show_values: 0,
 } as unknown;
 
 const TEST_JSON_FIELDS = [
