@@ -18,6 +18,8 @@ abstract class AbstractEvaluator implements IEValuator {
     return this._fieldJson;
   }
 
+  abstract parseValues<T>(values: TEvaluateRequest): TEvaluateResponse<T>;
+
   abstract evaluateWithValues<T>(
     values: TEvaluateRequest
   ): TEvaluateResponse<T>;

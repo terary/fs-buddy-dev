@@ -16,6 +16,11 @@ class MatrixEvaluator extends AbstractEvaluator {
     return this._supportedSubfieldIds;
   }
 
+  parseValues<T>(values: TEvaluateRequest): TEvaluateResponse<T> {
+    const s2 = this.parseSubmittedData(values);
+    return { [this.fieldId]: s2 as T };
+  }
+
   private parseSubmittedData(values: TEvaluateRequest) {
     const submissionData = values[this.fieldId] || [];
     if (!submissionData) {
@@ -23,7 +28,7 @@ class MatrixEvaluator extends AbstractEvaluator {
     }
     const records = submissionData.split("\n");
 
-    const s1 = records.map((field: string) => {
+    return records.map((field: string) => {
       const [subfieldIdRaw, valueRaw] = field.split("=");
       const subfieldId = (subfieldIdRaw || "").trim();
       const value = (valueRaw || "").trim();
@@ -33,20 +38,22 @@ class MatrixEvaluator extends AbstractEvaluator {
         value,
       };
     }) as [{ subfieldId: string; value: string }];
-
-    const s2 = s1.reduce((prev, cur, i, a) => {
-      prev[cur.subfieldId] = cur.value;
-      // if (this._supportedSubfieldIds.includes(cur.subfieldId)) {
-      //   prev[cur.subfieldId] = cur.value;
-      // }
-      return prev;
-    }, {} as { [subfieldId: string]: string });
-
-    return s2;
   }
 
   evaluateWithValues<T>(values: TEvaluateRequest): TEvaluateResponse<T> {
-    const s2 = this.parseSubmittedData(values);
+    const s1 = this.parseSubmittedData(values);
+    const s2 =
+      Array.isArray(s1) &&
+      s1.reduce((prev, cur, i, a) => {
+        prev[cur.subfieldId] = cur.value;
+        // if (this._supportedSubfieldIds.includes(cur.subfieldId)) {
+        //   prev[cur.subfieldId] = cur.value;
+        // }
+        return prev;
+      }, {} as { [subfieldId: string]: string });
+
+    // return s2;
+
     return { [this.fieldId]: s2 as T };
   }
 }
