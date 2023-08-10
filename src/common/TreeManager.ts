@@ -7,8 +7,6 @@ const getFormJsonFromApi = async (message: any): Promise<TApiFormJson> => {
   const { apiKey, formId } = message;
 
   return new Promise((resolve, reject) => {
-    console.log("Preparing request");
-
     if (!apiKey || !formId) {
       throw new Error(`apiKey: '${apiKey}' or formId: '${formId}'.`);
     }

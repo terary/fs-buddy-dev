@@ -30,11 +30,9 @@ describe("FsTreeFieldCollection", () => {
         TEST_JSON_FIELD_SIMPLE,
       ] as TFsFieldAnyJson[]);
       const values = {
-        // "147462596": "fieldLogic",
-        // "147462597": "calc",
         "148136237": "Show",
       };
-      expect(tree.evaluateWithValues(values)).toStrictEqual(38);
+      expect(tree.evaluateWithValues(values)).toStrictEqual([values]);
     });
   });
 

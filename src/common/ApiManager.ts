@@ -5,8 +5,6 @@ const getFormJsonFromApi = async (message: any) => {
   const { apiKey, formId } = message;
 
   return new Promise((resolve, reject) => {
-    console.log("Preparing request");
-
     if (!apiKey || !formId) {
       throw new Error(`apiKey: '${apiKey}' or formId: '${formId}'.`);
     }
@@ -58,7 +56,6 @@ class ApiCacheManager {
         .toString("utf8");
       this.addTree(formId, JSON.parse(formJson));
     });
-    console.log("Initialized");
   }
 
   putFile(formId: string, formJson: any) {

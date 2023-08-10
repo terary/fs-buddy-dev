@@ -209,10 +209,6 @@ class FsTreeField extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
   private getVisibilityLogicChain() {}
 
   getInterdependentFieldIdsOf(subjectField: FsTreeField): string[] {
-    // 148509470
-    if (this.fieldId === "148509470") {
-      console.log("found it");
-    }
     const thisLogic = this.getLogicTree();
     return [];
   }

@@ -379,31 +379,6 @@ describe("FsTreeField", () => {
     });
   });
   describe(".isInterdependentOf(...)", () => {
-    it("Should determine First Degree Interdependency.", () => {
-      const fields = badCircuitFormJson.fields
-        .map((fieldJson) => {
-          const f = FsTreeField.fromFieldJson(
-            transformers.fieldJson(fieldJson as unknown as TFsFieldAnyJson)
-          );
-          return f;
-        })
-        .reduce((prev, cur) => {
-          prev[cur.fieldId] = cur;
-          return prev;
-        }, {} as { [fieldId: string]: FsTreeField });
-
-      const badCircuit_A = fields["147462597"];
-      const badCircuit_B = fields["147462595"];
-
-      const x = badCircuit_A.isInterdependentOf(badCircuit_B);
-      console.log({ badCircuit_A: badCircuit_A.getDependantFieldIds() });
-
-      console.log({ badCircuit_A: badCircuit_A.getDependantFieldIds() });
-      console.log({ badCircuit_B: badCircuit_B.getDependantFieldIds() });
-
-      console.log({ fields });
-    });
-
     //fifthDegreeBadCircuitFormJson
     it("Should Determine Fifth Degree Interdependency.", () => {
       const fields = fifthDegreeBadCircuitFormJson.fields
@@ -436,8 +411,6 @@ describe("FsTreeField", () => {
           const intersectFieldIds = fieldA.getInterdependentFieldIdsOf(fieldB);
         });
       });
-
-      console.log({ fields });
     });
   });
   describe(".getLogicTree()", () => {
