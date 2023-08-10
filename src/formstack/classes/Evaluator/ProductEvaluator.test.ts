@@ -10,12 +10,11 @@ describe("ProductEvaluator", () => {
         [submissionData.field]: submissionData.value,
       });
       expect(actual).toStrictEqual({
-        "147738157": {
-          address: "123 Walt Disney Way 0",
-          address2: "Micky Mouse Hut #2, 4",
-          city: "Disney World 7",
-          state: "DE",
-          zip: "04240",
+        "147738171": {
+          charge_type: "fixed_amount",
+          quantity: "7",
+          unit_price: "3.99",
+          total: "27.93",
         },
       });
     });
@@ -28,12 +27,11 @@ describe("ProductEvaluator", () => {
         [submissionData.field]: testValue,
       });
       expect(actual).toStrictEqual({
-        "147738157": {
-          address: "123 Walt Disney Way 0",
-          address2: "Micky Mouse Hut #2, 4",
-          city: "Disney World 7",
-          state: "DE",
-          zip: "04240",
+        "147738171": {
+          charge_type: "fixed_amount",
+          quantity: "7",
+          unit_price: "3.99",
+          total: "27.93",
         },
       });
     });
@@ -45,48 +43,48 @@ describe("ProductEvaluator", () => {
         [submissionData.field]: testValue,
       });
       expect(actual).toStrictEqual({
-        "147738157": {
-          address: "123 Walt Disney Way 0",
-          address2: "Micky Mouse Hut #2, 4",
-          city: "Disney World 7",
-          state: "DE",
-          zip: "04240",
+        "147738171": {
+          charge_type: "fixed_amount",
+          quantity: "7",
+          unit_price: "3.99",
+          total: "27.93",
         },
       });
     });
   });
 });
 const submissionData = {
-  field: "147738157",
+  field: "147738171",
   value:
-    "address = 123 Walt Disney Way 0\naddress2 = Micky Mouse Hut #2, 4\ncity = Disney World 7\nstate = DE\nzip = 04240",
+    "charge_type = fixed_amount\nquantity = 7\nunit_price = 3.99\ntotal = 27.93",
 };
-
 const fieldJson = {
-  id: "147738157",
-  label: "Address",
+  id: "147738171",
+  label: "Event/Product",
   hide_label: "0",
-  description: "",
-  name: "address",
-  type: "address",
+  description: "Event description goes here...",
+  name: "eventproduct",
+  type: "product",
   options: "",
   required: "0",
   uniq: "0",
   hidden: "0",
   readonly: "0",
   colspan: "1",
-  sort: "6",
+  sort: "20",
   logic: null,
   calculation: "",
   workflow_access: "write",
   default: "",
-  text_size: 50,
-  show_country: 0,
-  format: "US",
-  hide_address: 0,
-  hide_address2: 0,
-  hide_city: 0,
-  hide_state: 0,
-  hide_zip: 0,
-  visible_subfields: ["address", "address2", "city", "state", "zip"],
+  charge_type: "fixed_amount",
+  currency: "local",
+  image: "",
+  inventory: "",
+  inventory_mode: "unlimited",
+  unit_price: "3.99",
+  min_quantity: 1,
+  max_quantity: 10,
+  soldout_action: "message",
+  is_soldout: false,
+  display: "default",
 } as unknown as TFsFieldAny;

@@ -10,8 +10,6 @@ import { MatrixEvaluator } from "./MatrixEvaluator";
 import { NonValueEvaluator } from "./NonValueEvaluator";
 import { ProductEvaluator } from "./ProductEvaluator";
 
-// time to rename 'evaluate' to 'parse'
-
 class Evaluator {
   static getEvaluatorWithFieldJson(fieldJson: TFsFieldAny): IEValuator {
     switch (fieldJson.type) {
