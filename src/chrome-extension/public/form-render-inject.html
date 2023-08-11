@@ -82,6 +82,11 @@
         case 'getFieldStatusesResponse': 
           handelGetFieldStatusesResponse(e.data.payload)
         break;
+
+        case 'fetchSubmissionResponse': 
+          handelFetchSubmissionResponse(e.data.payload)
+        break;
+ 
         case 'pong':
           console.log({ping:'pong', message: e.data.payload});
           break;
@@ -144,6 +149,12 @@
               payload: payload || null
             }
           break;
+          case 'fetchSubmissionRequest':
+            message = {
+              messageType: "fetchSubmissionRequest",
+              payload: payload || null
+            }
+          break;
         default:
           message = {
             messageType: "ping",
@@ -157,6 +168,13 @@
       const handleGetFieldStatusClick = ()=>{
         sendMessageToParent('getFieldStatusesRequest', {})
       }
+
+      const handleFetchSubmissionClick = ()=>{
+        const submissionIdContainer = document.getElementById("fsBuddyFetchSubmissionIdInput");
+        sendMessageToParent('fetchSubmissionRequest', {submissionId: submissionIdContainer.value})
+        
+      }
+
       const handleFieldIdSelected = (selectElementId, selectedValue)=>{
         // console.log({selectElementId, selectedValue})
         sendMessageToParent('getFieldLogicDependentsRequest', {fieldId: selectedValue})
@@ -208,6 +226,18 @@
           appendFieldStatusContainer(fieldId, statusMessages.statusMessages)
         })
         prependUserMessages(...formStatusMessages);
+      }
+
+      const handelFetchSubmissionResponse = (payload)=>{
+        const {submissionData} = payload;
+        submissionData.forEach(fieldData=>{
+          const htmlControl = document.getElementById(fieldData.uiid);
+          htmlControl.value = fieldData.value;
+
+          if(fieldData.statusMessages){
+            appendFieldStatusContainer(fieldData.fieldId, fieldData.statusMessages)
+          }
+        })
       }
 
       const SEVERITIES = {
@@ -461,7 +491,6 @@
         sendMessageToParent('getAllFieldInfoRequest')
      })
      const fsBuddyHelper = {}
-
 	</script>
 	</head>
 	<body>
@@ -519,7 +548,20 @@
                   </tr>
             </table>
       </div>
-      <div id='fsBuddyControlPanelUserMessages'>
+      <div id='fsBuddyControlPanelSubmission'>
+        <h4>Submission</h4>
+        <table>
+              <tr>
+                    <td>
+                          <button onclick="handleFetchSubmissionClick()">Load Submission</button>
+                    </td>
+                    <td>
+                          <input id="fsBuddyFetchSubmissionIdInput" value="1128297723"/>    
+                    </td>
+              </tr>
+        </table>
+  </div>
+  <div id='fsBuddyControlPanelUserMessages'>
             <h4>User Messages Go Here</h4>
             <div style="height: 300px; overflow-y: auto;" id="fsBuddyUserMessagesDiv"></div>
       </div>

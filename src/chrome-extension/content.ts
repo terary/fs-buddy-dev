@@ -80,6 +80,52 @@ function getFormAsJson() {
   }
 }
 
+function handleFetchSubmissionRequest(
+  caller: MessageEventSource,
+  payload: any
+) {
+  const { submissionId } = payload;
+  console.log(
+    `Send message response, fetch submission submissionId:'${submissionId}'`
+  );
+  caller.postMessage({
+    messageType: "fetchSubmissionResponse",
+    payload: {
+      id: submissionId,
+      submissionData: [
+        {
+          uiid: "field147738156-first",
+          fieldId: "147738156",
+          fieldType: "text",
+          value: "Set by Content Script. " + Math.floor(Math.random() * 10000),
+          statusMessages: [
+            {
+              severity: "warn",
+              message:
+                "This is a test.  This is only a test.  Had this been an actual message it would have said something useful.",
+              relatedFieldIds: ["147738154", "148111228", "147738157"],
+            } as TStatusRecord,
+          ],
+        },
+        {
+          uiid: "field147738157-state",
+          fieldId: "147738157",
+          fieldType: "select",
+          value: "DE",
+          statusMessages: [
+            {
+              severity: "warn",
+              message:
+                "This is a test.  This is only a test.  Had this been an actual message it would have said something useful.",
+              relatedFieldIds: ["147738154", "148111228", "147738157"],
+            } as TStatusRecord,
+          ],
+        },
+      ],
+    },
+  });
+}
+
 function handleGetFieldStatusesRequest(
   caller: MessageEventSource,
   payload: any
@@ -194,6 +240,12 @@ window.onmessage = function (e) {
       break;
     case "getFieldStatusesRequest":
       e.source && handleGetFieldStatusesRequest(e.source, e.data.payload);
+      break;
+    case "fetchSubmissionRequest":
+      console.log("receive message fetch submission");
+      console.log({ payload: e.data.payload });
+
+      e.source && handleFetchSubmissionRequest(e.source, e.data.payload);
       break;
     default:
     // console.log(`message type not understood. ( '${e.data.messageType}')`);

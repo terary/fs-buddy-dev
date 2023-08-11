@@ -2,7 +2,7 @@ import path from "path";
 import fs from "fs";
 type TFsFormJson = any;
 
-const getFormJsonFromApi = async (message: any) => {
+const getSubmissionJsonFromApi = async (message: any) => {
   const { apiKey, submissionId } = message;
 
   return new Promise((resolve, reject) => {
@@ -56,7 +56,7 @@ class ApiSubmissionCacheManager {
       const submissionJson = fs
         .readFileSync(path.join(this.#cacheDirectory, fileName))
         .toString("utf8");
-      this.addSubmission(submissionId, JSON.parse(submissionId));
+      this.addSubmission(submissionId, JSON.parse(submissionJson));
     });
   }
 
@@ -82,9 +82,13 @@ class ApiSubmissionCacheManager {
     submissionId: string
   ): Promise<TFsFormJson> {
     if (this.formIdExists(submissionId)) {
-      return Promise.resolve(this._getSubmission(submissionId));
+      const x = this._getSubmission(submissionId);
+      return Promise.resolve(x);
     } else {
-      const submissionJson = await getFormJsonFromApi({ apiKey, submissionId });
+      const submissionJson = await getSubmissionJsonFromApi({
+        apiKey,
+        submissionId,
+      });
       this.putFile(submissionId, submissionJson);
       // console.log("Disabled disk write");
       this.addSubmission(submissionId, submissionJson);
