@@ -184,11 +184,9 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
   }
 
   evaluateWithValues<T>(values: { [fieldId: string]: any }): T {
-    const x = Object.entries(this._fieldIdNodeMap).map(([fieldId, field]) => {
+    return Object.entries(this._fieldIdNodeMap).map(([fieldId, field]) => {
       return field.evaluateWithValues(values);
-    });
-
-    return x as T;
+    }) as T;
   }
 
   getDependantFields(): string[] {

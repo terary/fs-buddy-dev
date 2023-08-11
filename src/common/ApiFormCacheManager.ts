@@ -1,5 +1,6 @@
-import { ITree } from "predicate-tree-advanced-poc/dist/src";
 import path from "path";
+import fs from "fs";
+type TFsFormJson = any;
 
 const getFormJsonFromApi = async (message: any) => {
   const { apiKey, formId } = message;
@@ -36,10 +37,8 @@ const getFormJsonFromApi = async (message: any) => {
   });
 };
 
-type TFsFormJson = any;
-import fs from "fs";
-class ApiCacheManager {
-  static #instance: ApiCacheManager;
+class ApiFormCacheManager {
+  static #instance: ApiFormCacheManager;
   #cacheDirectory = process.cwd() + "/api-cache/forms";
   private _formsAsJson: { [formId: string]: TFsFormJson } = {};
   private constructor() {
@@ -87,12 +86,12 @@ class ApiCacheManager {
     }
   }
 
-  static getInstance(): ApiCacheManager {
-    if (!ApiCacheManager.#instance) {
-      ApiCacheManager.#instance = new ApiCacheManager();
+  static getInstance(): ApiFormCacheManager {
+    if (!ApiFormCacheManager.#instance) {
+      ApiFormCacheManager.#instance = new ApiFormCacheManager();
     }
-    return ApiCacheManager.#instance;
+    return ApiFormCacheManager.#instance;
   }
 }
 
-export { ApiCacheManager };
+export { ApiFormCacheManager };
