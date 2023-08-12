@@ -25,6 +25,14 @@ import { FsCircularDependencyNode } from "./trees/nodes/FsCircularDependencyNode
 import { FsMaxDepthExceededNode } from "./trees/nodes/FsMaxDepthExceededNode";
 import { FsLogicBranchNode } from "./trees/nodes/FsLogicBranchNode";
 import { FsTreeLogic } from "./trees/FsTreeLogic";
+import { Evaluator } from "../Evaluator";
+import {
+  TEvaluateRequest,
+  TEvaluateResponse,
+  TUiEvaluationObject,
+} from "../Evaluator/type";
+import { TSubmissionJson } from "../../type.form";
+import { IEValuator } from "../Evaluator/IEvaluator";
 class FsTreeFieldCollection extends AbstractExpressionTree<
   TTreeFieldNode | FsFormRootNode
 > {
@@ -55,11 +63,11 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
     return this.getAllFieldIds().length;
   }
 
-  getAllFieldIds() {
+  private getAllFieldIds() {
     return Object.keys(this._fieldIdNodeMap);
   }
 
-  getFieldById(fieldId: string): FsTreeField {
+  private getFieldById(fieldId: string): FsTreeField {
     return this._fieldIdNodeMap[fieldId];
   }
 
@@ -219,6 +227,33 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
     return sectionChildren;
   }
 
+  private getEvaluatorByFieldId(fieldId: string): IEValuator {
+    const treeField = this.getFieldById(fieldId);
+    return treeField.getSubmissionEvaluator();
+  }
+
+  getUiPopulateObject(
+    apiSubmissionJson: TSubmissionJson
+  ): TEvaluateResponse<any> {
+    const mappedSubmissionData = apiSubmissionJson.data.reduce(
+      (prev: any, cur: any) => {
+        prev[cur.field] = cur.value;
+        return prev;
+      },
+      {}
+    );
+    const submissionUiDataItems: TUiEvaluationObject[] = this.getAllFieldIds()
+      .map((fieldId) => {
+        const evaluator = this.getEvaluatorByFieldId(fieldId);
+        return evaluator.getUiPopulateObject(mappedSubmissionData);
+      })
+      .reduce((prev: TUiEvaluationObject[], cur: TUiEvaluationObject[]) => {
+        prev.push(...cur);
+        return prev;
+      }, []);
+
+    return submissionUiDataItems;
+  }
   static fromFieldJson(
     fieldsJson: TFsFieldAnyJson[],
     formId = "_FORM_ID_"

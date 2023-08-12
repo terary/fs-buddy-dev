@@ -1,16 +1,12 @@
-import { TEvaluateRequest, TEvaluateResponse } from "./type";
-
-type UiEvaluationObject = {
-  uiid: string;
-  fieldId: string;
-  fieldType: string; // known type/string
-  value: string;
-  statusMessages: any[];
-};
+import {
+  TEvaluateRequest,
+  TEvaluateResponse,
+  TUiEvaluationObject,
+} from "./type";
 
 interface IEValuator {
   evaluateWithValues<T>(values: TEvaluateRequest): TEvaluateResponse<T>;
-  getUiPopulateObject(values: TEvaluateRequest): UiEvaluationObject;
+  getUiPopulateObject(values: TEvaluateRequest): TUiEvaluationObject[];
 }
 
 export { IEValuator };

@@ -1,6 +1,10 @@
 import { TFsFieldAddress } from "../../type.field";
 import { AbstractEvaluator } from "./AbstractEvaluator";
-import { TEvaluateRequest, TEvaluateResponse } from "./type";
+import {
+  TEvaluateRequest,
+  TEvaluateResponse,
+  TUiEvaluationObject,
+} from "./type";
 
 abstract class AbstractSubfieldEvaluator extends AbstractEvaluator {
   abstract get supportedSubfieldIds(): string[];
@@ -27,6 +31,28 @@ abstract class AbstractSubfieldEvaluator extends AbstractEvaluator {
         value,
       };
     }) as [{ subfieldId: string; value: string }];
+  }
+
+  getUiPopulateObject(values: TEvaluateRequest): TUiEvaluationObject[] {
+    // this is where submission error/warn/info should happen
+    type TypeSubfieldParse = { subfieldId: string; value: string }[];
+    const parsedValues = this.parseValues<TypeSubfieldParse>(values); // I think parseValue is typed wrong or returns incorrect shape
+
+    const parsedValuesTyped = parsedValues as unknown as TypeSubfieldParse;
+
+    return this.supportedSubfieldIds.map((subfieldId) => {
+      return {
+        uiid: `field${this.fieldId}-${subfieldId}`,
+        fieldId: this.fieldId,
+        fieldType: this.fieldJson.type,
+        value:
+          // @ts-ignore
+          parsedValuesTyped[this.fieldId].find(
+            (x: any) => x.subfieldId === subfieldId
+          )?.value || "", //[subfieldId], //values[this.fieldId],
+        statusMessages: [],
+      } as TUiEvaluationObject;
+    });
   }
 
   evaluateWithValues<T>(values: TEvaluateRequest): TEvaluateResponse<T> {

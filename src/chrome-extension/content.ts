@@ -97,21 +97,24 @@ function getSubmissionAsJson(caller: MessageEventSource, submissionId: string) {
         apiKey: "cc17435f8800943cc1abd3063a8fe44f",
       },
       async (apiSubmissionJson) => {
-        const mappedSubmissionData = apiSubmissionJson.data.reduce(
-          (prev: any, cur: any) => {
-            // this is TSubmission type, I think
-            prev[cur.field] = cur.value;
-            return prev;
-          },
-          {}
-        );
-        const submissionUiDataItems = currentFieldCollection
-          .getAllFieldIds()
-          .map((fieldId) => {
-            const treeField = currentFieldCollection.getFieldById(fieldId);
-            const evaluator = treeField.getSubmissionEvaluator();
-            return evaluator.getUiPopulateObject(mappedSubmissionData);
-          });
+        const submissionUiDataItems =
+          currentFieldCollection.getUiPopulateObject(apiSubmissionJson);
+
+        // const mappedSubmissionData = apiSubmissionJson.data.reduce(
+        //   (prev: any, cur: any) => {
+        //     // this is TSubmission type, I think
+        //     prev[cur.field] = cur.value;
+        //     return prev;
+        //   },
+        //   {}
+        // );
+        // const submissionUiDataItems = currentFieldCollection
+        //   .getAllFieldIds()
+        //   .map((fieldId) => {
+        //     const treeField = currentFieldCollection.getFieldById(fieldId);
+        //     const evaluator = treeField.getSubmissionEvaluator();
+        //     return evaluator.getUiPopulateObject(mappedSubmissionData);
+        //   });
 
         caller.postMessage({
           messageType: "fetchSubmissionResponse",
@@ -138,6 +141,7 @@ function handleFetchSubmissionRequest(
   );
 
   caller.postMessage({
+    // *tmc* called, some dev/debug stuff - remove it
     messageType: "fetchSubmissionResponse",
     payload: {
       id: submissionJson,

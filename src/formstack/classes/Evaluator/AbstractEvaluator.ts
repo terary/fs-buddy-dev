@@ -1,7 +1,12 @@
 import { TFsFieldAny } from "../../type.field";
+import { TSubmissionDataItem } from "../../type.form";
 import { InvalidEvaluation } from "../InvalidEvaluation";
 import { IEValuator } from "./IEvaluator";
-import { TEvaluateRequest, TEvaluateResponse } from "./type";
+import {
+  TEvaluateRequest,
+  TEvaluateResponse,
+  TUiEvaluationObject,
+} from "./type";
 
 abstract class AbstractEvaluator implements IEValuator {
   private _fieldJson: TFsFieldAny;
@@ -20,14 +25,19 @@ abstract class AbstractEvaluator implements IEValuator {
 
   abstract parseValues<T>(values: TEvaluateRequest): TEvaluateResponse<T>;
 
-  getUiPopulateObject(values: TEvaluateRequest) {
-    return {
-      uiid: `field${this.fieldId}`,
-      fieldId: this.fieldId,
-      fieldType: this.fieldJson.type,
-      value: values[this.fieldId],
-      statusMessages: [],
-    };
+  getUiPopulateObject(values: TEvaluateRequest): TUiEvaluationObject[] {
+    // this is where submission error/warn/info should happen
+    const parsedValues = this.parseValues<string>(values);
+    return [
+      {
+        uiid: `field${this.fieldId}`,
+        fieldId: this.fieldId,
+        fieldType: this.fieldJson.type,
+        // @ts-ignore - typing is goofy,
+        value: parsedValues[this.fieldId], //values[this.fieldId],
+        statusMessages: [],
+      },
+    ];
   }
 
   abstract evaluateWithValues<T>(

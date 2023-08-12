@@ -1,7 +1,11 @@
 import { TFsFieldAddress } from "../../type.field";
 import { AbstractEvaluator } from "./AbstractEvaluator";
 import { AbstractSubfieldEvaluator } from "./AbstractSubfieldEvaluator";
-import { TEvaluateRequest, TEvaluateResponse } from "./type";
+import {
+  TEvaluateRequest,
+  TEvaluateResponse,
+  TUiEvaluationObject,
+} from "./type";
 
 class AddressEvaluator extends AbstractSubfieldEvaluator {
   private _supportedSubfieldIds = [
