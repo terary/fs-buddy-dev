@@ -40,8 +40,16 @@ type TApiForm = {
   fields: TFsFieldAny[];
 };
 
+// maybe move *submission* stuff to its own file(s)
+type TSubmissionDataItem = { fieldId: string; value: string };
+type TSubmissionJson = {
+  id: string;
+  form: string;
+  data: TSubmissionDataItem[];
+};
+
 // *tmc* type 'any' should be json type
 type TApiFormJson = Partial<Omit<TApiForm, "fields">> & {
   fields: any; // TFsFieldAnyJson[];
 };
-export type { TApiFormJson, TApiForm };
+export type { TApiFormJson, TApiForm, TSubmissionDataItem, TSubmissionJson };

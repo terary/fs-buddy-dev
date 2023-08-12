@@ -157,24 +157,17 @@ class FsTreeField extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
   evaluateWithValues<T>(values: { [fieldId: string]: any }): {
     [fieldId: string]: T | InvalidEvaluation; // this null should be instance of class 'InvalidEvaluation' (broken field)
   } {
-    // maybe in real life this would do a little more formatting.
-    // also what about dependant factors? (isHidden)
     if (this.getLogicTree() === null) {
       const evaluator = Evaluator.getEvaluatorWithFieldJson(
         this.fieldJson as TFsFieldAny
       );
       return evaluator.evaluateWithValues<T>(values);
-      // return this.evaluateByFieldType<T>(values);
-      // private evaluateByFieldType<T>(values: { [fieldId: string]: any }): {
-      //   [fieldId: string]: T | InvalidEvaluation;
-      // } {
-      //   const evaluator = Evaluator.getEvaluatorWithFieldJson(
-      //     this.fieldJson as TFsFieldAny
-      //   );
-      //   return evaluator.evaluateWithValues<T>(values);
-      // }
     }
     return values[this.fieldId];
+  }
+
+  getSubmissionEvaluator() {
+    return Evaluator.getEvaluatorWithFieldJson(this.fieldJson as TFsFieldAny);
   }
 
   private evaluateMultiSelect<T>(values: { [fieldId: string]: any }): {

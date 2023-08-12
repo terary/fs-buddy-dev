@@ -229,14 +229,40 @@
       }
 
       const handelFetchSubmissionResponse = (payload)=>{
-        const {submissionData} = payload;
-        submissionData.forEach(fieldData=>{
+        const {submissionData } = payload;
+        // {
+        submissionData.forEach((fieldData)=>{
           const htmlControl = document.getElementById(fieldData.uiid);
-          htmlControl.value = fieldData.value;
+          const {statusMessages = [], fieldType} = fieldData;
+          
+          if(fieldType === "file"){
+            statusMessages.push({
+              severity: "info",
+              message:
+                "field types of 'file', value can not be set",
+              relatedFieldIds: [],
+            })
+          } else if(htmlControl) {
+            htmlControl.value = fieldData?.value||'';
+          } else {
+            statusMessages.push({
+              severity: "warn",
+              message:
+                `Failed to find a ui element for field uiid '${fieldData.uiid}'.`,
+              relatedFieldIds: [],
+            })
 
-          if(fieldData.statusMessages){
-            appendFieldStatusContainer(fieldData.fieldId, fieldData.statusMessages)
+            console.log(`Can not set submissionData. Couldn't find UI control with id: '${fieldData.uiid}'.`);
+            console.log({fieldData})
           }
+
+          console.log({
+            fieldType: fsBuddyHelper.fieldSummary[fieldData.fieldId].type,
+            fieldId: fieldData.fieldId,
+            fieldSummary: fsBuddyHelper.fieldSummary[fieldData.fieldId],
+          })
+
+          appendFieldStatusContainer(fieldData.fieldId, statusMessages)
         })
       }
 
@@ -556,7 +582,7 @@
                           <button onclick="handleFetchSubmissionClick()">Load Submission</button>
                     </td>
                     <td>
-                          <input id="fsBuddyFetchSubmissionIdInput" value="1128297723"/>    
+                          <input id="fsBuddyFetchSubmissionIdInput" value="1129952515"/>    
                     </td>
               </tr>
         </table>

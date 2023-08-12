@@ -90,7 +90,6 @@ class ApiSubmissionCacheManager {
         submissionId,
       });
       this.putFile(submissionId, submissionJson);
-      // console.log("Disabled disk write");
       this.addSubmission(submissionId, submissionJson);
       return this._getSubmission(submissionId);
     }

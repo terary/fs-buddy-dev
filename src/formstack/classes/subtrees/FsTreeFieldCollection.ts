@@ -52,7 +52,15 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
   }
 
   getFormFieldsCount() {
-    return Object.keys(this._fieldIdNodeMap).length;
+    return this.getAllFieldIds().length;
+  }
+
+  getAllFieldIds() {
+    return Object.keys(this._fieldIdNodeMap);
+  }
+
+  getFieldById(fieldId: string): FsTreeField {
+    return this._fieldIdNodeMap[fieldId];
   }
 
   private getExtendedTree<T extends FsTreeLogicDeep = FsTreeLogicDeep>(

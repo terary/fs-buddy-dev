@@ -20,6 +20,16 @@ abstract class AbstractEvaluator implements IEValuator {
 
   abstract parseValues<T>(values: TEvaluateRequest): TEvaluateResponse<T>;
 
+  getUiPopulateObject(values: TEvaluateRequest) {
+    return {
+      uiid: `field${this.fieldId}`,
+      fieldId: this.fieldId,
+      fieldType: this.fieldJson.type,
+      value: values[this.fieldId],
+      statusMessages: [],
+    };
+  }
+
   abstract evaluateWithValues<T>(
     values: TEvaluateRequest
   ): TEvaluateResponse<T>;

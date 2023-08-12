@@ -1,6 +1,9 @@
 import { FormstackBuddy } from "../FormstackBuddy/FormstackBuddy";
 import { FieldLogicService } from "../FormstackBuddy/FieldLogicService";
-import { TFsFieldAnyJson } from "../formstack";
+import { FsTreeFieldCollection, TFsFieldAnyJson } from "../formstack";
+import { SubmissionEvaluator } from "../FormstackBuddy/SubmissionEvaluator";
+import { FsTreeField } from "../formstack/classes/subtrees/trees";
+import { TEvaluateRequest } from "../formstack/classes/Evaluator/type";
 alert("Hell from content.js");
 function getFormIdFromLocation({ pathname }: Location = location) {
   const regExp = /\/admin\/form\/builder\/(?<formId>\d+)\/build(\/*)+/g;
@@ -49,6 +52,7 @@ function buildIframe(iframeId: string): HTMLIFrameElement {
   iframe.style.backgroundColor = "green";
   return iframe;
 }
+let currentFieldCollection: FsTreeFieldCollection;
 
 function getFormAsJson() {
   const fetchTreeFormId = getFormIdFromLocation();
@@ -60,6 +64,7 @@ function getFormAsJson() {
         apiKey: "cc17435f8800943cc1abd3063a8fe44f",
       },
       async (apiFormJson) => {
+        // is this await necessary?
         const childFrameHtml = await getChildFrameHtml();
         const iframe = buildIframe("theFrame");
         iframe.srcdoc = childFrameHtml + apiFormJson.html;
@@ -69,6 +74,9 @@ function getFormAsJson() {
         (apiFormJson?.fields || []).map((field: any) => {
           devDebugFieldIds.push(field.id);
         });
+        currentFieldCollection = FsTreeFieldCollection.fromFieldJson(
+          apiFormJson.fields
+        );
 
         fieldLogicService = FormstackBuddy.getInstance().getFieldLogicService(
           (apiFormJson.fields as TFsFieldAnyJson[]) || []
@@ -80,18 +88,59 @@ function getFormAsJson() {
   }
 }
 
+function getSubmissionAsJson(caller: MessageEventSource, submissionId: string) {
+  if (submissionId) {
+    chrome.runtime.sendMessage(
+      {
+        type: "GetSubmissionFromApiRequest",
+        submissionId,
+        apiKey: "cc17435f8800943cc1abd3063a8fe44f",
+      },
+      async (apiSubmissionJson) => {
+        const mappedSubmissionData = apiSubmissionJson.data.reduce(
+          (prev: any, cur: any) => {
+            // this is TSubmission type, I think
+            prev[cur.field] = cur.value;
+            return prev;
+          },
+          {}
+        );
+        const submissionUiDataItems = currentFieldCollection
+          .getAllFieldIds()
+          .map((fieldId) => {
+            const treeField = currentFieldCollection.getFieldById(fieldId);
+            const evaluator = treeField.getSubmissionEvaluator();
+            return evaluator.getUiPopulateObject(mappedSubmissionData);
+          });
+
+        caller.postMessage({
+          messageType: "fetchSubmissionResponse",
+          payload: {
+            id: apiSubmissionJson.id,
+            submissionData: submissionUiDataItems,
+          },
+        });
+      }
+    );
+  } else {
+    console.log(`Failed to fetch submission, submissionId: '${submissionId}'.`);
+  }
+}
+
 function handleFetchSubmissionRequest(
   caller: MessageEventSource,
   payload: any
 ) {
   const { submissionId } = payload;
+  const submissionJson = getSubmissionAsJson(caller, submissionId);
   console.log(
     `Send message response, fetch submission submissionId:'${submissionId}'`
   );
+
   caller.postMessage({
     messageType: "fetchSubmissionResponse",
     payload: {
-      id: submissionId,
+      id: submissionJson,
       submissionData: [
         {
           uiid: "field147738156-first",
