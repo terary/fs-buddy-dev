@@ -1,21 +1,14 @@
-import { TFsFieldAddress } from "../../type.field";
+import { TStatusRecord } from "../../../chrome-extension/type";
+import { TFsFieldAddress, TFsFieldMatrix } from "../../type.field";
+import { InvalidEvaluation } from "../InvalidEvaluation";
 import { AbstractEvaluator } from "./AbstractEvaluator";
-import { TEvaluateRequest, TEvaluateResponse } from "./type";
+import {
+  TEvaluateRequest,
+  TEvaluateResponse,
+  TUiEvaluationObject,
+} from "./type";
 
 class MatrixEvaluator extends AbstractEvaluator {
-  private _supportedSubfieldIds = [
-    "first",
-    "last",
-    "initial",
-    "prefix",
-    "suffix",
-    "middle",
-  ];
-
-  get supportedSubfieldIds() {
-    return this._supportedSubfieldIds;
-  }
-
   parseValues<T>(values: TEvaluateRequest): TEvaluateResponse<T> {
     const s2 = this.parseSubmittedData(values);
     return { [this.fieldId]: s2 as T };
@@ -38,6 +31,61 @@ class MatrixEvaluator extends AbstractEvaluator {
         value,
       };
     }) as [{ subfieldId: string; value: string }];
+  }
+
+  private getAsMatrixUiFieldIdMap(): {
+    [row: string]: { [column: string]: string };
+  } {
+    // I *think* reverse these when that option is set in the fieldJson.options
+    const rows = (this.fieldJson as TFsFieldMatrix).row_choices.split("\n");
+    const columns = (this.fieldJson as TFsFieldMatrix).column_choices.split(
+      "\n"
+    );
+
+    const matrix: any = {};
+    rows.forEach((row, rowIndex) => {
+      matrix[row] = {};
+      columns.forEach((column, columnIndex) => {
+        matrix[row][column] = `field${this.fieldId}-${rowIndex + 1}-${
+          columnIndex + 1
+        }`;
+      });
+    });
+    console.log({ matrix });
+    return matrix;
+  }
+
+  getUiPopulateObject(values: TEvaluateRequest): TUiEvaluationObject[] {
+    type TypeSubfieldDatum = { subfieldId: string; value: string };
+    const parsedValues = this.parseSubmittedData(values);
+    const fieldIdMatrix = this.getAsMatrixUiFieldIdMap();
+
+    const selectedRows = parsedValues?.map((datum) => {
+      const statusMessages: TStatusRecord[] = [];
+      const uiFieldId = fieldIdMatrix[datum.subfieldId][datum.value];
+
+      if (uiFieldId === undefined) {
+        statusMessages.push({
+          severity: "warn",
+          message: `Unable to find matrix mapping for: '${JSON.stringify({
+            // *tmc* these static labels (row/column) may cause confusion if options are changed
+            row: datum.subfieldId,
+            column: datum.value,
+          })}'.`,
+          fieldId: this.fieldId,
+          relatedFieldIds: [],
+        });
+      }
+
+      return {
+        uiid: uiFieldId || this.fieldId,
+        fieldId: this.fieldId,
+        fieldType: this.fieldJson.type,
+        value: "checked",
+        statusMessages: statusMessages,
+      } as TUiEvaluationObject;
+    });
+    return selectedRows as TUiEvaluationObject[];
   }
 
   evaluateWithValues<T>(values: TEvaluateRequest): TEvaluateResponse<T> {

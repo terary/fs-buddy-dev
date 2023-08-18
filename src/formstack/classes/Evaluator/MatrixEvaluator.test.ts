@@ -51,6 +51,85 @@ describe("MatrixEvaluator", () => {
       });
     });
   });
+  describe(".getUiPopulateObject(...)", () => {
+    it("Should return array of properly formatted UI instructions (shape of TUiEvaluationObject).", () => {
+      const testValue = "Row 1 = Column 1\nRow 2 = Column 2\nRow 3 = Column 3";
+      const evaluator = new MatrixEvaluator(fieldJson);
+      const actual = evaluator.getUiPopulateObject({
+        [submissionData.field]: testValue,
+      });
+      expect(actual).toStrictEqual([
+        {
+          uiid: "field147738168-1-1",
+          fieldId: "147738168",
+          fieldType: "matrix",
+          value: "checked",
+          statusMessages: [],
+        },
+        {
+          uiid: "field147738168-2-2",
+          fieldId: "147738168",
+          fieldType: "matrix",
+          value: "checked",
+          statusMessages: [],
+        },
+        {
+          uiid: "field147738168-3-3",
+          fieldId: "147738168",
+          fieldType: "matrix",
+          value: "checked",
+          statusMessages: [],
+        },
+      ]);
+    });
+    it.only("Should return (Unknown Column).", () => {
+      const testValue =
+        "Row 1 = Column 1\nRow 2 = Column 2\nRow 3 = Column 3\nRow 3 = NON_COLUMN";
+      // const testValue = "Row 3 = NON_COLUMN";
+      const evaluator = new MatrixEvaluator(fieldJson);
+      const actual = evaluator.getUiPopulateObject({
+        [submissionData.field]: testValue,
+      });
+      expect(actual).toStrictEqual([
+        {
+          uiid: "field147738168-1-1",
+          fieldId: "147738168",
+          fieldType: "matrix",
+          value: "checked",
+          statusMessages: [],
+        },
+        {
+          uiid: "field147738168-2-2",
+          fieldId: "147738168",
+          fieldType: "matrix",
+          value: "checked",
+          statusMessages: [],
+        },
+        {
+          uiid: "field147738168-3-3",
+          fieldId: "147738168",
+          fieldType: "matrix",
+          value: "checked",
+          statusMessages: [],
+        },
+        {
+          uiid: "147738168",
+          fieldId: "147738168",
+          fieldType: "matrix",
+          value: "checked",
+          statusMessages: [
+            {
+              severity: "warn",
+              message:
+                'Unable to find matrix mapping for: \'{"row":"Row 3","column":"NON_COLUMN"}\'.',
+              fieldId: "147738168",
+              relatedFieldIds: [],
+            },
+          ],
+        },
+      ]);
+    });
+  });
 });
 const submissionData = {
   field: "147738168",

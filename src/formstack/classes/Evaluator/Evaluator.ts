@@ -9,6 +9,7 @@ import { FieldTypeUnknownError } from "../../errors/FieldTypeUnknownError";
 import { MatrixEvaluator } from "./MatrixEvaluator";
 import { NonValueEvaluator } from "./NonValueEvaluator";
 import { ProductEvaluator } from "./ProductEvaluator";
+import { DateEvaluator } from "./DateEvaluator";
 
 class Evaluator {
   static getEvaluatorWithFieldJson(fieldJson: TFsFieldAny): IEValuator {
@@ -32,6 +33,8 @@ class Evaluator {
         return new MultiSelectEvaluator(fieldJson);
 
       case "datetime":
+        return new DateEvaluator(fieldJson);
+
       case "email":
       case "file":
       case "phone":

@@ -228,18 +228,34 @@
         prependUserMessages(...formStatusMessages);
       }
 
+
       const handelFetchSubmissionResponse = (payload)=>{
         const {submissionData } = payload;
-        // {
         submissionData.forEach((fieldData)=>{
           const htmlControl = document.getElementById(fieldData.uiid);
-          const {statusMessages = [], fieldType} = fieldData;
+          const {statusMessages = [], fieldType, uiid, fieldId} = fieldData;
           
           if(fieldType === "file"){
             statusMessages.push({
               severity: "info",
+              fieldId,
               message:
                 "field types of 'file', value can not be set",
+              relatedFieldIds: [],
+            })
+          } else if(fieldType === "matrix"){
+            htmlControl.checked = true;
+          } else if(fieldType === "checkbox"){
+            htmlControl.checked = true;
+          } else if(fieldType === "radio"){
+            htmlControl.checked = true;
+          } else if(uiid === null && (statusMessages||[]).length>0) {
+            statusMessages.push(...statusMessages)
+            statusMessages.push({
+              severity: "debug",
+              fieldId,
+              message:
+                "Message created during submissionData response.",
               relatedFieldIds: [],
             })
           } else if(htmlControl) {
@@ -247,6 +263,7 @@
           } else {
             statusMessages.push({
               severity: "warn",
+              fieldId,
               message:
                 `Failed to find a ui element for field uiid '${fieldData.uiid}'.`,
               relatedFieldIds: [],
@@ -391,6 +408,8 @@
       }
       
       const appendFieldStatusContainer = (fieldId, statusMessages)=>{
+        // should check to see if container exists?
+        // should only add container if statusMessages is non empty
         const containerId =`fsCell${fieldId}`;
         const fieldContainer = getFieldContainer(fieldId);
         const collectionSeverity = getMessageCollectionSeverity(statusMessages);

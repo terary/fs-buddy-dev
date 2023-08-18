@@ -1,4 +1,6 @@
+import { TStatusRecord } from "../../../chrome-extension/type";
 import { TFsFieldAddress } from "../../type.field";
+import { InvalidEvaluation } from "../InvalidEvaluation";
 import { AbstractEvaluator } from "./AbstractEvaluator";
 import {
   TEvaluateRequest,
@@ -35,12 +37,46 @@ abstract class AbstractSubfieldEvaluator extends AbstractEvaluator {
 
   getUiPopulateObject(values: TEvaluateRequest): TUiEvaluationObject[] {
     // this is where submission error/warn/info should happen
-    type TypeSubfieldParse = { subfieldId: string; value: string }[];
+    type TypeSubfieldDatum = { subfieldId: string; value: string };
+    type TypeSubfieldParse = TypeSubfieldDatum[];
+
     const parsedValues = this.parseValues<TypeSubfieldParse>(values); // I think parseValue is typed wrong or returns incorrect shape
+    const statusMessages: TStatusRecord[] = [];
+    if (parsedValues instanceof InvalidEvaluation) {
+      return [
+        {
+          uiid: `field${this.fieldId}`,
+          fieldId: this.fieldId,
+          fieldType: this.fieldJson.type,
+          value: "",
+          statusMessages: [
+            {
+              severity: "error",
+              message: "Failed to parse field" + parsedValues.message,
+              relatedFieldIds: [],
+            },
+          ],
+        } as TUiEvaluationObject,
+      ];
+    }
 
     const parsedValuesTyped = parsedValues as unknown as TypeSubfieldParse;
+    // @ts-ignore
+    const unexpectedSubfields = parsedValuesTyped[this.fieldId].filter(
+      (datum: TypeSubfieldDatum) => {
+        return !this.supportedSubfieldIds.includes(datum.subfieldId);
+      }
+    );
+    unexpectedSubfields.forEach((datum: TypeSubfieldDatum) => {
+      statusMessages.push({
+        severity: "warn",
+        message: `Found unexpected subfield: '${datum.subfieldId}'. With value: '${datum.value}'.`,
+        fieldId: this.fieldId,
+        relatedFieldIds: [],
+      });
+    });
 
-    return this.supportedSubfieldIds.map((subfieldId) => {
+    const uiComponents = this.supportedSubfieldIds.map((subfieldId) => {
       return {
         uiid: `field${this.fieldId}-${subfieldId}`,
         fieldId: this.fieldId,
@@ -53,13 +89,24 @@ abstract class AbstractSubfieldEvaluator extends AbstractEvaluator {
         statusMessages: [],
       } as TUiEvaluationObject;
     });
+
+    if (statusMessages.length > 0) {
+      uiComponents.push({
+        uiid: `field${this.fieldId}`,
+        fieldId: this.fieldId,
+        fieldType: this.fieldJson.type,
+        value: "",
+        statusMessages: statusMessages,
+      } as TUiEvaluationObject);
+    }
+    return uiComponents;
   }
 
   evaluateWithValues<T>(values: TEvaluateRequest): TEvaluateResponse<T> {
     const s1 = this.parseSubmittedData(values);
     const s2 =
       Array.isArray(s1) &&
-      s1.reduce((prev, cur, i, a) => {
+      s1.reduce((prev, cur) => {
         if (this.supportedSubfieldIds.includes(cur.subfieldId)) {
           prev[cur.subfieldId] = cur.value;
         }

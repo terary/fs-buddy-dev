@@ -1,7 +1,7 @@
 import { InvalidEvaluation } from "../InvalidEvaluation";
 
 type TUiEvaluationObject = {
-  uiid: string;
+  uiid: string | null;
   fieldId: string;
   fieldType: string; // known type/string
   value: string;

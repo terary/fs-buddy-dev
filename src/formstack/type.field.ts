@@ -36,7 +36,7 @@ type TFsFieldType =
   | "rating"
   | "richtext";
 
-type TSelectOption = {
+type TFsSelectOption = {
   value: string;
   label: string;
   // maybe imageUrl or similar ?
@@ -83,7 +83,7 @@ type TFsFieldAddress = TFsBaseFieldType & {
 };
 
 type TFsFieldCheckbox = TFsBaseFieldType & {
-  options: TSelectOption[];
+  options: TFsSelectOption[];
   option_layout: "vertical"; // probably others
   option_other: boolean; // example 0 | 1;
   randomize_options: boolean; // example 0 | 1;
@@ -198,12 +198,12 @@ type TFsFieldRichText = TFsBaseFieldType & {
 };
 type TFsFieldSelect = TFsBaseFieldType & {
   // drop down list
-  options: TSelectOption[];
+  options: TFsSelectOption[];
   select_size: number;
 };
 
 type TFsFieldRadio = TFsBaseFieldType & {
-  options: TSelectOption[];
+  options: TFsSelectOption[];
 };
 
 type TFsFieldSection = TFsBaseFieldType & {
@@ -287,4 +287,5 @@ export type {
   TFsFieldText,
   TFsFieldType,
   TFsBaseFieldType,
+  TFsSelectOption,
 };
