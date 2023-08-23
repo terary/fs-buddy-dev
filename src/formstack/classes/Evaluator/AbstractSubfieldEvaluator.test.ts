@@ -93,6 +93,7 @@ describe("AbstractSubfieldEvaluator", () => {
       ]);
     });
   });
+  it.skip("Should given statusMessage if empty string");
 });
 const submissionData = {
   field: "147738157",

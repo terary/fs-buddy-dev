@@ -51,6 +51,7 @@ describe("MatrixEvaluator", () => {
       });
     });
   });
+  it.skip("Should hand empty values as expected");
   describe(".getUiPopulateObject(...)", () => {
     it("Should return array of properly formatted UI instructions (shape of TUiEvaluationObject).", () => {
       const testValue = "Row 1 = Column 1\nRow 2 = Column 2\nRow 3 = Column 3";

@@ -235,21 +235,15 @@
           const htmlControl = document.getElementById(fieldData.uiid);
           const {statusMessages = [], fieldType, uiid, fieldId} = fieldData;
           
-          if(fieldType === "file"){
+          if(fieldType === "file" || fieldType === "signature"){
             statusMessages.push({
               severity: "info",
               fieldId,
               message:
-                "field types of 'file', value can not be set",
+                `field types of 'file' or 'signature', value can not be set.  value: ${fieldData.value}`,
               relatedFieldIds: [],
             })
-          } else if(fieldType === "matrix"){
-            htmlControl.checked = true;
-          } else if(fieldType === "checkbox"){
-            htmlControl.checked = true;
-          } else if(fieldType === "radio"){
-            htmlControl.checked = true;
-          } else if(uiid === null && (statusMessages||[]).length>0) {
+          }  else if(uiid === null && (statusMessages||[]).length>0) {
             statusMessages.push(...statusMessages)
             statusMessages.push({
               severity: "debug",
@@ -258,6 +252,24 @@
                 "Message created during submissionData response.",
               relatedFieldIds: [],
             })
+          } else if(!htmlControl) {
+            statusMessages.push({
+              severity: "warn",
+              fieldId,
+              message:
+                `Failed to find a ui element for field uiid '${fieldData.uiid}'.`,
+              relatedFieldIds: [],
+            })
+
+            console.log(`Can not set submissionData. Couldn't find UI control with id: '${fieldData.uiid}'.`);
+            console.log({fieldData})
+
+          } else if(fieldType === "matrix"){
+            htmlControl.checked = true;
+          } else if(fieldType === "checkbox"){
+            htmlControl.checked = true;
+          } else if(fieldType === "radio"){
+            htmlControl.checked = true;
           } else if(htmlControl) {
             htmlControl.value = fieldData?.value||'';
           } else {

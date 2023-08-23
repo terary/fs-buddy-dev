@@ -8,6 +8,8 @@ import {
   TUiEvaluationObject,
 } from "./type";
 
+const isString = (str: any) => typeof str === "string" || str instanceof String;
+
 abstract class AbstractSubfieldEvaluator extends AbstractEvaluator {
   abstract get supportedSubfieldIds(): string[];
 
@@ -21,6 +23,16 @@ abstract class AbstractSubfieldEvaluator extends AbstractEvaluator {
     if (!submissionData) {
       return null;
     }
+
+    if (!isString(submissionData)) {
+      return new InvalidEvaluation(
+        `Subfield value not a string. value: '${submissionData}'.`,
+        {
+          value: values[this.fieldId],
+        }
+      );
+    }
+
     const records = submissionData.split("\n");
 
     return records.map((field: string) => {
@@ -42,7 +54,7 @@ abstract class AbstractSubfieldEvaluator extends AbstractEvaluator {
 
     const parsedValues = this.parseValues<TypeSubfieldParse>(values); // I think parseValue is typed wrong or returns incorrect shape
     const statusMessages: TStatusRecord[] = [];
-    if (parsedValues instanceof InvalidEvaluation) {
+    if (parsedValues[this.fieldId] instanceof InvalidEvaluation) {
       return [
         {
           uiid: `field${this.fieldId}`,

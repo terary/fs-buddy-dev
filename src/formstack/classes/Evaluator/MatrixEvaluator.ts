@@ -7,6 +7,7 @@ import {
   TEvaluateResponse,
   TUiEvaluationObject,
 } from "./type";
+const isString = (str: any) => typeof str === "string" || str instanceof String;
 
 class MatrixEvaluator extends AbstractEvaluator {
   parseValues<T>(values: TEvaluateRequest): TEvaluateResponse<T> {
@@ -19,6 +20,15 @@ class MatrixEvaluator extends AbstractEvaluator {
     if (!submissionData) {
       return null;
     }
+    if (!isString(submissionData)) {
+      return new InvalidEvaluation(
+        `Matrix value not a string. value: '${submissionData}'.`,
+        {
+          value: values[this.fieldId],
+        }
+      );
+    }
+
     const records = submissionData.split("\n");
 
     return records.map((field: string) => {
@@ -60,6 +70,54 @@ class MatrixEvaluator extends AbstractEvaluator {
     const parsedValues = this.parseSubmittedData(values);
     const fieldIdMatrix = this.getAsMatrixUiFieldIdMap();
 
+    if (
+      parsedValues &&
+      // @ts-ignore - parsedValues could be instance of InvalidEvaluation  (and not parsedValues[fieldId])
+      parsedValues[this.fieldId] instanceof InvalidEvaluation
+    ) {
+      return [
+        {
+          // uiid: `field${this.fieldId}`,
+          uiid: null,
+          fieldId: this.fieldId,
+          fieldType: this.fieldJson.type,
+          value: "",
+          statusMessages: [
+            {
+              severity: "error",
+              message: "Failed to parse field",
+              relatedFieldIds: [],
+            },
+          ],
+        } as TUiEvaluationObject,
+      ];
+    }
+
+    // ts-ignore,
+    // at this point parsedValues should be an array, except when the field is empty
+    // if (parsedValues && !isString(parsedValues[this.fieldId])) {
+    //   return [
+    //     {
+    //       // uiid: `field${this.fieldId}`,
+    //       uiid: null,
+    //       fieldId: this.fieldId,
+    //       fieldType: this.fieldJson.type,
+    //       value: "",
+    //       statusMessages: [
+    //         {
+    //           severity: "error",
+    //           message: `Failed to parse field. value: parsedValue: ${
+    //             // @ts-ignore - may be InvalidEvaluation
+    //             parsedValues[this.fieldId]
+    //           }`,
+    //           relatedFieldIds: [],
+    //         } as TStatusRecord,
+    //       ],
+    //     } as TUiEvaluationObject,
+    //   ];
+    // }
+
+    // @ts-ignore
     const selectedRows = parsedValues?.map((datum) => {
       const statusMessages: TStatusRecord[] = [];
       const uiFieldId = fieldIdMatrix[datum.subfieldId][datum.value];

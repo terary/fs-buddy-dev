@@ -1,7 +1,5 @@
 import { TFsFieldAny } from "../../type.field";
 import { DateEvaluator } from "./DateEvaluator";
-'Product' field next
-
 
 describe("DateEvaluator", () => {
   describe(".getUiPopulateObject(...)", () => {
@@ -53,9 +51,16 @@ describe("DateEvaluator", () => {
           value: "AM",
           statusMessages: [],
         },
+        {
+          fieldId: "147738166",
+          fieldType: "datetime",
+          statusMessages: [],
+          uiid: null,
+          value: "Nov 13, 2021 02:39 AM",
+        },
       ]);
     });
-    it("Should include statusMessages if date appears to be problematic.", () => {
+    it("Should include statusMessages if it fails to instantiate a Date type.", () => {
       const evaluator = new DateEvaluator(fieldJson);
       const actual = evaluator.getUiPopulateObject({
         [submissionData.field]: "SOME_INVALID_DATE",
@@ -72,6 +77,70 @@ describe("DateEvaluator", () => {
               message:
                 "Failed to parse field. Date did not parse correctly. Date: 'SOME_INVALID_DATE'",
               relatedFieldIds: [],
+            },
+          ],
+        },
+      ]);
+    });
+    it("Should include statusMessages if date is near epoch.", () => {
+      const evaluator = new DateEvaluator(fieldJson);
+      const actual = evaluator.getUiPopulateObject({
+        [submissionData.field]: new Date(0).toISOString(),
+      });
+      expect(actual).toStrictEqual([
+        {
+          uiid: "field147738166M",
+          fieldId: "147738166",
+          fieldType: "datetime",
+          value: "Dec",
+          statusMessages: [],
+        },
+        {
+          uiid: "field147738166D",
+          fieldId: "147738166",
+          fieldType: "datetime",
+          value: "31",
+          statusMessages: [],
+        },
+        {
+          uiid: "field147738166Y",
+          fieldId: "147738166",
+          fieldType: "datetime",
+          value: "1970",
+          statusMessages: [],
+        },
+        {
+          uiid: "field147738166H",
+          fieldId: "147738166",
+          fieldType: "datetime",
+          value: "18",
+          statusMessages: [],
+        },
+        {
+          uiid: "field147738166I",
+          fieldId: "147738166",
+          fieldType: "datetime",
+          value: "00",
+          statusMessages: [],
+        },
+        {
+          uiid: "field147738166A",
+          fieldId: "147738166",
+          fieldType: "datetime",
+          value: "PM",
+          statusMessages: [],
+        },
+        {
+          uiid: null,
+          fieldId: "147738166",
+          fieldType: "datetime",
+          value: "1970-01-01T00:00:00.000Z",
+          statusMessages: [
+            {
+              severity: "info",
+              fieldId: "147738166",
+              message:
+                "This date is near the epoch.  This could suggest malformed date string. Date: 'Wed Dec 31 1969' ",
             },
           ],
         },
