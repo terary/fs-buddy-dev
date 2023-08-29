@@ -66,10 +66,46 @@ class MatrixEvaluator extends AbstractEvaluator {
   }
 
   getUiPopulateObject(values: TEvaluateRequest): TUiEvaluationObject[] {
-    type TypeSubfieldDatum = { subfieldId: string; value: string };
+    if (!(this.fieldId in values)) {
+      return [
+        {
+          uiid: null,
+          fieldId: this.fieldId,
+          fieldType: this.fieldJson.type,
+          value: "__EMPTY_SUBMISSION_DATA__",
+          statusMessages: [
+            {
+              severity: "info",
+              message: `Stored value: '__EMPTY_SUBMISSION_DATA__'.`,
+              relatedFieldIds: [],
+            },
+          ],
+        } as TUiEvaluationObject,
+      ];
+    }
+
+    // type TypeSubfieldDatum = { subfieldId: string; value: string };
     const parsedValues = this.parseSubmittedData(values);
     const fieldIdMatrix = this.getAsMatrixUiFieldIdMap();
 
+    if (parsedValues instanceof InvalidEvaluation) {
+      return [
+        {
+          // uiid: `field${this.fieldId}`,
+          uiid: null,
+          fieldId: this.fieldId,
+          fieldType: this.fieldJson.type,
+          value: "",
+          statusMessages: [
+            {
+              severity: "info",
+              message: "Failed to parse field. " + parsedValues.message,
+              relatedFieldIds: [],
+            },
+          ],
+        } as TUiEvaluationObject,
+      ];
+    }
     if (
       parsedValues &&
       // @ts-ignore - parsedValues could be instance of InvalidEvaluation  (and not parsedValues[fieldId])
@@ -93,55 +129,47 @@ class MatrixEvaluator extends AbstractEvaluator {
       ];
     }
 
-    // ts-ignore,
-    // at this point parsedValues should be an array, except when the field is empty
-    // if (parsedValues && !isString(parsedValues[this.fieldId])) {
-    //   return [
-    //     {
-    //       // uiid: `field${this.fieldId}`,
-    //       uiid: null,
-    //       fieldId: this.fieldId,
-    //       fieldType: this.fieldJson.type,
-    //       value: "",
-    //       statusMessages: [
-    //         {
-    //           severity: "error",
-    //           message: `Failed to parse field. value: parsedValue: ${
-    //             // @ts-ignore - may be InvalidEvaluation
-    //             parsedValues[this.fieldId]
-    //           }`,
-    //           relatedFieldIds: [],
-    //         } as TStatusRecord,
-    //       ],
-    //     } as TUiEvaluationObject,
-    //   ];
-    // }
-
     // @ts-ignore
-    const selectedRows = parsedValues?.map((datum) => {
-      const statusMessages: TStatusRecord[] = [];
-      const uiFieldId = fieldIdMatrix[datum.subfieldId][datum.value];
+    const selectedRows =
+      parsedValues?.map((datum) => {
+        const statusMessages: TStatusRecord[] = [];
+        const uiFieldId = fieldIdMatrix[datum.subfieldId][datum.value];
 
-      if (uiFieldId === undefined) {
-        statusMessages.push({
-          severity: "warn",
-          message: `Unable to find matrix mapping for: '${JSON.stringify({
-            // *tmc* these static labels (row/column) may cause confusion if options are changed
-            row: datum.subfieldId,
-            column: datum.value,
-          })}'.`,
+        if (uiFieldId === undefined) {
+          statusMessages.push({
+            severity: "warn",
+            message: `Unable to find matrix mapping for: '${JSON.stringify({
+              // *tmc* these static labels (row/column) may cause confusion if options are changed
+              row: datum.subfieldId,
+              column: datum.value,
+            })}'.`,
+            fieldId: this.fieldId,
+            relatedFieldIds: [],
+          });
+        }
+
+        return {
+          uiid: uiFieldId || this.fieldId,
           fieldId: this.fieldId,
-          relatedFieldIds: [],
-        });
-      }
+          fieldType: this.fieldJson.type,
+          value: "checked",
+          statusMessages: statusMessages,
+        } as TUiEvaluationObject;
+      }) || [];
 
-      return {
-        uiid: uiFieldId || this.fieldId,
-        fieldId: this.fieldId,
-        fieldType: this.fieldJson.type,
-        value: "checked",
-        statusMessages: statusMessages,
-      } as TUiEvaluationObject;
+    selectedRows.push({
+      uiid: null,
+      fieldId: this.fieldId,
+      fieldType: this.fieldJson.type,
+      value: this.getStoredValue(values),
+      statusMessages: [
+        {
+          severity: "info",
+          fieldId: this.fieldId,
+          message: `Stored value: '${this.getStoredValue(values)}'.`,
+          relatedFieldIds: [],
+        },
+      ],
     });
     return selectedRows as TUiEvaluationObject[];
   }

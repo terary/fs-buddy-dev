@@ -70,11 +70,21 @@ class MultiSelectEvaluator extends AbstractEvaluator {
     values: TEvaluateRequest
   ): TUiEvaluationObject[] {
     const uiFields: TUiEvaluationObject[] = [];
-    const statusMessages: TStatusRecord[] = [];
     const selectedValues = (this.parseArrayValues<string[]>(values)[
       this.fieldId
     ] || []) as string[];
     const uiidFieldIdMap = this.getUiidFieldIdMap();
+    const statusMessages: TStatusRecord[] = [
+      {
+        severity: "info",
+        fieldId: this.fieldId,
+        message: `Stored value: '${(values[this.fieldId] || "").replace(
+          /\n/g,
+          "\\n"
+        )}'.`,
+        relatedFieldIds: [],
+      },
+    ];
 
     // @ts-ignore - InvalidEvaluation not iterable
     selectedValues.forEach((selectedOption) => {
@@ -112,16 +122,15 @@ class MultiSelectEvaluator extends AbstractEvaluator {
       });
     }
 
-    if (statusMessages.length > 0) {
-      uiFields.push({
-        // others are subfields, this is the main/parent record, used primarily to attach status messages.
-        uiid: this.fieldId,
-        fieldId: this.fieldId,
-        fieldType: this.fieldJson.type,
-        value: "",
-        statusMessages,
-      });
-    }
+    // if (statusMessages.length > 0) {
+    uiFields.push({
+      uiid: null,
+      fieldId: this.fieldId,
+      fieldType: this.fieldJson.type,
+      value: "",
+      statusMessages,
+    });
+    // }
 
     return uiFields;
   }
@@ -135,9 +144,21 @@ class MultiSelectEvaluator extends AbstractEvaluator {
     values: TEvaluateRequest
   ): TUiEvaluationObject[] {
     const uiFields: TUiEvaluationObject[] = [];
-    const statusMessages: TStatusRecord[] = [];
     const selectedValue = (this.parseValues<string>(values)[this.fieldId] ||
       "") as string;
+    const statusMessages: TStatusRecord[] = [
+      {
+        severity: "info",
+        fieldId: this.fieldId,
+        message: `Stored value: '${(values[this.fieldId] || "").replace(
+          /\n/g,
+          "\\n"
+        )}'.`,
+
+        relatedFieldIds: [],
+      },
+    ];
+
     //    const uiidFieldIdMap = this.getUiidFieldIdMap();
 
     if (!this.isValueInSelectOptions(selectedValue)) {
@@ -177,15 +198,43 @@ class MultiSelectEvaluator extends AbstractEvaluator {
   }
 
   getUiPopulateObject(values: TEvaluateRequest): TUiEvaluationObject[] {
+    if (!(this.fieldId in values)) {
+      return [
+        {
+          uiid: null,
+          fieldId: this.fieldId,
+          fieldType: this.fieldJson.type,
+          value: "__EMPTY_SUBMISSION_DATA__",
+          statusMessages: [
+            {
+              severity: "info",
+              message: `Stored value: '__EMPTY_SUBMISSION_DATA__'.`,
+              relatedFieldIds: [],
+            },
+          ],
+        } as TUiEvaluationObject,
+      ];
+    }
+
     if (this.fieldType === "checkbox") {
       return this.getUiPopulateObjectCheckbox(values);
     } else if (this.fieldType === "select") {
       return this.getUiPopulateObjectSelect(values);
     }
 
-    const statusMessages: TStatusRecord[] = [];
     const parsedValues = this.parseValues<string>(values);
     const uiidFieldIdMap = this.getUiidFieldIdMap();
+    const statusMessages: TStatusRecord[] = [
+      {
+        severity: "info",
+        fieldId: this.fieldId,
+        message: `Stored value: '${(values[this.fieldId] || "").replace(
+          /\n/g,
+          "\\n"
+        )}'.`,
+        relatedFieldIds: [],
+      },
+    ];
 
     // @ts-ignore - InvalidEvaluation cant be used as an index
     if (!uiidFieldIdMap[parsedValues[this.fieldId]]) {
@@ -221,6 +270,14 @@ class MultiSelectEvaluator extends AbstractEvaluator {
         fieldId: this.fieldId,
         fieldType: this.fieldJson.type,
         value: parsedValues[this.fieldId] as string,
+        statusMessages: [],
+      },
+      {
+        // @ts-ignore - InvalidEvaluation cant be used as an index
+        uiid: null,
+        fieldId: this.fieldId,
+        fieldType: this.fieldJson.type,
+        value: "null",
         statusMessages,
       },
     ];

@@ -59,6 +59,39 @@ describe("MultiSelectEvaluator", () => {
           },
         ]);
       });
+      it("Should return array of properly formatted UI instructions (radio).", () => {
+        const testValue = "1";
+        const evaluator = new MultiSelectEvaluator({
+          ...fieldJsonDropdown,
+          ...{ type: "radio" },
+        });
+        const actual = evaluator.getUiPopulateObject({
+          [submissionDataDropdown.field]: submissionDataDropdown.value,
+        });
+        expect(actual).toStrictEqual([
+          {
+            uiid: "field147738162_3",
+            fieldId: "147738162",
+            fieldType: "radio",
+            value: "OPT03",
+            statusMessages: [],
+          },
+          {
+            uiid: null,
+            fieldId: "147738162",
+            fieldType: "radio",
+            value: "null",
+            statusMessages: [
+              {
+                severity: "info",
+                fieldId: "147738162",
+                message: `Stored value: 'OPT03'.`,
+                relatedFieldIds: [],
+              },
+            ],
+          },
+        ]);
+      });
       it("Should include statusMessage when the parsedValue is not one of the available options.", () => {
         const testValue = "1";
         const evaluator = new MultiSelectEvaluator(fieldJsonDropdown);

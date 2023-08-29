@@ -229,69 +229,60 @@
       }
 
 
+
       const handelFetchSubmissionResponse = (payload)=>{
         const {submissionData } = payload;
         submissionData.forEach((fieldData)=>{
-          const htmlControl = document.getElementById(fieldData.uiid);
           const {statusMessages = [], fieldType, uiid, fieldId} = fieldData;
           
-          if(fieldType === "file" || fieldType === "signature"){
-            statusMessages.push({
-              severity: "info",
-              fieldId,
-              message:
-                `field types of 'file' or 'signature', value can not be set.  value: ${fieldData.value}`,
-              relatedFieldIds: [],
-            })
-          }  else if(uiid === null && (statusMessages||[]).length>0) {
-            statusMessages.push(...statusMessages)
-            statusMessages.push({
-              severity: "debug",
-              fieldId,
-              message:
-                "Message created during submissionData response.",
-              relatedFieldIds: [],
-            })
-          } else if(!htmlControl) {
-            statusMessages.push({
-              severity: "warn",
-              fieldId,
-              message:
-                `Failed to find a ui element for field uiid '${fieldData.uiid}'.`,
-              relatedFieldIds: [],
-            })
+          if(uiid === null ) {
+            if(statusMessages.length>0) {
+              appendFieldStatusContainer(fieldData.fieldId, statusMessages)
+            }
+            return;
+          }
 
-            console.log(`Can not set submissionData. Couldn't find UI control with id: '${fieldData.uiid}'.`);
-            console.log({fieldData})
+          const htmlControl = document.getElementById(uiid);
+          if(!htmlControl){
+            appendFieldStatusContainer(fieldId, [{
+                severity: "warn",
+                fieldId,
+                message:
+                  `Failed to find a ui element for field uiid '${uiid}'.`,
+                relatedFieldIds: [],
+              }])
+            return;
+          }
 
-          } else if(fieldType === "matrix"){
-            htmlControl.checked = true;
-          } else if(fieldType === "checkbox"){
-            htmlControl.checked = true;
-          } else if(fieldType === "radio"){
-            htmlControl.checked = true;
-          } else if(htmlControl) {
-            htmlControl.value = fieldData?.value||'';
-          } else {
-            statusMessages.push({
-              severity: "warn",
-              fieldId,
-              message:
-                `Failed to find a ui element for field uiid '${fieldData.uiid}'.`,
-              relatedFieldIds: [],
-            })
-
-            console.log(`Can not set submissionData. Couldn't find UI control with id: '${fieldData.uiid}'.`);
-            console.log({fieldData})
+          switch(true) {
+            case ['file','signature'].includes(fieldType):
+              statusMessages.push({
+                severity: "info",
+                fieldId,
+                message:
+                  `field types of 'file' or 'signature', value can not be set.  value: ${fieldData.value}`,
+                relatedFieldIds: [],
+              })
+            break;
+            case ['matrix','checkbox', 'radio'].includes(fieldType):
+              htmlControl.checked = true;
+            break;
+            default: 
+              htmlControl.value = fieldData?.value||'';
+              break; // <-- never stops being funny
           }
 
           console.log({
-            fieldType: fsBuddyHelper.fieldSummary[fieldData.fieldId].type,
-            fieldId: fieldData.fieldId,
-            fieldSummary: fsBuddyHelper.fieldSummary[fieldData.fieldId],
+            fieldType: fsBuddyHelper.fieldSummary[fieldId].type,
+            fieldSummary: fsBuddyHelper.fieldSummary[fieldId],
+            fieldId,
+            uiid,
           })
 
-          appendFieldStatusContainer(fieldData.fieldId, statusMessages)
+          if(`field${fieldId}` === uiid) {
+            // for non subfields
+            appendFieldStatusContainer(fieldId, statusMessages)
+          }
         })
       }
 
@@ -426,9 +417,14 @@
         const fieldContainer = getFieldContainer(fieldId);
         const collectionSeverity = getMessageCollectionSeverity(statusMessages);
 
-        const statusContainer = document.createElement('div');
-        statusContainer.id = `fsBuddy_statusContainer_${fieldId}`;
-        statusContainer.classList.add('fsBuddy_statusContainer');
+
+        let  statusContainer = document.getElementById(`fsBuddy_statusContainer_${fieldId}`)
+        if(!statusContainer) {
+          statusContainer = document.createElement('div');
+          statusContainer.id = `fsBuddy_statusContainer_${fieldId}`;
+          statusContainer.classList.add('fsBuddy_statusContainer');
+        }
+
 
         const divStatusHeadRow = document.createElement('div');
         divStatusHeadRow.classList.add(`fsBuddy_statusRowHeader`);

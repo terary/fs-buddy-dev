@@ -47,13 +47,46 @@ abstract class AbstractSubfieldEvaluator extends AbstractEvaluator {
     }) as [{ subfieldId: string; value: string }];
   }
 
+  getStoredValue(values: TEvaluateRequest): string {
+    if (this.fieldId in values) {
+      return (values[this.fieldId] || "").replace(/\n/g, "\\n");
+    } else {
+      return "__EMPTY_SUBMISSION_DATA__";
+    }
+  }
+
   getUiPopulateObject(values: TEvaluateRequest): TUiEvaluationObject[] {
     // this is where submission error/warn/info should happen
     type TypeSubfieldDatum = { subfieldId: string; value: string };
     type TypeSubfieldParse = TypeSubfieldDatum[];
 
+    if (!(this.fieldId in values)) {
+      return [
+        {
+          uiid: null,
+          fieldId: this.fieldId,
+          fieldType: this.fieldJson.type,
+          value: "__EMPTY_SUBMISSION_DATA__",
+          statusMessages: [
+            {
+              severity: "info",
+              message: `Stored value: '__EMPTY_SUBMISSION_DATA__'.`,
+              relatedFieldIds: [],
+            },
+          ],
+        } as TUiEvaluationObject,
+      ];
+    }
     const parsedValues = this.parseValues<TypeSubfieldParse>(values); // I think parseValue is typed wrong or returns incorrect shape
-    const statusMessages: TStatusRecord[] = [];
+    const statusMessages: TStatusRecord[] = [
+      {
+        severity: "info",
+        fieldId: this.fieldId,
+        message: `Stored value: '${this.getStoredValue(values)}'.`,
+        relatedFieldIds: [],
+      },
+    ];
+
     if (parsedValues[this.fieldId] instanceof InvalidEvaluation) {
       return [
         {
@@ -102,15 +135,13 @@ abstract class AbstractSubfieldEvaluator extends AbstractEvaluator {
       } as TUiEvaluationObject;
     });
 
-    if (statusMessages.length > 0) {
-      uiComponents.push({
-        uiid: `field${this.fieldId}`,
-        fieldId: this.fieldId,
-        fieldType: this.fieldJson.type,
-        value: "",
-        statusMessages: statusMessages,
-      } as TUiEvaluationObject);
-    }
+    uiComponents.push({
+      uiid: null,
+      fieldId: this.fieldId,
+      fieldType: this.fieldJson.type,
+      value: "",
+      statusMessages: statusMessages,
+    } as TUiEvaluationObject);
     return uiComponents;
   }
 

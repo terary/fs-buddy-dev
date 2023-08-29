@@ -31,8 +31,54 @@ abstract class AbstractEvaluator implements IEValuator {
 
   abstract parseValues<T>(values: TEvaluateRequest): TEvaluateResponse<T>;
 
+  protected getStoredValue(values: TEvaluateRequest) {
+    if (this.fieldId in values) {
+      return values[this.fieldId];
+    } else {
+      return "__EMPTY_SUBMISSION_DATA__";
+    }
+  }
+
   getUiPopulateObject(values: TEvaluateRequest): TUiEvaluationObject[] {
-    // this is where submission error/warn/info should happen
+    if (!(this.fieldId in values)) {
+      `      this needs to be in the abstract class
+         something like:
+            if isEmptySubmission
+               return emptySubmissionResponse
+
+
+     InvalidEvaluation should be an error and not part of the submission data
+     parse throw Invalid, catch Invald, return InvalidEvaluationResponse --- all in the abstract
+     
+     while you're at it, make these pipe-able
+
+`;
+
+      return [
+        {
+          uiid: null,
+          fieldId: this.fieldId,
+          fieldType: this.fieldJson.type,
+          value: "__EMPTY_SUBMISSION_DATA__",
+          statusMessages: [
+            {
+              severity: "info",
+              message: `Stored value: '__EMPTY_SUBMISSION_DATA__'.`,
+              relatedFieldIds: [],
+            },
+          ],
+        } as TUiEvaluationObject,
+      ];
+    }
+
+    const statusMessages: TStatusRecord[] = [
+      {
+        severity: "info",
+        fieldId: this.fieldId,
+        message: `Stored value: '${this.getStoredValue(values)}'.`,
+        relatedFieldIds: [],
+      },
+    ];
 
     const parsedValues = this.parseValues<string>(values);
     if (parsedValues instanceof InvalidEvaluation) {
@@ -52,7 +98,6 @@ abstract class AbstractEvaluator implements IEValuator {
         } as TUiEvaluationObject,
       ];
     }
-    const statusMessages: TStatusRecord[] = [];
 
     // need to make sure this is being transformed
     // @ts-ignore - this is expected 'required' to be boolean, which happens only if this json has been transformed

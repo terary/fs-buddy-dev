@@ -1,6 +1,10 @@
 import { TStatusRecord } from "../../../chrome-extension/type";
 import { InvalidEvaluation } from "../InvalidEvaluation";
-import { AbstractEvaluator } from "./AbstractEvaluator";
+
+console.log(`
+    It maybe time to get rid of the InvalidEvaluation - need to deal with empty submission data (storedValue = '__EMPTY__')
+`);
+
 import { GenericEvaluator } from "./GenericEvaluator";
 import {
   TEvaluateRequest,
@@ -24,6 +28,23 @@ class DateEvaluator extends GenericEvaluator {
 
   getUiPopulateObject(values: TEvaluateRequest): TUiEvaluationObject[] {
     // this is where submission error/warn/info should happen
+    if (!(this.fieldId in values)) {
+      return [
+        {
+          uiid: null,
+          fieldId: this.fieldId,
+          fieldType: this.fieldJson.type,
+          value: "__EMPTY_SUBMISSION_DATA__",
+          statusMessages: [
+            {
+              severity: "info",
+              message: `Stored value: '__EMPTY_SUBMISSION_DATA__'.`,
+              relatedFieldIds: [],
+            },
+          ],
+        } as TUiEvaluationObject,
+      ];
+    }
 
     const parsedValues = this.parseValues<string>(values);
     const x = new Date(parsedValues[this.fieldId] as unknown as string);
@@ -125,8 +146,15 @@ class DateEvaluator extends GenericEvaluator {
         uiid: null,
         fieldId: this.fieldId,
         fieldType: this.fieldJson.type,
-        value: values[this.fieldId] as string,
-        statusMessages,
+        value: this.getStoredValue(values),
+        statusMessages: [
+          {
+            severity: "info",
+            fieldId: this.fieldId,
+            message: `Stored value: '${this.getStoredValue(values)}'.`,
+            relatedFieldIds: [],
+          },
+        ],
       },
     ];
   }

@@ -33,7 +33,14 @@ class NumericOnlyEvaluator extends AbstractEvaluator {
     console.log(
       `TEvaluateRequest and TUiEvaluationObject need to be the same thing so the output can be piped into input. Good for validation (or not validation).`
     );
-    const statusMessages: TStatusRecord[] = [];
+    const statusMessages: TStatusRecord[] = [
+      {
+        severity: "info",
+        fieldId: this.fieldId,
+        message: `Stored value: '${this.getStoredValue(values)}'.`,
+        relatedFieldIds: [],
+      },
+    ];
     const parsedValues = this.parseValues<string>(values);
 
     if (parsedValues instanceof InvalidEvaluation) {

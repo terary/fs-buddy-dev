@@ -51,7 +51,8 @@ describe("MatrixEvaluator", () => {
       });
     });
   });
-  it.skip("Should hand empty values as expected");
+  it.skip("Should hand empty values as expected", () => {});
+  it.skip("all fields should include statusMessage with 'storedValue' a raw dump.  This would help identify issues with changes to fields (date format, missing dropdown options, etc", () => {});
   describe(".getUiPopulateObject(...)", () => {
     it("Should return array of properly formatted UI instructions (shape of TUiEvaluationObject).", () => {
       const testValue = "Row 1 = Column 1\nRow 2 = Column 2\nRow 3 = Column 3";

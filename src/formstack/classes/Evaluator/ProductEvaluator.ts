@@ -25,7 +25,14 @@ class ProductEvaluator extends AbstractSubfieldEvaluator {
 
   getUiPopulateObject(values: TEvaluateRequest): TUiEvaluationObject[] {
     console.log("Product getUiPopulateObject");
-    const statusMessages: TStatusRecord[] = [];
+    const statusMessages: TStatusRecord[] = [
+      {
+        severity: "info",
+        fieldId: this.fieldId,
+        message: `Stored value: '${this.getStoredValue(values)}'.`,
+        relatedFieldIds: [],
+      },
+    ];
 
     const parsedValues = this.parseValues<string>(values);
 
