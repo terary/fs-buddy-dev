@@ -6,11 +6,10 @@ import {
   TFsFieldSelect,
   TFsSelectOption,
 } from "../../type.field";
-import { InvalidEvaluation } from "../InvalidEvaluation";
 import { AbstractEvaluator } from "./AbstractEvaluator";
 import {
-  TEvaluateRequest,
-  TEvaluateResponse,
+  TFlatSubmissionValues,
+  TFlatSubmissionValues,
   TUiEvaluationObject,
 } from "./type";
 
@@ -31,32 +30,33 @@ class MultiSelectEvaluator extends AbstractEvaluator {
     return this.getSelectOptions().find((x) => x.value === value) !== undefined;
   }
 
-  parseValues<T>(values: TEvaluateRequest): TEvaluateResponse<T> {
+  parseValues<T>(values: TFlatSubmissionValues): TFlatSubmissionValues<T> {
     return { [this.fieldId]: values[this.fieldId] as T };
   }
 
-  private parseArrayValues<T>(values: TEvaluateRequest): TEvaluateResponse<T> {
+  private parseArrayValues<T>(values: TFlatSubmissionValues): TFlatSubmissionValues<T> {
     const splitValues = (values[this.fieldId] || "").split("\n");
     return { [this.fieldId]: splitValues as T };
   }
 
-  evaluateWithValues<T>(values: TEvaluateRequest): TEvaluateResponse<T> {
+  evaluateWithValues<T>(values: TFlatSubmissionValues): TFlatSubmissionValues<T> {
     // const selectedOption = this.parseValues(values)[this.fieldId];
 
     const foundOption = this.getSelectOptions().find(
       (option) => option.value === values[this.fieldId]
-    );
+    ) || { value: undefined };
 
-    if (foundOption === undefined) {
-      return {
-        [this.fieldId]: new InvalidEvaluation("Selected option not found.", {
-          options: (this.fieldJson as TSelectFields).options || [],
-          searchValue: values[this.fieldId],
-        }),
-      };
-    } else {
-      return { [this.fieldId]: foundOption.value as T };
-    }
+    // if (foundOption === undefined) {
+    //   return {
+    //     [this.fieldId]: new InvalidEvaluation("Selected option not found.", {
+    //       options: (this.fieldJson as TSelectFields).options || [],
+    //       searchValue: values[this.fieldId],
+    //     }),
+    //   };
+    // } else {
+    //   return { [this.fieldId]: foundOption.value as T };
+    // }
+    return { [this.fieldId]: foundOption.value as T };
   }
 
   getUiidFieldIdMap() {
@@ -67,7 +67,7 @@ class MultiSelectEvaluator extends AbstractEvaluator {
   }
 
   private getUiPopulateObjectCheckbox(
-    values: TEvaluateRequest
+    values: TFlatSubmissionValues
   ): TUiEvaluationObject[] {
     const uiFields: TUiEvaluationObject[] = [];
     const selectedValues = (this.parseArrayValues<string[]>(values)[
@@ -86,11 +86,9 @@ class MultiSelectEvaluator extends AbstractEvaluator {
       },
     ];
 
-    // @ts-ignore - InvalidEvaluation not iterable
     selectedValues.forEach((selectedOption) => {
       if (uiidFieldIdMap[selectedOption]) {
         uiFields.push({
-          // @ts-ignore - InvalidEvaluation cant be used as an index
           uiid: uiidFieldIdMap[selectedOption],
           fieldId: this.fieldId,
           fieldType: this.fieldJson.type,
@@ -141,7 +139,7 @@ class MultiSelectEvaluator extends AbstractEvaluator {
       .join("', '");
   }
   private getUiPopulateObjectSelect(
-    values: TEvaluateRequest
+    values: TFlatSubmissionValues
   ): TUiEvaluationObject[] {
     const uiFields: TUiEvaluationObject[] = [];
     const selectedValue = (this.parseValues<string>(values)[this.fieldId] ||
@@ -197,7 +195,7 @@ class MultiSelectEvaluator extends AbstractEvaluator {
     return uiFields;
   }
 
-  getUiPopulateObject(values: TEvaluateRequest): TUiEvaluationObject[] {
+  getUiPopulateObject(values: TFlatSubmissionValues): TUiEvaluationObject[] {
     if (!(this.fieldId in values)) {
       return [
         {
@@ -236,7 +234,6 @@ class MultiSelectEvaluator extends AbstractEvaluator {
       },
     ];
 
-    // @ts-ignore - InvalidEvaluation cant be used as an index
     if (!uiidFieldIdMap[parsedValues[this.fieldId]]) {
       statusMessages.push({
         severity: "warn",
@@ -265,7 +262,6 @@ class MultiSelectEvaluator extends AbstractEvaluator {
 
     return [
       {
-        // @ts-ignore - InvalidEvaluation cant be used as an index
         uiid: uiidFieldIdMap[parsedValues[this.fieldId]] || this.fieldId,
         fieldId: this.fieldId,
         fieldType: this.fieldJson.type,
@@ -273,7 +269,6 @@ class MultiSelectEvaluator extends AbstractEvaluator {
         statusMessages: [],
       },
       {
-        // @ts-ignore - InvalidEvaluation cant be used as an index
         uiid: null,
         fieldId: this.fieldId,
         fieldType: this.fieldJson.type,

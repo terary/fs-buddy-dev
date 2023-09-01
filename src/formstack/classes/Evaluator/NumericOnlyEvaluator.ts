@@ -1,9 +1,9 @@
 import { TStatusRecord } from "../../../chrome-extension/type";
-import { InvalidEvaluation } from "../InvalidEvaluation";
+// import { InvalidEvaluation } from "../InvalidEvaluation";
 import { AbstractEvaluator } from "./AbstractEvaluator";
 import {
-  TEvaluateRequest,
-  TEvaluateResponse,
+  TFlatSubmissionValues,
+  TFlatSubmissionValues,
   TUiEvaluationObject,
 } from "./type";
 const isNumericLoosely = (value: any) => {
@@ -11,27 +11,28 @@ const isNumericLoosely = (value: any) => {
 };
 
 class NumericOnlyEvaluator extends AbstractEvaluator {
-  parseValues<T>(values: TEvaluateRequest): TEvaluateResponse<T> {
+  parseValues<T>(values: TFlatSubmissionValues): TFlatSubmissionValues<T> {
     return { [this.fieldId]: values[this.fieldId] };
   }
 
-  evaluateWithValues<T>(values: TEvaluateRequest): TEvaluateResponse<T> {
+  evaluateWithValues<T>(values: TFlatSubmissionValues): TFlatSubmissionValues<T> {
     if (isNumericLoosely(values[this.fieldId])) {
       return { [this.fieldId]: values[this.fieldId] };
     }
+    return { [this.fieldId]: undefined };
 
-    return {
-      [this.fieldId]: new InvalidEvaluation(
-        `Could not convert to number: '${values[this.fieldId]}', fieldId: ${
-          this.fieldId
-        }.`
-      ),
-    };
+    // return {
+    //   [this.fieldId]: new InvalidEvaluation(
+    //     `Could not convert to number: '${values[this.fieldId]}', fieldId: ${
+    //       this.fieldId
+    //     }.`
+    //   ),
+    // };
   }
 
-  getUiPopulateObject(values: TEvaluateRequest): TUiEvaluationObject[] {
+  getUiPopulateObject(values: TFlatSubmissionValues): TUiEvaluationObject[] {
     console.log(
-      `TEvaluateRequest and TUiEvaluationObject need to be the same thing so the output can be piped into input. Good for validation (or not validation).`
+      `TFlatSubmissionValues and TUiEvaluationObject need to be the same thing so the output can be piped into input. Good for validation (or not validation).`
     );
     const statusMessages: TStatusRecord[] = [
       {
@@ -43,10 +44,10 @@ class NumericOnlyEvaluator extends AbstractEvaluator {
     ];
     const parsedValues = this.parseValues<string>(values);
 
-    if (parsedValues instanceof InvalidEvaluation) {
+    if (parsedValues === undefined) {
       statusMessages.push({
         severity: "error",
-        message: "Failed to parse field. " + parsedValues.message,
+        message: "Failed to parse field. ",
         relatedFieldIds: [],
       });
     }

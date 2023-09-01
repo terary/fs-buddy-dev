@@ -1,7 +1,21 @@
 import { TFsFieldAny } from "../../type.field";
-import { AbstractSubfieldEvaluator } from "./AbstractSubfieldEvaluator";
+import { AbstractEvaluator } from "./AbstractEvaluator";
+import { TFlatSubmissionValues } from "./type";
 
-class TestSubfieldEvaluator extends AbstractSubfieldEvaluator {
+class TestSubfieldEvaluator extends AbstractEvaluator {
+  parseValues<T>(values: TFlatSubmissionValues<T>): TFlatSubmissionValues<T> {
+    return values;
+  }
+
+  // pass all submission fields, return all submission fields
+  // so what does DateEvaluator(flatSubmissionData) do?
+  // in what context would this be used?  theForm.evaluate(submissionData)[theFieldId],
+  evaluateWithValues<T>(
+    values: TFlatSubmissionValues<T>
+  ): TFlatSubmissionValues<T> {
+    return values;
+  }
+
   get supportedSubfieldIds() {
     return ["subfield0", "subfield1", "subfield2"];
   }
@@ -35,6 +49,8 @@ describe("AbstractSubfieldEvaluator", () => {
       const actual = evaluator.getUiPopulateObject({
         [submissionData.field]: testValue,
       });
+
+      why/how does this work?
       expect(actual).toStrictEqual([
         {
           uiid: "field147738157-subfield0",

@@ -1,11 +1,9 @@
 import { TStatusRecord } from "../../../chrome-extension/type";
-import { TFsFieldAddress } from "../../type.field";
-import { InvalidEvaluation } from "../InvalidEvaluation";
-import { AbstractEvaluator } from "./AbstractEvaluator";
+// import { InvalidEvaluation } from "../InvalidEvaluation";
 import { AbstractSubfieldEvaluator } from "./AbstractSubfieldEvaluator";
 import {
-  TEvaluateRequest,
-  TEvaluateResponse,
+  TFlatSubmissionValues,
+  TFlatSubmissionValues,
   TUiEvaluationObject,
 } from "./type";
 
@@ -23,7 +21,7 @@ class ProductEvaluator extends AbstractSubfieldEvaluator {
     return this._supportedSubfieldIds;
   }
 
-  getUiPopulateObject(values: TEvaluateRequest): TUiEvaluationObject[] {
+  getUiPopulateObject(values: TFlatSubmissionValues): TUiEvaluationObject[] {
     console.log("Product getUiPopulateObject");
     const statusMessages: TStatusRecord[] = [
       {
@@ -36,7 +34,7 @@ class ProductEvaluator extends AbstractSubfieldEvaluator {
 
     const parsedValues = this.parseValues<string>(values);
 
-    if (parsedValues[this.fieldId] instanceof InvalidEvaluation) {
+    if (parsedValues[this.fieldId] === undefined) {
       statusMessages.push({
         severity: "error",
         message: "Failed to parse field. " + parsedValues.message,

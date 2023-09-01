@@ -1,11 +1,11 @@
 import { TFsFieldAny, TFsFieldType } from "../../type.field";
 import { TSubmissionDataItem } from "../../type.form";
-import { InvalidEvaluation } from "../InvalidEvaluation";
+//import { InvalidEvaluation } from "../InvalidEvaluation";
 import { IEValuator } from "./IEvaluator";
 import type { TStatusRecord } from "../../../chrome-extension/type";
 import {
-  TEvaluateRequest,
-  TEvaluateResponse,
+  TFlatSubmissionValues,
+  TFlatSubmissionValues,
   TUiEvaluationObject,
 } from "./type";
 
@@ -17,7 +17,7 @@ abstract class AbstractEvaluator implements IEValuator {
     this._fieldId = fieldJson.id;
   }
 
-  get fieldId() {
+  get fieldId(): string {
     return this._fieldId;
   }
 
@@ -29,9 +29,9 @@ abstract class AbstractEvaluator implements IEValuator {
     return this.fieldJson.type;
   }
 
-  abstract parseValues<T>(values: TEvaluateRequest): TEvaluateResponse<T>;
+  abstract parseValues<T>(values: TFlatSubmissionValues): TFlatSubmissionValues<T>;
 
-  protected getStoredValue(values: TEvaluateRequest) {
+  protected getStoredValue(values: TFlatSubmissionValues) {
     if (this.fieldId in values) {
       return values[this.fieldId];
     } else {
@@ -39,21 +39,8 @@ abstract class AbstractEvaluator implements IEValuator {
     }
   }
 
-  getUiPopulateObject(values: TEvaluateRequest): TUiEvaluationObject[] {
+  getUiPopulateObject(values: TFlatSubmissionValues): TUiEvaluationObject[] {
     if (!(this.fieldId in values)) {
-      `      this needs to be in the abstract class
-         something like:
-            if isEmptySubmission
-               return emptySubmissionResponse
-
-
-     InvalidEvaluation should be an error and not part of the submission data
-     parse throw Invalid, catch Invald, return InvalidEvaluationResponse --- all in the abstract
-     
-     while you're at it, make these pipe-able
-
-`;
-
       return [
         {
           uiid: null,
@@ -81,23 +68,23 @@ abstract class AbstractEvaluator implements IEValuator {
     ];
 
     const parsedValues = this.parseValues<string>(values);
-    if (parsedValues instanceof InvalidEvaluation) {
-      return [
-        {
-          uiid: `field${this.fieldId}`,
-          fieldId: this.fieldId,
-          fieldType: this.fieldJson.type,
-          value: "",
-          statusMessages: [
-            {
-              severity: "error",
-              message: "Failed to parse field. " + parsedValues.message,
-              relatedFieldIds: [],
-            },
-          ],
-        } as TUiEvaluationObject,
-      ];
-    }
+    // if (parsedValues instanceof InvalidEvaluation) {
+    //   return [
+    //     {
+    //       uiid: `field${this.fieldId}`,
+    //       fieldId: this.fieldId,
+    //       fieldType: this.fieldJson.type,
+    //       value: "",
+    //       statusMessages: [
+    //         {
+    //           severity: "error",
+    //           message: "Failed to parse field. " + parsedValues.message,
+    //           relatedFieldIds: [],
+    //         },
+    //       ],
+    //     } as TUiEvaluationObject,
+    //   ];
+    // }
 
     // need to make sure this is being transformed
     // @ts-ignore - this is expected 'required' to be boolean, which happens only if this json has been transformed
@@ -126,7 +113,7 @@ abstract class AbstractEvaluator implements IEValuator {
   }
 
   abstract evaluateWithValues<T>(
-    values: TEvaluateRequest
-  ): TEvaluateResponse<T>;
+    values: TFlatSubmissionValues
+  ): TFlatSubmissionValues<T>;
 }
 export { AbstractEvaluator };

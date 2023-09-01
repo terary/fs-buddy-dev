@@ -1,32 +1,33 @@
 import { TStatusRecord } from "../../../chrome-extension/type";
 import { TFsFieldAddress, TFsFieldMatrix } from "../../type.field";
-import { InvalidEvaluation } from "../InvalidEvaluation";
+// import { InvalidEvaluation } from "../InvalidEvaluation";
 import { AbstractEvaluator } from "./AbstractEvaluator";
 import {
-  TEvaluateRequest,
-  TEvaluateResponse,
+  TFlatSubmissionValues,
+  TFlatSubmissionValues,
   TUiEvaluationObject,
 } from "./type";
 const isString = (str: any) => typeof str === "string" || str instanceof String;
 
 class MatrixEvaluator extends AbstractEvaluator {
-  parseValues<T>(values: TEvaluateRequest): TEvaluateResponse<T> {
+  parseValues<T>(values: TFlatSubmissionValues): TFlatSubmissionValues<T> {
     const s2 = this.parseSubmittedData(values);
     return { [this.fieldId]: s2 as T };
   }
 
-  private parseSubmittedData(values: TEvaluateRequest) {
+  private parseSubmittedData(values: TFlatSubmissionValues) {
     const submissionData = values[this.fieldId] || [];
     if (!submissionData) {
       return null;
     }
     if (!isString(submissionData)) {
-      return new InvalidEvaluation(
-        `Matrix value not a string. value: '${submissionData}'.`,
-        {
-          value: values[this.fieldId],
-        }
-      );
+      return null;
+      // return new InvalidEvaluation(
+      //   `Matrix value not a string. value: '${submissionData}'.`,
+      //   {
+      //     value: values[this.fieldId],
+      //   }
+      // );
     }
 
     const records = submissionData.split("\n");
@@ -65,7 +66,7 @@ class MatrixEvaluator extends AbstractEvaluator {
     return matrix;
   }
 
-  getUiPopulateObject(values: TEvaluateRequest): TUiEvaluationObject[] {
+  getUiPopulateObject(values: TFlatSubmissionValues): TUiEvaluationObject[] {
     if (!(this.fieldId in values)) {
       return [
         {
@@ -88,7 +89,7 @@ class MatrixEvaluator extends AbstractEvaluator {
     const parsedValues = this.parseSubmittedData(values);
     const fieldIdMatrix = this.getAsMatrixUiFieldIdMap();
 
-    if (parsedValues instanceof InvalidEvaluation) {
+    if (parsedValues === undefined) {
       return [
         {
           // uiid: `field${this.fieldId}`,
@@ -108,8 +109,8 @@ class MatrixEvaluator extends AbstractEvaluator {
     }
     if (
       parsedValues &&
-      // @ts-ignore - parsedValues could be instance of InvalidEvaluation  (and not parsedValues[fieldId])
-      parsedValues[this.fieldId] instanceof InvalidEvaluation
+      // @ts-ignore -- this is an array, not an object
+      parsedValues[this.fieldId] === undefined
     ) {
       return [
         {
@@ -174,7 +175,7 @@ class MatrixEvaluator extends AbstractEvaluator {
     return selectedRows as TUiEvaluationObject[];
   }
 
-  evaluateWithValues<T>(values: TEvaluateRequest): TEvaluateResponse<T> {
+  evaluateWithValues<T>(values: TFlatSubmissionValues): TFlatSubmissionValues<T> {
     const s1 = this.parseSubmittedData(values);
     const s2 =
       Array.isArray(s1) &&

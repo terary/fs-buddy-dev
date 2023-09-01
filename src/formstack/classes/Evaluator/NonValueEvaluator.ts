@@ -1,21 +1,21 @@
 import { AbstractEvaluator } from "./AbstractEvaluator";
 import {
-  TEvaluateRequest,
-  TEvaluateResponse,
+  TFlatSubmissionValues,
+  TFlatSubmissionValues,
   TUiEvaluationObject,
 } from "./type";
 
 class NonValueEvaluator extends AbstractEvaluator {
-  parseValues<T>(values: TEvaluateRequest): TEvaluateResponse<T> {
+  parseValues<T>(values: TFlatSubmissionValues): TFlatSubmissionValues<T> {
     return { [this.fieldId]: values[this.fieldId] };
   }
 
-  evaluateWithValues<T>(values: TEvaluateRequest): TEvaluateResponse<T>;
-  evaluateWithValues(values: TEvaluateRequest): TEvaluateResponse<null> {
+  evaluateWithValues<T>(values: TFlatSubmissionValues): TFlatSubmissionValues<T>;
+  evaluateWithValues(values: TFlatSubmissionValues): TFlatSubmissionValues<null> {
     return { [this.fieldId]: null };
   }
 
-  getUiPopulateObject(values: TEvaluateRequest): TUiEvaluationObject[] {
+  getUiPopulateObject(values: TFlatSubmissionValues): TUiEvaluationObject[] {
     return [
       {
         uiid: null,

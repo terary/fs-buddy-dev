@@ -1,12 +1,12 @@
 import {
-  TEvaluateRequest,
-  TEvaluateResponse,
+  TFlatSubmissionValues,
+  TFlatSubmissionValues,
   TUiEvaluationObject,
 } from "./type";
 
 interface IEValuator {
-  evaluateWithValues<T>(values: TEvaluateRequest): TEvaluateResponse<T>;
-  getUiPopulateObject(values: TEvaluateRequest): TUiEvaluationObject[];
+  evaluateWithValues<T>(values: TFlatSubmissionValues): TFlatSubmissionValues<T>;
+  getUiPopulateObject(values: TFlatSubmissionValues): TUiEvaluationObject[];
 }
 
 export { IEValuator };

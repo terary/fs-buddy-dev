@@ -1,5 +1,3 @@
-import { InvalidEvaluation } from "../InvalidEvaluation";
-
 type TUiEvaluationObject = {
   uiid: string | null;
   fieldId: string;
@@ -8,7 +6,12 @@ type TUiEvaluationObject = {
   statusMessages: any[];
 };
 
-type TEvaluateRequest = { [fieldId: string]: any };
-type TEvaluateResponse<T> = { [fieldId: string]: T | InvalidEvaluation };
+type TFlatSubmissionValue<T> = { [fieldId: string]: T };
 
-export type { TEvaluateRequest, TEvaluateResponse, TUiEvaluationObject };
+// I am not sure this is what I want..
+// Submission data will come in the form of {fieldId: Date | null | string[], number, number[]} etc
+type TFlatSubmissionValues<T> = TFlatSubmissionValue<T>[];
+// type TFlatSubmissionValues = { [fieldId: string]: any };
+// type TFlatSubmissionValues<T> = { [fieldId: string]: T };
+
+export type { TFlatSubmissionValues, TUiEvaluationObject };

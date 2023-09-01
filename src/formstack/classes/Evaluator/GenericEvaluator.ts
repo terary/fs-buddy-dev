@@ -1,11 +1,11 @@
 import { AbstractEvaluator } from "./AbstractEvaluator";
-import { TEvaluateRequest, TEvaluateResponse } from "./type";
+import { TFlatSubmissionValues, TFlatSubmissionValues } from "./type";
 
 class GenericEvaluator extends AbstractEvaluator {
-  parseValues<T>(values: TEvaluateRequest): TEvaluateResponse<T> {
+  parseValues<T>(values: TFlatSubmissionValues): TFlatSubmissionValues<T> {
     return { [this.fieldId]: values[this.fieldId] as T };
   }
-  evaluateWithValues<T>(values: TEvaluateRequest): TEvaluateResponse<T> {
+  evaluateWithValues<T>(values: TFlatSubmissionValues): TFlatSubmissionValues<T> {
     return this.parseValues(values);
   }
 }

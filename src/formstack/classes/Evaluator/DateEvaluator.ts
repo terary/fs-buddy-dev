@@ -1,32 +1,27 @@
 import { TStatusRecord } from "../../../chrome-extension/type";
-import { InvalidEvaluation } from "../InvalidEvaluation";
-
-console.log(`
-    It maybe time to get rid of the InvalidEvaluation - need to deal with empty submission data (storedValue = '__EMPTY__')
-`);
-
+// import { InvalidEvaluation } from "../InvalidEvaluation";
 import { GenericEvaluator } from "./GenericEvaluator";
 import {
-  TEvaluateRequest,
-  TEvaluateResponse,
+  TFlatSubmissionValues,
+  TFlatSubmissionValues,
   TUiEvaluationObject,
 } from "./type";
 
 class DateEvaluator extends GenericEvaluator {
-  parseValues<T>(values: TEvaluateRequest): TEvaluateResponse<T> {
+  parseValues<T>(values: TFlatSubmissionValues): TFlatSubmissionValues<T> {
     const date = new Date(values[this.fieldId]);
     if (date.toString() === "Invalid Date") {
-      const invalidEvaluation = new InvalidEvaluation(
-        `Date did not parse correctly. Date: '${values[this.fieldId]}'`,
-        { [this.fieldId]: values[this.fieldId] }
-      );
-      return { [this.fieldId]: invalidEvaluation };
+      // const invalidEvaluation = new InvalidEvaluation(
+      //   `Date did not parse correctly. Date: '${values[this.fieldId]}'`,
+      //   { [this.fieldId]: values[this.fieldId] }
+      // );
+      return { [this.fieldId]: undefined };
     }
 
     return { [this.fieldId]: date as T };
   }
 
-  getUiPopulateObject(values: TEvaluateRequest): TUiEvaluationObject[] {
+  getUiPopulateObject(values: TFlatSubmissionValues): TUiEvaluationObject[] {
     // this is where submission error/warn/info should happen
     if (!(this.fieldId in values)) {
       return [
@@ -48,7 +43,7 @@ class DateEvaluator extends GenericEvaluator {
 
     const parsedValues = this.parseValues<string>(values);
     const x = new Date(parsedValues[this.fieldId] as unknown as string);
-    if (parsedValues[this.fieldId] instanceof InvalidEvaluation) {
+    if (parsedValues[this.fieldId] === undefined) {
       return [
         {
           uiid: `field${this.fieldId}`,
@@ -58,9 +53,7 @@ class DateEvaluator extends GenericEvaluator {
           statusMessages: [
             {
               severity: "error",
-              message:
-                "Failed to parse field. " +
-                (parsedValues[this.fieldId] as InvalidEvaluation).message,
+              message: "Failed to parse field. ",
               relatedFieldIds: [],
             },
           ],

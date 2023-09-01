@@ -1,10 +1,9 @@
 import { TStatusRecord } from "../../../chrome-extension/type";
-import { TFsFieldAddress } from "../../type.field";
-import { InvalidEvaluation } from "../InvalidEvaluation";
+// import { InvalidEvaluation } from "../InvalidEvaluation";
 import { AbstractEvaluator } from "./AbstractEvaluator";
 import {
-  TEvaluateRequest,
-  TEvaluateResponse,
+  TFlatSubmissionValues,
+  TFlatSubmissionValues,
   TUiEvaluationObject,
 } from "./type";
 
@@ -13,24 +12,25 @@ const isString = (str: any) => typeof str === "string" || str instanceof String;
 abstract class AbstractSubfieldEvaluator extends AbstractEvaluator {
   abstract get supportedSubfieldIds(): string[];
 
-  parseValues<T>(values: TEvaluateRequest): TEvaluateResponse<T> {
+  parseValues<T>(values: TFlatSubmissionValues): TFlatSubmissionValues<T> {
     const s2 = this.parseSubmittedData(values);
     return { [this.fieldId]: s2 as T };
   }
 
-  private parseSubmittedData(values: TEvaluateRequest) {
+  private parseSubmittedData(values: TFlatSubmissionValues) {
     const submissionData = values[this.fieldId] || [];
     if (!submissionData) {
       return null;
     }
 
     if (!isString(submissionData)) {
-      return new InvalidEvaluation(
-        `Subfield value not a string. value: '${submissionData}'.`,
-        {
-          value: values[this.fieldId],
-        }
-      );
+      // return new InvalidEvaluation(
+      //   `Subfield value not a string. value: '${submissionData}'.`,
+      //   {
+      //     value: values[this.fieldId],
+      //   }
+      // );
+      return null;
     }
 
     const records = submissionData.split("\n");
@@ -47,7 +47,7 @@ abstract class AbstractSubfieldEvaluator extends AbstractEvaluator {
     }) as [{ subfieldId: string; value: string }];
   }
 
-  getStoredValue(values: TEvaluateRequest): string {
+  getStoredValue(values: TFlatSubmissionValues): string {
     if (this.fieldId in values) {
       return (values[this.fieldId] || "").replace(/\n/g, "\\n");
     } else {
@@ -55,7 +55,7 @@ abstract class AbstractSubfieldEvaluator extends AbstractEvaluator {
     }
   }
 
-  getUiPopulateObject(values: TEvaluateRequest): TUiEvaluationObject[] {
+  getUiPopulateObject(values: TFlatSubmissionValues): TUiEvaluationObject[] {
     // this is where submission error/warn/info should happen
     type TypeSubfieldDatum = { subfieldId: string; value: string };
     type TypeSubfieldParse = TypeSubfieldDatum[];
@@ -87,7 +87,7 @@ abstract class AbstractSubfieldEvaluator extends AbstractEvaluator {
       },
     ];
 
-    if (parsedValues[this.fieldId] instanceof InvalidEvaluation) {
+    if (parsedValues[this.fieldId] === undefined) {
       return [
         {
           uiid: `field${this.fieldId}`,
@@ -145,7 +145,9 @@ abstract class AbstractSubfieldEvaluator extends AbstractEvaluator {
     return uiComponents;
   }
 
-  evaluateWithValues<T>(values: TEvaluateRequest): TEvaluateResponse<T> {
+  evaluateWithValues<T>(
+    values: TFlatSubmissionValues
+  ): TFlatSubmissionValues<T> {
     const s1 = this.parseSubmittedData(values);
     const s2 =
       Array.isArray(s1) &&

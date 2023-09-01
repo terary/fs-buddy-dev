@@ -1,4 +1,4 @@
-class InvalidEvaluation {
+class xInvalidEvaluation {
   private _message: string;
   private _payload: any;
   constructor(message: string, payload?: any) {
@@ -14,4 +14,4 @@ class InvalidEvaluation {
     return this._payload;
   }
 }
-export { InvalidEvaluation };
+export { xInvalidEvaluation };
