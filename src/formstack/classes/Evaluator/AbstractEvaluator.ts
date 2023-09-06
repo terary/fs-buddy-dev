@@ -3,15 +3,12 @@ import { TSubmissionDataItem } from "../../type.form";
 //import { InvalidEvaluation } from "../InvalidEvaluation";
 import { IEValuator } from "./IEvaluator";
 import type { TStatusRecord } from "../../../chrome-extension/type";
-import {
-  TFlatSubmissionValues,
-  TFlatSubmissionValues,
-  TUiEvaluationObject,
-} from "./type";
+import { TFlatSubmissionValues, TUiEvaluationObject } from "./type";
 
-abstract class AbstractEvaluator implements IEValuator {
+abstract class AbstractEvaluator {
   private _fieldJson: TFsFieldAny;
   private _fieldId: string;
+
   constructor(fieldJson: TFsFieldAny) {
     this._fieldJson = fieldJson;
     this._fieldId = fieldJson.id;
@@ -22,24 +19,74 @@ abstract class AbstractEvaluator implements IEValuator {
   }
 
   get fieldJson() {
-    return this._fieldJson;
+    return structuredClone(this._fieldJson);
   }
 
   get fieldType(): TFsFieldType {
-    return this.fieldJson.type;
+    return this.fieldJson.type.slice() as TFsFieldType;
   }
 
-  abstract parseValues<T>(values: TFlatSubmissionValues): TFlatSubmissionValues<T>;
+  get isRequired() {
+    const { required } = this.fieldJson;
+    // @ts-ignore - because field json is supposed to go through transformation that will
+    // that will type this boolean
+    return required === "1" || required === true;
+  }
 
-  protected getStoredValue(values: TFlatSubmissionValues) {
-    if (this.fieldId in values) {
-      return values[this.fieldId];
-    } else {
-      return "__EMPTY_SUBMISSION_DATA__";
+  abstract parseValues<S = string, T = string>(submissionDatum?: S): T;
+
+  abstract isCorrectType<T>(submissionDatum: T): boolean;
+
+  protected isValidSubmissionDatum(submissionDatum: string) {
+    return !(
+      ["__EMPTY_SUBMISSION_DATA__", "__MISSING_AND_REQUIRED__"].includes(
+        submissionDatum
+      ) || "__BAD_DATA_TYPE__ ".match(submissionDatum)
+    );
+  }
+
+  protected getStoredValue<T = string>(submissionDatum?: T): T {
+    if (this.isRequired && submissionDatum === undefined) {
+      return "__MISSING_AND_REQUIRED__" as T;
     }
+
+    if (!this.isRequired && submissionDatum === undefined) {
+      return "__EMPTY_SUBMISSION_DATA__" as T;
+    }
+
+    if (!this.isCorrectType(submissionDatum)) {
+      return `__BAD_DATA_TYPE__ "${typeof submissionDatum}"` as T;
+    }
+
+    return submissionDatum as T;
   }
 
-  getUiPopulateObject(values: TFlatSubmissionValues): TUiEvaluationObject[] {
+  getUiPopulateObject<T = string>(submissionDatum?: T): TUiEvaluationObject[] {
+    const datum = this.getStoredValue<string>(submissionDatum as string);
+
+    const storedValueStatusMessage = {
+      severity: datum === "__MISSING_AND_REQUIRED__" ? "warn" : "info",
+      message: `Stored value: '${datum}'.`,
+      relatedFieldIds: [],
+    };
+
+    return [
+      {
+        uiid: this.isValidSubmissionDatum(datum)
+          ? `field${this.fieldId}`
+          : null,
+        fieldId: this.fieldId,
+        fieldType: this.fieldJson.type,
+        value: this.isValidSubmissionDatum(datum) ? datum : "",
+
+        statusMessages: [storedValueStatusMessage],
+      },
+    ];
+  }
+
+  private x_getUiPopulateObject_subfields<T = string>(
+    values?: any
+  ): TUiEvaluationObject[] {
     if (!(this.fieldId in values)) {
       return [
         {
@@ -67,30 +114,14 @@ abstract class AbstractEvaluator implements IEValuator {
       },
     ];
 
-    const parsedValues = this.parseValues<string>(values);
-    // if (parsedValues instanceof InvalidEvaluation) {
-    //   return [
-    //     {
-    //       uiid: `field${this.fieldId}`,
-    //       fieldId: this.fieldId,
-    //       fieldType: this.fieldJson.type,
-    //       value: "",
-    //       statusMessages: [
-    //         {
-    //           severity: "error",
-    //           message: "Failed to parse field. " + parsedValues.message,
-    //           relatedFieldIds: [],
-    //         },
-    //       ],
-    //     } as TUiEvaluationObject,
-    //   ];
-    // }
+    const parsedValues = this.parseValues<T>(values);
 
     // need to make sure this is being transformed
     // @ts-ignore - this is expected 'required' to be boolean, which happens only if this json has been transformed
     if (
       // @ts-ignore
       (this.fieldJson.required || this.fieldJson.required === "1") &&
+      // @ts-ignore
       parsedValues[this.fieldId] === ""
     ) {
       statusMessages.push({
@@ -106,14 +137,16 @@ abstract class AbstractEvaluator implements IEValuator {
         uiid: `field${this.fieldId}`,
         fieldId: this.fieldId,
         fieldType: this.fieldJson.type,
+        // @ts-ignore
+
         value: parsedValues[this.fieldId] as string,
         statusMessages,
       },
     ];
   }
 
-  abstract evaluateWithValues<T>(
-    values: TFlatSubmissionValues
-  ): TFlatSubmissionValues<T>;
+  // abstract evaluateWithValues<T = string>(
+  //   submissionData: TFlatSubmissionValues<T>
+  // ): TFlatSubmissionValues<T>;
 }
 export { AbstractEvaluator };

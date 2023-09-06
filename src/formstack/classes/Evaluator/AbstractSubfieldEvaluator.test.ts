@@ -5,19 +5,22 @@ class TestSubfieldEvaluator extends AbstractSubfieldEvaluator {
   get supportedSubfieldIds() {
     return ["subfield0", "subfield1", "subfield2"];
   }
+  isCorrectType<T>(submissionDatum: T): boolean {
+    return true;
+  }
 }
 
 describe("AbstractSubfieldEvaluator", () => {
   describe(".getUiPopulateObject(...)", () => {
     it("Should return __EMPTY_SUBMISSION_DATA__ for fields without submission data", () => {
       const evaluator = new TestSubfieldEvaluator(fieldJson);
-      const actual = evaluator.getUiPopulateObject({});
+      const actual = evaluator.getUiPopulateObject(undefined);
       expect(actual).toStrictEqual([
         {
           uiid: null,
           fieldId: "147738157",
           fieldType: "address",
-          value: "__EMPTY_SUBMISSION_DATA__",
+          value: "",
           statusMessages: [
             {
               severity: "info",
@@ -28,13 +31,37 @@ describe("AbstractSubfieldEvaluator", () => {
         },
       ]);
     });
+
+    it("Should return Something if the object is empty?? for fields without submission data", () => {
+      const evaluator = new TestSubfieldEvaluator(fieldJson);
+      const actual = evaluator.getUiPopulateObject({});
+      expect(actual).toStrictEqual([
+        {
+          uiid: null,
+          fieldId: "147738157",
+          fieldType: "address",
+          value: "",
+          statusMessages: [
+            {
+              severity: "info",
+              fieldId: "147738157",
+              message: "Stored value: '{}'.",
+              relatedFieldIds: [],
+            },
+            {
+              severity: "error",
+              message: "Failed to parse field",
+              relatedFieldIds: [],
+            },
+          ],
+        },
+      ]);
+    });
     it("Should return array of properly formatted UI instructions (shape of TUiEvaluationObject).", () => {
       const testValue =
         "subfield0 = The First Value.\nsubfield1 = The Second Value.\nsubfield2 = The Final Value.";
       const evaluator = new TestSubfieldEvaluator(fieldJson);
-      const actual = evaluator.getUiPopulateObject({
-        [submissionData.field]: testValue,
-      });
+      const actual = evaluator.getUiPopulateObject(testValue);
       expect(actual).toStrictEqual([
         {
           uiid: "field147738157-subfield0",
@@ -67,7 +94,7 @@ describe("AbstractSubfieldEvaluator", () => {
               severity: "info",
               fieldId: "147738157",
               message:
-                "Stored value: 'subfield0 = The First Value.\\nsubfield1 = The Second Value.\\nsubfield2 = The Final Value.'.",
+                "Stored value: '\"subfield0 = The First Value.\\nsubfield1 = The Second Value.\\nsubfield2 = The Final Value.\"'.",
               relatedFieldIds: [],
             },
           ],
@@ -78,9 +105,7 @@ describe("AbstractSubfieldEvaluator", () => {
       const testValue =
         "subfield0 = The First Value.\nsubfield1 = The Second Value.\nsubfield2 = The Final Value.\nUnknownSubField = some unknown value\n";
       const evaluator = new TestSubfieldEvaluator(fieldJson);
-      const actual = evaluator.getUiPopulateObject({
-        [submissionData.field]: testValue,
-      });
+      const actual = evaluator.getUiPopulateObject(testValue);
       expect(actual).toStrictEqual([
         {
           uiid: "field147738157-subfield0",
@@ -113,19 +138,13 @@ describe("AbstractSubfieldEvaluator", () => {
               severity: "info",
               fieldId: "147738157",
               message:
-                "Stored value: 'subfield0 = The First Value.\\nsubfield1 = The Second Value.\\nsubfield2 = The Final Value.\\nUnknownSubField = some unknown value\\n'.",
+                "Stored value: '\"subfield0 = The First Value.\\nsubfield1 = The Second Value.\\nsubfield2 = The Final Value.\\nUnknownSubField = some unknown value\\n\"'.",
               relatedFieldIds: [],
             },
             {
               severity: "warn",
               message:
                 "Found unexpected subfield: 'UnknownSubField'. With value: 'some unknown value'.",
-              fieldId: "147738157",
-              relatedFieldIds: [],
-            },
-            {
-              severity: "warn",
-              message: "Found unexpected subfield: ''. With value: ''.",
               fieldId: "147738157",
               relatedFieldIds: [],
             },

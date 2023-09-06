@@ -1,103 +1,133 @@
 import { TStatusRecord } from "../../../chrome-extension/type";
 // import { InvalidEvaluation } from "../InvalidEvaluation";
 import { AbstractEvaluator } from "./AbstractEvaluator";
-import {
-  TFlatSubmissionValues,
-  TFlatSubmissionValues,
-  TUiEvaluationObject,
-} from "./type";
+import { TFlatSubmissionValues, TUiEvaluationObject } from "./type";
+
+type TAdvancedField = { [subfieldId: string]: string };
 
 const isString = (str: any) => typeof str === "string" || str instanceof String;
 
 abstract class AbstractSubfieldEvaluator extends AbstractEvaluator {
   abstract get supportedSubfieldIds(): string[];
 
-  parseValues<T>(values: TFlatSubmissionValues): TFlatSubmissionValues<T> {
-    const s2 = this.parseSubmittedData(values);
-    return { [this.fieldId]: s2 as T };
+  // abstract parseValues<T>(
+  //   values: TFlatSubmissionValues<T>
+  // ): TFlatSubmissionValues<T>;
+
+  // I think T should default to object
+  parseValues<S = string, T = string>(submissionDatum?: S): T {
+    return this.parseSubmittedData(submissionDatum as string) as T;
   }
 
-  private parseSubmittedData(values: TFlatSubmissionValues) {
-    const submissionData = values[this.fieldId] || [];
-    if (!submissionData) {
-      return null;
+  private parseSubmittedData(
+    submissionDatum?: string
+  ): TAdvancedField | undefined {
+    if (!submissionDatum) {
+      return undefined;
     }
 
-    if (!isString(submissionData)) {
+    if (!isString(submissionDatum)) {
       // return new InvalidEvaluation(
       //   `Subfield value not a string. value: '${submissionData}'.`,
       //   {
       //     value: values[this.fieldId],
       //   }
       // );
-      return null;
+      return {};
     }
 
-    const records = submissionData.split("\n");
+    if (!submissionDatum.match("\n")) {
+      return {};
+    }
 
-    return records.map((field: string) => {
+    const records = submissionDatum.split("\n");
+
+    const x: TAdvancedField = {};
+    records.forEach((field: string) => {
+      // maybe this should be reduce - so it can be returned directly?
       const [subfieldIdRaw, valueRaw] = field.split("=");
       const subfieldId = (subfieldIdRaw || "").trim();
       const value = (valueRaw || "").trim();
+      if (subfieldId !== "" || value !== "") {
+        x[subfieldId] = value;
+      }
+    });
 
-      return {
-        subfieldId,
-        value,
-      };
-    }) as [{ subfieldId: string; value: string }];
+    return x;
   }
 
-  getStoredValue(values: TFlatSubmissionValues): string {
-    if (this.fieldId in values) {
-      return (values[this.fieldId] || "").replace(/\n/g, "\\n");
-    } else {
-      return "__EMPTY_SUBMISSION_DATA__";
+  // getStoredValue<T = string>(submittedDatum: string): string {
+  //   if (this.fieldId in submittedDatum) {
+  //     return (values[this.fieldId] || "").replace(/\n/g, "\\n");
+  //   } else {
+  //     return "__EMPTY_SUBMISSION_DATA__";
+  //   }
+  // }
+  protected getStoredValue<T = string>(submissionDatum?: T): T {
+    // this is exactly the same as parent class.  If no changes made, inherit from parent
+
+    if (this.isRequired && submissionDatum === undefined) {
+      return "__MISSING_AND_REQUIRED__" as T;
     }
+
+    if (!this.isRequired && submissionDatum === undefined) {
+      return "__EMPTY_SUBMISSION_DATA__" as T;
+    }
+
+    if (!this.isCorrectType(submissionDatum)) {
+      return `__BAD_DATA_TYPE__ "${typeof submissionDatum}"` as T;
+    }
+
+    return submissionDatum as T;
   }
 
-  getUiPopulateObject(values: TFlatSubmissionValues): TUiEvaluationObject[] {
-    // this is where submission error/warn/info should happen
-    type TypeSubfieldDatum = { subfieldId: string; value: string };
-    type TypeSubfieldParse = TypeSubfieldDatum[];
+  getUiPopulateObject<T = string>(submissionDatum?: T): TUiEvaluationObject[] {
+    const parsedValues = this.parseValues<
+      string,
+      { [subfieldId: string]: string }
+    >(submissionDatum as string);
 
-    if (!(this.fieldId in values)) {
+    if (parsedValues === undefined) {
+      return [
+        {
+          uiid: null,
+          fieldId: this.fieldId,
+          fieldType: this.fieldType,
+          value: "",
+          statusMessages: [
+            {
+              severity: "info",
+              message: "Stored value: '__EMPTY_SUBMISSION_DATA__'.",
+              relatedFieldIds: [],
+            },
+          ],
+        },
+      ];
+    }
+
+    const statusMessages: TStatusRecord[] = [
+      {
+        severity: "info",
+        fieldId: this.fieldId,
+        message: `Stored value: '${JSON.stringify(
+          this.getStoredValue(submissionDatum)
+        )}'.`,
+        relatedFieldIds: [],
+      },
+    ];
+
+    if (Object.keys(parsedValues).length === 0) {
       return [
         {
           uiid: null,
           fieldId: this.fieldId,
           fieldType: this.fieldJson.type,
-          value: "__EMPTY_SUBMISSION_DATA__",
-          statusMessages: [
-            {
-              severity: "info",
-              message: `Stored value: '__EMPTY_SUBMISSION_DATA__'.`,
-              relatedFieldIds: [],
-            },
-          ],
-        } as TUiEvaluationObject,
-      ];
-    }
-    const parsedValues = this.parseValues<TypeSubfieldParse>(values); // I think parseValue is typed wrong or returns incorrect shape
-    const statusMessages: TStatusRecord[] = [
-      {
-        severity: "info",
-        fieldId: this.fieldId,
-        message: `Stored value: '${this.getStoredValue(values)}'.`,
-        relatedFieldIds: [],
-      },
-    ];
-
-    if (parsedValues[this.fieldId] === undefined) {
-      return [
-        {
-          uiid: `field${this.fieldId}`,
-          fieldId: this.fieldId,
-          fieldType: this.fieldJson.type,
           value: "",
           statusMessages: [
+            ...statusMessages,
             {
               severity: "error",
-              message: "Failed to parse field" + parsedValues.message,
+              message: "Failed to parse field",
               relatedFieldIds: [],
             },
           ],
@@ -105,36 +135,34 @@ abstract class AbstractSubfieldEvaluator extends AbstractEvaluator {
       ];
     }
 
-    const parsedValuesTyped = parsedValues as unknown as TypeSubfieldParse;
-    // @ts-ignore
-    const unexpectedSubfields = parsedValuesTyped[this.fieldId].filter(
-      (datum: TypeSubfieldDatum) => {
-        return !this.supportedSubfieldIds.includes(datum.subfieldId);
+    Object.entries(parsedValues).forEach(([key, value]) => {
+      if (!this.supportedSubfieldIds.includes(key)) {
+        statusMessages.push({
+          severity: "warn",
+          message: `Found unexpected subfield: '${key}'. With value: '${value}'.`,
+          fieldId: this.fieldId,
+          relatedFieldIds: [],
+        });
       }
-    );
-    unexpectedSubfields.forEach((datum: TypeSubfieldDatum) => {
-      statusMessages.push({
-        severity: "warn",
-        message: `Found unexpected subfield: '${datum.subfieldId}'. With value: '${datum.value}'.`,
-        fieldId: this.fieldId,
-        relatedFieldIds: [],
-      });
     });
+    // unexpectedSubfields.forEach((datum: TypeSubfieldDatum) => {
+    // });
 
     const uiComponents = this.supportedSubfieldIds.map((subfieldId) => {
       return {
         uiid: `field${this.fieldId}-${subfieldId}`,
         fieldId: this.fieldId,
         fieldType: this.fieldJson.type,
-        value:
-          // @ts-ignore
-          parsedValuesTyped[this.fieldId].find(
-            (x: any) => x.subfieldId === subfieldId
-          )?.value || "", //[subfieldId], //values[this.fieldId],
+        value: parsedValues[subfieldId],
+        // // @ts-ignore
+        // parsedValuesTyped[this.fieldId].find(
+        //   (x: any) => x.subfieldId === subfieldId
+        // )?.value || "", //[subfieldId], //values[this.fieldId],
         statusMessages: [],
       } as TUiEvaluationObject;
     });
 
+    // add one more for status message
     uiComponents.push({
       uiid: null,
       fieldId: this.fieldId,
@@ -144,23 +172,25 @@ abstract class AbstractSubfieldEvaluator extends AbstractEvaluator {
     } as TUiEvaluationObject);
     return uiComponents;
   }
+  // abstract evaluateWithValues<T = string>(
+  //   values: TFlatSubmissionValues<T>
+  // ): TFlatSubmissionValues<T>;
 
-  evaluateWithValues<T>(
-    values: TFlatSubmissionValues
-  ): TFlatSubmissionValues<T> {
-    const s1 = this.parseSubmittedData(values);
-    const s2 =
-      Array.isArray(s1) &&
-      s1.reduce((prev, cur) => {
-        if (this.supportedSubfieldIds.includes(cur.subfieldId)) {
-          prev[cur.subfieldId] = cur.value;
-        }
-        return prev;
-      }, {} as { [subfieldId: string]: string });
+  x_evaluateWithValues<T>(submissionDatum: string): any {
+    const s1 = this.parseSubmittedData(submissionDatum);
+    return s1;
+    // const s2 =
+    //   Array.isArray(s1) &&
+    //   s1.reduce((prev, cur) => {
+    //     if (this.supportedSubfieldIds.includes(cur.subfieldId)) {
+    //       prev[cur.subfieldId] = cur.value;
+    //     }
+    //     return prev;
+    //   }, {} as { [subfieldId: string]: string });
 
-    // return s2;
+    // // return s2;
 
-    return { [this.fieldId]: s2 as T };
+    // return { [this.fieldId]: s2 as T };
   }
 }
 
