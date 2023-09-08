@@ -7,11 +7,7 @@ import {
   TFsSelectOption,
 } from "../../type.field";
 import { AbstractEvaluator } from "./AbstractEvaluator";
-import {
-  TFlatSubmissionValues,
-  TFlatSubmissionValues,
-  TUiEvaluationObject,
-} from "./type";
+import { TFlatSubmissionValues, TUiEvaluationObject } from "./type";
 
 type TSelectFields = TFsFieldRadio | TFsFieldSelect | TFsFieldCheckbox;
 
@@ -30,20 +26,22 @@ class MultiSelectEvaluator extends AbstractEvaluator {
     return this.getSelectOptions().find((x) => x.value === value) !== undefined;
   }
 
-  parseValues<T>(values: TFlatSubmissionValues): TFlatSubmissionValues<T> {
-    return { [this.fieldId]: values[this.fieldId] as T };
+  parseValues<S = string, T = string>(submissionDatum?: S): T {
+    // parseValues<T>(values: TFlatSubmissionValues): TFlatSubmissionValues<T> {
+    // return { [this.fieldId]: values[this.fieldId] as T };
+    return submissionDatum as T;
   }
 
-  private parseArrayValues<T>(values: TFlatSubmissionValues): TFlatSubmissionValues<T> {
-    const splitValues = (values[this.fieldId] || "").split("\n");
-    return { [this.fieldId]: splitValues as T };
+  private parseArrayValues<T>(submissionDatum?: string): string[] {
+    const splitValues = (submissionDatum || "").split("\n");
+    return splitValues;
   }
 
-  evaluateWithValues<T>(values: TFlatSubmissionValues): TFlatSubmissionValues<T> {
-    // const selectedOption = this.parseValues(values)[this.fieldId];
+  evaluateWithValues<S = string, T = string>(value: S): T {
+    //     evaluateWithValues<T>( values: TFlatSubmissionValues) : TFlatSubmissionValues<T> {
 
     const foundOption = this.getSelectOptions().find(
-      (option) => option.value === values[this.fieldId]
+      (option) => option.value === value
     ) || { value: undefined };
 
     // if (foundOption === undefined) {
@@ -56,7 +54,8 @@ class MultiSelectEvaluator extends AbstractEvaluator {
     // } else {
     //   return { [this.fieldId]: foundOption.value as T };
     // }
-    return { [this.fieldId]: foundOption.value as T };
+    // return { [this.fieldId]: foundOption.value as T };
+    return foundOption.value as T;
   }
 
   getUiidFieldIdMap() {
@@ -66,19 +65,18 @@ class MultiSelectEvaluator extends AbstractEvaluator {
     }, {} as { [optionValue: string]: string });
   }
 
+  // getUiPopulateObject<T = string>(submissionDatum?: T): TUiEvaluationObject[] {
   private getUiPopulateObjectCheckbox(
-    values: TFlatSubmissionValues
+    submissionDatum?: string
   ): TUiEvaluationObject[] {
     const uiFields: TUiEvaluationObject[] = [];
-    const selectedValues = (this.parseArrayValues<string[]>(values)[
-      this.fieldId
-    ] || []) as string[];
+    const selectedValues = this.parseArrayValues<string[]>(submissionDatum);
     const uiidFieldIdMap = this.getUiidFieldIdMap();
     const statusMessages: TStatusRecord[] = [
       {
         severity: "info",
         fieldId: this.fieldId,
-        message: `Stored value: '${(values[this.fieldId] || "").replace(
+        message: `Stored value: '${(submissionDatum || "").replace(
           /\n/g,
           "\\n"
         )}'.`,
@@ -133,22 +131,32 @@ class MultiSelectEvaluator extends AbstractEvaluator {
     return uiFields;
   }
 
+  isCorrectType<T>(submissionDatum: T): boolean {
+    const parseSubmittedData = this.parseValues(submissionDatum);
+
+    // should we check if all keys are valid?
+    return (
+      typeof parseSubmittedData === "object" &&
+      parseSubmittedData !== null &&
+      Object.keys(parseSubmittedData).length > 0
+    );
+  }
+
   private validOptionValues(): string {
     return this.getSelectOptions()
       .map((x) => x.value)
       .join("', '");
   }
   private getUiPopulateObjectSelect(
-    values: TFlatSubmissionValues
+    submissionDatum?: string
   ): TUiEvaluationObject[] {
     const uiFields: TUiEvaluationObject[] = [];
-    const selectedValue = (this.parseValues<string>(values)[this.fieldId] ||
-      "") as string;
+    const selectedValue = this.parseValues<string>(submissionDatum);
     const statusMessages: TStatusRecord[] = [
       {
         severity: "info",
         fieldId: this.fieldId,
-        message: `Stored value: '${(values[this.fieldId] || "").replace(
+        message: `Stored value: '${(submissionDatum || "").replace(
           /\n/g,
           "\\n"
         )}'.`,
@@ -195,38 +203,39 @@ class MultiSelectEvaluator extends AbstractEvaluator {
     return uiFields;
   }
 
-  getUiPopulateObject(values: TFlatSubmissionValues): TUiEvaluationObject[] {
-    if (!(this.fieldId in values)) {
-      return [
-        {
-          uiid: null,
-          fieldId: this.fieldId,
-          fieldType: this.fieldJson.type,
-          value: "__EMPTY_SUBMISSION_DATA__",
-          statusMessages: [
-            {
-              severity: "info",
-              message: `Stored value: '__EMPTY_SUBMISSION_DATA__'.`,
-              relatedFieldIds: [],
-            },
-          ],
-        } as TUiEvaluationObject,
-      ];
-    }
+  getUiPopulateObject<T = string>(submissionDatum?: T): TUiEvaluationObject[] {
+    // getUiPopulateObject(values: TFlatSubmissionValues): TUiEvaluationObject[] {
+    // if (!(this.fieldId in values)) {
+    //   return [
+    //     {
+    //       uiid: null,
+    //       fieldId: this.fieldId,
+    //       fieldType: this.fieldJson.type,
+    //       value: "__EMPTY_SUBMISSION_DATA__",
+    //       statusMessages: [
+    //         {
+    //           severity: "info",
+    //           message: `Stored value: '__EMPTY_SUBMISSION_DATA__'.`,
+    //           relatedFieldIds: [],
+    //         },
+    //       ],
+    //     } as TUiEvaluationObject,
+    //   ];
+    // }
 
     if (this.fieldType === "checkbox") {
-      return this.getUiPopulateObjectCheckbox(values);
+      return this.getUiPopulateObjectCheckbox(submissionDatum as string);
     } else if (this.fieldType === "select") {
-      return this.getUiPopulateObjectSelect(values);
+      return this.getUiPopulateObjectSelect(submissionDatum as string);
     }
 
-    const parsedValues = this.parseValues<string>(values);
+    const parsedValues = this.parseValues<string>(submissionDatum as string);
     const uiidFieldIdMap = this.getUiidFieldIdMap();
     const statusMessages: TStatusRecord[] = [
       {
         severity: "info",
         fieldId: this.fieldId,
-        message: `Stored value: '${(values[this.fieldId] || "").replace(
+        message: `Stored value: '${((submissionDatum as string) || "").replace(
           /\n/g,
           "\\n"
         )}'.`,
@@ -234,13 +243,11 @@ class MultiSelectEvaluator extends AbstractEvaluator {
       },
     ];
 
-    if (!uiidFieldIdMap[parsedValues[this.fieldId]]) {
+    if (!uiidFieldIdMap[parsedValues]) {
       statusMessages.push({
         severity: "warn",
         fieldId: this.fieldId,
-        message: `Failed to find valid option: '${
-          values[this.fieldId]
-        }' within valid options: '${this.validOptionValues()}' `,
+        message: `Failed to find valid option: '${submissionDatum}' within valid options: '${this.validOptionValues()}' `,
         relatedFieldIds: [],
       });
     }
@@ -250,7 +257,7 @@ class MultiSelectEvaluator extends AbstractEvaluator {
     if (
       // @ts-ignore
       (this.fieldJson.required || this.fieldJson.required === "1") &&
-      parsedValues[this.fieldId] === ""
+      parsedValues === ""
     ) {
       statusMessages.push({
         severity: "info",
@@ -262,10 +269,10 @@ class MultiSelectEvaluator extends AbstractEvaluator {
 
     return [
       {
-        uiid: uiidFieldIdMap[parsedValues[this.fieldId]] || this.fieldId,
+        uiid: uiidFieldIdMap[parsedValues] || this.fieldId,
         fieldId: this.fieldId,
         fieldType: this.fieldJson.type,
-        value: parsedValues[this.fieldId] as string,
+        value: parsedValues as string,
         statusMessages: [],
       },
       {

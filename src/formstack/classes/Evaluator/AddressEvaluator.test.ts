@@ -2,57 +2,70 @@ import { TFsFieldAny } from "../../type.field";
 import { AddressEvaluator } from "./AddressEvaluator";
 
 describe("AddressEvaluator", () => {
-  describe(".evaluateWithValues(...)", () => {
-    it("Should parse submittedData", () => {
-      //
+  describe(".getUiPopulateObject(...)", () => {
+    it("Should return subfields ui descriptions", () => {
       const evaluator = new AddressEvaluator(fieldJson);
-      const actual = evaluator.evaluateWithValues({
-        [submissionData.field]: submissionData.value,
-      });
-      expect(actual).toStrictEqual({
-        "147738157": {
-          address: "123 Walt Disney Way 0",
-          address2: "Micky Mouse Hut #2, 4",
-          city: "Disney World 7",
-          state: "DE",
-          zip: "04240",
+      const actual = evaluator.getUiPopulateObject(submissionData.value);
+      expect(actual).toStrictEqual([
+        {
+          uiid: "field147738157-address",
+          fieldId: "147738157",
+          fieldType: "address",
+          value: "123 Walt Disney Way 0",
+          statusMessages: [],
         },
-      });
-    });
-    it("Should quietly ignore bad data if possible (non parsable string)", () => {
-      //
-      const evaluator = new AddressEvaluator(fieldJson);
-      const testValue =
-        "Something that does not belong\n" + submissionData.value;
-      const actual = evaluator.evaluateWithValues({
-        [submissionData.field]: testValue,
-      });
-      expect(actual).toStrictEqual({
-        "147738157": {
-          address: "123 Walt Disney Way 0",
-          address2: "Micky Mouse Hut #2, 4",
-          city: "Disney World 7",
-          state: "DE",
-          zip: "04240",
+        {
+          uiid: "field147738157-address2",
+          fieldId: "147738157",
+          fieldType: "address",
+          value: "Micky Mouse Hut #2, 4",
+          statusMessages: [],
         },
-      });
-    });
-    it("Should quietly ignore bad data if possible (unrecognized subfieldId)", () => {
-      //
-      const evaluator = new AddressEvaluator(fieldJson);
-      const testValue = "unknownSubfield = unknown\n" + submissionData.value;
-      const actual = evaluator.evaluateWithValues({
-        [submissionData.field]: testValue,
-      });
-      expect(actual).toStrictEqual({
-        "147738157": {
-          address: "123 Walt Disney Way 0",
-          address2: "Micky Mouse Hut #2, 4",
-          city: "Disney World 7",
-          state: "DE",
-          zip: "04240",
+        {
+          uiid: "field147738157-city",
+          fieldId: "147738157",
+          fieldType: "address",
+          value: "Disney World 7",
+          statusMessages: [],
         },
-      });
+        {
+          uiid: "field147738157-state",
+          fieldId: "147738157",
+          fieldType: "address",
+          value: "DE",
+          statusMessages: [],
+        },
+        {
+          uiid: "field147738157-zip",
+          fieldId: "147738157",
+          fieldType: "address",
+          value: "04240",
+          statusMessages: [],
+        },
+        {
+          uiid: "field147738157-country",
+          fieldId: "147738157",
+          fieldType: "address",
+          value: undefined,
+          statusMessages: [],
+        },
+        {
+          uiid: null,
+          fieldId: "147738157",
+          fieldType: "address",
+          value: "",
+          statusMessages: [
+            {
+              severity: "info",
+              fieldId: "147738157",
+              message:
+                "Stored value: '\"address = 123 Walt Disney Way 0\\naddress2 = Micky Mouse Hut #2, 4\\ncity = Disney World 7\\nstate = DE\\nzip = 04240\"'.",
+              relatedFieldIds: [],
+            },
+          ],
+        },
+      ]);
+      //     it("Should quietly ignore bad data if possible (non parsable string)", () => {
     });
   });
 });

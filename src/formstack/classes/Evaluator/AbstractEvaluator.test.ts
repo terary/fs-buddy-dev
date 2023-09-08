@@ -5,8 +5,8 @@ import { TFlatSubmissionValues } from "./type";
 const isString = (v: any) => typeof v === "string" || v instanceof String;
 
 class TestSubfieldEvaluator extends AbstractEvaluator {
-  parseValues<T>(values: TFlatSubmissionValues<T>): TFlatSubmissionValues<T> {
-    return values;
+  parseValues<S = string, T = string>(submissionDatum?: S): T {
+    return submissionDatum as T;
   }
 
   _getStoredValue(value: any) {

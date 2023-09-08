@@ -1,48 +1,44 @@
 import { TStatusRecord } from "../../../chrome-extension/type";
 // import { InvalidEvaluation } from "../InvalidEvaluation";
 import { AbstractEvaluator } from "./AbstractEvaluator";
-import {
-  TFlatSubmissionValues,
-  TFlatSubmissionValues,
-  TUiEvaluationObject,
-} from "./type";
+import { TUiEvaluationObject } from "./type";
+const isString = (v: any) => typeof v === "string" || v instanceof String;
+
 const isNumericLoosely = (value: any) => {
   return Number(value) == value;
 };
 
 class NumericOnlyEvaluator extends AbstractEvaluator {
-  parseValues<T>(values: TFlatSubmissionValues): TFlatSubmissionValues<T> {
-    return { [this.fieldId]: values[this.fieldId] };
+  parseValues<S = string, T = string>(submissionDatum?: S): T {
+    return submissionDatum as T;
+  }
+  isCorrectType<T>(submissionDatum: T): boolean {
+    return isString(submissionDatum) || isNumericLoosely(submissionDatum);
   }
 
-  evaluateWithValues<T>(values: TFlatSubmissionValues): TFlatSubmissionValues<T> {
-    if (isNumericLoosely(values[this.fieldId])) {
-      return { [this.fieldId]: values[this.fieldId] };
+  // parseValues<T>(values: TFlatSubmissionValues): TFlatSubmissionValues<T> {
+  //   return { [this.fieldId]: values[this.fieldId] };
+  // }
+
+  evaluateWithValues<S = string, T = string>(values: S): T {
+    //   evaluateWithValues<T>( values: TFlatSubmissionValues ) : TFlatSubmissionValues<T> {
+    if (isNumericLoosely(values)) {
+      return values as unknown as T;
     }
-    return { [this.fieldId]: undefined };
-
-    // return {
-    //   [this.fieldId]: new InvalidEvaluation(
-    //     `Could not convert to number: '${values[this.fieldId]}', fieldId: ${
-    //       this.fieldId
-    //     }.`
-    //   ),
-    // };
+    return undefined as T;
   }
 
-  getUiPopulateObject(values: TFlatSubmissionValues): TUiEvaluationObject[] {
-    console.log(
-      `TFlatSubmissionValues and TUiEvaluationObject need to be the same thing so the output can be piped into input. Good for validation (or not validation).`
-    );
+  getUiPopulateObject<T = string>(submissionDatum?: T): TUiEvaluationObject[] {
+    // getUiPopulateObject(values: TFlatSubmissionValues): TUiEvaluationObject[] {
     const statusMessages: TStatusRecord[] = [
       {
         severity: "info",
         fieldId: this.fieldId,
-        message: `Stored value: '${this.getStoredValue(values)}'.`,
+        message: `Stored value: '${this.getStoredValue(submissionDatum)}'.`,
         relatedFieldIds: [],
       },
     ];
-    const parsedValues = this.parseValues<string>(values);
+    const parsedValues = this.parseValues<string>(submissionDatum as string);
 
     if (parsedValues === undefined) {
       statusMessages.push({
@@ -57,7 +53,7 @@ class NumericOnlyEvaluator extends AbstractEvaluator {
     if (
       // @ts-ignore
       (this.fieldJson.required || this.fieldJson.required === "1") &&
-      parsedValues[this.fieldId] === ""
+      submissionDatum === ""
     ) {
       statusMessages.push({
         severity: "info",
@@ -72,7 +68,7 @@ class NumericOnlyEvaluator extends AbstractEvaluator {
         uiid: `field${this.fieldId}`,
         fieldId: this.fieldId,
         fieldType: this.fieldJson.type,
-        value: parsedValues[this.fieldId] as string,
+        value: parsedValues as string,
         statusMessages,
       },
     ];

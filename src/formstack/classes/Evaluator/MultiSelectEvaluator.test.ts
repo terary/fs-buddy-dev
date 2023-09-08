@@ -1,5 +1,4 @@
 import { TFsFieldAny } from "../../type.field";
-import { InvalidEvaluation } from "../InvalidEvaluation";
 import { MultiSelectEvaluator } from "./MultiSelectEvaluator";
 
 describe("MultiSelectEvaluator", () => {
@@ -8,54 +7,34 @@ describe("MultiSelectEvaluator", () => {
       it("Should parse submittedData, return the same type and value as passed-in data.", () => {
         //
         const evaluator = new MultiSelectEvaluator(fieldJsonDropdown);
-        const actual = evaluator.evaluateWithValues({
-          [submissionDataDropdown.field]: submissionDataDropdown.value,
-        });
+        const actual = evaluator.evaluateWithValues(
+          submissionDataDropdown.value
+        );
 
-        expect(actual).toStrictEqual({
-          "147738162": "OPT03",
-        });
-      });
-      it("Should return InvalidEvaluation for something that does not look like a number.", () => {
-        //
-        const evaluator = new MultiSelectEvaluator(fieldJsonDropdown);
-        const testValue = "Something that is not a number";
-        const actual = evaluator.evaluateWithValues({
-          [submissionDataDropdown.field]: testValue,
-        });
-        expect(actual[submissionDataDropdown.field]).toBeInstanceOf(
-          InvalidEvaluation
-        );
-        const actualEvaluation = actual[
-          submissionDataDropdown.field
-        ] as InvalidEvaluation;
-        expect(actualEvaluation.message).toStrictEqual(
-          "Selected option not found."
-        );
-        expect(actualEvaluation.payload).toStrictEqual({
-          options: [
-            { imageUrl: null, label: "Option1", value: "OPT01" },
-            { imageUrl: null, label: "Option2", value: "OPT02" },
-            { imageUrl: null, label: "Option3", value: "OPT03" },
-          ],
-          searchValue: "Something that is not a number",
-        });
+        expect(actual).toStrictEqual("OPT03");
       });
     });
     describe(".getUiPopulateObject(...)", () => {
       it("Should return array of properly formatted UI instructions (shape of TUiEvaluationObject).", () => {
         const testValue = "1";
         const evaluator = new MultiSelectEvaluator(fieldJsonDropdown);
-        const actual = evaluator.getUiPopulateObject({
-          [submissionDataDropdown.field]: submissionDataDropdown.value,
-        });
+        const actual = evaluator.getUiPopulateObject(
+          submissionDataDropdown.value
+        );
         expect(actual).toStrictEqual([
           {
             uiid: "field147738162",
             fieldId: "147738162",
             fieldType: "select",
             value: "OPT03",
-            statusMessages: [],
+            statusMessages: [
+              {
+                severity: "info",
+                fieldId: "147738162",
+                message: "Stored value: 'OPT03'.",
+                relatedFieldIds: [],
+              },
+            ],
           },
         ]);
       });
@@ -65,9 +44,9 @@ describe("MultiSelectEvaluator", () => {
           ...fieldJsonDropdown,
           ...{ type: "radio" },
         });
-        const actual = evaluator.getUiPopulateObject({
-          [submissionDataDropdown.field]: submissionDataDropdown.value,
-        });
+        const actual = evaluator.getUiPopulateObject(
+          submissionDataDropdown.value
+        );
         expect(actual).toStrictEqual([
           {
             uiid: "field147738162_3",
@@ -95,9 +74,7 @@ describe("MultiSelectEvaluator", () => {
       it("Should include statusMessage when the parsedValue is not one of the available options.", () => {
         const testValue = "1";
         const evaluator = new MultiSelectEvaluator(fieldJsonDropdown);
-        const actual = evaluator.getUiPopulateObject({
-          [submissionDataDropdown.field]: "INVALID_OPTION",
-        });
+        const actual = evaluator.getUiPopulateObject("INVALID_OPTION");
         expect(actual).toStrictEqual([
           {
             uiid: "field147738162",
@@ -105,6 +82,12 @@ describe("MultiSelectEvaluator", () => {
             fieldType: "select",
             value: "INVALID_OPTION",
             statusMessages: [
+              {
+                severity: "info",
+                fieldId: "147738162",
+                message: "Stored value: 'INVALID_OPTION'.",
+                relatedFieldIds: [],
+              },
               {
                 severity: "warn",
                 fieldId: "147738162",
@@ -122,9 +105,9 @@ describe("MultiSelectEvaluator", () => {
     describe(".getUiPopulateObject(...)", () => {
       it("Should return array of properly formatted UI instructions (shape of TUiEvaluationObject).", () => {
         const evaluator = new MultiSelectEvaluator(fieldJsonCheckbox);
-        const actual = evaluator.getUiPopulateObject({
-          [submissionDataCheckbox.field]: submissionDataCheckbox.value,
-        });
+        const actual = evaluator.getUiPopulateObject(
+          submissionDataCheckbox.value
+        );
         expect(actual).toStrictEqual([
           {
             uiid: "field147738164_1",
@@ -140,20 +123,38 @@ describe("MultiSelectEvaluator", () => {
             value: "Option2",
             statusMessages: [],
           },
-        ]);
-      });
-      it("Should empty return item with empty value and status message if field required and no options selected.", () => {
-        const evaluator = new MultiSelectEvaluator(fieldJsonCheckbox);
-        const actual = evaluator.getUiPopulateObject({
-          [submissionDataCheckbox.field]: "",
-        });
-        expect(actual).toStrictEqual([
           {
-            uiid: "147738164",
+            uiid: null,
             fieldId: "147738164",
             fieldType: "checkbox",
             value: "",
             statusMessages: [
+              {
+                severity: "info",
+                fieldId: "147738164",
+                message: "Stored value: 'Option1\\nOption2'.",
+                relatedFieldIds: [],
+              },
+            ],
+          },
+        ]);
+      });
+      it("Should empty return item with empty value and status message if field required and no options selected.", () => {
+        const evaluator = new MultiSelectEvaluator(fieldJsonCheckbox);
+        const actual = evaluator.getUiPopulateObject("");
+        expect(actual).toStrictEqual([
+          {
+            uiid: null,
+            fieldId: "147738164",
+            fieldType: "checkbox",
+            value: "",
+            statusMessages: [
+              {
+                severity: "info",
+                fieldId: "147738164",
+                message: "Stored value: ''.",
+                relatedFieldIds: [],
+              },
               {
                 severity: "info",
                 fieldId: "147738164",
@@ -167,16 +168,20 @@ describe("MultiSelectEvaluator", () => {
       });
       it("Should empty return item with empty value and status message if field required and invalid selected.", () => {
         const evaluator = new MultiSelectEvaluator(fieldJsonCheckbox);
-        const actual = evaluator.getUiPopulateObject({
-          [submissionDataCheckbox.field]: "_INVALID_OPTION_",
-        });
+        const actual = evaluator.getUiPopulateObject("_INVALID_OPTION_");
         expect(actual).toStrictEqual([
           {
-            uiid: "147738164",
+            uiid: null,
             fieldId: "147738164",
             fieldType: "checkbox",
             value: "",
             statusMessages: [
+              {
+                severity: "info",
+                fieldId: "147738164",
+                message: "Stored value: '_INVALID_OPTION_'.",
+                relatedFieldIds: [],
+              },
               {
                 severity: "info",
                 fieldId: "147738164",
@@ -190,10 +195,9 @@ describe("MultiSelectEvaluator", () => {
       });
       it("Should empty return item with empty value and status message if field required and invalid selected.", () => {
         const evaluator = new MultiSelectEvaluator(fieldJsonCheckbox);
-        const actual = evaluator.getUiPopulateObject({
-          [submissionDataCheckbox.field]:
-            submissionDataCheckbox.value + "\n_INVALID_OPTION_",
-        });
+        const actual = evaluator.getUiPopulateObject(
+          submissionDataCheckbox.value + "\n_INVALID_OPTION_"
+        );
         expect(actual).toStrictEqual([
           {
             uiid: "field147738164_1",
@@ -210,11 +214,18 @@ describe("MultiSelectEvaluator", () => {
             statusMessages: [],
           },
           {
-            uiid: "147738164",
+            uiid: null,
             fieldId: "147738164",
             fieldType: "checkbox",
             value: "",
             statusMessages: [
+              {
+                severity: "info",
+                fieldId: "147738164",
+                message:
+                  "Stored value: 'Option1\\nOption2\\n_INVALID_OPTION_'.",
+                relatedFieldIds: [],
+              },
               {
                 severity: "info",
                 fieldId: "147738164",

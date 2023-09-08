@@ -1,5 +1,5 @@
 import { TFsFieldAny } from "../../type.field";
-import { InvalidEvaluation } from "../InvalidEvaluation";
+// import { InvalidEvaluation } from "../InvalidEvaluation";
 import { NumericOnlyEvaluator } from "./NumericOnlyEvaluator";
 
 describe("NumericOnlyEvaluator", () => {
@@ -7,57 +7,34 @@ describe("NumericOnlyEvaluator", () => {
     it("Should parse submittedData, return the same type and value as passed-in data.", () => {
       //
       const evaluator = new NumericOnlyEvaluator(fieldJson);
-      const actualString = evaluator.evaluateWithValues({
-        [submissionData.field]: submissionData.value,
-      });
-      const actualNumber = evaluator.evaluateWithValues({
-        [submissionData.field]: 3,
-      });
+      const actualString = evaluator.evaluateWithValues(submissionData.value);
+      const actualNumber = evaluator.evaluateWithValues(3);
 
-      expect(actualString).toStrictEqual({
-        "147738160": "1",
-      });
-      expect(actualString).not.toStrictEqual({
-        "147738160": 1,
-      });
-      expect(actualNumber).toStrictEqual({
-        "147738160": 3,
-      });
-      expect(actualNumber).not.toStrictEqual({
-        "147738160": "3",
-      });
-    });
-    it("Should return InvalidEvaluation for something that does not look like a number.", () => {
-      //
-      const evaluator = new NumericOnlyEvaluator(fieldJson);
-      const testValue = "Something that is not a number";
-      const actual = evaluator.evaluateWithValues({
-        [submissionData.field]: testValue,
-      });
-      expect(actual[submissionData.field]).toBeInstanceOf(InvalidEvaluation);
-      const actualEvaluation = actual[
-        submissionData.field
-      ] as InvalidEvaluation;
-      expect(actualEvaluation.message).toStrictEqual(
-        "Could not convert to number: 'Something that is not a number', fieldId: 147738160."
-      );
-      expect(actualEvaluation.payload).toBeUndefined();
+      expect(actualString).toStrictEqual("1");
+      expect(actualString).not.toStrictEqual(1);
+      expect(actualNumber).toStrictEqual(3);
+      expect(actualNumber).not.toStrictEqual("3");
     });
   });
   describe(".getUiPopulateObject(...)", () => {
     it("Should return array of properly formatted UI instructions (shape of TUiEvaluationObject).", () => {
       const testValue = "1";
       const evaluator = new NumericOnlyEvaluator(fieldJson);
-      const actual = evaluator.getUiPopulateObject({
-        [submissionData.field]: testValue,
-      });
+      const actual = evaluator.getUiPopulateObject(testValue);
       expect(actual).toStrictEqual([
         {
           uiid: "field147738160",
           fieldId: "147738160",
           fieldType: "number",
           value: "1",
-          statusMessages: [],
+          statusMessages: [
+            {
+              severity: "info",
+              fieldId: "147738160",
+              message: "Stored value: '1'.",
+              relatedFieldIds: [],
+            },
+          ],
         },
       ]);
     });

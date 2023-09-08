@@ -24,7 +24,8 @@ describe("AbstractSubfieldEvaluator", () => {
           statusMessages: [
             {
               severity: "info",
-              message: "Stored value: '__EMPTY_SUBMISSION_DATA__'.",
+              fieldId: "147738157",
+              message: "Stored value: '\"__EMPTY_SUBMISSION_DATA__\"'.",
               relatedFieldIds: [],
             },
           ],
