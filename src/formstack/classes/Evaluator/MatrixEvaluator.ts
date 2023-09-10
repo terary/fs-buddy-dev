@@ -2,25 +2,51 @@ import { TStatusRecord } from "../../../chrome-extension/type";
 import { TFsFieldAddress, TFsFieldMatrix } from "../../type.field";
 // import { InvalidEvaluation } from "../InvalidEvaluation";
 import { AbstractEvaluator } from "./AbstractEvaluator";
-import {
-  TFlatSubmissionValues,
-  TFlatSubmissionValues,
-  TUiEvaluationObject,
-} from "./type";
+import { TFlatSubmissionValues, TUiEvaluationObject } from "./type";
 const isString = (str: any) => typeof str === "string" || str instanceof String;
-
+type TSimpleDictionary<T> = { [key: string]: T };
 class MatrixEvaluator extends AbstractEvaluator {
-  parseValues<T>(values: TFlatSubmissionValues): TFlatSubmissionValues<T> {
-    const s2 = this.parseSubmittedData(values);
-    return { [this.fieldId]: s2 as T };
+  parseValues<S = string, T = string>(submissionDatum?: S): T {
+    // parseValues<T>(values: TFlatSubmissionValues): TFlatSubmissionValues<T> {
+    // const s2 = this.parseSubmittedData(values);
+    return this.parseSubmittedData(submissionDatum as string) as T;
   }
 
-  private parseSubmittedData(values: TFlatSubmissionValues) {
-    const submissionData = values[this.fieldId] || [];
-    if (!submissionData) {
+  private parseSubmittedData(
+    submissionDatum?: string
+  ): TSimpleDictionary<string> | undefined {
+    if (!submissionDatum) {
+      return undefined;
+    }
+
+    if (!isString(submissionDatum)) {
+      return {};
+    }
+
+    if (!submissionDatum.match("\n")) {
+      return {};
+    }
+
+    const records = submissionDatum.split("\n");
+    return records.reduce((prev, cur, i, a) => {
+      const [subfieldIdRaw, valueRaw] = cur.split("=");
+      const subfieldId = (subfieldIdRaw || "").trim();
+      const value = (valueRaw || "").trim();
+      if (subfieldId !== "" || value !== "") {
+        prev[subfieldId] = value;
+      }
+
+      return prev;
+    }, {} as TSimpleDictionary<string>);
+  }
+
+  // private parseSubmittedData(values: TFlatSubmissionValues) {
+  private x_parseSubmittedData(submissionDatum?: string) {
+    // const submissionData = values[this.fieldId] || [];
+    if (!submissionDatum) {
       return null;
     }
-    if (!isString(submissionData)) {
+    if (!isString(submissionDatum)) {
       return null;
       // return new InvalidEvaluation(
       //   `Matrix value not a string. value: '${submissionData}'.`,
@@ -30,8 +56,7 @@ class MatrixEvaluator extends AbstractEvaluator {
       // );
     }
 
-    const records = submissionData.split("\n");
-
+    const records = submissionDatum.split("\n");
     return records.map((field: string) => {
       const [subfieldIdRaw, valueRaw] = field.split("=");
       const subfieldId = (subfieldIdRaw || "").trim();
@@ -42,6 +67,16 @@ class MatrixEvaluator extends AbstractEvaluator {
         value,
       };
     }) as [{ subfieldId: string; value: string }];
+    // return records.map((field: string) => {
+    //   const [subfieldIdRaw, valueRaw] = field.split("=");
+    //   const subfieldId = (subfieldIdRaw || "").trim();
+    //   const value = (valueRaw || "").trim();
+
+    //   return {
+    //     subfieldId,
+    //     value,
+    //   };
+    // }) as [{ subfieldId: string; value: string }];
   }
 
   private getAsMatrixUiFieldIdMap(): {
@@ -66,27 +101,28 @@ class MatrixEvaluator extends AbstractEvaluator {
     return matrix;
   }
 
-  getUiPopulateObject(values: TFlatSubmissionValues): TUiEvaluationObject[] {
-    if (!(this.fieldId in values)) {
-      return [
-        {
-          uiid: null,
-          fieldId: this.fieldId,
-          fieldType: this.fieldJson.type,
-          value: "__EMPTY_SUBMISSION_DATA__",
-          statusMessages: [
-            {
-              severity: "info",
-              message: `Stored value: '__EMPTY_SUBMISSION_DATA__'.`,
-              relatedFieldIds: [],
-            },
-          ],
-        } as TUiEvaluationObject,
-      ];
-    }
+  // getUiPopulateObject(values: TFlatSubmissionValues): TUiEvaluationObject[] {
+  getUiPopulateObject<T = string>(submissionDatum?: T): TUiEvaluationObject[] {
+    // if (!(this.fieldId in values)) {
+    //   return [
+    //     {
+    //       uiid: null,
+    //       fieldId: this.fieldId,
+    //       fieldType: this.fieldJson.type,
+    //       value: "__EMPTY_SUBMISSION_DATA__",
+    //       statusMessages: [
+    //         {
+    //           severity: "info",
+    //           message: `Stored value: '__EMPTY_SUBMISSION_DATA__'.`,
+    //           relatedFieldIds: [],
+    //         },
+    //       ],
+    //     } as TUiEvaluationObject,
+    //   ];
+    // }
 
     // type TypeSubfieldDatum = { subfieldId: string; value: string };
-    const parsedValues = this.parseSubmittedData(values);
+    const parsedValues = this.parseSubmittedData(submissionDatum as string);
     const fieldIdMatrix = this.getAsMatrixUiFieldIdMap();
 
     if (parsedValues === undefined) {
@@ -100,83 +136,106 @@ class MatrixEvaluator extends AbstractEvaluator {
           statusMessages: [
             {
               severity: "info",
-              message: "Failed to parse field. " + parsedValues.message,
+              message: "Failed to parse field. ", // + parsedValues.message,
               relatedFieldIds: [],
             },
           ],
         } as TUiEvaluationObject,
       ];
     }
-    if (
-      parsedValues &&
-      // @ts-ignore -- this is an array, not an object
-      parsedValues[this.fieldId] === undefined
-    ) {
-      return [
-        {
-          // uiid: `field${this.fieldId}`,
-          uiid: null,
-          fieldId: this.fieldId,
-          fieldType: this.fieldJson.type,
-          value: "",
-          statusMessages: [
-            {
-              severity: "error",
-              message: "Failed to parse field",
-              relatedFieldIds: [],
-            },
-          ],
-        } as TUiEvaluationObject,
-      ];
-    }
+    // if (parsedValues) {
+    //   return [
+    //     {
+    //       // uiid: `field${this.fieldId}`,
+    //       uiid: null,
+    //       fieldId: this.fieldId,
+    //       fieldType: this.fieldJson.type,
+    //       value: "",
+    //       statusMessages: [
+    //         {
+    //           severity: "error",
+    //           message: "Failed to parse field",
+    //           relatedFieldIds: [],
+    //         },
+    //       ],
+    //     } as TUiEvaluationObject,
+    //   ];
+    // }
+    const statusMessages: TStatusRecord[] = [
+      {
+        severity: "info",
+        fieldId: this.fieldId,
+        message: `Stored value: '${this.getStoredValue(submissionDatum)}'.`,
+        relatedFieldIds: [],
+      },
+    ];
 
-    // @ts-ignore
     const selectedRows =
-      parsedValues?.map((datum) => {
-        const statusMessages: TStatusRecord[] = [];
-        const uiFieldId = fieldIdMatrix[datum.subfieldId][datum.value];
+      Object.entries(parsedValues)
+        .filter(([row, column]) => {
+          const uiFieldId = fieldIdMatrix[row][column];
+          if (uiFieldId === undefined) {
+            statusMessages.push({
+              severity: "warn",
+              message: `Unable to find matrix mapping for: '${JSON.stringify({
+                row,
+                column,
+              })}'.`,
+              fieldId: this.fieldId,
+              relatedFieldIds: [],
+            });
+          }
 
-        if (uiFieldId === undefined) {
-          statusMessages.push({
-            severity: "warn",
-            message: `Unable to find matrix mapping for: '${JSON.stringify({
-              // *tmc* these static labels (row/column) may cause confusion if options are changed
-              row: datum.subfieldId,
-              column: datum.value,
-            })}'.`,
+          return uiFieldId;
+        })
+        .map(([row, column]) => {
+          const uiFieldId = fieldIdMatrix[row][column];
+
+          // if (uiFieldId === undefined) {
+          //   statusMessages.push({
+          //     severity: "warn",
+          //     message: `Unable to find matrix mapping for: '${JSON.stringify({
+          //       row,
+          //       column,
+          //     })}'.`,
+          //     fieldId: this.fieldId,
+          //     relatedFieldIds: [],
+          //   });
+          // }
+
+          return {
+            uiid: uiFieldId || null,
             fieldId: this.fieldId,
-            relatedFieldIds: [],
-          });
-        }
-
-        return {
-          uiid: uiFieldId || this.fieldId,
-          fieldId: this.fieldId,
-          fieldType: this.fieldJson.type,
-          value: "checked",
-          statusMessages: statusMessages,
-        } as TUiEvaluationObject;
-      }) || [];
+            fieldType: this.fieldJson.type,
+            value: "checked",
+            statusMessages: [], //statusMessages,
+          } as TUiEvaluationObject;
+        }) || [];
 
     selectedRows.push({
       uiid: null,
       fieldId: this.fieldId,
       fieldType: this.fieldJson.type,
-      value: this.getStoredValue(values),
-      statusMessages: [
-        {
-          severity: "info",
-          fieldId: this.fieldId,
-          message: `Stored value: '${this.getStoredValue(values)}'.`,
-          relatedFieldIds: [],
-        },
-      ],
+      value: "", // this.getStoredValue<string>(submissionDatum as string),
+      statusMessages,
     });
     return selectedRows as TUiEvaluationObject[];
   }
 
-  evaluateWithValues<T>(values: TFlatSubmissionValues): TFlatSubmissionValues<T> {
-    const s1 = this.parseSubmittedData(values);
+  isCorrectType<T>(submissionDatum: T): boolean {
+    const parseSubmittedData = this.parseValues(submissionDatum);
+
+    // should we check if all keys are valid?
+    return (
+      typeof parseSubmittedData === "object" &&
+      parseSubmittedData !== null &&
+      Object.keys(parseSubmittedData).length > 0
+    );
+  }
+
+  evaluateWithValues<S = string, T = string>(values: S): T {
+    //     evaluateWithValues<T>(values: TFlatSubmissionValues ): TFlatSubmissionValues<T> {
+    const s1 = this.parseSubmittedData(values as string);
     const s2 =
       Array.isArray(s1) &&
       s1.reduce((prev, cur, i, a) => {
@@ -189,7 +248,8 @@ class MatrixEvaluator extends AbstractEvaluator {
 
     // return s2;
 
-    return { [this.fieldId]: s2 as T };
+    // return { [this.fieldId]: s2 as T };
+    return s2 as T;
   }
 }
 

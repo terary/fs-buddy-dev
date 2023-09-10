@@ -6,15 +6,11 @@ describe("MatrixEvaluator", () => {
     it("Should parse submittedData", () => {
       //
       const evaluator = new MatrixEvaluator(fieldJson);
-      const actual = evaluator.evaluateWithValues({
-        [submissionData.field]: submissionData.value,
-      });
+      const actual = evaluator.evaluateWithValues(submissionData.value);
       expect(actual).toStrictEqual({
-        "147738168": {
-          "Row 1": "Column 1",
-          "Row 2": "Column 2",
-          "Row 3": "Column 3",
-        },
+        "Row 1": "Column 1",
+        "Row 2": "Column 2",
+        "Row 3": "Column 3",
       });
     });
     it("Should append column if key/value is missing value, to make matrix shape.", () => {
@@ -22,32 +18,24 @@ describe("MatrixEvaluator", () => {
       const evaluator = new MatrixEvaluator(fieldJson);
       const testValue =
         "Something that does not belong\n" + submissionData.value;
-      const actual = evaluator.evaluateWithValues({
-        [submissionData.field]: testValue,
-      });
+      const actual = evaluator.evaluateWithValues(testValue);
       expect(actual).toStrictEqual({
-        "147738168": {
-          "Row 1": "Column 1",
-          "Row 2": "Column 2",
-          "Row 3": "Column 3",
-          "Something that does not belong": "",
-        },
+        "Row 1": "Column 1",
+        "Row 2": "Column 2",
+        "Row 3": "Column 3",
+        "Something that does not belong": "",
       });
     });
     it("Should add unknown field row/column pairs", () => {
       //
       const evaluator = new MatrixEvaluator(fieldJson);
       const testValue = "unknownSubfield = unknown\n" + submissionData.value;
-      const actual = evaluator.evaluateWithValues({
-        [submissionData.field]: testValue,
-      });
+      const actual = evaluator.evaluateWithValues(testValue);
       expect(actual).toStrictEqual({
-        "147738168": {
-          "Row 1": "Column 1",
-          "Row 2": "Column 2",
-          "Row 3": "Column 3",
-          unknownSubfield: "unknown",
-        },
+        "Row 1": "Column 1",
+        "Row 2": "Column 2",
+        "Row 3": "Column 3",
+        unknownSubfield: "unknown",
       });
     });
   });
@@ -57,9 +45,7 @@ describe("MatrixEvaluator", () => {
     it("Should return array of properly formatted UI instructions (shape of TUiEvaluationObject).", () => {
       const testValue = "Row 1 = Column 1\nRow 2 = Column 2\nRow 3 = Column 3";
       const evaluator = new MatrixEvaluator(fieldJson);
-      const actual = evaluator.getUiPopulateObject({
-        [submissionData.field]: testValue,
-      });
+      const actual = evaluator.getUiPopulateObject(testValue);
       expect(actual).toStrictEqual([
         {
           uiid: "field147738168-1-1",
@@ -82,16 +68,29 @@ describe("MatrixEvaluator", () => {
           value: "checked",
           statusMessages: [],
         },
+        {
+          uiid: null,
+          fieldId: "147738168",
+          fieldType: "matrix",
+          value: "Row 1 = Column 1\nRow 2 = Column 2\nRow 3 = Column 3",
+          statusMessages: [
+            {
+              severity: "info",
+              fieldId: "147738168",
+              message:
+                "Stored value: 'Row 1 = Column 1\nRow 2 = Column 2\nRow 3 = Column 3'.",
+              relatedFieldIds: [],
+            },
+          ],
+        },
       ]);
     });
-    it.only("Should return (Unknown Column).", () => {
+    it("Should return (Unknown Column).", () => {
       const testValue =
         "Row 1 = Column 1\nRow 2 = Column 2\nRow 3 = Column 3\nRow 3 = NON_COLUMN";
       // const testValue = "Row 3 = NON_COLUMN";
       const evaluator = new MatrixEvaluator(fieldJson);
-      const actual = evaluator.getUiPopulateObject({
-        [submissionData.field]: testValue,
-      });
+      const actual = evaluator.getUiPopulateObject(testValue);
       expect(actual).toStrictEqual([
         {
           uiid: "field147738168-1-1",
@@ -107,19 +106,26 @@ describe("MatrixEvaluator", () => {
           value: "checked",
           statusMessages: [],
         },
+        // {
+        //   uiid: "field147738168-3-3",
+        //   fieldId: "147738168",
+        //   fieldType: "matrix",
+        //   value: "checked",
+        //   statusMessages: [],
+        // },
         {
-          uiid: "field147738168-3-3",
+          uiid: null,
           fieldId: "147738168",
           fieldType: "matrix",
-          value: "checked",
-          statusMessages: [],
-        },
-        {
-          uiid: "147738168",
-          fieldId: "147738168",
-          fieldType: "matrix",
-          value: "checked",
+          value: "",
           statusMessages: [
+            {
+              severity: "info",
+              fieldId: "147738168",
+              message:
+                "Stored value: 'Row 1 = Column 1\nRow 2 = Column 2\nRow 3 = Column 3\nRow 3 = NON_COLUMN'.",
+              relatedFieldIds: [],
+            },
             {
               severity: "warn",
               message:
