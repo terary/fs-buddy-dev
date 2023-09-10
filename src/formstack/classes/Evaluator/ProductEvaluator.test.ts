@@ -6,16 +6,12 @@ describe("ProductEvaluator", () => {
     it("Should parse submittedData", () => {
       //
       const evaluator = new ProductEvaluator(fieldJson);
-      const actual = evaluator.evaluateWithValues({
-        [submissionData.field]: submissionData.value,
-      });
+      const actual = evaluator.evaluateWithValues(submissionData.value);
       expect(actual).toStrictEqual({
-        "147738171": {
-          charge_type: "fixed_amount",
-          quantity: "7",
-          unit_price: "3.99",
-          total: "27.93",
-        },
+        charge_type: "fixed_amount",
+        quantity: "7",
+        unit_price: "3.99",
+        total: "27.93",
       });
     });
     it("Should quietly ignore bad data if possible (non parsable string)", () => {
@@ -23,32 +19,26 @@ describe("ProductEvaluator", () => {
       const evaluator = new ProductEvaluator(fieldJson);
       const testValue =
         "Something that does not belong\n" + submissionData.value;
-      const actual = evaluator.evaluateWithValues({
-        [submissionData.field]: testValue,
-      });
+      const actual = evaluator.evaluateWithValues(testValue);
       expect(actual).toStrictEqual({
-        "147738171": {
-          charge_type: "fixed_amount",
-          quantity: "7",
-          unit_price: "3.99",
-          total: "27.93",
-        },
+        "Something that does not belong": "",
+        charge_type: "fixed_amount",
+        quantity: "7",
+        unit_price: "3.99",
+        total: "27.93",
       });
     });
     it("Should quietly ignore bad data if possible (unrecognized subfieldId)", () => {
       //
       const evaluator = new ProductEvaluator(fieldJson);
       const testValue = "unknownSubfield = unknown\n" + submissionData.value;
-      const actual = evaluator.evaluateWithValues({
-        [submissionData.field]: testValue,
-      });
+      const actual = evaluator.evaluateWithValues(testValue);
       expect(actual).toStrictEqual({
-        "147738171": {
-          charge_type: "fixed_amount",
-          quantity: "7",
-          unit_price: "3.99",
-          total: "27.93",
-        },
+        charge_type: "fixed_amount",
+        quantity: "7",
+        unit_price: "3.99",
+        total: "27.93",
+        unknownSubfield: "unknown",
       });
     });
   });
