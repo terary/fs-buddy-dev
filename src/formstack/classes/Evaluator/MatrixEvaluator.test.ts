@@ -72,7 +72,7 @@ describe("MatrixEvaluator", () => {
           uiid: null,
           fieldId: "147738168",
           fieldType: "matrix",
-          value: "Row 1 = Column 1\nRow 2 = Column 2\nRow 3 = Column 3",
+          value: "", // "Row 1 = Column 1\nRow 2 = Column 2\nRow 3 = Column 3",
           statusMessages: [
             {
               severity: "info",

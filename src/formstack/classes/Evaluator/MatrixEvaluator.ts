@@ -40,45 +40,6 @@ class MatrixEvaluator extends AbstractEvaluator {
     }, {} as TSimpleDictionary<string>);
   }
 
-  // private parseSubmittedData(values: TFlatSubmissionValues) {
-  private x_parseSubmittedData(submissionDatum?: string) {
-    // const submissionData = values[this.fieldId] || [];
-    if (!submissionDatum) {
-      return null;
-    }
-    if (!isString(submissionDatum)) {
-      return null;
-      // return new InvalidEvaluation(
-      //   `Matrix value not a string. value: '${submissionData}'.`,
-      //   {
-      //     value: values[this.fieldId],
-      //   }
-      // );
-    }
-
-    const records = submissionDatum.split("\n");
-    return records.map((field: string) => {
-      const [subfieldIdRaw, valueRaw] = field.split("=");
-      const subfieldId = (subfieldIdRaw || "").trim();
-      const value = (valueRaw || "").trim();
-
-      return {
-        subfieldId,
-        value,
-      };
-    }) as [{ subfieldId: string; value: string }];
-    // return records.map((field: string) => {
-    //   const [subfieldIdRaw, valueRaw] = field.split("=");
-    //   const subfieldId = (subfieldIdRaw || "").trim();
-    //   const value = (valueRaw || "").trim();
-
-    //   return {
-    //     subfieldId,
-    //     value,
-    //   };
-    // }) as [{ subfieldId: string; value: string }];
-  }
-
   private getAsMatrixUiFieldIdMap(): {
     [row: string]: { [column: string]: string };
   } {
@@ -236,20 +197,21 @@ class MatrixEvaluator extends AbstractEvaluator {
   evaluateWithValues<S = string, T = string>(values: S): T {
     //     evaluateWithValues<T>(values: TFlatSubmissionValues ): TFlatSubmissionValues<T> {
     const s1 = this.parseSubmittedData(values as string);
-    const s2 =
-      Array.isArray(s1) &&
-      s1.reduce((prev, cur, i, a) => {
-        prev[cur.subfieldId] = cur.value;
-        // if (this._supportedSubfieldIds.includes(cur.subfieldId)) {
-        //   prev[cur.subfieldId] = cur.value;
-        // }
-        return prev;
-      }, {} as { [subfieldId: string]: string });
+    return s1 as T;
+    // const s2 =
+    //   Array.isArray(s1) &&
+    //   s1.reduce((prev, cur, i, a) => {
+    //     prev[cur.subfieldId] = cur.value;
+    //     // if (this._supportedSubfieldIds.includes(cur.subfieldId)) {
+    //     //   prev[cur.subfieldId] = cur.value;
+    //     // }
+    //     return prev;
+    //   }, {} as { [subfieldId: string]: string });
 
-    // return s2;
+    // // return s2;
 
-    // return { [this.fieldId]: s2 as T };
-    return s2 as T;
+    // // return { [this.fieldId]: s2 as T };
+    // return s2 as T;
   }
 }
 

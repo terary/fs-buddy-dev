@@ -1,11 +1,7 @@
 import { TStatusRecord } from "../../../chrome-extension/type";
 // import { InvalidEvaluation } from "../InvalidEvaluation";
 import { AbstractSubfieldEvaluator } from "./AbstractSubfieldEvaluator";
-import {
-  TFlatSubmissionValues,
-  TFlatSubmissionValues,
-  TUiEvaluationObject,
-} from "./type";
+import { TFlatSubmissionValues, TUiEvaluationObject } from "./type";
 
 class ProductEvaluator extends AbstractSubfieldEvaluator {
   //    //     "value": "charge_type = fixed_amount\nquantity = 7\nunit_price = 3.99\ntotal = 27.93"
@@ -16,47 +12,54 @@ class ProductEvaluator extends AbstractSubfieldEvaluator {
     "unit_price",
     "total",
   ];
+  isCorrectType<T>(submissionDatum: T): boolean {
+    const parseSubmittedData = this.parseValues(submissionDatum);
+
+    // should we check if all keys are valid?
+    return (
+      typeof parseSubmittedData === "object" &&
+      parseSubmittedData !== null &&
+      Object.keys(parseSubmittedData).length > 0
+    );
+  }
 
   get supportedSubfieldIds() {
     return this._supportedSubfieldIds;
   }
 
-  getUiPopulateObject(values: TFlatSubmissionValues): TUiEvaluationObject[] {
-    console.log("Product getUiPopulateObject");
+  getUiPopulateObject<T = string>(submissionDatum?: T): TUiEvaluationObject[] {
+    // getUiPopulateObject(values: TFlatSubmissionValues): TUiEvaluationObject[] {
     const statusMessages: TStatusRecord[] = [
       {
         severity: "info",
         fieldId: this.fieldId,
-        message: `Stored value: '${this.getStoredValue(values)}'.`,
+        message: `Stored value: '${this.getStoredValue(submissionDatum)}'.`,
         relatedFieldIds: [],
       },
     ];
 
-    const parsedValues = this.parseValues<string>(values);
+    const parsedValues = this.parseValues<string>(submissionDatum as string);
 
-    if (parsedValues[this.fieldId] === undefined) {
+    if (parsedValues === undefined) {
       statusMessages.push({
         severity: "error",
-        message: "Failed to parse field. " + parsedValues.message,
+        message: "Failed to parse field. ",
         relatedFieldIds: [],
       });
     }
-    const parsedValuesObject = Array.isArray(parsedValues[this.fieldId])
-      ? (parsedValues[this.fieldId] as unknown as any[]).reduce(
-          (prev, cur, i, a) => {
-            prev[cur.subfieldId] = cur.value;
-            // I *think* it should be {...prev, ...cur}
-            return prev;
-          },
-          {}
-        )
+    const parsedValuesObject = Array.isArray(parsedValues)
+      ? (parsedValues as unknown as any[]).reduce((prev, cur, i, a) => {
+          prev[cur.subfieldId] = cur.value;
+          // I *think* it should be {...prev, ...cur}
+          return prev;
+        }, {})
       : {};
     // need to make sure this is being transformed
     // @ts-ignore - this is expected 'required' to be boolean, which happens only if this json has been transformed
     if (
       // @ts-ignore
       (this.fieldJson.required || this.fieldJson.required === "1") &&
-      parsedValues[this.fieldId] === ""
+      parsedValues === ""
     ) {
       statusMessages.push({
         severity: "info",
