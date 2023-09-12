@@ -6,24 +6,8 @@ describe("GenericEvaluator", () => {
     it("Should parse submittedData", () => {
       //
       const evaluator = new GenericEvaluator(fieldJson);
-      const actual = evaluator.evaluateWithValues({
-        [submissionData.field]: submissionData.value,
-      });
-      expect(actual).toStrictEqual({
-        "147738155": "Just some plain text.",
-      });
-    });
-    it("Should return only the current field's data. (submission fieldId must match evaluator fieldId).", () => {
-      //
-      const evaluator = new GenericEvaluator(fieldJson);
-      const testValue =
-        "Something that does not belong\n" + submissionData.value;
-      const actual = evaluator.evaluateWithValues({
-        [submissionData.field]: testValue,
-        ["not_this_field_id"]: "Should not be returned",
-      });
-      expect(Object.keys(actual).length).toEqual(1);
-      expect(actual["not_this_field_id"]).toBeUndefined();
+      const actual = evaluator.evaluateWithValues("Just some plain text.");
+      expect(actual).toStrictEqual("Just some plain text.");
     });
   });
 });

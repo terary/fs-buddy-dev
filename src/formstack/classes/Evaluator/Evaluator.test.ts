@@ -156,13 +156,9 @@ describe("Evaluator", () => {
       );
 
       expect(evaluator).toBeInstanceOf(NonValueEvaluator);
-      const actual = evaluator.evaluateWithValues({
-        "147738170": "Any value will do.",
-      });
+      const actual = evaluator.evaluateWithValues("Any value will do.");
 
-      const expected = {
-        "147738170": null,
-      };
+      const expected = null;
       expect(actual).toStrictEqual(expected);
     });
 
@@ -172,13 +168,9 @@ describe("Evaluator", () => {
       );
 
       expect(evaluator).toBeInstanceOf(NonValueEvaluator);
-      const actual = evaluator.evaluateWithValues({
-        "149279532": "Any value will do.",
-      });
+      const actual = evaluator.evaluateWithValues("Any value will do.");
 
-      const expected = {
-        "149279532": null,
-      };
+      const expected = null;
       expect(actual).toStrictEqual(expected);
     });
     it('Should return NonValueEvaluator for field type: "richtext".', () => {
@@ -187,13 +179,9 @@ describe("Evaluator", () => {
       );
 
       expect(evaluator).toBeInstanceOf(NonValueEvaluator);
-      const actual = evaluator.evaluateWithValues({
-        "147738169": "Any value will do.",
-      });
+      const actual = evaluator.evaluateWithValues("Any value will do.");
 
-      const expected = {
-        "147738169": null,
-      };
+      const expected = null;
       expect(actual).toStrictEqual(expected);
     });
     it('Should return NonValueEvaluator for field type: "creditcard".', () => {
@@ -202,13 +190,9 @@ describe("Evaluator", () => {
       );
 
       expect(evaluator).toBeInstanceOf(NonValueEvaluator);
-      const actual = evaluator.evaluateWithValues({
-        "147738165": "Any value will do.",
-      });
+      const actual = evaluator.evaluateWithValues("Any value will do.");
 
-      const expected = {
-        "147738165": null,
-      };
+      const expected = null;
       expect(actual).toStrictEqual(expected);
     });
     it('Should return xxx for field type: "product".', () => {
@@ -217,18 +201,15 @@ describe("Evaluator", () => {
       );
 
       expect(evaluator).toBeInstanceOf(ProductEvaluator);
-      const actual = evaluator.evaluateWithValues({
-        "147738171":
-          "charge_type = fixed_amount\nquantity = 7\nunit_price = 3.99\ntotal = 27.93",
-      });
+      const actual = evaluator.evaluateWithValues(
+        "charge_type = fixed_amount\nquantity = 7\nunit_price = 3.99\ntotal = 27.93"
+      );
 
       const expected = {
-        "147738171": {
-          charge_type: "fixed_amount",
-          quantity: "7",
-          unit_price: "3.99",
-          total: "27.93",
-        },
+        charge_type: "fixed_amount",
+        quantity: "7",
+        unit_price: "3.99",
+        total: "27.93",
       };
       expect(actual).toStrictEqual(expected);
     });

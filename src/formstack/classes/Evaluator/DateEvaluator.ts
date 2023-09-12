@@ -1,73 +1,106 @@
 import { TStatusRecord } from "../../../chrome-extension/type";
 // import { InvalidEvaluation } from "../InvalidEvaluation";
 import { GenericEvaluator } from "./GenericEvaluator";
-import {
-  TFlatSubmissionValues,
-  TFlatSubmissionValues,
-  TUiEvaluationObject,
-} from "./type";
+import { TUiEvaluationObject } from "./type";
 
 class DateEvaluator extends GenericEvaluator {
-  parseValues<T>(values: TFlatSubmissionValues): TFlatSubmissionValues<T> {
-    const date = new Date(values[this.fieldId]);
-    if (date.toString() === "Invalid Date") {
-      // const invalidEvaluation = new InvalidEvaluation(
-      //   `Date did not parse correctly. Date: '${values[this.fieldId]}'`,
-      //   { [this.fieldId]: values[this.fieldId] }
-      // );
-      return { [this.fieldId]: undefined };
-    }
+  isCorrectType<T>(submissionDatum: T): boolean {
+    return (
+      this.parseValues<string, Date>(submissionDatum as string).toString() !==
+      "Invalid Date"
+    );
 
-    return { [this.fieldId]: date as T };
+    // const value = this.parseValues<string, Date>(submissionDatum as string);
+    // return true;
   }
 
-  getUiPopulateObject(values: TFlatSubmissionValues): TUiEvaluationObject[] {
-    // this is where submission error/warn/info should happen
-    if (!(this.fieldId in values)) {
+  parseValues<S = string, T = string>(submissionDatum?: S): T {
+    return new Date(submissionDatum as string) as T;
+
+    // // parseValues<T>(values: TFlatSubmissionValues): TFlatSubmissionValues<T> {
+    // const date = new Date(submissionDatum as string);
+    // if (date.toString() === "Invalid Date") {
+    //   // const invalidEvaluation = new InvalidEvaluation(
+    //   //   `Date did not parse correctly. Date: '${values[this.fieldId]}'`,
+    //   //   { [this.fieldId]: values[this.fieldId] }
+    //   // );
+    //   return undefined as T;
+    // }
+
+    // return date as T;
+  }
+
+  getUiPopulateObject<T = string>(submissionDatum?: T): TUiEvaluationObject[] {
+    // getUiPopulateObject(values: TFlatSubmissionValues): TUiEvaluationObject[] {
+    // if (!(this.fieldId in values)) {
+    //   return [
+    //     {
+    //       uiid: null,
+    //       fieldId: this.fieldId,
+    //       fieldType: this.fieldJson.type,
+    //       value: "__EMPTY_SUBMISSION_DATA__",
+    //       statusMessages: [
+    //         {
+    //           severity: "info",
+    //           message: `Stored value: '__EMPTY_SUBMISSION_DATA__'.`,
+    //           relatedFieldIds: [],
+    //         },
+    //       ],
+    //     } as TUiEvaluationObject,
+    //   ];
+    // }
+    const statusMessages: TStatusRecord[] = [
+      {
+        severity: "info",
+        fieldId: this.fieldId,
+        message: `Stored value: '${submissionDatum}'.`,
+        relatedFieldIds: [],
+      },
+    ];
+
+    const parsedValues = this.parseValues<string, Date>(
+      submissionDatum as string
+    );
+    if (parsedValues.toString() === "Invalid Date") {
+      statusMessages.push({
+        severity: "error",
+        message: `Failed to parse field. Date did not parse correctly. Date: '${submissionDatum}'`,
+        relatedFieldIds: [],
+      });
       return [
         {
           uiid: null,
           fieldId: this.fieldId,
           fieldType: this.fieldJson.type,
-          value: "__EMPTY_SUBMISSION_DATA__",
-          statusMessages: [
-            {
-              severity: "info",
-              message: `Stored value: '__EMPTY_SUBMISSION_DATA__'.`,
-              relatedFieldIds: [],
-            },
-          ],
-        } as TUiEvaluationObject,
-      ];
-    }
-
-    const parsedValues = this.parseValues<string>(values);
-    const x = new Date(parsedValues[this.fieldId] as unknown as string);
-    if (parsedValues[this.fieldId] === undefined) {
-      return [
-        {
-          uiid: `field${this.fieldId}`,
-          fieldId: this.fieldId,
-          fieldType: this.fieldJson.type,
           value: "",
-          statusMessages: [
-            {
-              severity: "error",
-              message: "Failed to parse field. ",
-              relatedFieldIds: [],
-            },
-          ],
+          statusMessages,
         } as TUiEvaluationObject,
       ];
     }
-    const statusMessages: TStatusRecord[] = [];
-
+    //    const x = new Date(parsedValues as unknown as string);
+    // if (parsedValues === undefined) {
+    //   return [
+    //     {
+    //       uiid: `field${this.fieldId}`,
+    //       fieldId: this.fieldId,
+    //       fieldType: this.fieldJson.type,
+    //       value: "",
+    //       statusMessages: [
+    //         {
+    //           severity: "error",
+    //           message: "Failed to parse field. ",
+    //           relatedFieldIds: [],
+    //         },
+    //       ],
+    //     } as TUiEvaluationObject,
+    //   ];
+    // }
     // need to make sure this is being transformed
     // @ts-ignore - this is expected 'required' to be boolean, which happens only if this json has been transformed
     if (
       // @ts-ignore
       (this.fieldJson.required || this.fieldJson.required === "1") &&
-      parsedValues[this.fieldId] === ""
+      submissionDatum === ""
     ) {
       statusMessages.push({
         severity: "info",
@@ -81,16 +114,16 @@ class DateEvaluator extends GenericEvaluator {
     // const n = Date.now();
     // const diff = Math.abs(x.getTime() - Date.now());
     // console.log({ diff, n, t });
-    if (Math.abs(x.getTime()) < 86400000) {
+    if (Math.abs(parsedValues.getTime()) < 86400000) {
       statusMessages.push({
         severity: "info",
         fieldId: this.fieldId,
-        message: `This date is near the epoch.  This could suggest malformed date string. Date: '${x.toDateString()}' `,
+        message: `This date is near the epoch.  This could suggest malformed date string. Date: '${parsedValues.toDateString()}' `,
       });
     }
 
     // I am not sure how this will work with other languages or field setting date format
-    const localizedMonth = x.toDateString().split(" ")[1] || "";
+    const localizedMonth = parsedValues.toDateString().split(" ")[1] || "";
 
     return [
       {
@@ -104,50 +137,43 @@ class DateEvaluator extends GenericEvaluator {
         uiid: `field${this.fieldId}D`,
         fieldId: this.fieldId,
         fieldType: this.fieldJson.type,
-        value: (x.getDate() + "").padStart(2, "0"), // 1..31
+        value: (parsedValues.getDate() + "").padStart(2, "0"), // 1..31
         statusMessages: [],
       },
       {
         uiid: `field${this.fieldId}Y`,
         fieldId: this.fieldId,
         fieldType: this.fieldJson.type,
-        value: x.getFullYear() + 1 + "",
+        value: parsedValues.getFullYear() + 1 + "",
         statusMessages: [],
       },
       {
         uiid: `field${this.fieldId}H`,
         fieldId: this.fieldId,
         fieldType: this.fieldJson.type,
-        value: (x.getHours() + "").padStart(2, "0"), // 0..23
+        value: (parsedValues.getHours() + "").padStart(2, "0"), // 0..23
         statusMessages: [],
       },
       {
         uiid: `field${this.fieldId}I`,
         fieldId: this.fieldId,
         fieldType: this.fieldJson.type,
-        value: (x.getMinutes() + "").padStart(2, "0"), // 0..59
+        value: (parsedValues.getMinutes() + "").padStart(2, "0"), // 0..59
         statusMessages: [],
       },
       {
         uiid: `field${this.fieldId}A`,
         fieldId: this.fieldId,
         fieldType: this.fieldJson.type,
-        value: x.getHours() > 12 ? "PM" : "AM",
+        value: parsedValues.getHours() > 12 ? "PM" : "AM",
         statusMessages: [],
       },
       {
         uiid: null,
         fieldId: this.fieldId,
         fieldType: this.fieldJson.type,
-        value: this.getStoredValue(values),
-        statusMessages: [
-          {
-            severity: "info",
-            fieldId: this.fieldId,
-            message: `Stored value: '${this.getStoredValue(values)}'.`,
-            relatedFieldIds: [],
-          },
-        ],
+        value: "", // this.getStoredValue(submissionDatum),
+        statusMessages,
       },
     ];
   }

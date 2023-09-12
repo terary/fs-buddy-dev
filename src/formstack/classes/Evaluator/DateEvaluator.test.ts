@@ -5,9 +5,7 @@ describe("DateEvaluator", () => {
   describe(".getUiPopulateObject(...)", () => {
     it("Should parse submittedData", () => {
       const evaluator = new DateEvaluator(fieldJson);
-      const actual = evaluator.getUiPopulateObject({
-        [submissionData.field]: submissionData.value,
-      });
+      const actual = evaluator.getUiPopulateObject(submissionData.value);
       expect(actual).toStrictEqual([
         {
           uiid: "field147738166M",
@@ -52,26 +50,37 @@ describe("DateEvaluator", () => {
           statusMessages: [],
         },
         {
+          uiid: null,
           fieldId: "147738166",
           fieldType: "datetime",
-          statusMessages: [],
-          uiid: null,
-          value: "Nov 13, 2021 02:39 AM",
+          value: "",
+          statusMessages: [
+            {
+              severity: "info",
+              fieldId: "147738166",
+              message: "Stored value: 'Nov 13, 2021 02:39 AM'.",
+              relatedFieldIds: [],
+            },
+          ],
         },
       ]);
     });
     it("Should include statusMessages if it fails to instantiate a Date type.", () => {
       const evaluator = new DateEvaluator(fieldJson);
-      const actual = evaluator.getUiPopulateObject({
-        [submissionData.field]: "SOME_INVALID_DATE",
-      });
+      const actual = evaluator.getUiPopulateObject("SOME_INVALID_DATE");
       expect(actual).toStrictEqual([
         {
-          uiid: "field147738166",
+          uiid: null,
           fieldId: "147738166",
           fieldType: "datetime",
           value: "",
           statusMessages: [
+            {
+              severity: "info",
+              fieldId: "147738166",
+              message: "Stored value: 'SOME_INVALID_DATE'.",
+              relatedFieldIds: [],
+            },
             {
               severity: "error",
               message:
@@ -84,9 +93,7 @@ describe("DateEvaluator", () => {
     });
     it("Should include statusMessages if date is near epoch.", () => {
       const evaluator = new DateEvaluator(fieldJson);
-      const actual = evaluator.getUiPopulateObject({
-        [submissionData.field]: new Date(0).toISOString(),
-      });
+      const actual = evaluator.getUiPopulateObject(new Date(0).toISOString());
       expect(actual).toStrictEqual([
         {
           uiid: "field147738166M",
@@ -134,8 +141,14 @@ describe("DateEvaluator", () => {
           uiid: null,
           fieldId: "147738166",
           fieldType: "datetime",
-          value: "1970-01-01T00:00:00.000Z",
+          value: "",
           statusMessages: [
+            {
+              severity: "info",
+              fieldId: "147738166",
+              message: "Stored value: '1970-01-01T00:00:00.000Z'.",
+              relatedFieldIds: [],
+            },
             {
               severity: "info",
               fieldId: "147738166",

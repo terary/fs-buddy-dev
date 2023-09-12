@@ -1,21 +1,27 @@
 import { AbstractEvaluator } from "./AbstractEvaluator";
-import {
-  TFlatSubmissionValues,
-  TFlatSubmissionValues,
-  TUiEvaluationObject,
-} from "./type";
+import { TFlatSubmissionValues, TUiEvaluationObject } from "./type";
 
 class NonValueEvaluator extends AbstractEvaluator {
-  parseValues<T>(values: TFlatSubmissionValues): TFlatSubmissionValues<T> {
-    return { [this.fieldId]: values[this.fieldId] };
+  parseValues<S = string, T = string>(submissionDatum?: S): T {
+    // parseValues<T>(values: TFlatSubmissionValues): TFlatSubmissionValues<T> {
+    return submissionDatum as T;
   }
 
-  evaluateWithValues<T>(values: TFlatSubmissionValues): TFlatSubmissionValues<T>;
-  evaluateWithValues(values: TFlatSubmissionValues): TFlatSubmissionValues<null> {
-    return { [this.fieldId]: null };
+  // the overload may cause issues,  since it's original writing the definition
+  // was changed to use generics
+  evaluateWithValues<S = string, T = string>(values: S): T;
+  evaluateWithValues(
+    values: string //
+  ): null {
+    return null;
   }
 
-  getUiPopulateObject(values: TFlatSubmissionValues): TUiEvaluationObject[] {
+  isCorrectType<T>(submissionDatum: T): boolean {
+    return true; // may want to check that submissionData is empty
+  }
+
+  getUiPopulateObject<T = string>(submissionDatum?: T): TUiEvaluationObject[] {
+    // getUiPopulateObject(values: TFlatSubmissionValues): TUiEvaluationObject[] {
     return [
       {
         uiid: null,
