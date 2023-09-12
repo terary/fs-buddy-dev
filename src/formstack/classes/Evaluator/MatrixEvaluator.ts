@@ -58,7 +58,6 @@ class MatrixEvaluator extends AbstractEvaluator {
         }`;
       });
     });
-    console.log({ matrix });
     return matrix;
   }
 

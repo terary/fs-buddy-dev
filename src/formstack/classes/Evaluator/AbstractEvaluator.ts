@@ -64,11 +64,22 @@ abstract class AbstractEvaluator {
   getUiPopulateObject<T = string>(submissionDatum?: T): TUiEvaluationObject[] {
     const datum = this.getStoredValue<string>(submissionDatum as string);
 
-    const storedValueStatusMessage = {
-      severity: datum === "__MISSING_AND_REQUIRED__" ? "warn" : "info",
-      message: `Stored value: '${datum}'.`,
-      relatedFieldIds: [],
-    };
+    const statusMessages: TStatusRecord[] = [
+      {
+        severity: datum === "__MISSING_AND_REQUIRED__" ? "warn" : "info",
+        message: `Stored value: '${datum}'.`,
+        relatedFieldIds: [],
+      },
+    ];
+
+    if (datum === "__MISSING_AND_REQUIRED__") {
+      statusMessages.push({
+        fieldId: this.fieldId,
+        severity: "warn",
+        message: `Submission data missing and required.  This is not an issue if the field is hidden by logic.`,
+        relatedFieldIds: [],
+      });
+    }
 
     return [
       {
@@ -79,7 +90,7 @@ abstract class AbstractEvaluator {
         fieldType: this.fieldJson.type,
         value: this.isValidSubmissionDatum(datum) ? datum : "",
 
-        statusMessages: [storedValueStatusMessage],
+        statusMessages: statusMessages,
       },
     ];
   }

@@ -111,7 +111,7 @@ class MultiSelectEvaluator extends AbstractEvaluator {
       selectedValues.length === 0
     ) {
       statusMessages.push({
-        severity: "info",
+        severity: "warn",
         fieldId: this.fieldId,
         message:
           "Field value appears empty but field is required. (if this field is eventually hidden by logic, then empty value is not significant.)",

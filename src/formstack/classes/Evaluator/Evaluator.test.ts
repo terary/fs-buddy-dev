@@ -7,12 +7,9 @@ import allFieldTypesFormJson from "../../../test-dev-resources/form-json/allFiel
 import { TFsFieldAnyJson } from "../types";
 import { NonValueEvaluator } from "./NonValueEvaluator";
 import { ProductEvaluator } from "./ProductEvaluator";
-//  "../../../../test-dev-resources/form-json/allFields.json";
+import { TUiEvaluationObject } from "./type";
 
 const allFieldTypes = [
-  //TFsFieldType
-  // this should be defined in terms of TFsFieldType.  Either define TFsFieldType differently or somehow define allFieldTypes related
-  // to TFsFieldType
   "address",
   "checkbox",
   "creditcard",
@@ -214,11 +211,58 @@ describe("Evaluator", () => {
       expect(actual).toStrictEqual(expected);
     });
   });
+  describe("[evaluator].getUiPopulateObject(...)", () => {
+    it("Should return status message if required and empty submission data", () => {
+      [
+        // "address",
+        // "checkbox",
+        // "creditcard",
+        // "datetime",
+        // "email",
+        // "embed",
+        // "file",
+        // "matrix",
+        // "section",
+        // "select",
+        // "signature",
+        "text",
+        "textarea",
+        // "name",
+        // "number",
+        // "phone",
+        // "product",
+        // "radio",
+        // "rating",
+        // "richtext",
+      ].forEach((fieldType) => {
+        const fieldJson = {
+          ...getFieldByType(fieldType as TFsFieldType),
+          ...{ required: "1" },
+        } as unknown as TFsFieldAny;
 
-  //   {
-  //     "field": "147738159",
-  //     "value": "(323) 555-1212"
-  // },
+        const evaluator = Evaluator.getEvaluatorWithFieldJson(fieldJson);
+        const uiElements = evaluator.getUiPopulateObject();
+        const parentUiElement = uiElements.find(
+          (uiElement) =>
+            uiElement.uiid === null && uiElement.fieldId === fieldJson.id
+        ) as TUiEvaluationObject;
+
+        const missingAndRequiredStatusMessage =
+          parentUiElement.statusMessages.find(
+            (statusMessage) =>
+              statusMessage.message ===
+              "Submission data missing and required.  This is not an issue if the field is hidden by logic."
+          );
+        expect(missingAndRequiredStatusMessage).toStrictEqual({
+          fieldId: fieldJson.id,
+          severity: "warn",
+          message:
+            "Submission data missing and required.  This is not an issue if the field is hidden by logic.",
+          relatedFieldIds: [],
+        });
+      });
+    });
+  });
 });
 
 const getFieldByType = (fieldType: keyof typeof fieldIdByType) => {
