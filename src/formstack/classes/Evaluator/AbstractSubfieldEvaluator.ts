@@ -57,6 +57,8 @@ abstract class AbstractSubfieldEvaluator extends AbstractEvaluator {
       string,
       { [subfieldId: string]: string }
     >(submissionDatum as string);
+
+    const x = this.isRequired;
     if (
       // @ts-ignore
       (this.fieldJson.required || this.fieldJson.required === "1") &&
