@@ -41,17 +41,43 @@ abstract class AbstractSubfieldEvaluator extends AbstractEvaluator {
     }, {} as TAdvancedField);
   }
 
-  getUiPopulateObject<T = string>(submissionDatum?: T): TUiEvaluationObject[] {
-    const statusMessages: TStatusRecord[] = [
+  protected createStatusMessageArrayWithStoredValue<T>(
+    submissionDatum?: T | undefined
+  ): TStatusRecord[] {
+    const message = isString(submissionDatum)
+      ? `Stored value: '${((submissionDatum as string) || "").replace(
+          /\n/g,
+          "\\n"
+        )}'.`
+      : `Stored value: '${JSON.stringify(submissionDatum)}'.`;
+
+    return [
       {
         severity: "info",
         fieldId: this.fieldId,
-        message: `Stored value: '${JSON.stringify(
-          this.getStoredValue(submissionDatum)
-        )}'.`,
+        message,
         relatedFieldIds: [],
       },
     ];
+  }
+
+  getUiPopulateObject<T = string>(submissionDatum?: T): TUiEvaluationObject[] {
+    const statusMessages =
+      this.createStatusMessageArrayWithStoredValue(submissionDatum);
+    if ((this.isRequired && submissionDatum === "") || !submissionDatum) {
+      return this.getUiPopulateObjectEmptyAndRequired(statusMessages);
+    }
+
+    // const statusMessages: TStatusRecord[] = [
+    //   {
+    //     severity: "info",
+    //     fieldId: this.fieldId,
+    //     message: `Stored value: '${JSON.stringify(
+    //       this.getStoredValue(submissionDatum)
+    //     )}'.`,
+    //     relatedFieldIds: [],
+    //   },
+    // ];
 
     const parsedValues = this.parseValues<
       string,

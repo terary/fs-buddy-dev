@@ -58,7 +58,47 @@ abstract class AbstractEvaluator {
     return submissionDatum as T;
   }
 
-  getUiPopulateObject<T = string>(submissionDatum?: T): TUiEvaluationObject[] {
+  protected createStatusMessageArrayWithStoredValue<T>(
+    submissionDatum?: T
+  ): TStatusRecord[] {
+    return [
+      {
+        severity: "info",
+        fieldId: this.fieldId,
+        message: `Stored value: '${this.getStoredValue(submissionDatum)}'.`,
+        relatedFieldIds: [],
+      },
+    ];
+  }
+
+  protected getUiPopulateObjectEmptyAndRequired(
+    statusMessages: TStatusRecord[]
+  ): TUiEvaluationObject[] {
+    statusMessages.push({
+      severity: "warn",
+      fieldId: this.fieldId,
+      message:
+        "Submission data missing and required.  This is not an issue if the field is hidden by logic.",
+      relatedFieldIds: [],
+    });
+    return [
+      {
+        uiid: null,
+        fieldId: this.fieldId,
+        fieldType: this.fieldJson.type,
+        value: "",
+        statusMessages,
+      },
+    ];
+  }
+
+  abstract getUiPopulateObject<T = string>(
+    submissionDatum?: T
+  ): TUiEvaluationObject[];
+
+  x_requireAndEmptyUiPopulateObject<T = string>(
+    submissionDatum?: T
+  ): TUiEvaluationObject[] {
     const datum = this.getStoredValue<string>(submissionDatum as string);
 
     const statusMessages: TStatusRecord[] = [

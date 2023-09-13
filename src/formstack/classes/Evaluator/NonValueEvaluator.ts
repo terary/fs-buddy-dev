@@ -21,7 +21,6 @@ class NonValueEvaluator extends AbstractEvaluator {
   }
 
   getUiPopulateObject<T = string>(submissionDatum?: T): TUiEvaluationObject[] {
-    // getUiPopulateObject(values: TFlatSubmissionValues): TUiEvaluationObject[] {
     return [
       {
         uiid: null,

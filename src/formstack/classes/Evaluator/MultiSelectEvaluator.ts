@@ -92,14 +92,14 @@ class MultiSelectEvaluator extends AbstractEvaluator {
       }
     });
 
-    if (this.isRequired && selectedValues.length === 0) {
-      statusMessages.push({
-        severity: "warn",
-        fieldId: this.fieldId,
-        message:
-          "Field value appears empty but field is required. (if this field is eventually hidden by logic, then empty value is not significant.)",
-      });
-    }
+    // if (this.isRequired && selectedValues.length === 0) {
+    //   statusMessages.push({
+    //     severity: "warn",
+    //     fieldId: this.fieldId,
+    //     message:
+    //       "Field value appears empty but field is required. (if this field is eventually hidden by logic, then empty value is not significant.)",
+    //   });
+    // }
 
     uiFields.push({
       uiid: null,
@@ -127,6 +127,7 @@ class MultiSelectEvaluator extends AbstractEvaluator {
       .map((x) => x.value)
       .join("', '");
   }
+
   private getUiPopulateObjectSelect(
     submissionDatum: string,
     statusMessages: TStatusRecord[]
@@ -143,14 +144,14 @@ class MultiSelectEvaluator extends AbstractEvaluator {
       });
     }
 
-    if (this.isRequired && selectedValue.length === 0) {
-      statusMessages.push({
-        severity: "warn",
-        fieldId: this.fieldId,
-        message:
-          "Field value appears empty but field is required. (if this field is eventually hidden by logic, then empty value is not significant.)",
-      });
-    }
+    // if (this.isRequired && selectedValue.length === 0) {
+    //   statusMessages.push({
+    //     severity: "warn",
+    //     fieldId: this.fieldId,
+    //     message:
+    //       "Field value appears empty but field is required. (if this field is eventually hidden by logic, then empty value is not significant.)",
+    //   });
+    // }
 
     uiFields.push({
       // others are subfields, this is the main/parent record, used primarily to attach status messages.
@@ -164,8 +165,10 @@ class MultiSelectEvaluator extends AbstractEvaluator {
     return uiFields;
   }
 
-  getUiPopulateObject<T = string>(submissionDatum?: T): TUiEvaluationObject[] {
-    const statusMessages: TStatusRecord[] = [
+  protected createStatusMessageArrayWithStoredValue<T>(
+    submissionDatum?: T | undefined
+  ): TStatusRecord[] {
+    return [
       {
         severity: "info",
         fieldId: this.fieldId,
@@ -176,25 +179,33 @@ class MultiSelectEvaluator extends AbstractEvaluator {
         relatedFieldIds: [],
       },
     ];
+  }
 
-    if (this.isRequired && (submissionDatum === "" || !submissionDatum)) {
-      statusMessages.push({
-        severity: "warn",
-        fieldId: this.fieldId,
-        message:
-          "Submission data missing and required.  This is not an issue if the field is hidden by logic.",
-        relatedFieldIds: [],
-      });
-      return [
-        {
-          uiid: null,
-          fieldId: this.fieldId,
-          fieldType: this.fieldJson.type,
-          value: "",
-          statusMessages,
-        } as TUiEvaluationObject,
-      ];
+  getUiPopulateObject<T = string>(submissionDatum?: T): TUiEvaluationObject[] {
+    const statusMessages =
+      this.createStatusMessageArrayWithStoredValue(submissionDatum);
+    if ((this.isRequired && submissionDatum === "") || !submissionDatum) {
+      return this.getUiPopulateObjectEmptyAndRequired(statusMessages);
     }
+
+    // if (this.isRequired && (submissionDatum === "" || !submissionDatum)) {
+    //   statusMessages.push({
+    //     severity: "warn",
+    //     fieldId: this.fieldId,
+    //     message:
+    //       "Submission data missing and required.  This is not an issue if the field is hidden by logic.",
+    //     relatedFieldIds: [],
+    //   });
+    //   return [
+    //     {
+    //       uiid: null,
+    //       fieldId: this.fieldId,
+    //       fieldType: this.fieldJson.type,
+    //       value: "",
+    //       statusMessages,
+    //     } as TUiEvaluationObject,
+    //   ];
+    // }
 
     if (this.fieldType === "checkbox") {
       return this.getUiPopulateObjectCheckbox(

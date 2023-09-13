@@ -1,6 +1,7 @@
+import { TStatusRecord } from "../../../chrome-extension/type";
 import { TFsFieldAny } from "../../type.field";
 import { AbstractEvaluator } from "./AbstractEvaluator";
-import { TFlatSubmissionValues } from "./type";
+import { TFlatSubmissionValues, TUiEvaluationObject } from "./type";
 
 const isString = (v: any) => typeof v === "string" || v instanceof String;
 
@@ -23,6 +24,40 @@ class TestSubfieldEvaluator extends AbstractEvaluator {
     values: TFlatSubmissionValues<T>
   ): TFlatSubmissionValues<T> {
     return values;
+  }
+
+  getUiPopulateObject<T = string>(submissionDatum?: T): TUiEvaluationObject[] {
+    const datum = this.getStoredValue<string>(submissionDatum as string);
+
+    const statusMessages: TStatusRecord[] = [
+      {
+        severity: datum === "__MISSING_AND_REQUIRED__" ? "warn" : "info",
+        message: `Stored value: '${datum}'.`,
+        relatedFieldIds: [],
+      },
+    ];
+
+    if (datum === "__MISSING_AND_REQUIRED__") {
+      statusMessages.push({
+        fieldId: this.fieldId,
+        severity: "warn",
+        message: `Submission data missing and required.  This is not an issue if the field is hidden by logic.`,
+        relatedFieldIds: [],
+      });
+    }
+
+    return [
+      {
+        uiid: this.isValidSubmissionDatum(datum)
+          ? `field${this.fieldId}`
+          : null,
+        fieldId: this.fieldId,
+        fieldType: this.fieldJson.type,
+        value: this.isValidSubmissionDatum(datum) ? datum : "",
+
+        statusMessages: statusMessages,
+      },
+    ];
   }
 }
 

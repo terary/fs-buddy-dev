@@ -29,7 +29,7 @@ describe("AbstractSubfieldEvaluator", () => {
             {
               severity: "info",
               fieldId: "147738157",
-              message: "Stored value: '\"__MISSING_AND_REQUIRED__\"'.",
+              message: "Stored value: 'undefined'.",
               relatedFieldIds: [],
             },
             {
@@ -106,7 +106,7 @@ describe("AbstractSubfieldEvaluator", () => {
               severity: "info",
               fieldId: "147738157",
               message:
-                "Stored value: '\"subfield0 = The First Value.\\nsubfield1 = The Second Value.\\nsubfield2 = The Final Value.\"'.",
+                "Stored value: 'subfield0 = The First Value.\\nsubfield1 = The Second Value.\\nsubfield2 = The Final Value.'.",
               relatedFieldIds: [],
             },
           ],
@@ -150,7 +150,7 @@ describe("AbstractSubfieldEvaluator", () => {
               severity: "info",
               fieldId: "147738157",
               message:
-                "Stored value: '\"subfield0 = The First Value.\\nsubfield1 = The Second Value.\\nsubfield2 = The Final Value.\\nUnknownSubField = some unknown value\\n\"'.",
+                "Stored value: 'subfield0 = The First Value.\\nsubfield1 = The Second Value.\\nsubfield2 = The Final Value.\\nUnknownSubField = some unknown value\\n'.",
               relatedFieldIds: [],
             },
             {

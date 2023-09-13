@@ -29,42 +29,20 @@ class NumericOnlyEvaluator extends AbstractEvaluator {
   }
 
   getUiPopulateObject<T = string>(submissionDatum?: T): TUiEvaluationObject[] {
-    let uiid: string | null = `field${this.fieldId}`;
-    const statusMessages: TStatusRecord[] = [
-      {
-        severity: "info",
-        fieldId: this.fieldId,
-        message: `Stored value: '${this.getStoredValue(submissionDatum)}'.`,
-        relatedFieldIds: [],
-      },
-    ];
-    const parsedValues = this.parseValues<string>(submissionDatum as string);
-
-    // if (parsedValues === undefined) {
-    //   statusMessages.push({
-    //     severity: "error",
-    //     message: "Failed to parse field. ",
-    //     relatedFieldIds: [],
-    //   });
-    // }
-
-    if (this.isRequired && (submissionDatum === "" || !submissionDatum)) {
-      uiid = null;
-      statusMessages.push({
-        severity: "warn",
-        fieldId: this.fieldId,
-        message:
-          "Submission data missing and required.  This is not an issue if the field is hidden by logic.",
-        relatedFieldIds: [],
-      });
+    const statusMessages =
+      this.createStatusMessageArrayWithStoredValue(submissionDatum);
+    if ((this.isRequired && submissionDatum === "") || !submissionDatum) {
+      return this.getUiPopulateObjectEmptyAndRequired(statusMessages);
     }
+
+    const parsedValues = this.parseValues<string>(submissionDatum as string);
 
     return [
       {
-        uiid,
+        uiid: `field${this.fieldId}`,
         fieldId: this.fieldId,
         fieldType: this.fieldJson.type,
-        value: parsedValues as string,
+        value: parsedValues,
         statusMessages,
       },
     ];

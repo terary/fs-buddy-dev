@@ -31,32 +31,38 @@ class DateEvaluator extends GenericEvaluator {
   }
 
   getUiPopulateObject<T = string>(submissionDatum?: T): TUiEvaluationObject[] {
-    const statusMessages: TStatusRecord[] = [
-      {
-        severity: "info",
-        fieldId: this.fieldId,
-        message: `Stored value: '${submissionDatum}'.`,
-        relatedFieldIds: [],
-      },
-    ];
-    if (this.isRequired && (submissionDatum === "" || !submissionDatum)) {
-      statusMessages.push({
-        severity: "warn",
-        fieldId: this.fieldId,
-        message:
-          "Submission data missing and required.  This is not an issue if the field is hidden by logic.",
-        relatedFieldIds: [],
-      });
-      return [
-        {
-          uiid: null,
-          fieldId: this.fieldId,
-          fieldType: this.fieldJson.type,
-          value: "",
-          statusMessages,
-        } as TUiEvaluationObject,
-      ];
+    const statusMessages =
+      this.createStatusMessageArrayWithStoredValue(submissionDatum);
+    if ((this.isRequired && submissionDatum === "") || !submissionDatum) {
+      return this.getUiPopulateObjectEmptyAndRequired(statusMessages);
     }
+
+    // const statusMessages: TStatusRecord[] = [
+    //   {
+    //     severity: "info",
+    //     fieldId: this.fieldId,
+    //     message: `Stored value: '${submissionDatum}'.`,
+    //     relatedFieldIds: [],
+    //   },
+    // ];
+    // if (this.isRequired && (submissionDatum === "" || !submissionDatum)) {
+    //   statusMessages.push({
+    //     severity: "warn",
+    //     fieldId: this.fieldId,
+    //     message:
+    //       "Submission data missing and required.  This is not an issue if the field is hidden by logic.",
+    //     relatedFieldIds: [],
+    //   });
+    //   return [
+    //     {
+    //       uiid: null,
+    //       fieldId: this.fieldId,
+    //       fieldType: this.fieldJson.type,
+    //       value: "",
+    //       statusMessages,
+    //     } as TUiEvaluationObject,
+    //   ];
+    // }
 
     const parsedValues = this.parseValues<string, Date>(
       submissionDatum as string

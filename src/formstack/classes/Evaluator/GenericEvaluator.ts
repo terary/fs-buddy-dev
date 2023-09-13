@@ -1,4 +1,6 @@
+import { TStatusRecord } from "../../../chrome-extension/type";
 import { AbstractEvaluator } from "./AbstractEvaluator";
+import { TUiEvaluationObject } from "./type";
 
 class GenericEvaluator extends AbstractEvaluator {
   parseValues<S = string, T = string>(submissionDatum?: S): T {
@@ -7,6 +9,28 @@ class GenericEvaluator extends AbstractEvaluator {
 
   evaluateWithValues<S = string, T = string>(values: S): T {
     return this.parseValues(values);
+  }
+
+  getUiPopulateObject<T = string>(submissionDatum?: T): TUiEvaluationObject[] {
+    const statusMessages =
+      this.createStatusMessageArrayWithStoredValue(submissionDatum);
+    if ((this.isRequired && submissionDatum === "") || !submissionDatum) {
+      return this.getUiPopulateObjectEmptyAndRequired(statusMessages);
+    }
+
+    const datum = this.getStoredValue<string>(submissionDatum as string);
+    return [
+      {
+        uiid: this.isValidSubmissionDatum(datum)
+          ? `field${this.fieldId}`
+          : null,
+        fieldId: this.fieldId,
+        fieldType: this.fieldJson.type,
+        value: this.isValidSubmissionDatum(datum) ? datum : "",
+
+        statusMessages: statusMessages,
+      },
+    ];
   }
 
   isCorrectType<T>(submissionDatum: T): boolean {

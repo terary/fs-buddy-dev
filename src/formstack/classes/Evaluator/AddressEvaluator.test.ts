@@ -59,7 +59,7 @@ describe("AddressEvaluator", () => {
               severity: "info",
               fieldId: "147738157",
               message:
-                "Stored value: '\"address = 123 Walt Disney Way 0\\naddress2 = Micky Mouse Hut #2, 4\\ncity = Disney World 7\\nstate = DE\\nzip = 04240\"'.",
+                "Stored value: 'address = 123 Walt Disney Way 0\\naddress2 = Micky Mouse Hut #2, 4\\ncity = Disney World 7\\nstate = DE\\nzip = 04240'.",
               relatedFieldIds: [],
             },
           ],

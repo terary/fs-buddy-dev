@@ -39,32 +39,10 @@ class ProductEvaluator extends AbstractSubfieldEvaluator {
   }
 
   getUiPopulateObject<T = string>(submissionDatum?: T): TUiEvaluationObject[] {
-    // getUiPopulateObject(values: TFlatSubmissionValues): TUiEvaluationObject[] {
-    const statusMessages: TStatusRecord[] = [
-      {
-        severity: "info",
-        fieldId: this.fieldId,
-        message: `Stored value: '${this.getStoredValue(submissionDatum)}'.`,
-        relatedFieldIds: [],
-      },
-    ];
+    const statusMessages =
+      this.createStatusMessageArrayWithStoredValue(submissionDatum);
     if ((this.isRequired && submissionDatum === "") || !submissionDatum) {
-      statusMessages.push({
-        severity: "warn",
-        fieldId: this.fieldId,
-        message:
-          "Submission data missing and required.  This is not an issue if the field is hidden by logic.",
-        relatedFieldIds: [],
-      });
-      return [
-        {
-          uiid: null,
-          fieldId: this.fieldId,
-          fieldType: this.fieldJson.type,
-          value: "",
-          statusMessages,
-        },
-      ];
+      return this.getUiPopulateObjectEmptyAndRequired(statusMessages);
     }
 
     const parsedValues = this.parseValues<string>(submissionDatum as string);
