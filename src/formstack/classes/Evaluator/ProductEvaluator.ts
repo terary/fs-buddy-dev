@@ -48,14 +48,7 @@ class ProductEvaluator extends AbstractSubfieldEvaluator {
         relatedFieldIds: [],
       },
     ];
-    // need to make sure this is being transformed
-    // @ts-ignore - this is expected 'required' to be boolean, which happens only if this json has been transformed
-    if (
-      // @ts-ignore
-      ((this.fieldJson.required || this.fieldJson.required === "1") &&
-        submissionDatum === "") ||
-      !submissionDatum
-    ) {
+    if ((this.isRequired && submissionDatum === "") || !submissionDatum) {
       statusMessages.push({
         severity: "warn",
         fieldId: this.fieldId,

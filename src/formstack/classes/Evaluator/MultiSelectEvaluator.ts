@@ -92,13 +92,7 @@ class MultiSelectEvaluator extends AbstractEvaluator {
       }
     });
 
-    // need to make sure this is being transformed
-    // @ts-ignore - this is expected 'required' to be boolean, which happens only if this json has been transformed
-    if (
-      // @ts-ignore
-      (this.fieldJson.required || this.fieldJson.required === "1") &&
-      selectedValues.length === 0
-    ) {
+    if (this.isRequired && selectedValues.length === 0) {
       statusMessages.push({
         severity: "warn",
         fieldId: this.fieldId,
@@ -107,7 +101,6 @@ class MultiSelectEvaluator extends AbstractEvaluator {
       });
     }
 
-    // if (statusMessages.length > 0) {
     uiFields.push({
       uiid: null,
       fieldId: this.fieldId,
@@ -115,8 +108,6 @@ class MultiSelectEvaluator extends AbstractEvaluator {
       value: "",
       statusMessages,
     });
-    // }
-
     return uiFields;
   }
 
@@ -152,13 +143,7 @@ class MultiSelectEvaluator extends AbstractEvaluator {
       });
     }
 
-    // need to make sure this is being transformed
-    // @ts-ignore - this is expected 'required' to be boolean, which happens only if this json has been transformed
-    if (
-      // @ts-ignore
-      (this.fieldJson.required || this.fieldJson.required === "1") &&
-      selectedValue.length === 0
-    ) {
+    if (this.isRequired && selectedValue.length === 0) {
       statusMessages.push({
         severity: "warn",
         fieldId: this.fieldId,
@@ -192,11 +177,7 @@ class MultiSelectEvaluator extends AbstractEvaluator {
       },
     ];
 
-    if (
-      // @ts-ignore
-      (this.fieldJson.required || this.fieldJson.required === "1") &&
-      (submissionDatum === "" || !submissionDatum)
-    ) {
+    if (this.isRequired && (submissionDatum === "" || !submissionDatum)) {
       statusMessages.push({
         severity: "warn",
         fieldId: this.fieldId,
@@ -239,13 +220,7 @@ class MultiSelectEvaluator extends AbstractEvaluator {
       });
     }
 
-    // need to make sure this is being transformed
-    // @ts-ignore - this is expected 'required' to be boolean, which happens only if this json has been transformed
-    if (
-      // @ts-ignore
-      (this.fieldJson.required || this.fieldJson.required === "1") &&
-      parsedValues === ""
-    ) {
+    if (this.isRequired && parsedValues === "") {
       statusMessages.push({
         severity: "info",
         fieldId: this.fieldId,

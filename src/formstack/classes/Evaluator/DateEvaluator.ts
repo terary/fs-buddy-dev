@@ -31,24 +31,6 @@ class DateEvaluator extends GenericEvaluator {
   }
 
   getUiPopulateObject<T = string>(submissionDatum?: T): TUiEvaluationObject[] {
-    // getUiPopulateObject(values: TFlatSubmissionValues): TUiEvaluationObject[] {
-    // if (!(this.fieldId in values)) {
-    //   return [
-    //     {
-    //       uiid: null,
-    //       fieldId: this.fieldId,
-    //       fieldType: this.fieldJson.type,
-    //       value: "__EMPTY_SUBMISSION_DATA__",
-    //       statusMessages: [
-    //         {
-    //           severity: "info",
-    //           message: `Stored value: '__EMPTY_SUBMISSION_DATA__'.`,
-    //           relatedFieldIds: [],
-    //         },
-    //       ],
-    //     } as TUiEvaluationObject,
-    //   ];
-    // }
     const statusMessages: TStatusRecord[] = [
       {
         severity: "info",
@@ -57,12 +39,7 @@ class DateEvaluator extends GenericEvaluator {
         relatedFieldIds: [],
       },
     ];
-    if (
-      // @ts-ignore
-      ((this.fieldJson.required || this.fieldJson.required === "1") &&
-        submissionDatum === "") ||
-      !submissionDatum
-    ) {
+    if (this.isRequired && (submissionDatum === "" || !submissionDatum)) {
       statusMessages.push({
         severity: "warn",
         fieldId: this.fieldId,

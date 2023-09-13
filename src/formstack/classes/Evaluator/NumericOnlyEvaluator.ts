@@ -48,13 +48,7 @@ class NumericOnlyEvaluator extends AbstractEvaluator {
     //   });
     // }
 
-    // need to make sure this is being transformed
-    // @ts-ignore - this is expected 'required' to be boolean, which happens only if this json has been transformed
-    if (
-      // @ts-ignore
-      (this.fieldJson.required || this.fieldJson.required === "1") &&
-      (submissionDatum === "" || !submissionDatum)
-    ) {
+    if (this.isRequired && (submissionDatum === "" || !submissionDatum)) {
       uiid = null;
       statusMessages.push({
         severity: "warn",

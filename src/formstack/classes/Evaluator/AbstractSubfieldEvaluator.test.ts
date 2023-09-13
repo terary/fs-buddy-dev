@@ -13,7 +13,11 @@ class TestSubfieldEvaluator extends AbstractSubfieldEvaluator {
 describe("AbstractSubfieldEvaluator", () => {
   describe(".getUiPopulateObject(...)", () => {
     it("Should return __EMPTY_SUBMISSION_DATA__ for fields without submission data", () => {
-      const evaluator = new TestSubfieldEvaluator(fieldJson);
+      const requireFieldJson = {
+        ...fieldJson,
+        ...{ required: "1" },
+      } as unknown as TFsFieldAny;
+      const evaluator = new TestSubfieldEvaluator(requireFieldJson);
       const actual = evaluator.getUiPopulateObject(undefined);
       expect(actual).toStrictEqual([
         {
@@ -25,7 +29,7 @@ describe("AbstractSubfieldEvaluator", () => {
             {
               severity: "info",
               fieldId: "147738157",
-              message: "Stored value: '\"__EMPTY_SUBMISSION_DATA__\"'.",
+              message: "Stored value: '\"__MISSING_AND_REQUIRED__\"'.",
               relatedFieldIds: [],
             },
             {

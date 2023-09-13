@@ -140,7 +140,10 @@ describe("MultiSelectEvaluator", () => {
         ]);
       });
       it("Should empty return item with empty value and status message if field required and no options selected.", () => {
-        const evaluator = new MultiSelectEvaluator(fieldJsonCheckbox);
+        const evaluator = new MultiSelectEvaluator({
+          ...fieldJsonCheckbox,
+          ...{ required: "1" },
+        } as unknown as TFsFieldAny);
         const actual = evaluator.getUiPopulateObject("");
         expect(actual).toStrictEqual([
           {

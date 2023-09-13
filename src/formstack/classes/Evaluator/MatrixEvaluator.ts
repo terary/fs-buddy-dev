@@ -72,11 +72,7 @@ class MatrixEvaluator extends AbstractEvaluator {
       },
     ];
 
-    if (
-      // @ts-ignore
-      (this.fieldJson.required || this.fieldJson.required === "1") &&
-      (submissionDatum === "" || !submissionDatum)
-    ) {
+    if (this.isRequired && (submissionDatum === "" || !submissionDatum)) {
       statusMessages.push({
         severity: "warn",
         fieldId: this.fieldId,
