@@ -63,29 +63,49 @@ class MatrixEvaluator extends AbstractEvaluator {
 
   // getUiPopulateObject(values: TFlatSubmissionValues): TUiEvaluationObject[] {
   getUiPopulateObject<T = string>(submissionDatum?: T): TUiEvaluationObject[] {
-    // if (!(this.fieldId in values)) {
-    //   return [
-    //     {
-    //       uiid: null,
-    //       fieldId: this.fieldId,
-    //       fieldType: this.fieldJson.type,
-    //       value: "__EMPTY_SUBMISSION_DATA__",
-    //       statusMessages: [
-    //         {
-    //           severity: "info",
-    //           message: `Stored value: '__EMPTY_SUBMISSION_DATA__'.`,
-    //           relatedFieldIds: [],
-    //         },
-    //       ],
-    //     } as TUiEvaluationObject,
-    //   ];
-    // }
+    const statusMessages: TStatusRecord[] = [
+      {
+        severity: "info",
+        fieldId: this.fieldId,
+        message: `Stored value: '${this.getStoredValue(submissionDatum)}'.`,
+        relatedFieldIds: [],
+      },
+    ];
 
-    // type TypeSubfieldDatum = { subfieldId: string; value: string };
+    if (
+      // @ts-ignore
+      (this.fieldJson.required || this.fieldJson.required === "1") &&
+      (submissionDatum === "" || !submissionDatum)
+    ) {
+      statusMessages.push({
+        severity: "warn",
+        fieldId: this.fieldId,
+        message:
+          "Submission data missing and required.  This is not an issue if the field is hidden by logic.",
+        relatedFieldIds: [],
+      });
+      return [
+        {
+          uiid: null,
+          fieldId: this.fieldId,
+          fieldType: this.fieldJson.type,
+          value: "",
+          statusMessages,
+        } as TUiEvaluationObject,
+      ];
+    }
+
     const parsedValues = this.parseSubmittedData(submissionDatum as string);
     const fieldIdMatrix = this.getAsMatrixUiFieldIdMap();
 
     if (parsedValues === undefined) {
+      statusMessages.push({
+        severity: "info",
+        fieldId: this.fieldId,
+        message: "Failed to parse field. ", // + parsedValues.message,
+        relatedFieldIds: [],
+      });
+
       return [
         {
           // uiid: `field${this.fieldId}`,
@@ -93,13 +113,7 @@ class MatrixEvaluator extends AbstractEvaluator {
           fieldId: this.fieldId,
           fieldType: this.fieldJson.type,
           value: "",
-          statusMessages: [
-            {
-              severity: "info",
-              message: "Failed to parse field. ", // + parsedValues.message,
-              relatedFieldIds: [],
-            },
-          ],
+          statusMessages,
         } as TUiEvaluationObject,
       ];
     }
@@ -121,15 +135,6 @@ class MatrixEvaluator extends AbstractEvaluator {
     //     } as TUiEvaluationObject,
     //   ];
     // }
-    const statusMessages: TStatusRecord[] = [
-      {
-        severity: "info",
-        fieldId: this.fieldId,
-        message: `Stored value: '${this.getStoredValue(submissionDatum)}'.`,
-        relatedFieldIds: [],
-      },
-    ];
-
     const selectedRows =
       Object.entries(parsedValues)
         .filter(([row, column]) => {

@@ -57,6 +57,28 @@ abstract class AbstractSubfieldEvaluator extends AbstractEvaluator {
       string,
       { [subfieldId: string]: string }
     >(submissionDatum as string);
+    if (
+      // @ts-ignore
+      (this.fieldJson.required || this.fieldJson.required === "1") &&
+      (submissionDatum === "" || !submissionDatum)
+    ) {
+      statusMessages.push({
+        severity: "warn",
+        fieldId: this.fieldId,
+        message:
+          "Submission data missing and required.  This is not an issue if the field is hidden by logic.",
+        relatedFieldIds: [],
+      });
+      return [
+        {
+          uiid: null,
+          fieldId: this.fieldId,
+          fieldType: this.fieldType,
+          value: "",
+          statusMessages,
+        },
+      ];
+    }
 
     if (parsedValues === undefined) {
       return [

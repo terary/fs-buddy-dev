@@ -214,25 +214,28 @@ describe("Evaluator", () => {
   describe("[evaluator].getUiPopulateObject(...)", () => {
     it("Should return status message if required and empty submission data", () => {
       [
+        /// ---------------- done below
+        // "text",
+        // "textarea",
+        // "number",
         // "address",
+        // "name",
+        // "matrix",
+        // "select",
         // "checkbox",
-        // "creditcard",
+        // "radio",
         // "datetime",
         // "email",
-        // "embed",
-        // "file",
-        // "matrix",
-        // "section",
-        // "select",
-        // "signature",
-        "text",
-        "textarea",
-        // "name",
-        // "number",
         // "phone",
-        // "product",
-        // "radio",
         // "rating",
+        // "file",
+        // "signature",
+        // "product",
+        // -------------------------------------
+        /// currently not applicable.  These sometimes will have data so may want consider how to handle that.
+        // "creditcard",
+        // "section",
+        // "embed",
         // "richtext",
       ].forEach((fieldType) => {
         const fieldJson = {

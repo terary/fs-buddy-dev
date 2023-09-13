@@ -28,6 +28,13 @@ describe("AbstractSubfieldEvaluator", () => {
               message: "Stored value: '\"__EMPTY_SUBMISSION_DATA__\"'.",
               relatedFieldIds: [],
             },
+            {
+              severity: "warn",
+              fieldId: "147738157",
+              message:
+                "Submission data missing and required.  This is not an issue if the field is hidden by logic.",
+              relatedFieldIds: [],
+            },
           ],
         },
       ]);

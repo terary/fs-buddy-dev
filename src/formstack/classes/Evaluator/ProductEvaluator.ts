@@ -48,6 +48,31 @@ class ProductEvaluator extends AbstractSubfieldEvaluator {
         relatedFieldIds: [],
       },
     ];
+    // need to make sure this is being transformed
+    // @ts-ignore - this is expected 'required' to be boolean, which happens only if this json has been transformed
+    if (
+      // @ts-ignore
+      ((this.fieldJson.required || this.fieldJson.required === "1") &&
+        submissionDatum === "") ||
+      !submissionDatum
+    ) {
+      statusMessages.push({
+        severity: "warn",
+        fieldId: this.fieldId,
+        message:
+          "Submission data missing and required.  This is not an issue if the field is hidden by logic.",
+        relatedFieldIds: [],
+      });
+      return [
+        {
+          uiid: null,
+          fieldId: this.fieldId,
+          fieldType: this.fieldJson.type,
+          value: "",
+          statusMessages,
+        },
+      ];
+    }
 
     const parsedValues = this.parseValues<string>(submissionDatum as string);
 
@@ -65,20 +90,6 @@ class ProductEvaluator extends AbstractSubfieldEvaluator {
           return prev;
         }, {})
       : {};
-    // need to make sure this is being transformed
-    // @ts-ignore - this is expected 'required' to be boolean, which happens only if this json has been transformed
-    if (
-      // @ts-ignore
-      (this.fieldJson.required || this.fieldJson.required === "1") &&
-      parsedValues === ""
-    ) {
-      statusMessages.push({
-        severity: "info",
-        fieldId: this.fieldId,
-        message:
-          "Field value appears empty but field is required. (if this field is eventually hidden by logic, then empty value is not significant.)",
-      });
-    }
 
     return [
       {

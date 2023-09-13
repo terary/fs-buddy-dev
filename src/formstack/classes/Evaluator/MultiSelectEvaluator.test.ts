@@ -156,10 +156,11 @@ describe("MultiSelectEvaluator", () => {
                 relatedFieldIds: [],
               },
               {
-                severity: "info",
+                severity: "warn",
                 fieldId: "147738164",
                 message:
-                  "Failed to find valid option: '' within valid options: 'Option1', 'Option2', 'Option3' ",
+                  "Submission data missing and required.  This is not an issue if the field is hidden by logic.",
+                //                  "Failed to find valid option: '' within valid options: 'Option1', 'Option2', 'Option3' ",
                 relatedFieldIds: [],
               },
             ],

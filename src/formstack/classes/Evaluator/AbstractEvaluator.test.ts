@@ -128,13 +128,6 @@ describe("AbstractSubfieldAbstractEvaluator", () => {
   });
 
   describe(".getUiPopulateObject(...)", () => {
-    it("should return '__EMPTY_SUBMISSION_DATA__' if undefined and required.", () => {
-      const evaluator = new TestSubfieldEvaluator(fieldJson);
-      expect(evaluator.getUiPopulateObject(undefined)).toStrictEqual(
-        "__EMPTY_SUBMISSION_DATA__"
-      );
-    });
-
     it("Should return TUiEvaluationObject[] non-empty, correctly typed submissionData.", () => {
       const evaluator = new TestSubfieldEvaluator(fieldJson);
       const actual = evaluator.getUiPopulateObject("any value will do");
@@ -154,7 +147,7 @@ describe("AbstractSubfieldAbstractEvaluator", () => {
         },
       ]);
     });
-    it.only("Should return TUiEvaluationObject[] with status message indicating required and empty (statusMessage[].severity: 'warn'), if datum undefined and not required.", () => {
+    it("Should return TUiEvaluationObject[] with status message indicating required and empty (statusMessage[].severity: 'warn'), if datum undefined and not required.", () => {
       const modifiedFieldJson = {
         ...fieldJson,
         ...{ required: "1" },
@@ -174,11 +167,18 @@ describe("AbstractSubfieldAbstractEvaluator", () => {
               message: "Stored value: '__MISSING_AND_REQUIRED__'.",
               relatedFieldIds: [],
             },
+            {
+              fieldId: "148008076",
+              severity: "warn",
+              message:
+                "Submission data missing and required.  This is not an issue if the field is hidden by logic.",
+              relatedFieldIds: [],
+            },
           ],
         },
       ]);
     });
-    it.only("Should return TUiEvaluationObject[] with status message indicating empty, if datum undefined and is required.", () => {
+    it("Should return TUiEvaluationObject[] with status message indicating empty, if datum undefined and is required.", () => {
       const evaluator = new TestSubfieldEvaluator(fieldJson);
       const actual = evaluator.getUiPopulateObject(undefined);
       expect(actual).toStrictEqual([

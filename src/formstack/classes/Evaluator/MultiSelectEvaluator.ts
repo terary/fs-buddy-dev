@@ -67,23 +67,12 @@ class MultiSelectEvaluator extends AbstractEvaluator {
 
   // getUiPopulateObject<T = string>(submissionDatum?: T): TUiEvaluationObject[] {
   private getUiPopulateObjectCheckbox(
-    submissionDatum?: string
+    submissionDatum: string,
+    statusMessages: TStatusRecord[]
   ): TUiEvaluationObject[] {
     const uiFields: TUiEvaluationObject[] = [];
     const selectedValues = this.parseArrayValues<string[]>(submissionDatum);
     const uiidFieldIdMap = this.getUiidFieldIdMap();
-    const statusMessages: TStatusRecord[] = [
-      {
-        severity: "info",
-        fieldId: this.fieldId,
-        message: `Stored value: '${(submissionDatum || "").replace(
-          /\n/g,
-          "\\n"
-        )}'.`,
-        relatedFieldIds: [],
-      },
-    ];
-
     selectedValues.forEach((selectedOption) => {
       if (uiidFieldIdMap[selectedOption]) {
         uiFields.push({
@@ -148,24 +137,11 @@ class MultiSelectEvaluator extends AbstractEvaluator {
       .join("', '");
   }
   private getUiPopulateObjectSelect(
-    submissionDatum?: string
+    submissionDatum: string,
+    statusMessages: TStatusRecord[]
   ): TUiEvaluationObject[] {
     const uiFields: TUiEvaluationObject[] = [];
     const selectedValue = this.parseValues<string>(submissionDatum);
-    const statusMessages: TStatusRecord[] = [
-      {
-        severity: "info",
-        fieldId: this.fieldId,
-        message: `Stored value: '${(submissionDatum || "").replace(
-          /\n/g,
-          "\\n"
-        )}'.`,
-
-        relatedFieldIds: [],
-      },
-    ];
-
-    //    const uiidFieldIdMap = this.getUiidFieldIdMap();
 
     if (!this.isValueInSelectOptions(selectedValue)) {
       statusMessages.push({
@@ -204,33 +180,6 @@ class MultiSelectEvaluator extends AbstractEvaluator {
   }
 
   getUiPopulateObject<T = string>(submissionDatum?: T): TUiEvaluationObject[] {
-    // getUiPopulateObject(values: TFlatSubmissionValues): TUiEvaluationObject[] {
-    // if (!(this.fieldId in values)) {
-    //   return [
-    //     {
-    //       uiid: null,
-    //       fieldId: this.fieldId,
-    //       fieldType: this.fieldJson.type,
-    //       value: "__EMPTY_SUBMISSION_DATA__",
-    //       statusMessages: [
-    //         {
-    //           severity: "info",
-    //           message: `Stored value: '__EMPTY_SUBMISSION_DATA__'.`,
-    //           relatedFieldIds: [],
-    //         },
-    //       ],
-    //     } as TUiEvaluationObject,
-    //   ];
-    // }
-
-    if (this.fieldType === "checkbox") {
-      return this.getUiPopulateObjectCheckbox(submissionDatum as string);
-    } else if (this.fieldType === "select") {
-      return this.getUiPopulateObjectSelect(submissionDatum as string);
-    }
-
-    const parsedValues = this.parseValues<string>(submissionDatum as string);
-    const uiidFieldIdMap = this.getUiidFieldIdMap();
     const statusMessages: TStatusRecord[] = [
       {
         severity: "info",
@@ -242,6 +191,44 @@ class MultiSelectEvaluator extends AbstractEvaluator {
         relatedFieldIds: [],
       },
     ];
+
+    if (
+      // @ts-ignore
+      (this.fieldJson.required || this.fieldJson.required === "1") &&
+      (submissionDatum === "" || !submissionDatum)
+    ) {
+      statusMessages.push({
+        severity: "warn",
+        fieldId: this.fieldId,
+        message:
+          "Submission data missing and required.  This is not an issue if the field is hidden by logic.",
+        relatedFieldIds: [],
+      });
+      return [
+        {
+          uiid: null,
+          fieldId: this.fieldId,
+          fieldType: this.fieldJson.type,
+          value: "",
+          statusMessages,
+        } as TUiEvaluationObject,
+      ];
+    }
+
+    if (this.fieldType === "checkbox") {
+      return this.getUiPopulateObjectCheckbox(
+        submissionDatum as string,
+        statusMessages
+      );
+    } else if (this.fieldType === "select") {
+      return this.getUiPopulateObjectSelect(
+        submissionDatum as string,
+        statusMessages
+      );
+    }
+
+    const parsedValues = this.parseValues<string>(submissionDatum as string);
+    const uiidFieldIdMap = this.getUiidFieldIdMap();
 
     if (!uiidFieldIdMap[parsedValues]) {
       statusMessages.push({

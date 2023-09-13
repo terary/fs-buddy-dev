@@ -29,7 +29,7 @@ class NumericOnlyEvaluator extends AbstractEvaluator {
   }
 
   getUiPopulateObject<T = string>(submissionDatum?: T): TUiEvaluationObject[] {
-    // getUiPopulateObject(values: TFlatSubmissionValues): TUiEvaluationObject[] {
+    let uiid: string | null = `field${this.fieldId}`;
     const statusMessages: TStatusRecord[] = [
       {
         severity: "info",
@@ -40,32 +40,34 @@ class NumericOnlyEvaluator extends AbstractEvaluator {
     ];
     const parsedValues = this.parseValues<string>(submissionDatum as string);
 
-    if (parsedValues === undefined) {
-      statusMessages.push({
-        severity: "error",
-        message: "Failed to parse field. ",
-        relatedFieldIds: [],
-      });
-    }
+    // if (parsedValues === undefined) {
+    //   statusMessages.push({
+    //     severity: "error",
+    //     message: "Failed to parse field. ",
+    //     relatedFieldIds: [],
+    //   });
+    // }
 
     // need to make sure this is being transformed
     // @ts-ignore - this is expected 'required' to be boolean, which happens only if this json has been transformed
     if (
       // @ts-ignore
       (this.fieldJson.required || this.fieldJson.required === "1") &&
-      submissionDatum === ""
+      (submissionDatum === "" || !submissionDatum)
     ) {
+      uiid = null;
       statusMessages.push({
-        severity: "info",
+        severity: "warn",
         fieldId: this.fieldId,
         message:
-          "Field value appears empty but field is required. (if this field is eventually hidden by logic, then empty value is not significant.)",
+          "Submission data missing and required.  This is not an issue if the field is hidden by logic.",
+        relatedFieldIds: [],
       });
     }
 
     return [
       {
-        uiid: `field${this.fieldId}`,
+        uiid,
         fieldId: this.fieldId,
         fieldType: this.fieldJson.type,
         value: parsedValues as string,
