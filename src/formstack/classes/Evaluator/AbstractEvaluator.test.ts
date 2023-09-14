@@ -26,7 +26,7 @@ class TestSubfieldEvaluator extends AbstractEvaluator {
     return values;
   }
 
-  getUiPopulateObject<T = string>(submissionDatum?: T): TUiEvaluationObject[] {
+  getUiPopulateObjects<T = string>(submissionDatum?: T): TUiEvaluationObject[] {
     const datum = this.getStoredValue<string>(submissionDatum as string);
 
     const statusMessages: TStatusRecord[] = [
@@ -162,10 +162,10 @@ describe("AbstractSubfieldAbstractEvaluator", () => {
     });
   });
 
-  describe(".getUiPopulateObject(...)", () => {
+  describe(".getUiPopulateObjects(...)", () => {
     it("Should return TUiEvaluationObject[] non-empty, correctly typed submissionData.", () => {
       const evaluator = new TestSubfieldEvaluator(fieldJson);
-      const actual = evaluator.getUiPopulateObject("any value will do");
+      const actual = evaluator.getUiPopulateObjects("any value will do");
       expect(actual).toStrictEqual([
         {
           uiid: "field148008076",
@@ -189,7 +189,7 @@ describe("AbstractSubfieldAbstractEvaluator", () => {
       } as unknown as TFsFieldAny;
 
       const evaluator = new TestSubfieldEvaluator(modifiedFieldJson);
-      const actual = evaluator.getUiPopulateObject(undefined);
+      const actual = evaluator.getUiPopulateObjects(undefined);
       expect(actual).toStrictEqual([
         {
           uiid: null,
@@ -215,7 +215,7 @@ describe("AbstractSubfieldAbstractEvaluator", () => {
     });
     it("Should return TUiEvaluationObject[] with status message indicating empty, if datum undefined and is required.", () => {
       const evaluator = new TestSubfieldEvaluator(fieldJson);
-      const actual = evaluator.getUiPopulateObject(undefined);
+      const actual = evaluator.getUiPopulateObjects(undefined);
       expect(actual).toStrictEqual([
         {
           uiid: null,

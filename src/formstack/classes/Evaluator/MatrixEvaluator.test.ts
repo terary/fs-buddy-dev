@@ -41,11 +41,11 @@ describe("MatrixEvaluator", () => {
   });
   it.skip("Should hand empty values as expected", () => {});
   it.skip("all fields should include statusMessage with 'storedValue' a raw dump.  This would help identify issues with changes to fields (date format, missing dropdown options, etc", () => {});
-  describe(".getUiPopulateObject(...)", () => {
+  describe(".getUiPopulateObjects(...)", () => {
     it("Should return array of properly formatted UI instructions (shape of TUiEvaluationObject).", () => {
       const testValue = "Row 1 = Column 1\nRow 2 = Column 2\nRow 3 = Column 3";
       const evaluator = new MatrixEvaluator(fieldJson);
-      const actual = evaluator.getUiPopulateObject(testValue);
+      const actual = evaluator.getUiPopulateObjects(testValue);
       expect(actual).toStrictEqual([
         {
           uiid: "field147738168-1-1",
@@ -90,7 +90,7 @@ describe("MatrixEvaluator", () => {
         "Row 1 = Column 1\nRow 2 = Column 2\nRow 3 = Column 3\nRow 3 = NON_COLUMN";
       // const testValue = "Row 3 = NON_COLUMN";
       const evaluator = new MatrixEvaluator(fieldJson);
-      const actual = evaluator.getUiPopulateObject(testValue);
+      const actual = evaluator.getUiPopulateObjects(testValue);
       expect(actual).toStrictEqual([
         {
           uiid: "field147738168-1-1",

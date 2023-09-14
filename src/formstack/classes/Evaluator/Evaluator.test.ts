@@ -211,7 +211,7 @@ describe("Evaluator", () => {
       expect(actual).toStrictEqual(expected);
     });
   });
-  describe("[evaluator].getUiPopulateObject(...)", () => {
+  describe("[evaluator].getUiPopulateObjects(...)", () => {
     it("Should return status message if required and empty submission data", () => {
       [
         /// ---------------- done below
@@ -244,7 +244,7 @@ describe("Evaluator", () => {
         } as unknown as TFsFieldAny;
 
         const evaluator = Evaluator.getEvaluatorWithFieldJson(fieldJson);
-        const uiElements = evaluator.getUiPopulateObject();
+        const uiElements = evaluator.getUiPopulateObjects();
         const parentUiElement = uiElements.find(
           (uiElement) =>
             uiElement.uiid === null && uiElement.fieldId === fieldJson.id

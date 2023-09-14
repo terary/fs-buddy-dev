@@ -87,7 +87,7 @@ abstract class AbstractEvaluator {
     return [];
   }
 
-  protected getUiPopulateObjectEmptyAndRequired(
+  protected getUiPopulateObjectsEmptyAndRequired(
     statusMessages: TStatusRecord[]
   ): TUiEvaluationObject[] {
     statusMessages.push(this.getStatusMessageEmptyAndRequired());
@@ -102,7 +102,7 @@ abstract class AbstractEvaluator {
     ];
   }
 
-  abstract getUiPopulateObject<T = string>(
+  abstract getUiPopulateObjects<T = string>(
     submissionDatum?: T
   ): TUiEvaluationObject[];
 }

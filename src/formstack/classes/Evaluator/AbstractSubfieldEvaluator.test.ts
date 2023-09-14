@@ -11,14 +11,14 @@ class TestSubfieldEvaluator extends AbstractSubfieldEvaluator {
 }
 
 describe("AbstractSubfieldEvaluator", () => {
-  describe(".getUiPopulateObject(...)", () => {
+  describe(".getUiPopulateObjects(...)", () => {
     it("Should return __EMPTY_SUBMISSION_DATA__ for fields without submission data", () => {
       const requireFieldJson = {
         ...fieldJson,
         ...{ required: "1" },
       } as unknown as TFsFieldAny;
       const evaluator = new TestSubfieldEvaluator(requireFieldJson);
-      const actual = evaluator.getUiPopulateObject(undefined);
+      const actual = evaluator.getUiPopulateObjects(undefined);
       expect(actual).toStrictEqual([
         {
           uiid: null,
@@ -46,7 +46,7 @@ describe("AbstractSubfieldEvaluator", () => {
 
     it("Should return Something if the object is empty?? for fields without submission data", () => {
       const evaluator = new TestSubfieldEvaluator(fieldJson);
-      const actual = evaluator.getUiPopulateObject({});
+      const actual = evaluator.getUiPopulateObjects({});
       expect(actual).toStrictEqual([
         {
           uiid: null,
@@ -73,7 +73,7 @@ describe("AbstractSubfieldEvaluator", () => {
       const testValue =
         "subfield0 = The First Value.\nsubfield1 = The Second Value.\nsubfield2 = The Final Value.";
       const evaluator = new TestSubfieldEvaluator(fieldJson);
-      const actual = evaluator.getUiPopulateObject(testValue);
+      const actual = evaluator.getUiPopulateObjects(testValue);
       expect(actual).toStrictEqual([
         {
           uiid: "field147738157-subfield0",
@@ -117,7 +117,7 @@ describe("AbstractSubfieldEvaluator", () => {
       const testValue =
         "subfield0 = The First Value.\nsubfield1 = The Second Value.\nsubfield2 = The Final Value.\nUnknownSubField = some unknown value\n";
       const evaluator = new TestSubfieldEvaluator(fieldJson);
-      const actual = evaluator.getUiPopulateObject(testValue);
+      const actual = evaluator.getUiPopulateObjects(testValue);
       expect(actual).toStrictEqual([
         {
           uiid: "field147738157-subfield0",

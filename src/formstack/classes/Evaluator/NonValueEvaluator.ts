@@ -20,7 +20,7 @@ class NonValueEvaluator extends AbstractEvaluator {
     return true; // may want to check that submissionData is empty
   }
 
-  getUiPopulateObject<T = string>(submissionDatum?: T): TUiEvaluationObject[] {
+  getUiPopulateObjects<T = string>(submissionDatum?: T): TUiEvaluationObject[] {
     return [
       {
         uiid: null,

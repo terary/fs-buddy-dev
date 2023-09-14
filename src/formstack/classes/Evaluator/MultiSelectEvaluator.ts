@@ -65,8 +65,8 @@ class MultiSelectEvaluator extends AbstractEvaluator {
     }, {} as { [optionValue: string]: string });
   }
 
-  // getUiPopulateObject<T = string>(submissionDatum?: T): TUiEvaluationObject[] {
-  private getUiPopulateObjectCheckbox(
+  // getUiPopulateObjects<T = string>(submissionDatum?: T): TUiEvaluationObject[] {
+  private getUiPopulateObjectsCheckbox(
     submissionDatum: string,
     statusMessages: TStatusRecord[]
   ): TUiEvaluationObject[] {
@@ -128,7 +128,7 @@ class MultiSelectEvaluator extends AbstractEvaluator {
       .join("', '");
   }
 
-  private getUiPopulateObjectSelect(
+  private getUiPopulateObjectsSelect(
     submissionDatum: string,
     statusMessages: TStatusRecord[]
   ): TUiEvaluationObject[] {
@@ -181,11 +181,11 @@ class MultiSelectEvaluator extends AbstractEvaluator {
     ];
   }
 
-  getUiPopulateObject<T = string>(submissionDatum?: T): TUiEvaluationObject[] {
+  getUiPopulateObjects<T = string>(submissionDatum?: T): TUiEvaluationObject[] {
     const statusMessages =
       this.createStatusMessageArrayWithStoredValue(submissionDatum);
     if ((this.isRequired && submissionDatum === "") || !submissionDatum) {
-      return this.getUiPopulateObjectEmptyAndRequired(statusMessages);
+      return this.getUiPopulateObjectsEmptyAndRequired(statusMessages);
     }
 
     // if (this.isRequired && (submissionDatum === "" || !submissionDatum)) {
@@ -208,12 +208,12 @@ class MultiSelectEvaluator extends AbstractEvaluator {
     // }
 
     if (this.fieldType === "checkbox") {
-      return this.getUiPopulateObjectCheckbox(
+      return this.getUiPopulateObjectsCheckbox(
         submissionDatum as string,
         statusMessages
       );
     } else if (this.fieldType === "select") {
-      return this.getUiPopulateObjectSelect(
+      return this.getUiPopulateObjectsSelect(
         submissionDatum as string,
         statusMessages
       );

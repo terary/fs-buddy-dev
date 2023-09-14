@@ -7,10 +7,10 @@ interface IEValuator {
   // evaluateWithValues<T>(
   //   values: TFlatSubmissionValues<T>
   // ): TFlatSubmissionValues<T>;
-  // getUiPopulateObject<T>(
+  // getUiPopulateObjects<T>(
   //   values: TFlatSubmissionValues<T>
   // ): TUiEvaluationObject[];
-  getUiPopulateObject<T = string>(submissionDatum?: T): TUiEvaluationObject[];
+  getUiPopulateObjects<T = string>(submissionDatum?: T): TUiEvaluationObject[];
 }
 
 export { IEValuator };

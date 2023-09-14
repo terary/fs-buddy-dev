@@ -16,11 +16,11 @@ describe("NumericOnlyEvaluator", () => {
       expect(actualNumber).not.toStrictEqual("3");
     });
   });
-  describe(".getUiPopulateObject(...)", () => {
+  describe(".getUiPopulateObjects(...)", () => {
     it("Should return array of properly formatted UI instructions (shape of TUiEvaluationObject).", () => {
       const testValue = "1";
       const evaluator = new NumericOnlyEvaluator(fieldJson);
-      const actual = evaluator.getUiPopulateObject(testValue);
+      const actual = evaluator.getUiPopulateObjects(testValue);
       expect(actual).toStrictEqual([
         {
           uiid: "field147738160",

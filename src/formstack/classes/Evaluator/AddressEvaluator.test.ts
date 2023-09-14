@@ -2,10 +2,10 @@ import { TFsFieldAny } from "../../type.field";
 import { AddressEvaluator } from "./AddressEvaluator";
 
 describe("AddressEvaluator", () => {
-  describe(".getUiPopulateObject(...)", () => {
+  describe(".getUiPopulateObjects(...)", () => {
     it("Should return subfields ui descriptions", () => {
       const evaluator = new AddressEvaluator(fieldJson);
-      const actual = evaluator.getUiPopulateObject(submissionData.value);
+      const actual = evaluator.getUiPopulateObjects(submissionData.value);
       expect(actual).toStrictEqual([
         {
           uiid: "field147738157-address",

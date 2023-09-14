@@ -11,11 +11,11 @@ class GenericEvaluator extends AbstractEvaluator {
     return this.parseValues(values);
   }
 
-  getUiPopulateObject<T = string>(submissionDatum?: T): TUiEvaluationObject[] {
+  getUiPopulateObjects<T = string>(submissionDatum?: T): TUiEvaluationObject[] {
     const statusMessages =
       this.createStatusMessageArrayWithStoredValue(submissionDatum);
     if ((this.isRequired && submissionDatum === "") || !submissionDatum) {
-      return this.getUiPopulateObjectEmptyAndRequired(statusMessages);
+      return this.getUiPopulateObjectsEmptyAndRequired(statusMessages);
     }
 
     const datum = this.getStoredValue<string>(submissionDatum as string);

@@ -61,13 +61,13 @@ class MatrixEvaluator extends AbstractEvaluator {
     return matrix;
   }
 
-  // getUiPopulateObject(values: TFlatSubmissionValues): TUiEvaluationObject[] {
-  getUiPopulateObject<T = string>(submissionDatum?: T): TUiEvaluationObject[] {
+  // getUiPopulateObjects(values: TFlatSubmissionValues): TUiEvaluationObject[] {
+  getUiPopulateObjects<T = string>(submissionDatum?: T): TUiEvaluationObject[] {
     const statusMessages =
       this.createStatusMessageArrayWithStoredValue(submissionDatum);
 
     if ((this.isRequired && submissionDatum === "") || !submissionDatum) {
-      return this.getUiPopulateObjectEmptyAndRequired(statusMessages);
+      return this.getUiPopulateObjectsEmptyAndRequired(statusMessages);
     }
 
     const parsedValues = this.parseSubmittedData(submissionDatum as string);

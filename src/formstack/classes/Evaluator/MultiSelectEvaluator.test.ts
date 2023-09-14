@@ -14,11 +14,11 @@ describe("MultiSelectEvaluator", () => {
         expect(actual).toStrictEqual("OPT03");
       });
     });
-    describe(".getUiPopulateObject(...)", () => {
+    describe(".getUiPopulateObjects(...)", () => {
       it("Should return array of properly formatted UI instructions (shape of TUiEvaluationObject).", () => {
         const testValue = "1";
         const evaluator = new MultiSelectEvaluator(fieldJsonDropdown);
-        const actual = evaluator.getUiPopulateObject(
+        const actual = evaluator.getUiPopulateObjects(
           submissionDataDropdown.value
         );
         expect(actual).toStrictEqual([
@@ -44,7 +44,7 @@ describe("MultiSelectEvaluator", () => {
           ...fieldJsonDropdown,
           ...{ type: "radio" },
         });
-        const actual = evaluator.getUiPopulateObject(
+        const actual = evaluator.getUiPopulateObjects(
           submissionDataDropdown.value
         );
         expect(actual).toStrictEqual([
@@ -74,7 +74,7 @@ describe("MultiSelectEvaluator", () => {
       it("Should include statusMessage when the parsedValue is not one of the available options.", () => {
         const testValue = "1";
         const evaluator = new MultiSelectEvaluator(fieldJsonDropdown);
-        const actual = evaluator.getUiPopulateObject("INVALID_OPTION");
+        const actual = evaluator.getUiPopulateObjects("INVALID_OPTION");
         expect(actual).toStrictEqual([
           {
             uiid: "field147738162",
@@ -102,10 +102,10 @@ describe("MultiSelectEvaluator", () => {
     });
   });
   describe("Multiple selectable options (checkbox)", () => {
-    describe(".getUiPopulateObject(...)", () => {
+    describe(".getUiPopulateObjects(...)", () => {
       it("Should return array of properly formatted UI instructions (shape of TUiEvaluationObject).", () => {
         const evaluator = new MultiSelectEvaluator(fieldJsonCheckbox);
-        const actual = evaluator.getUiPopulateObject(
+        const actual = evaluator.getUiPopulateObjects(
           submissionDataCheckbox.value
         );
         expect(actual).toStrictEqual([
@@ -144,7 +144,7 @@ describe("MultiSelectEvaluator", () => {
           ...fieldJsonCheckbox,
           ...{ required: "1" },
         } as unknown as TFsFieldAny);
-        const actual = evaluator.getUiPopulateObject("");
+        const actual = evaluator.getUiPopulateObjects("");
         expect(actual).toStrictEqual([
           {
             uiid: null,
@@ -172,7 +172,7 @@ describe("MultiSelectEvaluator", () => {
       });
       it("Should empty return item with empty value and status message if field required and invalid selected.", () => {
         const evaluator = new MultiSelectEvaluator(fieldJsonCheckbox);
-        const actual = evaluator.getUiPopulateObject("_INVALID_OPTION_");
+        const actual = evaluator.getUiPopulateObjects("_INVALID_OPTION_");
         expect(actual).toStrictEqual([
           {
             uiid: null,
@@ -199,7 +199,7 @@ describe("MultiSelectEvaluator", () => {
       });
       it("Should empty return item with empty value and status message if field required and invalid selected.", () => {
         const evaluator = new MultiSelectEvaluator(fieldJsonCheckbox);
-        const actual = evaluator.getUiPopulateObject(
+        const actual = evaluator.getUiPopulateObjects(
           submissionDataCheckbox.value + "\n_INVALID_OPTION_"
         );
         expect(actual).toStrictEqual([
@@ -244,7 +244,7 @@ describe("MultiSelectEvaluator", () => {
       it.skip("Should include statusMessage when the parsedValue is not one of the available options.", () => {
         // skipped because this is using dropdown,
         const evaluator = new MultiSelectEvaluator(fieldJsonDropdown);
-        const actual = evaluator.getUiPopulateObject({
+        const actual = evaluator.getUiPopulateObjects({
           [submissionDataDropdown.field]: "INVALID_OPTION",
         });
         expect(actual).toStrictEqual([

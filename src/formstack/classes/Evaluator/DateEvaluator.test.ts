@@ -2,10 +2,10 @@ import { TFsFieldAny } from "../../type.field";
 import { DateEvaluator } from "./DateEvaluator";
 
 describe("DateEvaluator", () => {
-  describe(".getUiPopulateObject(...)", () => {
+  describe(".getUiPopulateObjects(...)", () => {
     it("Should parse submittedData", () => {
       const evaluator = new DateEvaluator(fieldJson);
-      const actual = evaluator.getUiPopulateObject(submissionData.value);
+      const actual = evaluator.getUiPopulateObjects(submissionData.value);
       expect(actual).toStrictEqual([
         {
           uiid: "field147738166M",
@@ -67,7 +67,7 @@ describe("DateEvaluator", () => {
     });
     it("Should include statusMessages if it fails to instantiate a Date type.", () => {
       const evaluator = new DateEvaluator(fieldJson);
-      const actual = evaluator.getUiPopulateObject("SOME_INVALID_DATE");
+      const actual = evaluator.getUiPopulateObjects("SOME_INVALID_DATE");
       expect(actual).toStrictEqual([
         {
           uiid: null,
@@ -94,7 +94,7 @@ describe("DateEvaluator", () => {
     });
     it("Should include statusMessages if date is near epoch.", () => {
       const evaluator = new DateEvaluator(fieldJson);
-      const actual = evaluator.getUiPopulateObject(new Date(0).toISOString());
+      const actual = evaluator.getUiPopulateObjects(new Date(0).toISOString());
       expect(actual).toStrictEqual([
         {
           uiid: "field147738166M",
