@@ -9,6 +9,7 @@ const isString = (str: any) => typeof str === "string" || str instanceof String;
 
 abstract class AbstractSubfieldEvaluator extends AbstractEvaluator {
   abstract get supportedSubfieldIds(): string[];
+
   parseValues<S = string, T = string>(submissionDatum?: S): T {
     return this.parseSubmittedData(submissionDatum as string) as T;
   }
@@ -64,20 +65,10 @@ abstract class AbstractSubfieldEvaluator extends AbstractEvaluator {
   getUiPopulateObject<T = string>(submissionDatum?: T): TUiEvaluationObject[] {
     const statusMessages =
       this.createStatusMessageArrayWithStoredValue(submissionDatum);
+
     if ((this.isRequired && submissionDatum === "") || !submissionDatum) {
       return this.getUiPopulateObjectEmptyAndRequired(statusMessages);
     }
-
-    // const statusMessages: TStatusRecord[] = [
-    //   {
-    //     severity: "info",
-    //     fieldId: this.fieldId,
-    //     message: `Stored value: '${JSON.stringify(
-    //       this.getStoredValue(submissionDatum)
-    //     )}'.`,
-    //     relatedFieldIds: [],
-    //   },
-    // ];
 
     const parsedValues = this.parseValues<
       string,

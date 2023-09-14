@@ -58,29 +58,39 @@ abstract class AbstractEvaluator {
     return submissionDatum as T;
   }
 
-  protected createStatusMessageArrayWithStoredValue<T>(
-    submissionDatum?: T
-  ): TStatusRecord[] {
-    return [
-      {
-        severity: "info",
-        fieldId: this.fieldId,
-        message: `Stored value: '${this.getStoredValue(submissionDatum)}'.`,
-        relatedFieldIds: [],
-      },
-    ];
+  protected getStatusMessageStoredValue<T>(submissionDatum?: T): TStatusRecord {
+    return {
+      severity: "info",
+      fieldId: this.fieldId,
+      message: `Stored value: '${this.getStoredValue(submissionDatum)}'.`,
+      relatedFieldIds: [],
+    };
   }
 
-  protected getUiPopulateObjectEmptyAndRequired(
-    statusMessages: TStatusRecord[]
-  ): TUiEvaluationObject[] {
-    statusMessages.push({
+  protected getStatusMessageEmptyAndRequired(): TStatusRecord {
+    return {
       severity: "warn",
       fieldId: this.fieldId,
       message:
         "Submission data missing and required.  This is not an issue if the field is hidden by logic.",
       relatedFieldIds: [],
-    });
+    };
+  }
+
+  protected createStatusMessageArrayWithStoredValue<T>(
+    submissionDatum?: T
+  ): TStatusRecord[] {
+    return [this.getStatusMessageStoredValue(submissionDatum)];
+  }
+
+  protected getEmptyStatusMessageArray(): TStatusRecord[] {
+    return [];
+  }
+
+  protected getUiPopulateObjectEmptyAndRequired(
+    statusMessages: TStatusRecord[]
+  ): TUiEvaluationObject[] {
+    statusMessages.push(this.getStatusMessageEmptyAndRequired());
     return [
       {
         uiid: null,
@@ -95,41 +105,5 @@ abstract class AbstractEvaluator {
   abstract getUiPopulateObject<T = string>(
     submissionDatum?: T
   ): TUiEvaluationObject[];
-
-  x_requireAndEmptyUiPopulateObject<T = string>(
-    submissionDatum?: T
-  ): TUiEvaluationObject[] {
-    const datum = this.getStoredValue<string>(submissionDatum as string);
-
-    const statusMessages: TStatusRecord[] = [
-      {
-        severity: datum === "__MISSING_AND_REQUIRED__" ? "warn" : "info",
-        message: `Stored value: '${datum}'.`,
-        relatedFieldIds: [],
-      },
-    ];
-
-    if (datum === "__MISSING_AND_REQUIRED__") {
-      statusMessages.push({
-        fieldId: this.fieldId,
-        severity: "warn",
-        message: `Submission data missing and required.  This is not an issue if the field is hidden by logic.`,
-        relatedFieldIds: [],
-      });
-    }
-
-    return [
-      {
-        uiid: this.isValidSubmissionDatum(datum)
-          ? `field${this.fieldId}`
-          : null,
-        fieldId: this.fieldId,
-        fieldType: this.fieldJson.type,
-        value: this.isValidSubmissionDatum(datum) ? datum : "",
-
-        statusMessages: statusMessages,
-      },
-    ];
-  }
 }
 export { AbstractEvaluator };
