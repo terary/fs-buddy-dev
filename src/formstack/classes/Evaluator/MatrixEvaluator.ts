@@ -74,22 +74,26 @@ class MatrixEvaluator extends AbstractEvaluator {
     const fieldIdMatrix = this.getAsMatrixUiFieldIdMap();
 
     if (parsedValues === undefined) {
-      statusMessages.push({
-        severity: "info",
-        fieldId: this.fieldId,
-        message: "Failed to parse field. ", // + parsedValues.message,
-        relatedFieldIds: [],
-      });
+      statusMessages.push(
+        this.wrapAsStatusMessage("info", "Failed to parse field. ")
+        //   {
+        //   severity: "info",
+        //   fieldId: this.fieldId,
+        //   message: "Failed to parse field. ", // + parsedValues.message,
+        //   relatedFieldIds: [],
+        // }
+      );
 
       return [
-        {
-          // uiid: `field${this.fieldId}`,
-          uiid: null,
-          fieldId: this.fieldId,
-          fieldType: this.fieldJson.type,
-          value: "",
-          statusMessages,
-        } as TUiEvaluationObject,
+        this.wrapAsUiObject(null, "", statusMessages),
+        // {
+        //   // uiid: `field${this.fieldId}`,
+        //   uiid: null,
+        //   fieldId: this.fieldId,
+        //   fieldType: this.fieldJson.type,
+        //   value: "",
+        //   statusMessages,
+        // } as TUiEvaluationObject,
       ];
     }
     // if (parsedValues) {
@@ -115,15 +119,24 @@ class MatrixEvaluator extends AbstractEvaluator {
         .filter(([row, column]) => {
           const uiFieldId = fieldIdMatrix[row][column];
           if (uiFieldId === undefined) {
-            statusMessages.push({
-              severity: "warn",
-              message: `Unable to find matrix mapping for: '${JSON.stringify({
-                row,
-                column,
-              })}'.`,
-              fieldId: this.fieldId,
-              relatedFieldIds: [],
-            });
+            statusMessages.push(
+              this.wrapAsStatusMessage(
+                "warn",
+                `Unable to find matrix mapping for: '${JSON.stringify({
+                  row,
+                  column,
+                })}'.`
+              )
+              //   {
+              //   severity: "warn",
+              //   message: `Unable to find matrix mapping for: '${JSON.stringify({
+              //     row,
+              //     column,
+              //   })}'.`,
+              //   fieldId: this.fieldId,
+              //   relatedFieldIds: [],
+              // }
+            );
           }
 
           return uiFieldId;
@@ -142,23 +155,26 @@ class MatrixEvaluator extends AbstractEvaluator {
           //     relatedFieldIds: [],
           //   });
           // }
-
-          return {
-            uiid: uiFieldId || null,
-            fieldId: this.fieldId,
-            fieldType: this.fieldJson.type,
-            value: "checked",
-            statusMessages: [], //statusMessages,
-          } as TUiEvaluationObject;
+          return this.wrapAsUiObject(uiFieldId || null, "checked");
+          // return {
+          //   uiid: uiFieldId || null,
+          //   fieldId: this.fieldId,
+          //   fieldType: this.fieldJson.type,
+          //   value: "checked",
+          //   statusMessages: [], //statusMessages,
+          // } as TUiEvaluationObject;
         }) || [];
 
-    selectedRows.push({
-      uiid: null,
-      fieldId: this.fieldId,
-      fieldType: this.fieldJson.type,
-      value: "", // this.getStoredValue<string>(submissionDatum as string),
-      statusMessages,
-    });
+    selectedRows.push(
+      this.wrapAsUiObject(null, "", statusMessages)
+      //   {
+      //   uiid: null,
+      //   fieldId: this.fieldId,
+      //   fieldType: this.fieldJson.type,
+      //   value: "", // this.getStoredValue<string>(submissionDatum as string),
+      //   statusMessages,
+      // }
+    );
     return selectedRows as TUiEvaluationObject[];
   }
 
@@ -174,9 +190,10 @@ class MatrixEvaluator extends AbstractEvaluator {
   }
 
   evaluateWithValues<S = string, T = string>(values: S): T {
+    return this.parseSubmittedData(values as string) as T;
     //     evaluateWithValues<T>(values: TFlatSubmissionValues ): TFlatSubmissionValues<T> {
-    const s1 = this.parseSubmittedData(values as string);
-    return s1 as T;
+    // const s1 = this.parseSubmittedData(values as string);
+    // return s1 as T;
     // const s2 =
     //   Array.isArray(s1) &&
     //   s1.reduce((prev, cur, i, a) => {

@@ -76,84 +76,107 @@ abstract class AbstractSubfieldEvaluator extends AbstractEvaluator {
     >(submissionDatum as string);
 
     if (this.isRequired && (submissionDatum === "" || !submissionDatum)) {
-      statusMessages.push({
-        severity: "warn",
-        fieldId: this.fieldId,
-        message:
-          "Submission data missing and required.  This is not an issue if the field is hidden by logic.",
-        relatedFieldIds: [],
-      });
-      return [
-        {
-          uiid: null,
-          fieldId: this.fieldId,
-          fieldType: this.fieldType,
-          value: "",
-          statusMessages,
-        },
-      ];
+      statusMessages.push(
+        this.wrapAsStatusMessage(
+          "warn",
+          "Submission data missing and required.  This is not an issue if the field is hidden by logic."
+        )
+        //   {
+        //   severity: "warn",
+        //   fieldId: this.fieldId,
+        //   message:
+        //     "Submission data missing and required.  This is not an issue if the field is hidden by logic.",
+        //   relatedFieldIds: [],
+        // }
+      );
+
+      return [this.wrapAsUiObject(null, "", statusMessages)];
     }
 
     if (parsedValues === undefined) {
       return [
-        {
-          uiid: null,
-          fieldId: this.fieldId,
-          fieldType: this.fieldType,
-          value: "",
-          statusMessages,
-        },
+        this.wrapAsUiObject(null, "", statusMessages),
+        // {
+        //   uiid: null,
+        //   fieldId: this.fieldId,
+        //   fieldType: this.fieldType,
+        //   value: "",
+        //   statusMessages,
+        // },
       ];
     }
 
     if (Object.keys(parsedValues).length === 0) {
+      statusMessages.push(
+        this.wrapAsStatusMessage("error", "Failed to parse field")
+        //   {
+        //   severity: "error",
+        //   message: "Failed to parse field",
+        //   relatedFieldIds: [],
+        // }
+      );
+
       return [
-        {
-          uiid: null,
-          fieldId: this.fieldId,
-          fieldType: this.fieldJson.type,
-          value: "",
-          statusMessages: [
-            ...statusMessages,
-            {
-              severity: "error",
-              message: "Failed to parse field",
-              relatedFieldIds: [],
-            },
-          ],
-        } as TUiEvaluationObject,
+        this.wrapAsUiObject(null, "", statusMessages),
+        // {
+        //   uiid: null,
+        //   fieldId: this.fieldId,
+        //   fieldType: this.fieldJson.type,
+        //   value: "",
+        //   statusMessages: [
+        //     ...statusMessages,
+        //     {
+        //       severity: "error",
+        //       message: "Failed to parse field",
+        //       relatedFieldIds: [],
+        //     },
+        //   ],
+        // } as TUiEvaluationObject,
       ];
     }
 
     Object.entries(parsedValues).forEach(([key, value]) => {
       if (!this.supportedSubfieldIds.includes(key)) {
-        statusMessages.push({
-          severity: "warn",
-          message: `Found unexpected subfield: '${key}'. With value: '${value}'.`,
-          fieldId: this.fieldId,
-          relatedFieldIds: [],
-        });
+        statusMessages.push(
+          this.wrapAsStatusMessage(
+            "warn",
+            `Found unexpected subfield: '${key}'. With value: '${value}'.`
+          )
+          //   {
+          //   severity: "warn",
+          //   message: `Found unexpected subfield: '${key}'. With value: '${value}'.`,
+          //   fieldId: this.fieldId,
+          //   relatedFieldIds: [],
+          // }
+        );
       }
     });
 
     const uiComponents = this.supportedSubfieldIds.map((subfieldId) => {
-      return {
-        uiid: `field${this.fieldId}-${subfieldId}`,
-        fieldId: this.fieldId,
-        fieldType: this.fieldJson.type,
-        value: parsedValues[subfieldId],
-        statusMessages: [],
-      } as TUiEvaluationObject;
+      return this.wrapAsUiObject(
+        `field${this.fieldId}-${subfieldId}`,
+        parsedValues[subfieldId]
+      );
+      // return {
+      //   uiid: `field${this.fieldId}-${subfieldId}`,
+      //   fieldId: this.fieldId,
+      //   fieldType: this.fieldJson.type,
+      //   value: parsedValues[subfieldId],
+      //   statusMessages: [],
+      // } as TUiEvaluationObject;
     });
 
     // add one more for status message
-    uiComponents.push({
-      uiid: null,
-      fieldId: this.fieldId,
-      fieldType: this.fieldJson.type,
-      value: "",
-      statusMessages: statusMessages,
-    } as TUiEvaluationObject);
+    uiComponents.push(
+      this.wrapAsUiObject(null, "", statusMessages)
+      //   {
+      //   uiid: null,
+      //   fieldId: this.fieldId,
+      //   fieldType: this.fieldJson.type,
+      //   value: "",
+      //   statusMessages: statusMessages,
+      // } as TUiEvaluationObject
+    );
     return uiComponents;
   }
 }

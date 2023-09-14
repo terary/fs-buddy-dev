@@ -15,14 +15,8 @@ class ProductEvaluator extends AbstractSubfieldEvaluator {
 
   evaluateWithValues<S = string, T = string>(values: S): T {
     return this.parseValues(values);
-    // const s2 = this.parseValues(values);
-    // return { [this.fieldId]: s2 as T };
   }
 
-  // evaluateWithValues<T>(values: TEvaluateRequest): TEvaluateResponse<T> {
-  //   const s2 = this.parseSubmittedData(values);
-  //   return { [this.fieldId]: s2 as T };
-  // }
   isCorrectType<T>(submissionDatum: T): boolean {
     const parseSubmittedData = this.parseValues(submissionDatum);
 
@@ -49,11 +43,9 @@ class ProductEvaluator extends AbstractSubfieldEvaluator {
     const parsedValues = this.parseValues<string>(submissionDatum as string);
 
     if (parsedValues === undefined) {
-      statusMessages.push({
-        severity: "error",
-        message: "Failed to parse field. ",
-        relatedFieldIds: [],
-      });
+      statusMessages.push(
+        this.wrapAsStatusMessage("error", "Failed to parse field. ")
+      );
     }
     const parsedValuesObject = Array.isArray(parsedValues)
       ? (parsedValues as unknown as any[]).reduce((prev, cur, i, a) => {
@@ -64,13 +56,11 @@ class ProductEvaluator extends AbstractSubfieldEvaluator {
       : {};
 
     return [
-      {
-        uiid: `field${this.fieldId}`,
-        fieldId: this.fieldId,
-        fieldType: this.fieldJson.type,
-        value: parsedValuesObject["quantity"] as string,
-        statusMessages,
-      },
+      this.wrapAsUiObject(
+        `field${this.fieldId}`,
+        parsedValuesObject["quantity"],
+        statusMessages
+      ),
     ];
   }
 }

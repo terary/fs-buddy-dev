@@ -38,13 +38,14 @@ class NumericOnlyEvaluator extends AbstractEvaluator {
     const parsedValues = this.parseValues<string>(submissionDatum as string);
 
     return [
-      {
-        uiid: `field${this.fieldId}`,
-        fieldId: this.fieldId,
-        fieldType: this.fieldJson.type,
-        value: parsedValues,
-        statusMessages,
-      },
+      this.wrapAsUiObject(`field${this.fieldId}`, parsedValues, statusMessages),
+      // {
+      //   uiid: `field${this.fieldId}`,
+      //   fieldId: this.fieldId,
+      //   fieldType: this.fieldJson.type,
+      //   value: parsedValues,
+      //   statusMessages,
+      // },
     ];
   }
 }

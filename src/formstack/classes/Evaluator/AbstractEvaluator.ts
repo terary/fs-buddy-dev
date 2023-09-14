@@ -2,6 +2,8 @@ import { TFsFieldAny, TFsFieldType } from "../../type.field";
 import type { TStatusRecord } from "../../../chrome-extension/type";
 import { TFlatSubmissionValues, TUiEvaluationObject } from "./type";
 
+type SeverityTypes = "debug" | "error" | "info" | "warn";
+
 abstract class AbstractEvaluator {
   private _fieldJson: TFsFieldAny;
   private _fieldId: string;
@@ -59,22 +61,31 @@ abstract class AbstractEvaluator {
   }
 
   protected getStatusMessageStoredValue<T>(submissionDatum?: T): TStatusRecord {
-    return {
-      severity: "info",
-      fieldId: this.fieldId,
-      message: `Stored value: '${this.getStoredValue(submissionDatum)}'.`,
-      relatedFieldIds: [],
-    };
+    return this.wrapAsStatusMessage(
+      "info",
+      `Stored value: '${this.getStoredValue(submissionDatum)}'.`
+    );
+    // return {
+    //   severity: "info",
+    //   fieldId: this.fieldId,
+    //   message: `Stored value: '${this.getStoredValue(submissionDatum)}'.`,
+    //   relatedFieldIds: [],
+    // };
   }
 
   protected getStatusMessageEmptyAndRequired(): TStatusRecord {
-    return {
-      severity: "warn",
-      fieldId: this.fieldId,
-      message:
-        "Submission data missing and required.  This is not an issue if the field is hidden by logic.",
-      relatedFieldIds: [],
-    };
+    return this.wrapAsStatusMessage(
+      "warn",
+      "Submission data missing and required.  This is not an issue if the field is hidden by logic."
+    );
+
+    // {
+    //   severity: "warn",
+    //   fieldId: this.fieldId,
+    //   message:
+    //     "Submission data missing and required.  This is not an issue if the field is hidden by logic.",
+    //   relatedFieldIds: [],
+    // };
   }
 
   protected createStatusMessageArrayWithStoredValue<T>(
@@ -91,15 +102,34 @@ abstract class AbstractEvaluator {
     statusMessages: TStatusRecord[]
   ): TUiEvaluationObject[] {
     statusMessages.push(this.getStatusMessageEmptyAndRequired());
-    return [
-      {
-        uiid: null,
-        fieldId: this.fieldId,
-        fieldType: this.fieldJson.type,
-        value: "",
-        statusMessages,
-      },
-    ];
+    return [this.wrapAsUiObject(null, "", statusMessages)];
+  }
+
+  protected wrapAsStatusMessage(
+    severity: SeverityTypes,
+    message: string,
+    relatedFieldIds: string[] = [],
+    fieldId?: string
+  ): TStatusRecord {
+    return {
+      severity,
+      fieldId: fieldId || this.fieldId,
+      message,
+      relatedFieldIds,
+    };
+  }
+  protected wrapAsUiObject(
+    uiid: string | null, // null -> on field, not on subfield, undefined => on form not on field/subfield, defined => attached to field/subfield
+    value: string,
+    statusMessages: TStatusRecord[] = []
+  ): TUiEvaluationObject {
+    return {
+      uiid,
+      fieldId: this.fieldId,
+      fieldType: this.fieldType,
+      value,
+      statusMessages,
+    } as TUiEvaluationObject;
   }
 
   abstract getUiPopulateObjects<T = string>(

@@ -84,6 +84,7 @@ describe("DateEvaluator", () => {
             },
             {
               severity: "error",
+              fieldId: "147738166", // if there is no field Id, the status message gets associated with form status messages,  maybe we want that here?
               message:
                 "Failed to parse field. Date did not parse correctly. Date: 'SOME_INVALID_DATE'",
               relatedFieldIds: [],
@@ -155,6 +156,7 @@ describe("DateEvaluator", () => {
               fieldId: "147738166",
               message:
                 "This date is near the epoch.  This could suggest malformed date string. Date: 'Wed Dec 31 1969' ",
+              relatedFieldIds: [],
             },
           ],
         },

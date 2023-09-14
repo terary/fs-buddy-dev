@@ -22,21 +22,27 @@ class NonValueEvaluator extends AbstractEvaluator {
 
   getUiPopulateObjects<T = string>(submissionDatum?: T): TUiEvaluationObject[] {
     return [
-      {
-        uiid: null,
-        fieldId: this.fieldId,
-        fieldType: this.fieldJson.type,
-        statusMessages: [
-          {
-            severity: "debug",
-            message:
-              'Sections may have statusMessages but they will never get "parsed".',
-            fieldId: "147738168",
-            relatedFieldIds: [],
-          },
-        ],
-      },
-    ] as TUiEvaluationObject[];
+      this.wrapAsUiObject(null, "", [
+        this.wrapAsStatusMessage(
+          "debug",
+          'Sections may have statusMessages but they will never get "parsed".'
+        ),
+      ]),
+      // {
+      //   uiid: null,
+      //   fieldId: this.fieldId,
+      //   fieldType: this.fieldJson.type,
+      //   statusMessages: [
+      //     {
+      //       severity: "debug",
+      //       message:
+      //         'Sections may have statusMessages but they will never get "parsed".',
+      //       fieldId: "147738168",
+      //       relatedFieldIds: [],
+      //     },
+      //   ],
+      // },
+    ];
   }
 }
 

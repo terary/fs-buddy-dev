@@ -68,19 +68,26 @@ class DateEvaluator extends GenericEvaluator {
       submissionDatum as string
     );
     if (parsedValues.toString() === "Invalid Date") {
-      statusMessages.push({
-        severity: "error",
-        message: `Failed to parse field. Date did not parse correctly. Date: '${submissionDatum}'`,
-        relatedFieldIds: [],
-      });
+      statusMessages.push(
+        this.wrapAsStatusMessage(
+          "error",
+          `Failed to parse field. Date did not parse correctly. Date: '${submissionDatum}'`
+        )
+        //   {
+        //   severity: "error",
+        //   message: `Failed to parse field. Date did not parse correctly. Date: '${submissionDatum}'`,
+        //   relatedFieldIds: [],
+        // }
+      );
       return [
-        {
-          uiid: null,
-          fieldId: this.fieldId,
-          fieldType: this.fieldJson.type,
-          value: "",
-          statusMessages,
-        } as TUiEvaluationObject,
+        this.wrapAsUiObject(null, "", statusMessages),
+        // {
+        //   uiid: null,
+        //   fieldId: this.fieldId,
+        //   fieldType: this.fieldJson.type,
+        //   value: "",
+        //   statusMessages,
+        // } as TUiEvaluationObject,
       ];
     }
     //    const x = new Date(parsedValues as unknown as string);
@@ -109,66 +116,94 @@ class DateEvaluator extends GenericEvaluator {
     // const diff = Math.abs(x.getTime() - Date.now());
     // console.log({ diff, n, t });
     if (Math.abs(parsedValues.getTime()) < 86400000) {
-      statusMessages.push({
-        severity: "info",
-        fieldId: this.fieldId,
-        message: `This date is near the epoch.  This could suggest malformed date string. Date: '${parsedValues.toDateString()}' `,
-      });
+      statusMessages.push(
+        this.wrapAsStatusMessage(
+          "info",
+          `This date is near the epoch.  This could suggest malformed date string. Date: '${parsedValues.toDateString()}' `
+        )
+        //   {
+        //   severity: "info",
+        //   fieldId: this.fieldId,
+        //   message: `This date is near the epoch.  This could suggest malformed date string. Date: '${parsedValues.toDateString()}' `,
+        // }
+      );
     }
 
     // I am not sure how this will work with other languages or field setting date format
     const localizedMonth = parsedValues.toDateString().split(" ")[1] || "";
 
     return [
-      {
-        uiid: `field${this.fieldId}M`,
-        fieldId: this.fieldId,
-        fieldType: this.fieldJson.type,
-        value: localizedMonth,
-        statusMessages: [],
-      },
-      {
-        uiid: `field${this.fieldId}D`,
-        fieldId: this.fieldId,
-        fieldType: this.fieldJson.type,
-        value: (parsedValues.getDate() + "").padStart(2, "0"), // 1..31
-        statusMessages: [],
-      },
-      {
-        uiid: `field${this.fieldId}Y`,
-        fieldId: this.fieldId,
-        fieldType: this.fieldJson.type,
-        value: parsedValues.getFullYear() + 1 + "",
-        statusMessages: [],
-      },
-      {
-        uiid: `field${this.fieldId}H`,
-        fieldId: this.fieldId,
-        fieldType: this.fieldJson.type,
-        value: (parsedValues.getHours() + "").padStart(2, "0"), // 0..23
-        statusMessages: [],
-      },
-      {
-        uiid: `field${this.fieldId}I`,
-        fieldId: this.fieldId,
-        fieldType: this.fieldJson.type,
-        value: (parsedValues.getMinutes() + "").padStart(2, "0"), // 0..59
-        statusMessages: [],
-      },
-      {
-        uiid: `field${this.fieldId}A`,
-        fieldId: this.fieldId,
-        fieldType: this.fieldJson.type,
-        value: parsedValues.getHours() > 12 ? "PM" : "AM",
-        statusMessages: [],
-      },
-      {
-        uiid: null,
-        fieldId: this.fieldId,
-        fieldType: this.fieldJson.type,
-        value: "", // this.getStoredValue(submissionDatum),
-        statusMessages,
-      },
+      this.wrapAsUiObject(`field${this.fieldId}M`, localizedMonth),
+      // {
+      //   uiid: `field${this.fieldId}M`,
+      //   fieldId: this.fieldId,
+      //   fieldType: this.fieldJson.type,
+      //   value: localizedMonth,
+      //   statusMessages: [],
+      // },
+      this.wrapAsUiObject(
+        `field${this.fieldId}D`,
+        (parsedValues.getDate() + "").padStart(2, "0")
+      ), // 1..31
+      // {
+      //   uiid: `field${this.fieldId}D`,
+      //   fieldId: this.fieldId,
+      //   fieldType: this.fieldJson.type,
+      //   value: (parsedValues.getDate() + "").padStart(2, "0"), // 1..31
+      //   statusMessages: [],
+      // },
+      this.wrapAsUiObject(
+        `field${this.fieldId}Y`,
+        parsedValues.getFullYear() + 1 + ""
+      ),
+      // {
+      //   uiid: `field${this.fieldId}Y`,
+      //   fieldId: this.fieldId,
+      //   fieldType: this.fieldJson.type,
+      //   value: parsedValues.getFullYear() + 1 + "",
+      //   statusMessages: [],
+      // },
+      this.wrapAsUiObject(
+        `field${this.fieldId}H`,
+        (parsedValues.getHours() + "").padStart(2, "0")
+      ),
+      // {
+      //   uiid: `field${this.fieldId}H`,
+      //   fieldId: this.fieldId,
+      //   fieldType: this.fieldJson.type,
+      //   value: (parsedValues.getHours() + "").padStart(2, "0"), // 0..23
+      //   statusMessages: [],
+      // },
+      this.wrapAsUiObject(
+        `field${this.fieldId}I`,
+        (parsedValues.getMinutes() + "").padStart(2, "0")
+      ),
+      // {
+      //   uiid: `field${this.fieldId}I`,
+      //   fieldId: this.fieldId,
+      //   fieldType: this.fieldJson.type,
+      //   value: (parsedValues.getMinutes() + "").padStart(2, "0"), // 0..59
+      //   statusMessages: [],
+      // },
+      this.wrapAsUiObject(
+        `field${this.fieldId}A`,
+        parsedValues.getHours() > 12 ? "PM" : "AM"
+      ),
+      // {
+      //   uiid: `field${this.fieldId}A`,
+      //   fieldId: this.fieldId,
+      //   fieldType: this.fieldJson.type,
+      //   value: parsedValues.getHours() > 12 ? "PM" : "AM",
+      //   statusMessages: [],
+      // },
+      this.wrapAsUiObject(null, "", statusMessages),
+      // {
+      //   uiid: null,
+      //   fieldId: this.fieldId,
+      //   fieldType: this.fieldJson.type,
+      //   value: "", // this.getStoredValue(submissionDatum),
+      //   statusMessages,
+      // },
     ];
   }
 }

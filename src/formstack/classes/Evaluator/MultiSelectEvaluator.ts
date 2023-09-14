@@ -75,20 +75,29 @@ class MultiSelectEvaluator extends AbstractEvaluator {
     const uiidFieldIdMap = this.getUiidFieldIdMap();
     selectedValues.forEach((selectedOption) => {
       if (uiidFieldIdMap[selectedOption]) {
-        uiFields.push({
-          uiid: uiidFieldIdMap[selectedOption],
-          fieldId: this.fieldId,
-          fieldType: this.fieldJson.type,
-          value: selectedOption,
-          statusMessages: [],
-        });
+        uiFields.push(
+          this.wrapAsUiObject(uiidFieldIdMap[selectedOption], selectedOption)
+          //   {
+          //   uiid: uiidFieldIdMap[selectedOption],
+          //   fieldId: this.fieldId,
+          //   fieldType: this.fieldJson.type,
+          //   value: selectedOption,
+          //   statusMessages: [],
+          // }
+        );
       } else {
-        statusMessages.push({
-          severity: "info",
-          fieldId: this.fieldId,
-          message: `Failed to find valid option: '${selectedOption}' within valid options: '${this.validOptionValues()}' `,
-          relatedFieldIds: [],
-        });
+        statusMessages.push(
+          this.wrapAsStatusMessage(
+            "info",
+            `Failed to find valid option: '${selectedOption}' within valid options: '${this.validOptionValues()}' `
+          )
+          //   {
+          //   severity: "info",
+          //   fieldId: this.fieldId,
+          //   message: `Failed to find valid option: '${selectedOption}' within valid options: '${this.validOptionValues()}' `,
+          //   relatedFieldIds: [],
+          // }
+        );
       }
     });
 
@@ -101,13 +110,16 @@ class MultiSelectEvaluator extends AbstractEvaluator {
     //   });
     // }
 
-    uiFields.push({
-      uiid: null,
-      fieldId: this.fieldId,
-      fieldType: this.fieldJson.type,
-      value: "",
-      statusMessages,
-    });
+    uiFields.push(
+      this.wrapAsUiObject(null, "", statusMessages)
+      //   {
+      //   uiid: null,
+      //   fieldId: this.fieldId,
+      //   fieldType: this.fieldJson.type,
+      //   value: "",
+      //   statusMessages,
+      // }
+    );
     return uiFields;
   }
 
@@ -136,12 +148,18 @@ class MultiSelectEvaluator extends AbstractEvaluator {
     const selectedValue = this.parseValues<string>(submissionDatum);
 
     if (!this.isValueInSelectOptions(selectedValue)) {
-      statusMessages.push({
-        severity: "warn",
-        fieldId: this.fieldId,
-        message: `Failed to find valid option: '${selectedValue}' within valid options: '${this.validOptionValues()}' `,
-        relatedFieldIds: [],
-      });
+      statusMessages.push(
+        this.wrapAsStatusMessage(
+          "warn",
+          `Failed to find valid option: '${selectedValue}' within valid options: '${this.validOptionValues()}'.`
+        )
+        //   {
+        //   severity: "warn",
+        //   fieldId: this.fieldId,
+        //   message: `Failed to find valid option: '${selectedValue}' within valid options: '${this.validOptionValues()}' `,
+        //   relatedFieldIds: [],
+        // }
+      );
     }
 
     // if (this.isRequired && selectedValue.length === 0) {
@@ -153,14 +171,17 @@ class MultiSelectEvaluator extends AbstractEvaluator {
     //   });
     // }
 
-    uiFields.push({
-      // others are subfields, this is the main/parent record, used primarily to attach status messages.
-      uiid: `field${this.fieldId}`,
-      fieldId: this.fieldId,
-      fieldType: this.fieldJson.type,
-      value: selectedValue,
-      statusMessages,
-    });
+    uiFields.push(
+      this.wrapAsUiObject(`field${this.fieldId}`, selectedValue, statusMessages)
+      //   {
+      //   // others are subfields, this is the main/parent record, used primarily to attach status messages.
+      //   uiid: `field${this.fieldId}`,
+      //   fieldId: this.fieldId,
+      //   fieldType: this.fieldJson.type,
+      //   value: selectedValue,
+      //   statusMessages,
+      // }
+    );
 
     return uiFields;
   }
@@ -169,15 +190,22 @@ class MultiSelectEvaluator extends AbstractEvaluator {
     submissionDatum?: T | undefined
   ): TStatusRecord[] {
     return [
-      {
-        severity: "info",
-        fieldId: this.fieldId,
-        message: `Stored value: '${((submissionDatum as string) || "").replace(
+      this.wrapAsStatusMessage(
+        "info",
+        `Stored value: '${((submissionDatum as string) || "").replace(
           /\n/g,
           "\\n"
-        )}'.`,
-        relatedFieldIds: [],
-      },
+        )}'.`
+      ),
+      // {
+      //   severity: "info",
+      //   fieldId: this.fieldId,
+      // message: `Stored value: '${((submissionDatum as string) || "").replace(
+      //   /\n/g,
+      //   "\\n"
+      // )}'.`,
+      //   relatedFieldIds: [],
+      // },
     ];
   }
 
@@ -223,38 +251,55 @@ class MultiSelectEvaluator extends AbstractEvaluator {
     const uiidFieldIdMap = this.getUiidFieldIdMap();
 
     if (!uiidFieldIdMap[parsedValues]) {
-      statusMessages.push({
-        severity: "warn",
-        fieldId: this.fieldId,
-        message: `Failed to find valid option: '${submissionDatum}' within valid options: '${this.validOptionValues()}' `,
-        relatedFieldIds: [],
-      });
+      statusMessages.push(
+        this.wrapAsStatusMessage(
+          "warn",
+          `Failed to find valid option: '${submissionDatum}' within valid options: '${this.validOptionValues()}' `
+        )
+        //   {
+        //   severity: "warn",
+        //   fieldId: this.fieldId,
+        //   message: `Failed to find valid option: '${submissionDatum}' within valid options: '${this.validOptionValues()}' `,
+        //   relatedFieldIds: [],
+        // }
+      );
     }
 
     if (this.isRequired && parsedValues === "") {
-      statusMessages.push({
-        severity: "info",
-        fieldId: this.fieldId,
-        message:
-          "Field value appears empty but field is required. (if this field is eventually hidden by logic, then empty value is not significant.)",
-      });
+      statusMessages.push(
+        this.wrapAsStatusMessage(
+          "info",
+          "Field value appears empty but field is required. (if this field is eventually hidden by logic, then empty value is not significant.)"
+        )
+        //   {
+        //   severity: "info",
+        //   fieldId: this.fieldId,
+        //   message:
+        //     "Field value appears empty but field is required. (if this field is eventually hidden by logic, then empty value is not significant.)",
+        // }
+      );
     }
 
     return [
-      {
-        uiid: uiidFieldIdMap[parsedValues] || this.fieldId,
-        fieldId: this.fieldId,
-        fieldType: this.fieldJson.type,
-        value: parsedValues as string,
-        statusMessages: [],
-      },
-      {
-        uiid: null,
-        fieldId: this.fieldId,
-        fieldType: this.fieldJson.type,
-        value: "null",
-        statusMessages,
-      },
+      this.wrapAsUiObject(
+        uiidFieldIdMap[parsedValues] || this.fieldId,
+        parsedValues
+      ),
+      // {
+      //   uiid: uiidFieldIdMap[parsedValues] || this.fieldId,
+      //   fieldId: this.fieldId,
+      //   fieldType: this.fieldJson.type,
+      //   value: parsedValues as string,
+      //   statusMessages: [],
+      // },
+      this.wrapAsUiObject(null, "null", statusMessages),
+      // {
+      //   uiid: null,
+      //   fieldId: this.fieldId,
+      //   fieldType: this.fieldJson.type,
+      //   value: "null",
+      //   statusMessages,
+      // },
     ];
   }
 }

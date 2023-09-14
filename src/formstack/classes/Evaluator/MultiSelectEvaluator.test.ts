@@ -92,7 +92,7 @@ describe("MultiSelectEvaluator", () => {
                 severity: "warn",
                 fieldId: "147738162",
                 message:
-                  "Failed to find valid option: 'INVALID_OPTION' within valid options: 'OPT01', 'OPT02', 'OPT03' ",
+                  "Failed to find valid option: 'INVALID_OPTION' within valid options: 'OPT01', 'OPT02', 'OPT03'.",
                 relatedFieldIds: [],
               },
             ],

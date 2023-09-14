@@ -62,6 +62,7 @@ describe("AbstractSubfieldEvaluator", () => {
             },
             {
               severity: "error",
+              fieldId: "147738157", // if we exclude fieldId it should attached the message on the form, I think we want that here?
               message: "Failed to parse field",
               relatedFieldIds: [],
             },
