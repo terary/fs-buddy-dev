@@ -25,16 +25,6 @@ class GenericEvaluator extends AbstractEvaluator {
         this.isValidSubmissionDatum(datum) ? datum : "",
         statusMessages
       ),
-      // {
-      //   uiid: this.isValidSubmissionDatum(datum)
-      //     ? `field${this.fieldId}`
-      //     : null,
-      //   fieldId: this.fieldId,
-      //   fieldType: this.fieldJson.type,
-      //   value: this.isValidSubmissionDatum(datum) ? datum : "",
-
-      //   statusMessages: statusMessages,
-      // },
     ];
   }
 

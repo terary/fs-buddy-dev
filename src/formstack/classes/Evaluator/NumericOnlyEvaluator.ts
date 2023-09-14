@@ -9,19 +9,7 @@ const isNumericLoosely = (value: any) => {
 };
 
 class NumericOnlyEvaluator extends AbstractEvaluator {
-  parseValues<S = string, T = string>(submissionDatum?: S): T {
-    return submissionDatum as T;
-  }
-  isCorrectType<T>(submissionDatum: T): boolean {
-    return isString(submissionDatum) || isNumericLoosely(submissionDatum);
-  }
-
-  // parseValues<T>(values: TFlatSubmissionValues): TFlatSubmissionValues<T> {
-  //   return { [this.fieldId]: values[this.fieldId] };
-  // }
-
   evaluateWithValues<S = string, T = string>(values: S): T {
-    //   evaluateWithValues<T>( values: TFlatSubmissionValues ) : TFlatSubmissionValues<T> {
     if (isNumericLoosely(values)) {
       return values as unknown as T;
     }
@@ -39,14 +27,15 @@ class NumericOnlyEvaluator extends AbstractEvaluator {
 
     return [
       this.wrapAsUiObject(`field${this.fieldId}`, parsedValues, statusMessages),
-      // {
-      //   uiid: `field${this.fieldId}`,
-      //   fieldId: this.fieldId,
-      //   fieldType: this.fieldJson.type,
-      //   value: parsedValues,
-      //   statusMessages,
-      // },
     ];
+  }
+
+  isCorrectType<T>(submissionDatum: T): boolean {
+    return isString(submissionDatum) || isNumericLoosely(submissionDatum);
+  }
+
+  parseValues<S = string, T = string>(submissionDatum?: S): T {
+    return submissionDatum as T;
   }
 }
 

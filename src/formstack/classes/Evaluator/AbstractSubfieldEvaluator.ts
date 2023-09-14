@@ -1,7 +1,6 @@
 import { TStatusRecord } from "../../../chrome-extension/type";
-// import { InvalidEvaluation } from "../InvalidEvaluation";
 import { AbstractEvaluator } from "./AbstractEvaluator";
-import { TFlatSubmissionValues, TUiEvaluationObject } from "./type";
+import { TUiEvaluationObject } from "./type";
 
 type TAdvancedField = { [subfieldId: string]: string };
 
@@ -81,58 +80,21 @@ abstract class AbstractSubfieldEvaluator extends AbstractEvaluator {
           "warn",
           "Submission data missing and required.  This is not an issue if the field is hidden by logic."
         )
-        //   {
-        //   severity: "warn",
-        //   fieldId: this.fieldId,
-        //   message:
-        //     "Submission data missing and required.  This is not an issue if the field is hidden by logic.",
-        //   relatedFieldIds: [],
-        // }
       );
 
       return [this.wrapAsUiObject(null, "", statusMessages)];
     }
 
     if (parsedValues === undefined) {
-      return [
-        this.wrapAsUiObject(null, "", statusMessages),
-        // {
-        //   uiid: null,
-        //   fieldId: this.fieldId,
-        //   fieldType: this.fieldType,
-        //   value: "",
-        //   statusMessages,
-        // },
-      ];
+      return [this.wrapAsUiObject(null, "", statusMessages)];
     }
 
     if (Object.keys(parsedValues).length === 0) {
       statusMessages.push(
         this.wrapAsStatusMessage("error", "Failed to parse field")
-        //   {
-        //   severity: "error",
-        //   message: "Failed to parse field",
-        //   relatedFieldIds: [],
-        // }
       );
 
-      return [
-        this.wrapAsUiObject(null, "", statusMessages),
-        // {
-        //   uiid: null,
-        //   fieldId: this.fieldId,
-        //   fieldType: this.fieldJson.type,
-        //   value: "",
-        //   statusMessages: [
-        //     ...statusMessages,
-        //     {
-        //       severity: "error",
-        //       message: "Failed to parse field",
-        //       relatedFieldIds: [],
-        //     },
-        //   ],
-        // } as TUiEvaluationObject,
-      ];
+      return [this.wrapAsUiObject(null, "", statusMessages)];
     }
 
     Object.entries(parsedValues).forEach(([key, value]) => {
@@ -142,12 +104,6 @@ abstract class AbstractSubfieldEvaluator extends AbstractEvaluator {
             "warn",
             `Found unexpected subfield: '${key}'. With value: '${value}'.`
           )
-          //   {
-          //   severity: "warn",
-          //   message: `Found unexpected subfield: '${key}'. With value: '${value}'.`,
-          //   fieldId: this.fieldId,
-          //   relatedFieldIds: [],
-          // }
         );
       }
     });
@@ -157,26 +113,10 @@ abstract class AbstractSubfieldEvaluator extends AbstractEvaluator {
         `field${this.fieldId}-${subfieldId}`,
         parsedValues[subfieldId]
       );
-      // return {
-      //   uiid: `field${this.fieldId}-${subfieldId}`,
-      //   fieldId: this.fieldId,
-      //   fieldType: this.fieldJson.type,
-      //   value: parsedValues[subfieldId],
-      //   statusMessages: [],
-      // } as TUiEvaluationObject;
     });
 
     // add one more for status message
-    uiComponents.push(
-      this.wrapAsUiObject(null, "", statusMessages)
-      //   {
-      //   uiid: null,
-      //   fieldId: this.fieldId,
-      //   fieldType: this.fieldJson.type,
-      //   value: "",
-      //   statusMessages: statusMessages,
-      // } as TUiEvaluationObject
-    );
+    uiComponents.push(this.wrapAsUiObject(null, "", statusMessages));
     return uiComponents;
   }
 }

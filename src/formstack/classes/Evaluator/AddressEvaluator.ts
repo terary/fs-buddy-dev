@@ -50,7 +50,6 @@ class AddressEvaluator extends AbstractSubfieldEvaluator {
   }
 
   evaluateWithValues<S = string, T = string>(values: S): T {
-    // evaluateWithValues<T>(values: TEvaluateRequest): TEvaluateResponse<T> {
     return this._parseSubmittedData(values as string) as T;
   }
 

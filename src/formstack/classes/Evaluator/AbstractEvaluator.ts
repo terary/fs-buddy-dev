@@ -65,12 +65,6 @@ abstract class AbstractEvaluator {
       "info",
       `Stored value: '${this.getStoredValue(submissionDatum)}'.`
     );
-    // return {
-    //   severity: "info",
-    //   fieldId: this.fieldId,
-    //   message: `Stored value: '${this.getStoredValue(submissionDatum)}'.`,
-    //   relatedFieldIds: [],
-    // };
   }
 
   protected getStatusMessageEmptyAndRequired(): TStatusRecord {
@@ -78,14 +72,6 @@ abstract class AbstractEvaluator {
       "warn",
       "Submission data missing and required.  This is not an issue if the field is hidden by logic."
     );
-
-    // {
-    //   severity: "warn",
-    //   fieldId: this.fieldId,
-    //   message:
-    //     "Submission data missing and required.  This is not an issue if the field is hidden by logic.",
-    //   relatedFieldIds: [],
-    // };
   }
 
   protected createStatusMessageArrayWithStoredValue<T>(
