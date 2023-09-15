@@ -1,7 +1,7 @@
 import { TStatusRecord } from "../../../chrome-extension/type";
 import { AbstractEvaluator } from "./AbstractEvaluator";
 import { TUiEvaluationObject } from "./type";
-
+const isString = (str: any) => typeof str === "string" || str instanceof String;
 class GenericEvaluator extends AbstractEvaluator {
   parseValues<S = string, T = string>(submissionDatum?: S): T {
     return submissionDatum as T;
@@ -30,13 +30,13 @@ class GenericEvaluator extends AbstractEvaluator {
 
   isCorrectType<T>(submissionDatum: T): boolean {
     const parseSubmittedData = this.parseValues(submissionDatum);
-
+    return isString(parseSubmittedData);
     // should we check if all keys are valid?
-    return (
-      typeof parseSubmittedData === "object" &&
-      parseSubmittedData !== null &&
-      Object.keys(parseSubmittedData).length > 0
-    );
+    // return (
+    //   typeof parseSubmittedData === "object" &&
+    //   parseSubmittedData !== null &&
+    //   Object.keys(parseSubmittedData).length > 0
+    // );
   }
 }
 

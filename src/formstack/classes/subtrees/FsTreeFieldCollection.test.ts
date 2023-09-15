@@ -178,20 +178,40 @@ describe("FsTreeFieldCollection", () => {
     });
   });
   it.only("Should return the value of the calculation given field values", () => {
-    // const field147738154 = formWithAllFieldsJson.fields.filter(
-    //   (field) => field.id === "147738154"
-    // );
+    // logic/not required 147738154
+    // required 148008076
+    const getFieldJson = (fieldId: string) => {
+      return formWithAllFieldsJson.fields.filter(
+        (field) => field.id === fieldId
+      );
+    };
+    const getExpected = (fieldId: string) => {
+      return uiComponentsExpected.filter((x) => x.fieldId === fieldId);
+    };
 
-    const tree = FsTreeFieldCollection.fromFieldJson(
-      // field147738154 as unknown as TFsFieldAnyJson[]
-      formWithAllFieldsJson.fields as unknown as TFsFieldAnyJson[]
+    const fieldJsonNotRequired147738154 = getFieldJson("147738154");
+    const fieldJsonRequired148008076 = getFieldJson("148008076");
+
+    const expected147738154 = getExpected("147738154");
+    const expected148008076 = getExpected("148008076"); // this is wrong __BAD_DATA__ ...
+
+    const tree147738154 = FsTreeFieldCollection.fromFieldJson(
+      fieldJsonNotRequired147738154 as unknown as TFsFieldAnyJson[]
     );
-    const uiComponentsActual = tree.getUiPopulateObject(
+
+    const tree148008076 = FsTreeFieldCollection.fromFieldJson(
+      fieldJsonRequired148008076 as unknown as TFsFieldAnyJson[]
+    );
+
+    const actual147738154 = tree147738154.getUiPopulateObject(
       submissionWithAllFieldsJson as unknown as TSubmissionJson
     );
-    expect(uiComponentsActual).toStrictEqual(uiComponentsExpected);
-    // expect(tree.evaluateWithValues(values)).toStrictEqual([values]);
-    // expect(tree.evaluateWithValues(values)).toStrictEqual([values]);
+    const actual148008076 = tree148008076.getUiPopulateObject(
+      submissionWithAllFieldsJson as unknown as TSubmissionJson
+    );
+
+    expect(expected147738154).toStrictEqual(actual147738154);
+    expect(expected148008076).toStrictEqual(actual148008076);
   });
   /// ---------------------------------
 });

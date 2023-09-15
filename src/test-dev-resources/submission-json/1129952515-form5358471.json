@@ -22,7 +22,7 @@
         },
         {
             "field": "147738156",
-            "value": "prefix = Prefix (optional) 962\nfirst = First Name 89\nmiddle = Middle Name (optional) 784\ninitial = Initial (optional) 173\nlast = Last Name 137\nsuffix = Suffix (optional) 650"
+            "value": "first = First Name 89\nlast = Last Name 137\ninitial = Initial (optional) 173\nmiddle = Middle Name (optional) 784\nprefix = Prefix (optional) 962\nsuffix = Suffix (optional) 650"
         },
         {
             "field": "147738157",
@@ -42,7 +42,7 @@
         },
         {
             "field": "147738161",
-            "value": "Option1"
+            "value": "Option2"
         },
         {
             "field": "147738162",
@@ -50,7 +50,7 @@
         },
         {
             "field": "147738163",
-            "value": "Option1"
+            "value": "Option2"
         },
         {
             "field": "147738164",
@@ -70,7 +70,7 @@
         },
         {
             "field": "147738171",
-            "value": "charge_type = fixed_amount\nquantity = 7\nunit_price = 3.99\ntotal = 27.93"
+            "value": "unit_price = 3.99\nquantity = 7\ncharge_type = fixed_amount\ntotal = 27.93"
         },
         {
             "field": "147738172",
