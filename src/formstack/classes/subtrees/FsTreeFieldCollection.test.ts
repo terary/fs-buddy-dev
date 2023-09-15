@@ -25,7 +25,7 @@ describe("FsTreeFieldCollection", () => {
 
   // I *think*,  I think there is root node and plus 1?  Should root not be null??
   describe(".evaluateWithValues(...)", () => {
-    it.only("Should return the value of the calculation given field values", () => {
+    it("Should return the value of the calculation given field values", () => {
       const tree = FsTreeFieldCollection.fromFieldJson([
         TEST_JSON_FIELD_SIMPLE,
       ] as TFsFieldAnyJson[]);

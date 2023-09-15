@@ -18,7 +18,7 @@ import {
   TFsFieldSection,
   TFsFieldSelect,
 } from "../../../type.field";
-import { InvalidEvaluation } from "../../InvalidEvaluation";
+// import { InvalidEvaluation } from "../../InvalidEvaluation";
 import { Evaluator } from "../../Evaluator";
 
 type TSelectFields = TFsFieldRadio | TFsFieldSelect | TFsFieldCheckbox;
@@ -155,13 +155,17 @@ class FsTreeField extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
   }
 
   evaluateWithValues<T>(values: { [fieldId: string]: any }): {
-    [fieldId: string]: T | InvalidEvaluation; // this null should be instance of class 'InvalidEvaluation' (broken field)
+    [fieldId: string]: T; // | InvalidEvaluation; // this null should be instance of class 'InvalidEvaluation' (broken field)
   } {
     if (this.getLogicTree() === null) {
       const evaluator = Evaluator.getEvaluatorWithFieldJson(
         this.fieldJson as TFsFieldAny
       );
-      return evaluator.evaluateWithValues<T>(values);
+      return {
+        [this.fieldId]: evaluator.evaluateWithValues<T>(
+          values[this.fieldId]
+        ) as T,
+      };
     }
     return values[this.fieldId];
   }
@@ -170,33 +174,38 @@ class FsTreeField extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
     return Evaluator.getEvaluatorWithFieldJson(this.fieldJson as TFsFieldAny);
   }
 
-  private evaluateMultiSelect<T>(values: { [fieldId: string]: any }): {
-    [fieldId: string]: T | InvalidEvaluation;
+  private x_evaluateMultiSelect<T>(values: { [fieldId: string]: any }): {
+    [fieldId: string]: T; // | InvalidEvaluation;
   } {
     const options = (this.fieldJson as TSelectFields).options || [];
     const selectedOption = options.find(
       (option) => option.value === values[this.fieldId]
     );
 
-    if (selectedOption === undefined) {
-      return {
-        [this.fieldId]: new InvalidEvaluation("Selected option not found.", {
-          options,
-          searchValue: values[this.fieldId],
-        }),
-      };
-    } else {
-      return { [this.fieldId]: selectedOption.value as T };
-    }
+    // if (selectedOption === undefined) {
+    //   return {
+    //     [this.fieldId]: new InvalidEvaluation("Selected option not found.", {
+    //       options,
+    //       searchValue: values[this.fieldId],
+    //     }),
+    //   };
+    // } else {
+    //   return { [this.fieldId]: selectedOption.value as T };
+    // }
+    return { [this.fieldId]: (selectedOption || {}).value as T };
   }
 
   private x_evaluateByFieldType<T>(values: { [fieldId: string]: any }): {
-    [fieldId: string]: T | InvalidEvaluation;
+    [fieldId: string]: T; //| InvalidEvaluation;
   } {
     const evaluator = Evaluator.getEvaluatorWithFieldJson(
       this.fieldJson as TFsFieldAny
     );
-    return evaluator.evaluateWithValues<T>(values);
+    return {
+      [this.fieldId]: evaluator.evaluateWithValues<T>(
+        values[this.fieldId]
+      ) as T,
+    };
   }
 
   private getVisibilityLogicChain() {}

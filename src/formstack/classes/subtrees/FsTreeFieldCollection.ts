@@ -1,22 +1,14 @@
-import {
-  AbstractExpressionTree,
-  IExpressionTree,
-} from "predicate-tree-advanced-poc/dist/src";
-import assert from "assert";
+import { AbstractExpressionTree } from "predicate-tree-advanced-poc/dist/src";
 
 import { TFsFieldAnyJson } from "../types";
 import { FsTreeLogicDeep } from "./trees/FsTreeLogicDeep";
 import { FsTreeField } from "./trees/FsTreeField";
-import { TFsFieldAny } from "../../type.field";
 import { transformers } from "../../transformers";
 
 import { FsFieldVisibilityLinkNode, FsFormRootNode } from "./trees/nodes";
 import {
   TFsFieldLogicCheckLeaf,
   TFsFieldLogicJunction,
-  TFsFieldLogicJunctionJson,
-  TFsLogicNode,
-  TFsLogicNodeJson,
   TLogicJunctionOperators,
   TTreeFieldNode,
 } from "./types";
@@ -25,12 +17,7 @@ import { FsCircularDependencyNode } from "./trees/nodes/FsCircularDependencyNode
 import { FsMaxDepthExceededNode } from "./trees/nodes/FsMaxDepthExceededNode";
 import { FsLogicBranchNode } from "./trees/nodes/FsLogicBranchNode";
 import { FsTreeLogic } from "./trees/FsTreeLogic";
-import { Evaluator } from "../Evaluator";
-import {
-  TEvaluateRequest,
-  TEvaluateResponse,
-  TUiEvaluationObject,
-} from "../Evaluator/type";
+import { TUiEvaluationObject } from "../Evaluator/type";
 import { TSubmissionJson } from "../../type.form";
 import { IEValuator } from "../Evaluator/IEvaluator";
 class FsTreeFieldCollection extends AbstractExpressionTree<
@@ -234,7 +221,7 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
 
   getUiPopulateObject(
     apiSubmissionJson: TSubmissionJson
-  ): TEvaluateResponse<any> {
+  ): TUiEvaluationObject[] {
     const mappedSubmissionData = apiSubmissionJson.data.reduce(
       (prev: any, cur: any) => {
         prev[cur.field] = cur.value;
@@ -245,7 +232,7 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
     const submissionUiDataItems: TUiEvaluationObject[] = this.getAllFieldIds()
       .map((fieldId) => {
         const evaluator = this.getEvaluatorByFieldId(fieldId);
-        return evaluator.getUiPopulateObject(mappedSubmissionData);
+        return evaluator.getUiPopulateObjects(mappedSubmissionData[fieldId]);
       })
       .reduce((prev: TUiEvaluationObject[], cur: TUiEvaluationObject[]) => {
         prev.push(...cur);

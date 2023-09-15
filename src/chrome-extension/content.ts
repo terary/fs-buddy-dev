@@ -1,12 +1,9 @@
 import { FormstackBuddy } from "../FormstackBuddy/FormstackBuddy";
 import { FieldLogicService } from "../FormstackBuddy/FieldLogicService";
 import { FsTreeFieldCollection, TFsFieldAnyJson } from "../formstack";
-import { SubmissionEvaluator } from "../FormstackBuddy/SubmissionEvaluator";
-import { FsTreeField } from "../formstack/classes/subtrees/trees";
-import { TEvaluateRequest } from "../formstack/classes/Evaluator/type";
 import type { TStatusRecord } from "./type";
 
-alert("Hell from content.js");
+alert("Hello from content.js");
 function getFormIdFromLocation({ pathname }: Location = location) {
   const regExp = /\/admin\/form\/builder\/(?<formId>\d+)\/build(\/*)+/g;
   return regExp.exec(pathname)?.groups?.formId || null;

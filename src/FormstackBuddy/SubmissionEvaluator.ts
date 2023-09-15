@@ -40,7 +40,7 @@ class SubmissionEvaluator {
       const evaluator = Evaluator.getEvaluatorWithFieldJson(
         fieldTree?.fieldJson as TFsFieldAny
       );
-      return evaluator.getUiPopulateObject({ [datum.fieldId]: datum.value });
+      return evaluator.getUiPopulateObjects({ [datum.fieldId]: datum.value });
     });
 
     return [];
