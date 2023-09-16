@@ -10,6 +10,7 @@ import { MatrixEvaluator } from "./MatrixEvaluator";
 import { NonValueEvaluator } from "./NonValueEvaluator";
 import { ProductEvaluator } from "./ProductEvaluator";
 import { DateEvaluator } from "./DateEvaluator";
+import { CheckboxEvaluator } from "./CheckboxEvaluator";
 
 class Evaluator {
   static getEvaluatorWithFieldJson(fieldJson: TFsFieldAny): IEValuator {
@@ -28,6 +29,7 @@ class Evaluator {
         return new NumericOnlyEvaluator(fieldJson);
 
       case "checkbox":
+        return new CheckboxEvaluator(fieldJson);
       case "radio":
       case "select":
         return new MultiSelectEvaluator(fieldJson);

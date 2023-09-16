@@ -16,6 +16,7 @@ describe("MultiSelectEvaluator", () => {
     });
     describe(".getUiPopulateObjects(...)", () => {
       it("Should return array of properly formatted UI instructions (shape of TUiEvaluationObject).", () => {
+        const testValue = "1";
         const evaluator = new MultiSelectEvaluator(fieldJsonDropdown);
         const actual = evaluator.getUiPopulateObjects(
           submissionDataDropdown.value
@@ -76,10 +77,10 @@ describe("MultiSelectEvaluator", () => {
         const actual = evaluator.getUiPopulateObjects("INVALID_OPTION");
         expect(actual).toStrictEqual([
           {
-            uiid: null,
+            uiid: "field147738162",
             fieldId: "147738162",
             fieldType: "select",
-            value: "",
+            value: "INVALID_OPTION",
             statusMessages: [
               {
                 severity: "info",
@@ -102,30 +103,96 @@ describe("MultiSelectEvaluator", () => {
   });
   describe("Multiple selectable options (checkbox)", () => {
     describe(".getUiPopulateObjects(...)", () => {
+      it("Should return array of properly formatted UI instructions (shape of TUiEvaluationObject).", () => {
+        const evaluator = new MultiSelectEvaluator(fieldJsonCheckbox);
+        const actual = evaluator.getUiPopulateObjects(
+          submissionDataCheckbox.value
+        );
+        expect(actual).toStrictEqual([
+          {
+            uiid: "field147738164_1",
+            fieldId: "147738164",
+            fieldType: "checkbox",
+            value: "Option1",
+            statusMessages: [],
+          },
+          {
+            uiid: "field147738164_2",
+            fieldId: "147738164",
+            fieldType: "checkbox",
+            value: "Option2",
+            statusMessages: [],
+          },
+          {
+            uiid: null,
+            fieldId: "147738164",
+            fieldType: "checkbox",
+            value: "",
+            statusMessages: [
+              {
+                severity: "info",
+                fieldId: "147738164",
+                message: "Stored value: 'Option1\\nOption2'.",
+                relatedFieldIds: [],
+              },
+            ],
+          },
+        ]);
+      });
+      it("Should return TUiEvaluationObject[] with statusMessage indicating empty value and option not found, if datum is empty string.", () => {
+        const evaluator = new MultiSelectEvaluator({
+          ...fieldJsonCheckbox,
+          ...{ required: "1" },
+        } as unknown as TFsFieldAny);
+        const actual = evaluator.getUiPopulateObjects("");
+        expect(actual).toStrictEqual([
+          {
+            uiid: null,
+            fieldId: "147738164",
+            fieldType: "checkbox",
+            value: "",
+            statusMessages: [
+              {
+                severity: "info",
+                fieldId: "147738164",
+                message: "Stored value: ''.",
+                relatedFieldIds: [],
+              },
+              {
+                severity: "warn",
+                fieldId: "147738164",
+                message:
+                  "Failed to find valid option: '' within valid options: 'Option1', 'Option2', 'Option3'.",
+                relatedFieldIds: [],
+              },
+            ],
+          },
+        ]);
+      });
       it("Should return TUiEvaluationObject[] with statusMessage indicating empty and require value, if datum is undefined.", () => {
         const evaluator = new MultiSelectEvaluator({
-          ...fieldJsonDropdown,
+          ...fieldJsonCheckbox,
           ...{ required: "1" },
         } as unknown as TFsFieldAny);
         const actual = evaluator.getUiPopulateObjects();
         expect(actual).toStrictEqual([
           {
             uiid: null,
-            fieldId: "147738162",
-            fieldType: "select",
+            fieldId: "147738164",
+            fieldType: "checkbox",
             value: "",
             statusMessages: [
               {
                 severity: "warn",
-                fieldId: "147738162",
+                fieldId: "147738164",
                 message: "Stored value: '__MISSING_AND_REQUIRED__'.",
                 relatedFieldIds: [],
               },
               {
                 severity: "warn",
-                fieldId: "147738162",
+                fieldId: "147738164",
                 message:
-                  "Failed to find valid option: 'undefined' within valid options: 'OPT01', 'OPT02', 'OPT03'.",
+                  "Submission data missing and required.  This is not an issue if the field is hidden by logic.",
                 relatedFieldIds: [],
               },
             ],
@@ -134,26 +201,26 @@ describe("MultiSelectEvaluator", () => {
       });
       it("Should return TUiEvaluationObject[] with statusMessage indicating bad data type if datum type not string. (radio/select)", () => {
         const evaluator = new MultiSelectEvaluator({
-          ...fieldJsonDropdown,
+          ...fieldJsonCheckbox,
           ...{ required: "1", type: "radio" },
         } as unknown as TFsFieldAny);
         const actual = evaluator.getUiPopulateObjects([]);
         expect(actual).toStrictEqual([
           {
             uiid: null,
-            fieldId: "147738162",
+            fieldId: "147738164",
             fieldType: "radio",
             value: "",
             statusMessages: [
               {
                 severity: "warn",
-                fieldId: "147738162",
+                fieldId: "147738164",
                 message: "Stored value: '__BAD_DATA_TYPE__ (object)'.",
                 relatedFieldIds: [],
               },
               {
                 severity: "warn",
-                fieldId: "147738162",
+                fieldId: "147738164",
                 message: "stringified: []",
                 relatedFieldIds: [],
               },
@@ -162,26 +229,94 @@ describe("MultiSelectEvaluator", () => {
         ]);
       });
       it("Should empty return item with empty value and status message if field required and invalid selected.", () => {
-        const evaluator = new MultiSelectEvaluator(fieldJsonDropdown);
+        const evaluator = new MultiSelectEvaluator(fieldJsonCheckbox);
         const actual = evaluator.getUiPopulateObjects("_INVALID_OPTION_");
         expect(actual).toStrictEqual([
           {
             uiid: null,
-            fieldId: "147738162",
-            fieldType: "select",
+            fieldId: "147738164",
+            fieldType: "checkbox",
             value: "",
             statusMessages: [
               {
                 severity: "info",
-                fieldId: "147738162",
+                fieldId: "147738164",
                 message: "Stored value: '_INVALID_OPTION_'.",
                 relatedFieldIds: [],
               },
               {
+                severity: "info",
+                fieldId: "147738164",
+                message:
+                  "Failed to find valid option: '_INVALID_OPTION_' within valid options: 'Option1', 'Option2', 'Option3' ",
+                relatedFieldIds: [],
+              },
+            ],
+          },
+        ]);
+      });
+      it("Should empty return item with empty value and status message if field required and invalid selected.", () => {
+        const evaluator = new MultiSelectEvaluator(fieldJsonCheckbox);
+        const actual = evaluator.getUiPopulateObjects(
+          submissionDataCheckbox.value + "\n_INVALID_OPTION_"
+        );
+        expect(actual).toStrictEqual([
+          {
+            uiid: "field147738164_1",
+            fieldId: "147738164",
+            fieldType: "checkbox",
+            value: "Option1",
+            statusMessages: [],
+          },
+          {
+            uiid: "field147738164_2",
+            fieldId: "147738164",
+            fieldType: "checkbox",
+            value: "Option2",
+            statusMessages: [],
+          },
+          {
+            uiid: null,
+            fieldId: "147738164",
+            fieldType: "checkbox",
+            value: "",
+            statusMessages: [
+              {
+                severity: "info",
+                fieldId: "147738164",
+                message:
+                  "Stored value: 'Option1\\nOption2\\n_INVALID_OPTION_'.",
+                relatedFieldIds: [],
+              },
+              {
+                severity: "info",
+                fieldId: "147738164",
+                message:
+                  "Failed to find valid option: '_INVALID_OPTION_' within valid options: 'Option1', 'Option2', 'Option3' ",
+                relatedFieldIds: [],
+              },
+            ],
+          },
+        ]);
+      });
+      it.skip("Should include statusMessage when the parsedValue is not one of the available options.", () => {
+        // skipped because this is using dropdown,
+        const evaluator = new MultiSelectEvaluator(fieldJsonDropdown);
+        const actual = evaluator.getUiPopulateObjects({
+          [submissionDataDropdown.field]: "INVALID_OPTION",
+        });
+        expect(actual).toStrictEqual([
+          {
+            uiid: "147738162",
+            fieldId: "147738162",
+            fieldType: "select",
+            value: "INVALID_OPTION",
+            statusMessages: [
+              {
                 severity: "warn",
                 fieldId: "147738162",
                 message:
-                  "Failed to find valid option: '_INVALID_OPTION_' within valid options: 'OPT01', 'OPT02', 'OPT03'.",
+                  "Failed to find valid option: 'INVALID_OPTION' within valid options: 'OPT01', 'OPT02', 'OPT03' ",
                 relatedFieldIds: [],
               },
             ],
@@ -241,3 +376,50 @@ const submissionDataCheckbox = {
   field: "147738164",
   value: "Option1\nOption2",
 };
+
+const fieldJsonCheckbox = {
+  id: "147738164",
+  label: "Checkbox",
+  hide_label: "0",
+  description: "",
+  name: "checkbox",
+  type: "checkbox",
+  options: [
+    {
+      label: "Option1",
+      value: "Option1",
+    },
+    {
+      label: "Option2",
+      value: "Option2",
+    },
+    {
+      label: "Option3",
+      value: "Option3",
+    },
+  ],
+  required: "0",
+  uniq: "0",
+  hidden: "0",
+  readonly: "0",
+  colspan: "1",
+  sort: "13",
+  logic: null,
+  calculation: "",
+  workflow_access: "write",
+  default: "",
+  option_layout: "vertical",
+  option_other: 0,
+  option_checkall: 0,
+  randomize_options: 0,
+  option_store: "value",
+  option_show_values: 0,
+  use_images: 0,
+  image_dimensions: "customDimensions",
+  image_height: 100,
+  image_width: 100,
+  lock_image_ratio: true,
+  lock_image_ratio_option: "fitProportionally",
+  image_label_alignment: "bottom",
+  hide_option_button: true,
+} as unknown as TFsFieldAny;
