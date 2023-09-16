@@ -6,6 +6,9 @@ import { TFsFieldAny } from "../../type.field";
 import { FsTreeLogic } from "./trees/FsTreeLogic";
 import { FsCircularDependencyNode } from "./trees/nodes/FsCircularDependencyNode";
 import { FsLogicLeafNode } from "./trees/nodes/FsLogicLeafNode";
+import formWithAllFieldsJson from "../../../test-dev-resources/form-json/5358471.json";
+import submissionWithAllFieldsJson from "../../../test-dev-resources/submission-json/1129952515-form5358471.json";
+import { TSubmissionJson } from "../../type.form";
 
 describe("FsTreeFieldCollection", () => {
   describe("Creation", () => {
@@ -25,11 +28,14 @@ describe("FsTreeFieldCollection", () => {
 
   // I *think*,  I think there is root node and plus 1?  Should root not be null??
   describe(".evaluateWithValues(...)", () => {
-    it.skip("Should return the value of the calculation given field values", () => {
-      const tree = FsTreeFieldCollection.fromFieldJson(
-        TEST_JSON_FIELDS as TFsFieldAnyJson[]
-      );
-      expect(tree.evaluateWithValues({ "123": 3 })).toStrictEqual(38);
+    it("Should return the value of the calculation given field values", () => {
+      const tree = FsTreeFieldCollection.fromFieldJson([
+        TEST_JSON_FIELD_SIMPLE,
+      ] as TFsFieldAnyJson[]);
+      const values = {
+        "148136237": "Show",
+      };
+      expect(tree.evaluateWithValues(values)).toStrictEqual([values]);
     });
   });
 
@@ -68,7 +74,6 @@ describe("FsTreeFieldCollection", () => {
           "148509721",
         ].sort()
       );
-      console.log({ tree, fieldsInSection });
     });
   });
 
@@ -124,8 +129,6 @@ describe("FsTreeFieldCollection", () => {
         agBigDipper: agBigDipper.getDependantFieldIds(),
       };
 
-      console.log(counts);
-
       // // These are not getting loaded in correctly.
       // // the logic . checks are never internalized, its always the same rootNodeContent
 
@@ -172,16 +175,44 @@ describe("FsTreeFieldCollection", () => {
         "148604234",
         "148604236",
       ]);
-
-      console.log({
-        agBigDipper,
-        agLittleDipperCircular,
-        agTreeCircularRefA,
-        agTreeCircularRefB,
-      });
     });
   });
+  it.only("Should return the value of the calculation given field values", () => {
+    // logic/not required 147738154
+    // required 148008076
+    const getFieldJson = (fieldId: string) => {
+      return formWithAllFieldsJson.fields.filter(
+        (field) => field.id === fieldId
+      );
+    };
+    const getExpected = (fieldId: string) => {
+      return uiComponentsExpected.filter((x) => x.fieldId === fieldId);
+    };
 
+    const fieldJsonNotRequired147738154 = getFieldJson("147738154");
+    const fieldJsonRequired148008076 = getFieldJson("148008076");
+
+    const expected147738154 = getExpected("147738154");
+    const expected148008076 = getExpected("148008076"); // this is wrong __BAD_DATA__ ...
+
+    const tree147738154 = FsTreeFieldCollection.fromFieldJson(
+      fieldJsonNotRequired147738154 as unknown as TFsFieldAnyJson[]
+    );
+
+    const tree148008076 = FsTreeFieldCollection.fromFieldJson(
+      fieldJsonRequired148008076 as unknown as TFsFieldAnyJson[]
+    );
+
+    const actual147738154 = tree147738154.getUiPopulateObject(
+      submissionWithAllFieldsJson as unknown as TSubmissionJson
+    );
+    const actual148008076 = tree148008076.getUiPopulateObject(
+      submissionWithAllFieldsJson as unknown as TSubmissionJson
+    );
+
+    expect(expected147738154).toStrictEqual(actual147738154);
+    expect(expected148008076).toStrictEqual(actual148008076);
+  });
   /// ---------------------------------
 });
 
@@ -255,7 +286,551 @@ const TEST_JSON_FIELD_CALC_STRING = {
   text_editor: "wysiwyg",
 } as unknown;
 
+const TEST_JSON_FIELD_SIMPLE = {
+  id: "148136237",
+  label: "ShowHide",
+  hide_label: "0",
+  description: "",
+  name: "showhide",
+  type: "select",
+  options: [
+    { label: "Hide", value: "Hide", imageUrl: null },
+    { label: "Show", value: "Show", imageUrl: null },
+  ],
+  required: "0",
+  uniq: "0",
+  hidden: "0",
+  readonly: "0",
+  colspan: "1",
+  sort: "2",
+  logic: null,
+  calculation: "",
+  workflow_access: "write",
+  default: "",
+  select_size: 1,
+  option_layout: "vertical",
+  option_other: 0,
+  randomize_options: 0,
+  option_store: "value",
+  option_show_values: 0,
+} as unknown;
+
 const TEST_JSON_FIELDS = [
   TEST_JSON_FIELD_CALC_STRING,
   TEST_JSON_FIELD_LOGIC,
 ] as TFsFieldAnyJson[];
+
+const uiComponentsExpected = [
+  {
+    uiid: null,
+    fieldId: "147738154",
+    fieldType: "text",
+    value: "",
+    statusMessages: [
+      {
+        severity: "info",
+        fieldId: "147738154",
+        message: "Stored value: '__EMPTY_SUBMISSION_DATA__'.",
+        relatedFieldIds: [],
+      },
+    ],
+  },
+  {
+    uiid: "field147738155",
+    fieldId: "147738155",
+    fieldType: "textarea",
+    value: '__BAD_DATA_TYPE__ "string"',
+    statusMessages: [
+      {
+        severity: "info",
+        fieldId: "147738155",
+        message: "Stored value: '__BAD_DATA_TYPE__ \"string\"'.",
+        relatedFieldIds: [],
+      },
+    ],
+  },
+  {
+    uiid: "field147738156-first",
+    fieldId: "147738156",
+    fieldType: "name",
+    value: "First Name 89",
+    statusMessages: [],
+  },
+  {
+    uiid: "field147738156-last",
+    fieldId: "147738156",
+    fieldType: "name",
+    value: "Last Name 137",
+    statusMessages: [],
+  },
+  {
+    uiid: "field147738156-initial",
+    fieldId: "147738156",
+    fieldType: "name",
+    value: "Initial (optional) 173",
+    statusMessages: [],
+  },
+  {
+    uiid: "field147738156-prefix",
+    fieldId: "147738156",
+    fieldType: "name",
+    value: "Prefix (optional) 962",
+    statusMessages: [],
+  },
+  {
+    uiid: "field147738156-suffix",
+    fieldId: "147738156",
+    fieldType: "name",
+    value: "Suffix (optional) 650",
+    statusMessages: [],
+  },
+  {
+    uiid: "field147738156-middle",
+    fieldId: "147738156",
+    fieldType: "name",
+    value: "Middle Name (optional) 784",
+    statusMessages: [],
+  },
+  {
+    uiid: null,
+    fieldId: "147738156",
+    fieldType: "name",
+    value: "",
+    statusMessages: [
+      {
+        severity: "info",
+        fieldId: "147738156",
+        message:
+          "Stored value: 'prefix = Prefix (optional) 962\\nfirst = First Name 89\\nmiddle = Middle Name (optional) 784\\ninitial = Initial (optional) 173\\nlast = Last Name 137\\nsuffix = Suffix (optional) 650'.",
+        relatedFieldIds: [],
+      },
+    ],
+  },
+  {
+    uiid: "field147738157-address",
+    fieldId: "147738157",
+    fieldType: "address",
+    value: "123 Walt Disney Way 8",
+    statusMessages: [],
+  },
+  {
+    uiid: "field147738157-address2",
+    fieldId: "147738157",
+    fieldType: "address",
+    value: "Micky Mouse Hut #2, 5",
+    statusMessages: [],
+  },
+  {
+    uiid: "field147738157-city",
+    fieldId: "147738157",
+    fieldType: "address",
+    value: "Disney World 6",
+    statusMessages: [],
+  },
+  {
+    uiid: "field147738157-state",
+    fieldId: "147738157",
+    fieldType: "address",
+    value: "VA",
+    statusMessages: [],
+  },
+  {
+    uiid: "field147738157-zip",
+    fieldId: "147738157",
+    fieldType: "address",
+    value: "04240",
+    statusMessages: [],
+  },
+  {
+    uiid: "field147738157-country",
+    fieldId: "147738157",
+    fieldType: "address",
+    value: "Bulgaria",
+    statusMessages: [],
+  },
+  {
+    uiid: null,
+    fieldId: "147738157",
+    fieldType: "address",
+    value: "",
+    statusMessages: [
+      {
+        severity: "info",
+        fieldId: "147738157",
+        message:
+          "Stored value: 'address = 123 Walt Disney Way 8\\naddress2 = Micky Mouse Hut #2, 5\\ncity = Disney World 6\\nstate = VA\\nzip = 04240\\ncountry = Bulgaria'.",
+        relatedFieldIds: [],
+      },
+    ],
+  },
+  {
+    uiid: "field147738158",
+    fieldId: "147738158",
+    fieldType: "email",
+    value: '__BAD_DATA_TYPE__ "string"',
+    statusMessages: [
+      {
+        severity: "info",
+        fieldId: "147738158",
+        message: "Stored value: '__BAD_DATA_TYPE__ \"string\"'.",
+        relatedFieldIds: [],
+      },
+    ],
+  },
+  {
+    uiid: "field147738159",
+    fieldId: "147738159",
+    fieldType: "phone",
+    value: '__BAD_DATA_TYPE__ "string"',
+    statusMessages: [
+      {
+        severity: "info",
+        fieldId: "147738159",
+        message: "Stored value: '__BAD_DATA_TYPE__ \"string\"'.",
+        relatedFieldIds: [],
+      },
+    ],
+  },
+  {
+    uiid: "field147738160",
+    fieldId: "147738160",
+    fieldType: "number",
+    value: "1",
+    statusMessages: [
+      {
+        severity: "info",
+        fieldId: "147738160",
+        message: "Stored value: '1'.",
+        relatedFieldIds: [],
+      },
+    ],
+  },
+  {
+    uiid: "field147738161",
+    fieldId: "147738161",
+    fieldType: "select",
+    value: "Option1",
+    statusMessages: [
+      {
+        severity: "info",
+        fieldId: "147738161",
+        message: "Stored value: 'Option1'.",
+        relatedFieldIds: [],
+      },
+    ],
+  },
+  {
+    uiid: "field147738162",
+    fieldId: "147738162",
+    fieldType: "select",
+    value: "OPT03",
+    statusMessages: [
+      {
+        severity: "info",
+        fieldId: "147738162",
+        message: "Stored value: 'OPT03'.",
+        relatedFieldIds: [],
+      },
+    ],
+  },
+  {
+    uiid: "field147738163_1",
+    fieldId: "147738163",
+    fieldType: "radio",
+    value: "Option1",
+    statusMessages: [],
+  },
+  {
+    uiid: null,
+    fieldId: "147738163",
+    fieldType: "radio",
+    value: "null",
+    statusMessages: [
+      {
+        severity: "info",
+        fieldId: "147738163",
+        message: "Stored value: 'Option1'.",
+        relatedFieldIds: [],
+      },
+    ],
+  },
+  {
+    uiid: "field147738164_1",
+    fieldId: "147738164",
+    fieldType: "checkbox",
+    value: "Option1",
+    statusMessages: [],
+  },
+  {
+    uiid: "field147738164_2",
+    fieldId: "147738164",
+    fieldType: "checkbox",
+    value: "Option2",
+    statusMessages: [],
+  },
+  {
+    uiid: null,
+    fieldId: "147738164",
+    fieldType: "checkbox",
+    value: "",
+    statusMessages: [
+      {
+        severity: "info",
+        fieldId: "147738164",
+        message: "Stored value: 'Option1\\nOption2'.",
+        relatedFieldIds: [],
+      },
+    ],
+  },
+  {
+    uiid: null,
+    fieldId: "147738165",
+    fieldType: "creditcard",
+    value: "",
+    statusMessages: [
+      {
+        severity: "debug",
+        fieldId: "147738165",
+        message:
+          'Sections may have statusMessages but they will never get "parsed".',
+        relatedFieldIds: [],
+      },
+    ],
+  },
+  {
+    uiid: "field147738166M",
+    fieldId: "147738166",
+    fieldType: "datetime",
+    value: "Nov",
+    statusMessages: [],
+  },
+  {
+    uiid: "field147738166D",
+    fieldId: "147738166",
+    fieldType: "datetime",
+    value: "13",
+    statusMessages: [],
+  },
+  {
+    uiid: "field147738166Y",
+    fieldId: "147738166",
+    fieldType: "datetime",
+    value: "2022",
+    statusMessages: [],
+  },
+  {
+    uiid: "field147738166H",
+    fieldId: "147738166",
+    fieldType: "datetime",
+    value: "02",
+    statusMessages: [],
+  },
+  {
+    uiid: "field147738166I",
+    fieldId: "147738166",
+    fieldType: "datetime",
+    value: "39",
+    statusMessages: [],
+  },
+  {
+    uiid: "field147738166A",
+    fieldId: "147738166",
+    fieldType: "datetime",
+    value: "AM",
+    statusMessages: [],
+  },
+  {
+    uiid: null,
+    fieldId: "147738166",
+    fieldType: "datetime",
+    value: "",
+    statusMessages: [
+      {
+        severity: "info",
+        fieldId: "147738166",
+        message: "Stored value: 'Nov 13, 2021 02:39 AM'.",
+        relatedFieldIds: [],
+      },
+    ],
+  },
+  {
+    uiid: "field147738167",
+    fieldId: "147738167",
+    fieldType: "file",
+    value: '__BAD_DATA_TYPE__ "string"',
+    statusMessages: [
+      {
+        severity: "info",
+        fieldId: "147738167",
+        message: "Stored value: '__BAD_DATA_TYPE__ \"string\"'.",
+        relatedFieldIds: [],
+      },
+    ],
+  },
+  {
+    uiid: null,
+    fieldId: "147738168",
+    fieldType: "matrix",
+    value: "",
+    statusMessages: [
+      {
+        severity: "info",
+        fieldId: "147738168",
+        message: "Stored value: '__BAD_DATA_TYPE__ \"string\"'.",
+        relatedFieldIds: [],
+      },
+    ],
+  },
+  {
+    uiid: null,
+    fieldId: "147738169",
+    fieldType: "richtext",
+    value: "",
+    statusMessages: [
+      {
+        severity: "debug",
+        fieldId: "147738169",
+        message:
+          'Sections may have statusMessages but they will never get "parsed".',
+        relatedFieldIds: [],
+      },
+    ],
+  },
+  {
+    uiid: null,
+    fieldId: "147738170",
+    fieldType: "embed",
+    value: "",
+    statusMessages: [
+      {
+        severity: "debug",
+        fieldId: "147738170",
+        message:
+          'Sections may have statusMessages but they will never get "parsed".',
+        relatedFieldIds: [],
+      },
+    ],
+  },
+  {
+    uiid: "field147738171",
+    fieldId: "147738171",
+    fieldType: "product",
+    value: undefined,
+    statusMessages: [
+      {
+        severity: "info",
+        fieldId: "147738171",
+        message:
+          "Stored value: 'charge_type = fixed_amount\\nquantity = 7\\nunit_price = 3.99\\ntotal = 27.93'.",
+        relatedFieldIds: [],
+      },
+    ],
+  },
+  {
+    uiid: "field147738172",
+    fieldId: "147738172",
+    fieldType: "signature",
+    value: '__BAD_DATA_TYPE__ "string"',
+    statusMessages: [
+      {
+        severity: "info",
+        fieldId: "147738172",
+        message: "Stored value: '__BAD_DATA_TYPE__ \"string\"'.",
+        relatedFieldIds: [],
+      },
+    ],
+  },
+  {
+    uiid: "field147738173",
+    fieldId: "147738173",
+    fieldType: "rating",
+    value: "2",
+    statusMessages: [
+      {
+        severity: "info",
+        fieldId: "147738173",
+        message: "Stored value: '2'.",
+        relatedFieldIds: [],
+      },
+    ],
+  },
+  {
+    uiid: "field147887088",
+    fieldId: "147887088",
+    fieldType: "text",
+    value: '__BAD_DATA_TYPE__ "string"',
+    statusMessages: [
+      {
+        severity: "info",
+        fieldId: "147887088",
+        message: "Stored value: '__BAD_DATA_TYPE__ \"string\"'.",
+        relatedFieldIds: [],
+      },
+    ],
+  },
+  {
+    uiid: "field148008076",
+    fieldId: "148008076",
+    fieldType: "text",
+    value: '__BAD_DATA_TYPE__ "string"',
+    statusMessages: [
+      {
+        severity: "info",
+        fieldId: "148008076",
+        message: "Stored value: '__BAD_DATA_TYPE__ \"string\"'.",
+        relatedFieldIds: [],
+      },
+    ],
+  },
+  {
+    uiid: "field148111228_1",
+    fieldId: "148111228",
+    fieldType: "checkbox",
+    value: "Show",
+    statusMessages: [],
+  },
+  {
+    uiid: null,
+    fieldId: "148111228",
+    fieldType: "checkbox",
+    value: "",
+    statusMessages: [
+      {
+        severity: "info",
+        fieldId: "148111228",
+        message: "Stored value: 'Show'.",
+        relatedFieldIds: [],
+      },
+    ],
+  },
+  {
+    uiid: null,
+    fieldId: "148113605",
+    fieldType: "embed",
+    value: "",
+    statusMessages: [
+      {
+        severity: "debug",
+        fieldId: "148113605",
+        message:
+          'Sections may have statusMessages but they will never get "parsed".',
+        relatedFieldIds: [],
+      },
+    ],
+  },
+  {
+    uiid: null,
+    fieldId: "149279532",
+    fieldType: "section",
+    value: "",
+    statusMessages: [
+      {
+        severity: "debug",
+        fieldId: "149279532",
+        message:
+          'Sections may have statusMessages but they will never get "parsed".',
+        relatedFieldIds: [],
+      },
+    ],
+  },
+];

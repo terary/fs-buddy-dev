@@ -1,5 +1,5 @@
 /**
- * Probably not producation quality
+ * Probably not production quality
  *  - probably some field types are missing properties
  *  - field value datatypes are known to have issues from the source
  *         eg: things like option array can be a list of options [...], empty list ([]), null, or empty string
@@ -9,7 +9,10 @@
  *
  */
 
-import { TFsFieldLogicJunction } from "./classes/subtrees/types";
+import {
+  TFsFieldLogicJunction,
+  TFsJunctionOperators,
+} from "./classes/subtrees/types";
 
 type TFsFieldType =
   | "address"
@@ -33,6 +36,12 @@ type TFsFieldType =
   | "rating"
   | "richtext";
 
+type TFsSelectOption = {
+  value: string;
+  label: string;
+  // maybe imageUrl or similar ?
+};
+
 type TFsBaseFieldType = {
   id: string;
   label: string;
@@ -54,13 +63,13 @@ type TFsBaseFieldType = {
   colspan: number;
   sort: number; //  something like field-on-form order
 
-  logic: TFsFieldLogicJunction; // ?
+  logic: TFsFieldLogicJunction<TFsJunctionOperators>; // ?
+
   calculation: null | string; // ?  probably never an object
   // calculation: null | object; // ?  not sure of the shape
   workflow_access: "write"; //  what other possibilities
   default: string | object; // matrix use options array
 };
-
 type TFsFieldAddress = TFsBaseFieldType & {
   text_size: number;
   visible_subfields: string[]; // example ["address", ..., "zip"]
@@ -74,6 +83,7 @@ type TFsFieldAddress = TFsBaseFieldType & {
 };
 
 type TFsFieldCheckbox = TFsBaseFieldType & {
+  options: TFsSelectOption[];
   option_layout: "vertical"; // probably others
   option_other: boolean; // example 0 | 1;
   randomize_options: boolean; // example 0 | 1;
@@ -186,10 +196,16 @@ type TFsFieldRichText = TFsBaseFieldType & {
   section_text: string;
   text_editor: "wysiwyg"; // probably other options
 };
-type TFFieldSelect = TFsBaseFieldType & {
+type TFsFieldSelect = TFsBaseFieldType & {
   // drop down list
+  options: TFsSelectOption[];
   select_size: number;
 };
+
+type TFsFieldRadio = TFsBaseFieldType & {
+  options: TFsSelectOption[];
+};
+
 type TFsFieldSection = TFsBaseFieldType & {
   num_columns: number;
   label_position: "default";
@@ -237,9 +253,10 @@ type TFsFieldAny =
   | TFsFieldNumber
   | TFsFieldPhone
   | TFsFieldProduct
+  | TFsFieldRadio
   | TFsFieldRating
   | TFsFieldRichText
-  | TFFieldSelect
+  | TFsFieldSelect
   | TFsFieldSection
   | TFsFieldTextArea
   | TFsFieldText
@@ -261,11 +278,14 @@ export type {
   TFsFieldNumber,
   TFsFieldPhone,
   TFsFieldProduct,
+  TFsFieldRadio,
   TFsFieldRating,
   TFsFieldRichText,
-  TFFieldSelect,
+  TFsFieldSelect,
   TFsFieldSection,
   TFsFieldTextArea,
   TFsFieldText,
+  TFsFieldType,
   TFsBaseFieldType,
+  TFsSelectOption,
 };

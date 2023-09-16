@@ -1,14 +1,11 @@
-import { ITree } from "predicate-tree-advanced-poc/dist/src";
-import { FsTreeFieldCollection } from "../formstack";
 import { TApiFormJson } from "../formstack/type.form";
 import { FormstackBuddy } from "../FormstackBuddy/FormstackBuddy";
 import { FieldLogicService } from "../FormstackBuddy/FieldLogicService";
+
 const getFormJsonFromApi = async (message: any): Promise<TApiFormJson> => {
   const { apiKey, formId } = message;
 
   return new Promise((resolve, reject) => {
-    console.log("Preparing request");
-
     if (!apiKey || !formId) {
       throw new Error(`apiKey: '${apiKey}' or formId: '${formId}'.`);
     }
@@ -39,8 +36,6 @@ const getFormJsonFromApi = async (message: any): Promise<TApiFormJson> => {
       .catch((error) => reject(error));
   });
 };
-
-type x_TFsFormJson = any;
 
 class TreeManager {
   static #instance: TreeManager;

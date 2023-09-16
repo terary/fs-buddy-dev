@@ -1,12 +1,11 @@
-import { ITree } from "predicate-tree-advanced-poc/dist/src";
 import path from "path";
+import fs from "fs";
+type TFsFormJson = any;
 
 const getFormJsonFromApi = async (message: any) => {
   const { apiKey, formId } = message;
 
   return new Promise((resolve, reject) => {
-    console.log("Preparing request");
-
     if (!apiKey || !formId) {
       throw new Error(`apiKey: '${apiKey}' or formId: '${formId}'.`);
     }
@@ -38,10 +37,8 @@ const getFormJsonFromApi = async (message: any) => {
   });
 };
 
-type TFsFormJson = any;
-import fs from "fs";
-class ApiCacheManager {
-  static #instance: ApiCacheManager;
+class ApiFormCacheManager {
+  static #instance: ApiFormCacheManager;
   #cacheDirectory = process.cwd() + "/api-cache/forms";
   private _formsAsJson: { [formId: string]: TFsFormJson } = {};
   private constructor() {
@@ -58,7 +55,6 @@ class ApiCacheManager {
         .toString("utf8");
       this.addTree(formId, JSON.parse(formJson));
     });
-    console.log("Initialized");
   }
 
   putFile(formId: string, formJson: any) {
@@ -90,12 +86,12 @@ class ApiCacheManager {
     }
   }
 
-  static getInstance(): ApiCacheManager {
-    if (!ApiCacheManager.#instance) {
-      ApiCacheManager.#instance = new ApiCacheManager();
+  static getInstance(): ApiFormCacheManager {
+    if (!ApiFormCacheManager.#instance) {
+      ApiFormCacheManager.#instance = new ApiFormCacheManager();
     }
-    return ApiCacheManager.#instance;
+    return ApiFormCacheManager.#instance;
   }
 }
 
-export { ApiCacheManager };
+export { ApiFormCacheManager };

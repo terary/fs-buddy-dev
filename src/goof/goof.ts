@@ -1,9 +1,12 @@
 import { FsFormAsDirectedGraph } from "./FsFormAsDirectedGraph";
 // import form5353031 from "./fs-goof/fs-form/form5353031.json";
-import { ApiCacheManager } from "../common/ApiManager";
+import { ApiFormCacheManager } from "../common/ApiFormCacheManager";
 const apiKey = "cc17435f8800943cc1abd3063a8fe44f";
 // const formId = "5368371";
-const formId = "5375703";
+// const formId = "5375703";  // different logic (big dipper, interdependant)
+// const formId = "5389250"; // calc/logic operators
+// const formId = "5353031"; // calc/logic operators
+const formId = "5358471"; // calc/logic operators
 
 const getDependancyList = (tree: FsFormAsDirectedGraph): any => {
   const theList: any = {};
@@ -16,7 +19,7 @@ const getDependancyList = (tree: FsFormAsDirectedGraph): any => {
 
 (async () => {
   // const treeJsonX = await ApiCacheManager.getInstance().getTree(apiKey, formId);
-  const treeJson = await ApiCacheManager.getInstance().getTree(
+  const treeJson = await ApiFormCacheManager.getInstance().getTree(
     apiKey,
     formId
     // "5358473"

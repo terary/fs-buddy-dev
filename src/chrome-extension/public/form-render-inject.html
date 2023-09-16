@@ -82,6 +82,11 @@
         case 'getFieldStatusesResponse': 
           handelGetFieldStatusesResponse(e.data.payload)
         break;
+
+        case 'fetchSubmissionResponse': 
+          handelFetchSubmissionResponse(e.data.payload)
+        break;
+ 
         case 'pong':
           console.log({ping:'pong', message: e.data.payload});
           break;
@@ -144,6 +149,12 @@
               payload: payload || null
             }
           break;
+          case 'fetchSubmissionRequest':
+            message = {
+              messageType: "fetchSubmissionRequest",
+              payload: payload || null
+            }
+          break;
         default:
           message = {
             messageType: "ping",
@@ -157,6 +168,13 @@
       const handleGetFieldStatusClick = ()=>{
         sendMessageToParent('getFieldStatusesRequest', {})
       }
+
+      const handleFetchSubmissionClick = ()=>{
+        const submissionIdContainer = document.getElementById("fsBuddyFetchSubmissionIdInput");
+        sendMessageToParent('fetchSubmissionRequest', {submissionId: submissionIdContainer.value})
+        
+      }
+
       const handleFieldIdSelected = (selectElementId, selectedValue)=>{
         // console.log({selectElementId, selectedValue})
         sendMessageToParent('getFieldLogicDependentsRequest', {fieldId: selectedValue})
@@ -208,6 +226,64 @@
           appendFieldStatusContainer(fieldId, statusMessages.statusMessages)
         })
         prependUserMessages(...formStatusMessages);
+      }
+
+
+
+      const handelFetchSubmissionResponse = (payload)=>{
+        const {submissionData } = payload;
+        submissionData.forEach((fieldData)=>{
+          const {statusMessages = [], fieldType, uiid, fieldId} = fieldData;
+          
+          if(uiid === null ) {
+            if(statusMessages.length>0) {
+              appendFieldStatusContainer(fieldData.fieldId, statusMessages)
+            }
+            return;
+          }
+
+          const htmlControl = document.getElementById(uiid);
+          if(!htmlControl){
+            appendFieldStatusContainer(fieldId, [{
+                severity: "warn",
+                fieldId,
+                message:
+                  `Failed to find a ui element for field uiid '${uiid}'.`,
+                relatedFieldIds: [],
+              }])
+            return;
+          }
+
+          switch(true) {
+            case ['file','signature'].includes(fieldType):
+              statusMessages.push({
+                severity: "info",
+                fieldId,
+                message:
+                  `field types of 'file' or 'signature', value can not be set.  value: ${fieldData.value}`,
+                relatedFieldIds: [],
+              })
+            break;
+            case ['matrix','checkbox', 'radio'].includes(fieldType):
+              htmlControl.checked = true;
+            break;
+            default: 
+              htmlControl.value = fieldData?.value||'';
+              break; // <-- never stops being funny
+          }
+
+          console.log({
+            fieldType: fsBuddyHelper.fieldSummary[fieldId].type,
+            fieldSummary: fsBuddyHelper.fieldSummary[fieldId],
+            fieldId,
+            uiid,
+          })
+
+          if(`field${fieldId}` === uiid) {
+            // for non subfields
+            appendFieldStatusContainer(fieldId, statusMessages)
+          }
+        })
       }
 
       const SEVERITIES = {
@@ -335,13 +411,20 @@
       }
       
       const appendFieldStatusContainer = (fieldId, statusMessages)=>{
+        // should check to see if container exists?
+        // should only add container if statusMessages is non empty
         const containerId =`fsCell${fieldId}`;
         const fieldContainer = getFieldContainer(fieldId);
         const collectionSeverity = getMessageCollectionSeverity(statusMessages);
 
-        const statusContainer = document.createElement('div');
-        statusContainer.id = `fsBuddy_statusContainer_${fieldId}`;
-        statusContainer.classList.add('fsBuddy_statusContainer');
+
+        let  statusContainer = document.getElementById(`fsBuddy_statusContainer_${fieldId}`)
+        if(!statusContainer) {
+          statusContainer = document.createElement('div');
+          statusContainer.id = `fsBuddy_statusContainer_${fieldId}`;
+          statusContainer.classList.add('fsBuddy_statusContainer');
+        }
+
 
         const divStatusHeadRow = document.createElement('div');
         divStatusHeadRow.classList.add(`fsBuddy_statusRowHeader`);
@@ -461,7 +544,6 @@
         sendMessageToParent('getAllFieldInfoRequest')
      })
      const fsBuddyHelper = {}
-
 	</script>
 	</head>
 	<body>
@@ -519,7 +601,20 @@
                   </tr>
             </table>
       </div>
-      <div id='fsBuddyControlPanelUserMessages'>
+      <div id='fsBuddyControlPanelSubmission'>
+        <h4>Submission</h4>
+        <table>
+              <tr>
+                    <td>
+                          <button onclick="handleFetchSubmissionClick()">Load Submission</button>
+                    </td>
+                    <td>
+                          <input id="fsBuddyFetchSubmissionIdInput" value="1129952515"/>    
+                    </td>
+              </tr>
+        </table>
+  </div>
+  <div id='fsBuddyControlPanelUserMessages'>
             <h4>User Messages Go Here</h4>
             <div style="height: 300px; overflow-y: auto;" id="fsBuddyUserMessagesDiv"></div>
       </div>

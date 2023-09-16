@@ -11,7 +11,18 @@ import { TFsVisibilityModes } from "../types";
 import { MultipleLogicTreeError } from "../../../errors/MultipleLogicTreeError";
 import { FsCircularDependencyNode } from "./nodes/FsCircularDependencyNode";
 import { AbstractNode } from "./nodes/AbstractNode";
-import { TFsFieldAny, TFsFieldSection } from "../../../type.field";
+import {
+  TFsFieldAny,
+  TFsFieldCheckbox,
+  TFsFieldRadio,
+  TFsFieldSection,
+  TFsFieldSelect,
+} from "../../../type.field";
+// import { InvalidEvaluation } from "../../InvalidEvaluation";
+import { Evaluator } from "../../Evaluator";
+
+type TSelectFields = TFsFieldRadio | TFsFieldSelect | TFsFieldCheckbox;
+
 type TSubtrees = FsTreeCalcString | FsTreeLogic;
 
 type TFsFieldTreeNodeTypes =
@@ -143,19 +154,63 @@ class FsTreeField extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
     //   : null;
   }
 
-  evaluateWithValues<T>(values: { [fieldId: string]: any }): T {
-    // maybe in real life this would do a little more formatting.
-    // also what about dependant factors? (isHidden)
+  evaluateWithValues<T>(values: { [fieldId: string]: any }): {
+    [fieldId: string]: T; // | InvalidEvaluation; // this null should be instance of class 'InvalidEvaluation' (broken field)
+  } {
+    if (this.getLogicTree() === null) {
+      const evaluator = Evaluator.getEvaluatorWithFieldJson(
+        this.fieldJson as TFsFieldAny
+      );
+      return {
+        [this.fieldId]: evaluator.evaluateWithValues<T>(
+          values[this.fieldId]
+        ) as T,
+      };
+    }
     return values[this.fieldId];
+  }
+
+  getSubmissionEvaluator() {
+    return Evaluator.getEvaluatorWithFieldJson(this.fieldJson as TFsFieldAny);
+  }
+
+  private x_evaluateMultiSelect<T>(values: { [fieldId: string]: any }): {
+    [fieldId: string]: T; // | InvalidEvaluation;
+  } {
+    const options = (this.fieldJson as TSelectFields).options || [];
+    const selectedOption = options.find(
+      (option) => option.value === values[this.fieldId]
+    );
+
+    // if (selectedOption === undefined) {
+    //   return {
+    //     [this.fieldId]: new InvalidEvaluation("Selected option not found.", {
+    //       options,
+    //       searchValue: values[this.fieldId],
+    //     }),
+    //   };
+    // } else {
+    //   return { [this.fieldId]: selectedOption.value as T };
+    // }
+    return { [this.fieldId]: (selectedOption || {}).value as T };
+  }
+
+  private x_evaluateByFieldType<T>(values: { [fieldId: string]: any }): {
+    [fieldId: string]: T; //| InvalidEvaluation;
+  } {
+    const evaluator = Evaluator.getEvaluatorWithFieldJson(
+      this.fieldJson as TFsFieldAny
+    );
+    return {
+      [this.fieldId]: evaluator.evaluateWithValues<T>(
+        values[this.fieldId]
+      ) as T,
+    };
   }
 
   private getVisibilityLogicChain() {}
 
   getInterdependentFieldIdsOf(subjectField: FsTreeField): string[] {
-    // 148509470
-    if (this.fieldId === "148509470") {
-      console.log("found it");
-    }
     const thisLogic = this.getLogicTree();
     return [];
   }
@@ -174,7 +229,7 @@ class FsTreeField extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
     return logicDep.concat(calcDep);
   }
 
-  static fromFieldJson(fieldJson: TFsFieldAnyJson): FsTreeField {
+  static fromFieldJson(fieldJson: TFsFieldAny): FsTreeField {
     const field = new FsTreeField("_FIELD_ID_", {
       // @ts-ignore
       fieldId: fieldJson.id,
@@ -186,7 +241,7 @@ class FsTreeField extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
     field._fieldJson = fieldJson as TFsFieldAny;
 
     if (fieldJson.calculation) {
-      const subtreeConstructor = (fieldJson: TFsFieldAnyJson) =>
+      const subtreeConstructor = (fieldJson: TFsFieldAny) =>
         FsTreeCalcString.fromFieldJson(fieldJson);
 
       FsTreeField.createSubtreeFromFieldJson(
@@ -213,13 +268,10 @@ class FsTreeField extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
 
   static createSubtreeFromFieldJson<T>(
     rootTree: FsTreeField,
-
-    // rootTree: FsTreeFieldCollection,
-
     targetRootId: string,
-    fieldJson: TFsFieldAnyJson,
+    fieldJson: TFsFieldAny,
     subtreeConstructor?:
-      | ((fieldJson: TFsFieldAnyJson) => TFsFieldTreeNodeTypes)
+      | ((fieldJson: TFsFieldAny) => TFsFieldTreeNodeTypes)
       | undefined
   ): T {
     const subtree = subtreeConstructor

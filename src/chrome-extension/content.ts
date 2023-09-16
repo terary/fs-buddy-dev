@@ -1,19 +1,15 @@
 import { FormstackBuddy } from "../FormstackBuddy/FormstackBuddy";
 import { FieldLogicService } from "../FormstackBuddy/FieldLogicService";
-import { TFsFieldAnyJson } from "../formstack";
-alert("Hell from content.js");
+import { FsTreeFieldCollection, TFsFieldAnyJson } from "../formstack";
+import type { TStatusRecord } from "./type";
+
+alert("Hello from content.js");
 function getFormIdFromLocation({ pathname }: Location = location) {
   const regExp = /\/admin\/form\/builder\/(?<formId>\d+)\/build(\/*)+/g;
   return regExp.exec(pathname)?.groups?.formId || null;
 }
 let fieldLogicService: FieldLogicService | null = null;
 
-type TStatusRecord = {
-  fieldId?: string | null;
-  severity: "error" | "warn" | "info" | "debug";
-  message: string;
-  relatedFieldIds?: string[] | null;
-};
 type TFieldStatusMessages = {
   [fieldId: string]: TStatusRecord[];
 };
@@ -49,6 +45,7 @@ function buildIframe(iframeId: string): HTMLIFrameElement {
   iframe.style.backgroundColor = "green";
   return iframe;
 }
+let currentFieldCollection: FsTreeFieldCollection;
 
 function getFormAsJson() {
   const fetchTreeFormId = getFormIdFromLocation();
@@ -60,6 +57,7 @@ function getFormAsJson() {
         apiKey: "cc17435f8800943cc1abd3063a8fe44f",
       },
       async (apiFormJson) => {
+        // is this await necessary?
         const childFrameHtml = await getChildFrameHtml();
         const iframe = buildIframe("theFrame");
         iframe.srcdoc = childFrameHtml + apiFormJson.html;
@@ -69,6 +67,9 @@ function getFormAsJson() {
         (apiFormJson?.fields || []).map((field: any) => {
           devDebugFieldIds.push(field.id);
         });
+        currentFieldCollection = FsTreeFieldCollection.fromFieldJson(
+          apiFormJson.fields
+        );
 
         fieldLogicService = FormstackBuddy.getInstance().getFieldLogicService(
           (apiFormJson.fields as TFsFieldAnyJson[]) || []
@@ -78,6 +79,97 @@ function getFormAsJson() {
   } else {
     console.log("Failed to fetchTree, could not get formId from url");
   }
+}
+
+function getSubmissionAsJson(caller: MessageEventSource, submissionId: string) {
+  if (submissionId) {
+    chrome.runtime.sendMessage(
+      {
+        type: "GetSubmissionFromApiRequest",
+        submissionId,
+        apiKey: "cc17435f8800943cc1abd3063a8fe44f",
+      },
+      async (apiSubmissionJson) => {
+        const submissionUiDataItems =
+          currentFieldCollection.getUiPopulateObject(apiSubmissionJson);
+
+        // const mappedSubmissionData = apiSubmissionJson.data.reduce(
+        //   (prev: any, cur: any) => {
+        //     // this is TSubmission type, I think
+        //     prev[cur.field] = cur.value;
+        //     return prev;
+        //   },
+        //   {}
+        // );
+        // const submissionUiDataItems = currentFieldCollection
+        //   .getAllFieldIds()
+        //   .map((fieldId) => {
+        //     const treeField = currentFieldCollection.getFieldById(fieldId);
+        //     const evaluator = treeField.getSubmissionEvaluator();
+        //     return evaluator.getUiPopulateObject(mappedSubmissionData);
+        //   });
+
+        caller.postMessage({
+          messageType: "fetchSubmissionResponse",
+          payload: {
+            id: apiSubmissionJson.id,
+            submissionData: submissionUiDataItems,
+          },
+        });
+      }
+    );
+  } else {
+    console.log(`Failed to fetch submission, submissionId: '${submissionId}'.`);
+  }
+}
+
+function handleFetchSubmissionRequest(
+  caller: MessageEventSource,
+  payload: any
+) {
+  const { submissionId } = payload;
+  const submissionJson = getSubmissionAsJson(caller, submissionId);
+  console.log(
+    `Send message response, fetch submission submissionId:'${submissionId}'`
+  );
+
+  caller.postMessage({
+    // *tmc* called, some dev/debug stuff - remove it
+    messageType: "fetchSubmissionResponse",
+    payload: {
+      id: submissionJson,
+      submissionData: [
+        {
+          uiid: "field147738156-first",
+          fieldId: "147738156",
+          fieldType: "text",
+          value: "Set by Content Script. " + Math.floor(Math.random() * 10000),
+          statusMessages: [
+            {
+              severity: "warn",
+              message:
+                "This is a test.  This is only a test.  Had this been an actual message it would have said something useful.",
+              relatedFieldIds: ["147738154", "148111228", "147738157"],
+            } as TStatusRecord,
+          ],
+        },
+        {
+          uiid: "field147738157-state",
+          fieldId: "147738157",
+          fieldType: "select",
+          value: "DE",
+          statusMessages: [
+            {
+              severity: "warn",
+              message:
+                "This is a test.  This is only a test.  Had this been an actual message it would have said something useful.",
+              relatedFieldIds: ["147738154", "148111228", "147738157"],
+            } as TStatusRecord,
+          ],
+        },
+      ],
+    },
+  });
 }
 
 function handleGetFieldStatusesRequest(
@@ -194,6 +286,12 @@ window.onmessage = function (e) {
       break;
     case "getFieldStatusesRequest":
       e.source && handleGetFieldStatusesRequest(e.source, e.data.payload);
+      break;
+    case "fetchSubmissionRequest":
+      console.log("receive message fetch submission");
+      console.log({ payload: e.data.payload });
+
+      e.source && handleFetchSubmissionRequest(e.source, e.data.payload);
       break;
     default:
     // console.log(`message type not understood. ( '${e.data.messageType}')`);

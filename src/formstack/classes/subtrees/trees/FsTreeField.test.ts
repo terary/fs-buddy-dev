@@ -1,10 +1,18 @@
 import { FsTreeField } from "./FsTreeField";
 import { TFsFieldAnyJson } from "../../types";
 import { FsTreeLogic } from "./FsTreeLogic";
+import type { TFsFieldType } from "../../../type.field";
+// TFsFieldType
 import { MultipleLogicTreeError } from "../../../errors/MultipleLogicTreeError";
 import { FsTreeCalcString } from "./FsTreeCalcString";
-import badCircuitFormJson from "../../../../test-dev-resources/form-json/5353031.json"; // 5353031
+import badCircuitFormJson from "../../../../test-dev-resources/form-json/5353031.json";
+import allFieldTypesFormJson from "../../../../test-dev-resources/form-json/allFields.json";
+
 import fifthDegreeBadCircuitFormJson from "../../../../test-dev-resources/form-json/5375703.json"; // 5353031
+import manyCalcLogicOperators from "../../../../test-dev-resources/form-json/5389250.json"; // 5353031
+import { transform } from "typescript";
+import { transformers } from "../../../transformers";
+// import { InvalidEvaluation } from "../../InvalidEvaluation";
 type RelationshipCategoryTypes =
   | "Dependency"
   | "mutualExclusive"
@@ -14,6 +22,34 @@ type RelationRecordType = {
 };
 type RelationAuditReport = {
   [fieldId: string]: RelationRecordType;
+};
+const fieldIdByType: { [dataType in TFsFieldType]: string } = {
+  text: "147738154",
+  textarea: "147738155",
+  name: "147738156",
+  address: "147738157",
+  email: "147738158",
+  phone: "147738159",
+  number: "147738160",
+  select: "147738162",
+  radio: "147738163",
+  checkbox: "147738164",
+  creditcard: "147738165",
+  datetime: "147738166",
+  file: "147738167",
+  matrix: "147738168",
+  richtext: "147738169",
+  embed: "147738170",
+  product: "147738171",
+  signature: "147738172",
+  rating: "147738173",
+  section: "149279532",
+  ///
+  // "select": "147738161",
+  // "147887088": "text", (done)
+  // "148008076": "text", (done)
+  // "148111228": "checkbox", (done)
+  // "148113605": "embed",
 };
 
 const getDependencyAudit = (fields: FsTreeField[]): RelationAuditReport => {
@@ -47,7 +83,9 @@ const getDependencyAudit = (fields: FsTreeField[]): RelationAuditReport => {
 describe("FsTreeField", () => {
   let field: FsTreeField;
   beforeEach(() => {
-    field = FsTreeField.fromFieldJson(TEST_JSON_FIELD as TFsFieldAnyJson);
+    field = FsTreeField.fromFieldJson(
+      transformers.fieldJson(TEST_JSON_FIELD as TFsFieldAnyJson)
+    );
   });
   describe("Smoke Test", () => {
     it("Should be awesome", () => {
@@ -61,22 +99,270 @@ describe("FsTreeField", () => {
   describe(".fieldJson", () => {
     let tree: FsTreeField;
     beforeEach(() => {
-      tree = FsTreeField.fromFieldJson(TEST_JSON_FIELD as TFsFieldAnyJson);
+      tree = FsTreeField.fromFieldJson(
+        transformers.fieldJson(TEST_JSON_FIELD as TFsFieldAnyJson)
+        // TEST_JSON_FIELD as TFsFieldAnyJson
+      );
     });
 
     it("Should be segment of the original json", () => {
       expect(tree.fieldJson).toStrictEqual(TEST_JSON_FIELD);
     });
+    it.skip("Should transform proper operators", () => {
+      const complexTree = FsTreeField.fromFieldJson(
+        transformers.fieldJson(
+          manyCalcLogicOperators.fields[0] as unknown as TFsFieldAnyJson // this needs "transform", stringBoolean numericBoolean ,  etc
+        )
+      );
+    });
   });
 
   describe("evaluateWithValues({...values})", () => {
     it("Should return the value of the property matching fieldId (values.fieldId)", () => {
+      const checkboxField = FsTreeField.fromFieldJson(
+        transformers.fieldJson(getFieldJsonByIdFromAllFields("148111228"))
+      );
+
       expect(
         field.evaluateWithValues({ "147462596": "Hello World" })
       ).toStrictEqual("Hello World");
     });
     it("Should returned if no property matches.", () => {
       expect(field.evaluateWithValues({})).toBeUndefined();
+    });
+
+    describe("multi-select field types (checkbox, radio, select)", () => {
+      const checkboxFieldId = "147738164";
+      const radioFieldId = "147738163";
+      const selectFieldId = "147738161";
+      [checkboxFieldId, radioFieldId, selectFieldId].forEach((fieldId) => {
+        it("Should return the selected option", () => {
+          const checkboxField = FsTreeField.fromFieldJson(
+            transformers.fieldJson(getFieldJsonByIdFromAllFields(fieldId))
+          );
+          expect(
+            checkboxField.evaluateWithValues({ [fieldId]: "Option2" })
+          ).toStrictEqual({ [fieldId]: "Option2" });
+        });
+
+        // it("Should return instance of InvalidEvaluation for invalid option.", () => {
+        //   const multiselectField = FsTreeField.fromFieldJson(
+        //     transformers.fieldJson(getFieldJsonByIdFromAllFields(fieldId))
+        //   );
+        //   const valuation = multiselectField.evaluateWithValues<
+        //     string
+        //   >({
+        //     [fieldId]: "_NOT_A_VALID_OPTION_",
+        //   });
+
+        //   expect(valuation[fieldId]).toBeInstanceOf(InvalidEvaluation);
+        //   expect(
+        //     (valuation[fieldId] as InvalidEvaluation).message
+        //   ).toStrictEqual("Selected option not found.");
+        // });
+      });
+
+      it("Should return the selected value when using value/label options", () => {
+        const multiselectField = FsTreeField.fromFieldJson(
+          transformers.fieldJson(getFieldJsonByIdFromAllFields("147738162"))
+        );
+        expect(
+          multiselectField.evaluateWithValues({ ["147738162"]: "OPT02" })
+        ).toStrictEqual({ ["147738162"]: "OPT02" });
+      });
+    });
+    describe("rating, number", () => {
+      [fieldIdByType["rating"], fieldIdByType["number"]].forEach((fieldId) => {
+        it("Should return a number given a number.", () => {
+          // const rattingFieldId = "147738173";
+
+          // const fieldId = fieldIdByType["rating"]; //  rattingFieldId;
+          // setup
+          const textField = FsTreeField.fromFieldJson(
+            transformers.fieldJson(getFieldJsonByIdFromAllFields(fieldId))
+          );
+
+          // exercise
+          const evaluationResult = textField.evaluateWithValues({
+            [fieldId]: 3,
+          });
+
+          // result
+          expect(evaluationResult).toStrictEqual({
+            [fieldId]: 3,
+          });
+        });
+        it("Should be tolerant of string/number.", () => {
+          // const fieldId = fieldIdByType["rating"]; //  rattingFieldId;
+          // setup
+          const textField = FsTreeField.fromFieldJson(
+            transformers.fieldJson(getFieldJsonByIdFromAllFields(fieldId))
+          );
+
+          // exercise
+          const evaluationResult = textField.evaluateWithValues({
+            [fieldId]: "3",
+          });
+
+          // result
+          expect(evaluationResult).toStrictEqual({
+            [fieldId]: "3",
+          });
+        });
+        // it("Should return InvalidEvaluation for non-number.", () => {
+        //   // setup
+        //   const textField = FsTreeField.fromFieldJson(
+        //     transformers.fieldJson(getFieldJsonByIdFromAllFields(fieldId))
+        //   );
+
+        //   // exercise
+        //   const evaluationResult = textField.evaluateWithValues({
+        //     [fieldId]: "3x",
+        //   });
+
+        //   // result
+        //   expect(evaluationResult).toStrictEqual({
+        //     [fieldId]: new InvalidEvaluation(
+        //       `Could not convert to number: '3x', fieldId: ${fieldId}.`
+        //     ),
+        //   });
+        // });
+      });
+    });
+    describe("text", () => {
+      const shortAnswerFieldId = "148008076";
+      const dateTimeFieldId = "147738166";
+      const numberFieldId = "147738160";
+      const emailFieldId = "147738158";
+      const rattingFieldId = "147738173";
+
+      // case "text":
+      // case "number":
+      // case "email":
+      // case "datetime": // ?
+      // case "rating": // ?
+
+      [
+        shortAnswerFieldId,
+        // dateTimeFieldId,
+        // numberFieldId,
+        emailFieldId,
+        // rattingFieldId,
+      ].forEach((fieldId) => {
+        it("Should return the given value", () => {
+          // setup
+          const textField = FsTreeField.fromFieldJson(
+            transformers.fieldJson(getFieldJsonByIdFromAllFields(fieldId))
+          );
+
+          // exercise
+          const evaluationResult = textField.evaluateWithValues({
+            [fieldId]: "Some ordinary text",
+          });
+
+          // result
+          expect(evaluationResult).toStrictEqual({
+            [fieldId]: "Some ordinary text",
+          });
+        });
+      });
+
+      it("Should return the selected value when using value/label options", () => {
+        const checkboxField = FsTreeField.fromFieldJson(
+          transformers.fieldJson(getFieldJsonByIdFromAllFields("147738162"))
+        );
+        expect(
+          checkboxField.evaluateWithValues({ ["147738162"]: "OPT02" })
+        ).toStrictEqual({ ["147738162"]: "OPT02" });
+      });
+    });
+
+    describe("Address", () => {
+      const fieldId = fieldIdByType["address"];
+      it("Should return parsed Address field Record", () => {
+        const fieldJson = getFieldJsonByIdFromAllFields(fieldId);
+        // setup
+        const textField = FsTreeField.fromFieldJson(
+          transformers.fieldJson(getFieldJsonByIdFromAllFields(fieldId))
+        );
+
+        // exercise
+        const evaluationResult = textField.evaluateWithValues({
+          [fieldId]:
+            "address = 123 Walt Disney Way 0\naddress2 = Micky Mouse Hut #2, 4\ncity = Disney World 7\nstate = DE\nzip = 04240",
+        });
+
+        // result
+        expect(evaluationResult).toStrictEqual({
+          [fieldId]: {
+            address: "123 Walt Disney Way 0",
+            address2: "Micky Mouse Hut #2, 4",
+            city: "Disney World 7",
+            state: "DE",
+            zip: "04240",
+          },
+        });
+      });
+      it("Should return empty object if there are no subfields", () => {
+        const fieldJson = getFieldJsonByIdFromAllFields(fieldId);
+        // setup
+        const textField = FsTreeField.fromFieldJson(
+          transformers.fieldJson(getFieldJsonByIdFromAllFields(fieldId))
+        );
+
+        // exercise
+        const evaluationResult = textField.evaluateWithValues({
+          [fieldId]: "Some ordinary text",
+        });
+
+        // result
+        expect(evaluationResult).toStrictEqual({
+          [fieldId]: {},
+        });
+      });
+    });
+
+    // Abstract away commonality between Name and Address
+    // then work on Matrix, see if that would benefit here
+    describe("Name", () => {
+      const fieldId = fieldIdByType["name"];
+      it("Should return parsed Name field Record", () => {
+        const fieldJson = getFieldJsonByIdFromAllFields(fieldId);
+        // setup
+        const textField = FsTreeField.fromFieldJson(
+          transformers.fieldJson(getFieldJsonByIdFromAllFields(fieldId))
+        );
+
+        // exercise
+        const evaluationResult = textField.evaluateWithValues({
+          [fieldId]: "first = First Name 439\nlast = Last Name 925",
+        });
+
+        // result
+        expect(evaluationResult).toStrictEqual({
+          [fieldId]: {
+            first: "First Name 439",
+            last: "Last Name 925",
+          },
+        });
+      });
+      it("Should return empty object if there are no subfields", () => {
+        const fieldJson = getFieldJsonByIdFromAllFields(fieldId);
+        // setup
+        const textField = FsTreeField.fromFieldJson(
+          transformers.fieldJson(getFieldJsonByIdFromAllFields(fieldId))
+        );
+
+        // exercise
+        const evaluationResult = textField.evaluateWithValues({
+          [fieldId]: "Some ordinary text",
+        });
+
+        // result
+        expect(evaluationResult).toStrictEqual({
+          [fieldId]: {},
+        });
+      });
     });
   });
 
@@ -93,37 +379,12 @@ describe("FsTreeField", () => {
     });
   });
   describe(".isInterdependentOf(...)", () => {
-    it("Should determine First Degree Interdependency.", () => {
-      const fields = badCircuitFormJson.fields
-        .map((fieldJson) => {
-          const f = FsTreeField.fromFieldJson(
-            fieldJson as unknown as TFsFieldAnyJson
-          );
-          return f;
-        })
-        .reduce((prev, cur) => {
-          prev[cur.fieldId] = cur;
-          return prev;
-        }, {} as { [fieldId: string]: FsTreeField });
-
-      const badCircuit_A = fields["147462597"];
-      const badCircuit_B = fields["147462595"];
-
-      const x = badCircuit_A.isInterdependentOf(badCircuit_B);
-      console.log({ badCircuit_A: badCircuit_A.getDependantFieldIds() });
-
-      console.log({ badCircuit_A: badCircuit_A.getDependantFieldIds() });
-      console.log({ badCircuit_B: badCircuit_B.getDependantFieldIds() });
-
-      console.log({ fields });
-    });
-
     //fifthDegreeBadCircuitFormJson
-    it.only("Should Determine Fifth Degree Interdependency.", () => {
+    it("Should Determine Fifth Degree Interdependency.", () => {
       const fields = fifthDegreeBadCircuitFormJson.fields
         .map((fieldJson) => {
           const f = FsTreeField.fromFieldJson(
-            fieldJson as unknown as TFsFieldAnyJson
+            transformers.fieldJson(fieldJson as unknown as TFsFieldAnyJson)
           );
           return f;
         })
@@ -150,8 +411,6 @@ describe("FsTreeField", () => {
           const intersectFieldIds = fieldA.getInterdependentFieldIdsOf(fieldB);
         });
       });
-
-      console.log({ fields });
     });
   });
   describe(".getLogicTree()", () => {
@@ -167,14 +426,14 @@ describe("FsTreeField", () => {
     });
     it("return null if there are no logic trees.", () => {
       const tree = TestFsTreeField.fromFieldJson(
-        TEST_JSON_FIELD as TFsFieldAnyJson
+        transformers.fieldJson(TEST_JSON_FIELD as TFsFieldAnyJson)
       ) as TestFsTreeField;
 
       expect(tree.getLogicTree()).toBeInstanceOf(FsTreeLogic);
     });
     it("Throw error if there is more than one logic tree.", () => {
       const extraLogicTree = TestFsTreeField.fromFieldJson(
-        TEST_JSON_FIELD as TFsFieldAnyJson
+        transformers.fieldJson(TEST_JSON_FIELD as TFsFieldAnyJson)
       );
 
       const subtreeConstructor = (fieldJson: TFsFieldAnyJson) =>
@@ -183,13 +442,13 @@ describe("FsTreeField", () => {
       FsTreeField.createSubtreeFromFieldJson(
         extraLogicTree,
         extraLogicTree.rootNodeId,
-        TEST_JSON_FIELD as TFsFieldAnyJson,
+        transformers.fieldJson(TEST_JSON_FIELD as TFsFieldAnyJson),
         subtreeConstructor
       );
       FsTreeField.createSubtreeFromFieldJson(
         extraLogicTree,
         extraLogicTree.rootNodeId,
-        TEST_JSON_FIELD as TFsFieldAnyJson,
+        transformers.fieldJson(TEST_JSON_FIELD as TFsFieldAnyJson),
         subtreeConstructor
       );
 
@@ -216,14 +475,14 @@ describe("FsTreeField", () => {
     });
     it("return null if there are no logic trees.", () => {
       const tree = TestFsTreeField.fromFieldJson(
-        TEST_JSON_FIELD as TFsFieldAnyJson
+        transformers.fieldJson(TEST_JSON_FIELD as TFsFieldAnyJson)
       ) as TestFsTreeField;
 
       expect(tree.getCalcStringTree()).toBeInstanceOf(FsTreeCalcString);
     });
     it("Throw error if there is more than one logic tree.", () => {
       const extraLogicTree = TestFsTreeField.fromFieldJson(
-        TEST_JSON_FIELD as TFsFieldAnyJson
+        transformers.fieldJson(TEST_JSON_FIELD as TFsFieldAnyJson)
       );
 
       const subtreeConstructor = (fieldJson: TFsFieldAnyJson) =>
@@ -232,13 +491,13 @@ describe("FsTreeField", () => {
       FsTreeField.createSubtreeFromFieldJson(
         extraLogicTree,
         extraLogicTree.rootNodeId,
-        TEST_JSON_FIELD as TFsFieldAnyJson,
+        transformers.fieldJson(TEST_JSON_FIELD as TFsFieldAnyJson),
         subtreeConstructor
       );
       FsTreeField.createSubtreeFromFieldJson(
         extraLogicTree,
         extraLogicTree.rootNodeId,
-        TEST_JSON_FIELD as TFsFieldAnyJson,
+        transformers.fieldJson(TEST_JSON_FIELD as TFsFieldAnyJson),
         subtreeConstructor
       );
 
@@ -301,3 +560,15 @@ const TEST_JSON_FIELD = {
   section_text: "<p>The check boxes prevent this from showing.</p>",
   text_editor: "wysiwyg",
 } as unknown;
+
+const getFieldJsonByIdFromAllFields = (fieldId: string) => {
+  const fieldJson = allFieldTypesFormJson.fields.find(
+    (fieldJson) => fieldJson.id === fieldId
+  );
+
+  if (fieldJson === undefined) {
+    throw Error(`Could not find field with id: '${fieldId}'`);
+  }
+
+  return fieldJson as unknown as TFsFieldAnyJson;
+};

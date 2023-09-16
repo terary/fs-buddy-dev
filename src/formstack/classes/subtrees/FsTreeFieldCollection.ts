@@ -1,19 +1,15 @@
-import {
-  AbstractExpressionTree,
-  IExpressionTree,
-} from "predicate-tree-advanced-poc/dist/src";
-import assert from "assert";
+import { AbstractExpressionTree } from "predicate-tree-advanced-poc/dist/src";
 
 import { TFsFieldAnyJson } from "../types";
-import { FsTreeCalcString } from "./trees/FsTreeCalcString";
 import { FsTreeLogicDeep } from "./trees/FsTreeLogicDeep";
 import { FsTreeField } from "./trees/FsTreeField";
-import { TFsFieldAny } from "../../type.field";
+import { transformers } from "../../transformers";
+
 import { FsFieldVisibilityLinkNode, FsFormRootNode } from "./trees/nodes";
 import {
   TFsFieldLogicCheckLeaf,
-  TFsFieldLogicJunctionJson,
-  TFsLogicNode,
+  TFsFieldLogicJunction,
+  TLogicJunctionOperators,
   TTreeFieldNode,
 } from "./types";
 import { FsLogicLeafNode } from "./trees/nodes/FsLogicLeafNode";
@@ -21,6 +17,9 @@ import { FsCircularDependencyNode } from "./trees/nodes/FsCircularDependencyNode
 import { FsMaxDepthExceededNode } from "./trees/nodes/FsMaxDepthExceededNode";
 import { FsLogicBranchNode } from "./trees/nodes/FsLogicBranchNode";
 import { FsTreeLogic } from "./trees/FsTreeLogic";
+import { TUiEvaluationObject } from "../Evaluator/type";
+import { TSubmissionJson } from "../../type.form";
+import { IEValuator } from "../Evaluator/IEvaluator";
 class FsTreeFieldCollection extends AbstractExpressionTree<
   TTreeFieldNode | FsFormRootNode
 > {
@@ -48,7 +47,15 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
   }
 
   getFormFieldsCount() {
-    return Object.keys(this._fieldIdNodeMap).length;
+    return this.getAllFieldIds().length;
+  }
+
+  private getAllFieldIds() {
+    return Object.keys(this._fieldIdNodeMap);
+  }
+
+  private getFieldById(fieldId: string): FsTreeField {
+    return this._fieldIdNodeMap[fieldId];
   }
 
   private getExtendedTree<T extends FsTreeLogicDeep = FsTreeLogicDeep>(
@@ -79,22 +86,22 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
 
     const rootNodeContent = logicTree.getChildContentAt(
       logicTree.rootNodeId //
-    ) as TFsLogicNode;
+    ) as TFsFieldLogicJunction<TLogicJunctionOperators>;
 
     let exTree: FsTreeLogicDeep;
     let currentBranchNodeId: string;
-    const { conditional, action, fieldJson } =
-      rootNodeContent as TFsFieldLogicJunctionJson;
+    const { conditional, action, fieldJson } = rootNodeContent;
     const newBranchNode = new FsLogicBranchNode(
       field.fieldId,
-      conditional,
+      // @ts-ignore - doesn't like '$in'
+      (conditional || "$and") as TLogicJunctionOperators,
       action || null,
       fieldJson
     );
 
     if (extendedTree === undefined) {
       const { conditional, action, fieldJson } =
-        rootNodeContent as TFsFieldLogicJunctionJson;
+        rootNodeContent as TFsFieldLogicJunction<TLogicJunctionOperators>;
 
       exTree = new FsTreeLogicDeep(field.fieldId, newBranchNode);
       exTree.ownerFieldId = field.fieldId;
@@ -180,7 +187,9 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
   }
 
   evaluateWithValues<T>(values: { [fieldId: string]: any }): T {
-    return {} as T;
+    return Object.entries(this._fieldIdNodeMap).map(([fieldId, field]) => {
+      return field.evaluateWithValues(values);
+    }) as T;
   }
 
   getDependantFields(): string[] {
@@ -195,9 +204,6 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
     const sectionChildren = childrenFieldNodes
       .filter((fieldNode) => {
         const { fieldId, field } = fieldNode;
-        if (fieldId === "148509478") {
-          console.log("Here we go");
-        }
 
         const visibilityNode = field.getVisibilityNode();
         // return x?.parentNode?.fieldId === section.fieldId;
@@ -208,6 +214,33 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
     return sectionChildren;
   }
 
+  private getEvaluatorByFieldId(fieldId: string): IEValuator {
+    const treeField = this.getFieldById(fieldId);
+    return treeField.getSubmissionEvaluator();
+  }
+
+  getUiPopulateObject(
+    apiSubmissionJson: TSubmissionJson
+  ): TUiEvaluationObject[] {
+    const mappedSubmissionData = apiSubmissionJson.data.reduce(
+      (prev: any, cur: any) => {
+        prev[cur.field] = cur.value;
+        return prev;
+      },
+      {}
+    );
+    const submissionUiDataItems: TUiEvaluationObject[] = this.getAllFieldIds()
+      .map((fieldId) => {
+        const evaluator = this.getEvaluatorByFieldId(fieldId);
+        return evaluator.getUiPopulateObjects(mappedSubmissionData[fieldId]);
+      })
+      .reduce((prev: TUiEvaluationObject[], cur: TUiEvaluationObject[]) => {
+        prev.push(...cur);
+        return prev;
+      }, []);
+
+    return submissionUiDataItems;
+  }
   static fromFieldJson(
     fieldsJson: TFsFieldAnyJson[],
     formId = "_FORM_ID_"
@@ -215,7 +248,11 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
     const tree = new FsTreeFieldCollection(formId, new FsFormRootNode(formId));
 
     (fieldsJson || []).forEach((fieldJson) => {
-      const field = FsTreeField.fromFieldJson(fieldJson);
+      const field = FsTreeField.fromFieldJson(
+        transformers.fieldJson(fieldJson)
+      );
+
+      // this doesn't belong in the loop ??
       tree.appendChildNodeWithContent(tree.rootNodeId, {
         fieldId: field.fieldId,
         field,

@@ -19,7 +19,10 @@ abstract class AbstractFsTreeGeneric<
     | TFsFieldLogicJunctionJson
     | TFsFieldLogicCheckLeafJson
     | string
-    | null;
+    | null; // because this is inherited by logic, and fieldJson.logic maybe null
+
+  //    | null;  // *tmc* I don't think this should ever be null
+
   getDependantFieldIds(): string[] {
     return [];
   }

@@ -1,16 +1,19 @@
-import { TFsFieldLogicCheckLeaf, TFsVisibilityModes } from "../../types";
+import {
+  TFsFieldLogicCheckLeaf,
+  TFsLeafOperators,
+  TFsVisibilityModes,
+} from "../../types";
 import { AbstractNode } from "./AbstractNode";
 
 //TFsFieldLogicCheckLeaf
 class FsLogicLeafNode extends AbstractNode implements TFsFieldLogicCheckLeaf {
   private _fieldId: string;
-  private _condition: "equals" | "greaterThan";
+  private _condition: TFsLeafOperators;
+
   private _option: TFsVisibilityModes;
-  // condition: "equals" | "greaterThan"; // not sure greaterThan is valid. Need to find all valid
-  // option: TFsVisibilityModes; // values of the target field (not the same as TFsFieldLogic.action)
   constructor(
     fieldId: string,
-    condition: "equals" | "greaterThan",
+    condition: TFsLeafOperators,
     option: TFsVisibilityModes
   ) {
     super();

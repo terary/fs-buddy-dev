@@ -1,25 +1,26 @@
-type TNumberiBoolean = "0" | "1";
+type TNumericBoolean = "0" | "1";
+import { TFsFieldAnyJson } from "./classes/types";
 import type { TFsFieldAny } from "./type.field";
 
-type TApiFormJson = {
+type TApiForm = {
   created: string; //"2023-07-04 06:04:24";
-  db: number; // "1";
-  deleted: TNumberiBoolean; // "0";
-  folder: number; // "0";
+  db: string; // "1";
+  deleted: TNumericBoolean; // "0";
+  folder: string; // "0";
   id: string; // "5353031";
   language: string; // "en";
   name: string; // "predicate_tree_deep_routed_circular_logic";
-  num_columns: number; // "1";
-  progress_meter: number; // "0";
-  submissions: number; //"0";
-  submissions_unread: number; //"0";
+  num_columns: string; // "1";
+  progress_meter: string; // "0";
+  submissions: string; //"0";
+  submissions_unread: string; //"0";
   updated: string; //"2023-07-04 06:04:24";
   viewkey: string; //"92LJo5m7jk";
-  views: number; // "2";
+  views: string; // "2";
   submissions_today: number; // 0;
   url: string; // "https://terarychambers.formstack.com/forms/predicate_tree_deep_routed_circular_logic";
   encrypted: boolean; // false;
-  thumbnail_url: number | null; //null;
+  thumbnail_url: string | null; //null;
   submit_button_title: string; // "Submit Form";
   inactive: boolean;
   timezone: string; // "US/Eastern";
@@ -39,4 +40,16 @@ type TApiFormJson = {
   fields: TFsFieldAny[];
 };
 
-export type { TApiFormJson };
+// maybe move *submission* stuff to its own file(s)
+type TSubmissionDataItem = { fieldId: string; value: string };
+type TSubmissionJson = {
+  id: string;
+  form: string;
+  data: TSubmissionDataItem[];
+};
+
+// *tmc* type 'any' should be json type
+type TApiFormJson = Partial<Omit<TApiForm, "fields">> & {
+  fields: any; // TFsFieldAnyJson[];
+};
+export type { TApiFormJson, TApiForm, TSubmissionDataItem, TSubmissionJson };

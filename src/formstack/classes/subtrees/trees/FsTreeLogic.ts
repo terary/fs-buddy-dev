@@ -11,6 +11,7 @@ import type {
   TFsLogicNode,
   TFsLogicNodeJson,
   TFsVisibilityModes,
+  TLogicJunctionOperators,
 } from "../types";
 import { AbstractFsTreeLogic } from "./AbstractFsTreeLogic";
 
@@ -29,31 +30,45 @@ class FsTreeLogic extends AbstractFsTreeLogic<TFsLogicNode> {
     // *tmc* needs to make this a real thing, I guess: or add it to the abstract?
     return new FsTreeLogic();
   }
+  getDependantFieldIds() {
+    return this.getShallowDependantFieldIds();
+  }
+  getShallowDependantFieldIds(): string[] {
+    const children = this.getChildrenContentOf(
+      this.rootNodeId
+    ) as TFsLogicNode[]; // shallow = only the children
+    return children.map((child) =>
+      // @ts-ignore - fieldId, ownerId not on type TFsLogic...
+      child.fieldId ? child.fieldId : child.ownerFieldId
+    );
+    return [];
+  }
 
   evaluateWithValues<T>(values: { [fieldId: string]: any }): T | undefined {
     const parent = this.getChildContentAt(
       this.rootNodeId
-    ) as TFsFieldLogicJunction;
+    ) as TFsFieldLogicJunction<TLogicJunctionOperators>;
     const { conditional } = parent;
-
     const children = this.getChildrenContentOf(
       this.rootNodeId
     ) as TFsFieldLogicCheckLeaf[];
 
     const evaluatedChildren = children.map((child) => {
       switch (child.condition) {
-        case "equals":
+        case "==":
           return values[child.fieldId] === child.option;
-        case "greaterThan":
+        case "gt":
           // guard against null/undefined
           return child.option && values[child.fieldId] > child.option;
       }
     });
 
-    if (conditional === "all") {
+    if (conditional === "$and") {
+      // @ts-ignore - not happy about typing of 'andReducer'
       return evaluatedChildren.reduce(andReducer, true) as T;
     }
-    if (conditional === "any") {
+    if (conditional === "$or") {
+      // @ts-ignore - not happy about typing of 'orReducer'
       return evaluatedChildren.reduce(orReducer, false) as T;
     }
 
@@ -104,10 +119,11 @@ class FsTreeLogic extends AbstractFsTreeLogic<TFsLogicNode> {
     );
 
     leafExpressions.forEach((childNode: TFsLogicNode) => {
-      const { condition, fieldId, option } =
-        childNode as TFsFieldLogicCheckLeaf;
-      const leafNode = { fieldId, condition, option };
-      tree.appendChildNodeWithContent(tree.rootNodeId, leafNode);
+      // const { condition, fieldId, option } =
+      //   childNode as TFsFieldLogicCheckLeaf;
+      // const leafNode = { fieldId, condition, option };
+      // tree.appendChildNodeWithContent(tree.rootNodeId, leafNode);
+      tree.appendChildNodeWithContent(tree.rootNodeId, childNode);
     });
 
     return tree;
