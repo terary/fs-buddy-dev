@@ -5,6 +5,13 @@ type TUiEvaluationObject = {
   value: string;
   statusMessages: any[];
 };
-type TStatusMessageSeverity = "debug" | "error" | "info" | "warn";
 
-export type { TStatusMessageSeverity, TUiEvaluationObject };
+type TFlatSubmissionValues<T> = { [fieldId: string]: T };
+
+// I am not sure this is what I want..
+// Submission data will come in the form of {fieldId: Date | null | string[], number, number[]} etc
+// type TFlatSubmissionValues<T> = TFlatSubmissionValue<T>[];
+// type TFlatSubmissionValues = { [fieldId: string]: any };
+// type TFlatSubmissionValues<T> = { [fieldId: string]: T };
+
+export type { TFlatSubmissionValues, TUiEvaluationObject };

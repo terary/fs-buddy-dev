@@ -1,7 +1,7 @@
 import { TStatusRecord } from "../../../chrome-extension/type";
 import { TFsFieldAny } from "../../type.field";
 import { AbstractEvaluator } from "./AbstractEvaluator";
-import { TUiEvaluationObject } from "./type";
+import { TFlatSubmissionValues, TUiEvaluationObject } from "./type";
 
 const isString = (v: any) => typeof v === "string" || v instanceof String;
 
@@ -20,13 +20,13 @@ class TestSubfieldEvaluator extends AbstractEvaluator {
   // pass all submission fields, return all submission fields
   // so what does DateEvaluator(flatSubmissionData) do?
   // in what context would this be used?  theForm.evaluate(submissionData)[theFieldId],
-  evaluateWithValues(values: string): string {
+  evaluateWithValues<T>(
+    values: TFlatSubmissionValues<T>
+  ): TFlatSubmissionValues<T> {
     return values;
   }
 
-  getUiPopulateObjects<T = string | undefined>(
-    submissionDatum: T
-  ): TUiEvaluationObject[] {
+  getUiPopulateObjects<T = string>(submissionDatum?: T): TUiEvaluationObject[] {
     const datum = this.getStoredValue<string>(submissionDatum as string);
 
     const statusMessages: TStatusRecord[] = [
@@ -137,10 +137,10 @@ describe("AbstractSubfieldAbstractEvaluator", () => {
         "Any value will do"
       );
     });
-    it("should return '__NO_SUBMISSION_DATA__' if undefined and required.", () => {
+    it("should return '__EMPTY_SUBMISSION_DATA__' if undefined and required.", () => {
       const evaluator = new TestSubfieldEvaluator(fieldJson);
       expect(evaluator._getStoredValue(undefined)).toStrictEqual(
-        "__NO_SUBMISSION_DATA__"
+        "__EMPTY_SUBMISSION_DATA__"
       );
     });
     it("should return '__BAD_DATA_TYPE__' if undefined and required.", () => {
@@ -225,7 +225,7 @@ describe("AbstractSubfieldAbstractEvaluator", () => {
           statusMessages: [
             {
               severity: "info",
-              message: "Stored value: '__NO_SUBMISSION_DATA__'.",
+              message: "Stored value: '__EMPTY_SUBMISSION_DATA__'.",
               relatedFieldIds: [],
             },
           ],
