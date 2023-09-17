@@ -1,26 +1,24 @@
 import { TStatusRecord } from "../../../chrome-extension/type";
 import { AbstractEvaluator } from "./AbstractEvaluator";
 import { TUiEvaluationObject } from "./type";
+import { isFunctions } from "../../../common/isFunctions";
+type TComplexDatumField = { [subfieldId: string]: string };
 
-type TAdvancedField = { [subfieldId: string]: string };
-
-const isString = (str: any) => typeof str === "string" || str instanceof String;
-
-abstract class AbstractSubfieldEvaluator extends AbstractEvaluator {
+abstract class AbstractComplexSubmissionDatumEvaluator extends AbstractEvaluator {
   abstract get supportedSubfieldIds(): string[];
 
   parseValues<S = string, T = string>(submissionDatum?: S): T {
-    return this.parseSubmittedData(submissionDatum as string) as T;
+    return this.parseSubmittedDatum(submissionDatum as string) as T;
   }
 
-  private parseSubmittedData(
+  private parseSubmittedDatum(
     submissionDatum?: string
-  ): TAdvancedField | undefined {
+  ): TComplexDatumField | undefined {
     if (!submissionDatum) {
       return undefined;
     }
 
-    if (!isString(submissionDatum)) {
+    if (!isFunctions.isString(submissionDatum)) {
       return {};
     }
 
@@ -38,13 +36,13 @@ abstract class AbstractSubfieldEvaluator extends AbstractEvaluator {
       }
 
       return prev;
-    }, {} as TAdvancedField);
+    }, {} as TComplexDatumField);
   }
 
   protected createStatusMessageArrayWithStoredValue<T>(
     submissionDatum?: T | undefined
   ): TStatusRecord[] {
-    const message = isString(submissionDatum)
+    const message = isFunctions.isString(submissionDatum)
       ? `Stored value: '${((submissionDatum as string) || "").replace(
           /\n/g,
           "\\n"
@@ -121,4 +119,4 @@ abstract class AbstractSubfieldEvaluator extends AbstractEvaluator {
   }
 }
 
-export { AbstractSubfieldEvaluator };
+export { AbstractComplexSubmissionDatumEvaluator };

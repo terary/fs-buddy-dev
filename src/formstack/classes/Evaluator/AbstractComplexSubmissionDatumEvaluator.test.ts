@@ -1,7 +1,7 @@
 import { TFsFieldAny } from "../../type.field";
-import { AbstractSubfieldEvaluator } from "./AbstractSubfieldEvaluator";
+import { AbstractComplexSubmissionDatumEvaluator } from "./AbstractComplexSubmissionDatumEvaluator";
 
-class TestSubfieldEvaluator extends AbstractSubfieldEvaluator {
+class TestSubfieldEvaluator extends AbstractComplexSubmissionDatumEvaluator {
   get supportedSubfieldIds() {
     return ["subfield0", "subfield1", "subfield2"];
   }
@@ -10,7 +10,7 @@ class TestSubfieldEvaluator extends AbstractSubfieldEvaluator {
   }
 }
 
-describe("AbstractSubfieldEvaluator", () => {
+describe("AbstractScalarSubmissionDatumEvaluator", () => {
   describe(".getUiPopulateObjects(...)", () => {
     it("Should return __EMPTY_SUBMISSION_DATA__ for fields without submission data", () => {
       const requireFieldJson = {

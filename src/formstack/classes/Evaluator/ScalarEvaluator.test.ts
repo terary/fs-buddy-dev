@@ -1,11 +1,11 @@
 import { TFsFieldAny } from "../../type.field";
-import { GenericEvaluator } from "./GenericEvaluator";
+import { ScalarEvaluator } from "./ScalarEvaluator";
 
-describe("GenericEvaluator", () => {
+describe("ScalarEvaluator", () => {
   describe(".evaluateWithValues(...)", () => {
     it("Should parse submittedData", () => {
       //
-      const evaluator = new GenericEvaluator(fieldJsonTextArea);
+      const evaluator = new ScalarEvaluator(fieldJsonTextArea);
       const actual = evaluator.evaluateWithValues("Just some plain text.");
       expect(actual).toStrictEqual("Just some plain text.");
     });
@@ -13,7 +13,7 @@ describe("GenericEvaluator", () => {
   describe(".getUiPopulateObjects(...)", () => {
     it("Should return array of TUiEvaluationObject object when there is submission data.(ideal)", () => {
       const testValue = "Anything will do";
-      const evaluator = new GenericEvaluator(fieldJsonText);
+      const evaluator = new ScalarEvaluator(fieldJsonText);
       const actual = evaluator.getUiPopulateObjects(testValue);
       expect(actual).toStrictEqual([
         {
@@ -32,8 +32,8 @@ describe("GenericEvaluator", () => {
         },
       ]);
     });
-    it("Should return array of TUiEvaluationObject object when there is no submission data.", () => {
-      const evaluator = new GenericEvaluator(fieldJsonText);
+    it("Should return TUiEvaluationObject[], including status message for empty submission data.", () => {
+      const evaluator = new ScalarEvaluator(fieldJsonText);
       const actual = evaluator.getUiPopulateObjects(undefined);
       expect(actual).toStrictEqual([
         {
@@ -45,20 +45,16 @@ describe("GenericEvaluator", () => {
             {
               severity: "info",
               fieldId: "147738154",
-              // message:
-              message: "Stored value: '__EMPTY_SUBMISSION_DATA__'.",
+              message: "Stored value: '__NO_SUBMISSION_DATA__'.",
               relatedFieldIds: [],
             },
           ],
         },
       ]);
     });
-    it("Should return array of TUiEvaluationObject object when there is no submission data.", () => {
-      const fieldJsonRequired = {
-        ...fieldJsonText,
-        ...{ required: "1" },
-      } as unknown as TFsFieldAny;
-      const evaluator = new GenericEvaluator(fieldJsonRequired);
+    it("Should return TUiEvaluationObject[], including status message for empty and require submission data.", () => {
+      const fieldJsonTextRequired = { ...fieldJsonText, ...{ required: "1" } };
+      const evaluator = new ScalarEvaluator(fieldJsonTextRequired);
       const actual = evaluator.getUiPopulateObjects(undefined);
       expect(actual).toStrictEqual([
         {
@@ -70,7 +66,7 @@ describe("GenericEvaluator", () => {
             {
               severity: "info",
               fieldId: "147738154",
-              message: "Stored value: '__MISSING_AND_REQUIRED__'.",
+              message: "Stored value: '__EMPTY_AND_REQUIRED__'.",
               relatedFieldIds: [],
             },
             {
@@ -78,6 +74,32 @@ describe("GenericEvaluator", () => {
               fieldId: "147738154",
               message:
                 "Submission data missing and required.  This is not an issue if the field is hidden by logic.",
+              relatedFieldIds: [],
+            },
+          ],
+        },
+      ]);
+    });
+    it("Should return TUiEvaluationObject[], including status message corrupt/broken submission data.", () => {
+      const evaluator = new ScalarEvaluator(fieldJsonText);
+      const actual = evaluator.getUiPopulateObjects({});
+      expect(actual).toStrictEqual([
+        {
+          uiid: null,
+          fieldId: "147738154",
+          fieldType: "text",
+          value: "",
+          statusMessages: [
+            {
+              severity: "info",
+              fieldId: "147738154",
+              message: "Stored value: '[object Object]'.",
+              relatedFieldIds: [],
+            },
+            {
+              severity: "warn",
+              fieldId: "147738154",
+              message: "_BAD_DATA_TYPE_' type: 'object', value: '{}'",
               relatedFieldIds: [],
             },
           ],
