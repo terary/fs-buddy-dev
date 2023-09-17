@@ -56,7 +56,7 @@ type TFsBaseFieldType = {
         label: string;
         value: string;
       }[];
-  required: boolean;
+  required: boolean | string | number;
   uniq: boolean;
   hidden: boolean;
   readonly: boolean;
