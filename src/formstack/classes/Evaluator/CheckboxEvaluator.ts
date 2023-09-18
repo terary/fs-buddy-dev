@@ -13,7 +13,7 @@ class CheckboxEvaluator extends AbstractComplexSubmissionDatumEvaluator {
     this.#fieldSelectOptions = (fieldJson.options || []) as TFsSelectOption[];
   }
 
-  private getSelectOptions() {
+  protected getSelectOptions() {
     return this.#fieldSelectOptions;
   }
 
@@ -32,7 +32,7 @@ class CheckboxEvaluator extends AbstractComplexSubmissionDatumEvaluator {
     }, {} as TSimpleDictionary<string>);
   }
 
-  private invalidSelectedOptionMessage(selectedOption: string): string {
+  protected invalidSelectedOptionMessage(selectedOption: string): string {
     return `Failed to find valid option: '${selectedOption}' within valid options: '${this.validOptionAsPrintableString()}'.`;
   }
 
@@ -51,10 +51,6 @@ class CheckboxEvaluator extends AbstractComplexSubmissionDatumEvaluator {
     const splitValues = (submissionDatum || "").split("\n");
     return splitValues;
   }
-
-  // parseValues<S = string, T = string>(submissionDatum?: S): T {
-  //   return submissionDatum as T;
-  // }
 
   private validOptionAsPrintableString(): string {
     return this.getSelectOptions()
@@ -76,7 +72,6 @@ class CheckboxEvaluator extends AbstractComplexSubmissionDatumEvaluator {
       statusMessages.push(
         this.wrapAsStatusMessage(
           "error",
-          // "_BAD_DATA_TYPE_' type: 'object', value: '{}'"
           `_BAD_DATA_TYPE_' type: '${typeof submissionDatum}', value: '${submissionDatum}'.`
         )
       );

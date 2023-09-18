@@ -4,10 +4,6 @@ import { CheckboxEvaluator } from "./CheckboxEvaluator";
 describe("CheckboxEvaluator", () => {
   describe("Multiple selectable options (checkbox)", () => {
     describe(".getUiPopulateObjects(...)", () => {
-      //
-      //
-      //
-      //
       it("Should return array of TUiEvaluationObject object when there is submission data.(ideal)", () => {
         const evaluator = new CheckboxEvaluator(fieldJsonCheckbox);
         const actual = evaluator.getUiPopulateObjects(
