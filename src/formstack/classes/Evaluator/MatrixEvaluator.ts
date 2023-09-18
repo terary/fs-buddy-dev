@@ -1,7 +1,6 @@
 import { AbstractComplexSubmissionDatumEvaluator } from "./AbstractComplexSubmissionDatumEvaluator";
-import { isFunctions } from "../../../common/isFunctions";
-import { TSimpleDictionary, TUiEvaluationObject } from "./type";
 import { TFsFieldMatrix } from "../../type.field";
+import { TUiEvaluationObject } from "./type";
 
 class MatrixEvaluator extends AbstractComplexSubmissionDatumEvaluator {
   private getAsMatrixUiFieldIdMap(): {
