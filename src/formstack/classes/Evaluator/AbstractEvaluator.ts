@@ -76,7 +76,7 @@ abstract class AbstractEvaluator {
     return [this.getStatusMessageStoredValue(submissionDatum)];
   }
 
-  protected getEmptyStatusMessageArray(): TStatusRecord[] {
+  private getEmptyStatusMessageArray(): TStatusRecord[] {
     return [];
   }
 

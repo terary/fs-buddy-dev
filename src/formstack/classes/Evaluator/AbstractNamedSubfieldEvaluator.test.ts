@@ -1,18 +1,24 @@
 import { TFsFieldAny } from "../../type.field";
-import { AbstractComplexSubmissionDatumEvaluator } from "./AbstractComplexSubmissionDatumEvaluator";
-
-class TestSubfieldEvaluator extends AbstractComplexSubmissionDatumEvaluator {
+import { AbstractNamedSubfieldEvaluator } from "./AbstractNamedSubfieldEvaluator";
+import { TSimpleDictionary } from "./type";
+class TestSubfieldEvaluator extends AbstractNamedSubfieldEvaluator {
   get supportedSubfieldIds() {
     return ["subfield0", "subfield1", "subfield2"];
   }
   isCorrectType<T>(submissionDatum: T): boolean {
     return true;
   }
+  // parseSubmittedDatum
+  public _transformSubmittedDatumToObject(
+    submissionDatum?: string | undefined
+  ): TSimpleDictionary<string> {
+    return super.transformSubmittedDatumToObject(submissionDatum);
+  }
 }
 
-describe("AbstractScalarSubmissionDatumEvaluator", () => {
+describe("AbstractNamedSubfieldEvaluator", () => {
   describe(".getUiPopulateObjects(...)", () => {
-    it("Should return __EMPTY_SUBMISSION_DATA__ for fields without submission data", () => {
+    it("Should return __EMPTY_SUBMISSION_DATA__ for fields without submission data.", () => {
       const requireFieldJson = {
         ...fieldJson,
         ...{ required: "1" },
@@ -44,7 +50,7 @@ describe("AbstractScalarSubmissionDatumEvaluator", () => {
       ]);
     });
 
-    it("Should return Something if the object is empty?? for fields without submission data", () => {
+    it("Should return Something if the object is empty?? for fields without submission data.", () => {
       const evaluator = new TestSubfieldEvaluator(fieldJson);
       const actual = evaluator.getUiPopulateObjects({});
       expect(actual).toStrictEqual([
@@ -70,6 +76,7 @@ describe("AbstractScalarSubmissionDatumEvaluator", () => {
         },
       ]);
     });
+
     it("Should return array of properly formatted UI instructions (shape of TUiEvaluationObject).", () => {
       const testValue =
         "subfield0 = The First Value.\nsubfield1 = The Second Value.\nsubfield2 = The Final Value.";
@@ -114,6 +121,7 @@ describe("AbstractScalarSubmissionDatumEvaluator", () => {
         },
       ]);
     });
+
     it("Should return status messages indicated unknown field found.", () => {
       const testValue =
         "subfield0 = The First Value.\nsubfield1 = The Second Value.\nsubfield2 = The Final Value.\nUnknownSubField = some unknown value\n";
@@ -164,6 +172,30 @@ describe("AbstractScalarSubmissionDatumEvaluator", () => {
           ],
         },
       ]);
+    });
+  });
+  describe(".transformSubmittedDatumToObject()", () => {
+    it("Should accept 'key = value\n...' string and return key/value object. (ideal)", () => {
+      const evaluator = new TestSubfieldEvaluator(fieldJson);
+      const actual = evaluator._transformSubmittedDatumToObject(
+        "one = 1\n two = 2\n three = 3"
+      );
+
+      expect(actual).toStrictEqual({ one: "1", two: "2", three: "3" });
+    });
+    it("Should return empty object if datum is undefined.", () => {
+      const evaluator = new TestSubfieldEvaluator(fieldJson);
+      const actual = evaluator._transformSubmittedDatumToObject(undefined);
+
+      expect(actual).toStrictEqual({});
+    });
+    it.only("Should return object with one key and empty string value if no new line contained in the datum.", () => {
+      const evaluator = new TestSubfieldEvaluator(fieldJson);
+      const actual = evaluator._transformSubmittedDatumToObject(
+        "Simple string no key/value"
+      );
+
+      expect(actual).toStrictEqual({ "Simple string no key/value": "" });
     });
   });
 });

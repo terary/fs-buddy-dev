@@ -2,8 +2,7 @@ import { TStatusRecord } from "../../../chrome-extension/type";
 import { TFsFieldAny } from "../../type.field";
 import { AbstractEvaluator } from "./AbstractEvaluator";
 import { TUiEvaluationObject } from "./type";
-
-const isString = (v: any) => typeof v === "string" || v instanceof String;
+import { isFunctions } from "../../../common/isFunctions";
 
 class TestSubfieldEvaluator extends AbstractEvaluator {
   parseValues<S = string, T = string>(submissionDatum?: S): T {
@@ -15,7 +14,7 @@ class TestSubfieldEvaluator extends AbstractEvaluator {
   }
 
   isCorrectType<T>(submissionDatum: T): boolean {
-    return isString(submissionDatum);
+    return isFunctions.isString(submissionDatum);
   }
   // pass all submission fields, return all submission fields
   // so what does DateEvaluator(flatSubmissionData) do?
@@ -48,12 +47,14 @@ class TestSubfieldEvaluator extends AbstractEvaluator {
 
     return [
       {
-        uiid: this.isValidSubmissionDatum(datum)
-          ? `field${this.fieldId}`
-          : null,
+        // *tmc* getUi - is probably an abstract function, should be removed from this class?
+        uiid: "_ABSTRACT_",
+        //  // this.isValidSubmissionDatum(datum)
+        //   ? `field${this.fieldId}`
+        //   : null,
         fieldId: this.fieldId,
         fieldType: this.fieldJson.type,
-        value: this.isValidSubmissionDatum(datum) ? datum : "",
+        value: "_ABSTRACT_", //this.isValidSubmissionDatum(datum) ? datum : "",
 
         statusMessages: statusMessages,
       },

@@ -32,7 +32,7 @@ describe("ScalarEvaluator", () => {
         },
       ]);
     });
-    it("Should return TUiEvaluationObject[], including status message for empty submission data.", () => {
+    it("Should return TUiEvaluationObject[], including status message for empty (undefined) submission data.", () => {
       const evaluator = new ScalarEvaluator(fieldJsonText);
       const actual = evaluator.getUiPopulateObjects(undefined);
       expect(actual).toStrictEqual([
@@ -108,10 +108,6 @@ describe("ScalarEvaluator", () => {
     });
   });
 });
-const submissionData = {
-  field: "147738155",
-  value: "Just some plain text.",
-};
 
 const fieldJsonTextArea = {
   id: "147738155",

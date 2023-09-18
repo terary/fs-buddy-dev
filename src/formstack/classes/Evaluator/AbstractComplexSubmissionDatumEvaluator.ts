@@ -2,20 +2,38 @@ import { TStatusRecord } from "../../../chrome-extension/type";
 import { AbstractEvaluator } from "./AbstractEvaluator";
 import { TUiEvaluationObject } from "./type";
 import { isFunctions } from "../../../common/isFunctions";
-type TComplexDatumField = { [subfieldId: string]: string };
+import type { TSimpleDictionary } from "./type";
+type TComplexDatumField = TSimpleDictionary<string>;
 
 abstract class AbstractComplexSubmissionDatumEvaluator extends AbstractEvaluator {
-  abstract get supportedSubfieldIds(): string[];
+  // this should be on subclass so this class can be used with matrix and checkbox
+  // abstract get supportedSubfieldIds(): string[];
 
-  parseValues<S = string, T = string>(submissionDatum?: S): T {
-    return this.parseSubmittedDatum(submissionDatum as string) as T;
+  parseValues<S = string, T = string>(submissionDatum?: S): T;
+  parseValues(submissionDatum?: string): TComplexDatumField {
+    return this.transformSubmittedDatumToObject(submissionDatum as string);
+  }
+  public isCorrectType<T>(submissionDatum: T): boolean;
+  isCorrectType<T>(submissionDatum: T): boolean {
+    const parseSubmittedData = this.parseValues(submissionDatum);
+
+    // should we check if all keys are valid?
+    return (
+      typeof parseSubmittedData === "object" &&
+      parseSubmittedData !== null &&
+      Object.keys(parseSubmittedData).length > 0
+    );
   }
 
-  private parseSubmittedDatum(
+  abstract getUiPopulateObjects<T = string>(
+    submissionDatum?: T
+  ): TUiEvaluationObject[];
+
+  protected parseSubmittedData(
     submissionDatum?: string
-  ): TComplexDatumField | undefined {
+  ): TSimpleDictionary<string> {
     if (!submissionDatum) {
-      return undefined;
+      return {};
     }
 
     if (!isFunctions.isString(submissionDatum)) {
@@ -36,18 +54,49 @@ abstract class AbstractComplexSubmissionDatumEvaluator extends AbstractEvaluator
       }
 
       return prev;
+    }, {} as TSimpleDictionary<string>);
+  }
+
+  protected transformSubmittedDatumToObject(
+    submissionDatum?: string
+  ): TComplexDatumField {
+    if (!submissionDatum) {
+      return {};
+    }
+
+    if (!isFunctions.isString(submissionDatum)) {
+      return {};
+    }
+
+    const records = submissionDatum.split("\n");
+    return records.reduce((prev, cur, i, a) => {
+      const [subfieldIdRaw, valueRaw] = cur.split("=");
+      const subfieldId = (subfieldIdRaw || "").trim();
+      const value = (valueRaw || "").trim();
+      if (subfieldId !== "" || value !== "") {
+        prev[subfieldId] = value;
+      }
+
+      return prev;
     }, {} as TComplexDatumField);
   }
 
   protected createStatusMessageArrayWithStoredValue<T>(
     submissionDatum?: T | undefined
   ): TStatusRecord[] {
-    const message = isFunctions.isString(submissionDatum)
-      ? `Stored value: '${((submissionDatum as string) || "").replace(
-          /\n/g,
-          "\\n"
-        )}'.`
-      : `Stored value: '${JSON.stringify(submissionDatum)}'.`;
+    let message = "";
+    if (isFunctions.isString(submissionDatum)) {
+      message = `Stored value: '${((submissionDatum as string) || "").replace(
+        /\n/g,
+        "\\n"
+      )}'.`;
+    } else if (submissionDatum === undefined) {
+      message = `Stored value: '${super.getStoredValue<string>(
+        submissionDatum as string
+      )}'.`;
+    } else {
+      message = `Stored value: '${JSON.stringify(submissionDatum)}'.`;
+    }
 
     return [
       {
@@ -57,65 +106,6 @@ abstract class AbstractComplexSubmissionDatumEvaluator extends AbstractEvaluator
         relatedFieldIds: [],
       },
     ];
-  }
-
-  getUiPopulateObjects<T = string>(submissionDatum?: T): TUiEvaluationObject[] {
-    const statusMessages =
-      this.createStatusMessageArrayWithStoredValue(submissionDatum);
-
-    if ((this.isRequired && submissionDatum === "") || !submissionDatum) {
-      return this.getUiPopulateObjectsEmptyAndRequired(statusMessages);
-    }
-
-    const parsedValues = this.parseValues<
-      string,
-      { [subfieldId: string]: string }
-    >(submissionDatum as string);
-
-    if (this.isRequired && (submissionDatum === "" || !submissionDatum)) {
-      statusMessages.push(
-        this.wrapAsStatusMessage(
-          "warn",
-          "Submission data missing and required.  This is not an issue if the field is hidden by logic."
-        )
-      );
-
-      return [this.wrapAsUiObject(null, "", statusMessages)];
-    }
-
-    if (parsedValues === undefined) {
-      return [this.wrapAsUiObject(null, "", statusMessages)];
-    }
-
-    if (Object.keys(parsedValues).length === 0) {
-      statusMessages.push(
-        this.wrapAsStatusMessage("error", "Failed to parse field")
-      );
-
-      return [this.wrapAsUiObject(null, "", statusMessages)];
-    }
-
-    Object.entries(parsedValues).forEach(([key, value]) => {
-      if (!this.supportedSubfieldIds.includes(key)) {
-        statusMessages.push(
-          this.wrapAsStatusMessage(
-            "warn",
-            `Found unexpected subfield: '${key}'. With value: '${value}'.`
-          )
-        );
-      }
-    });
-
-    const uiComponents = this.supportedSubfieldIds.map((subfieldId) => {
-      return this.wrapAsUiObject(
-        `field${this.fieldId}-${subfieldId}`,
-        parsedValues[subfieldId]
-      );
-    });
-
-    // add one more for status message
-    uiComponents.push(this.wrapAsUiObject(null, "", statusMessages));
-    return uiComponents;
   }
 }
 

@@ -6,5 +6,6 @@ type TUiEvaluationObject = {
   statusMessages: any[];
 };
 type TStatusMessageSeverity = "debug" | "error" | "info" | "warn";
+type TSimpleDictionary<T> = { [key: string]: T };
 
-export type { TStatusMessageSeverity, TUiEvaluationObject };
+export type { TStatusMessageSeverity, TUiEvaluationObject, TSimpleDictionary };
