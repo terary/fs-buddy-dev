@@ -2,7 +2,7 @@ import { TUiEvaluationObject } from "./type";
 import { isFunctions } from "../../../common/isFunctions";
 import { AbstractSelectOptionEvaluator } from "./AbstractSelectOptionEvaluator";
 
-class SelectEvaluator extends AbstractSelectOptionEvaluator {
+class RadioEvaluator extends AbstractSelectOptionEvaluator {
   private isValueInSelectOptions(value: string): boolean {
     return this.getSelectOptions().find((x) => x.value === value) !== undefined;
   }
@@ -18,7 +18,63 @@ class SelectEvaluator extends AbstractSelectOptionEvaluator {
   }
 
   getUiPopulateObjects<T = string>(submissionDatum?: T): TUiEvaluationObject[];
-  getUiPopulateObjects(submissionDatum: string): TUiEvaluationObject[] {
+  getUiPopulateObjects(submissionDatum?: string): TUiEvaluationObject[] {
+    const statusMessages =
+      this.createStatusMessageArrayWithStoredValue(submissionDatum);
+
+    if (!submissionDatum) {
+      statusMessages.push(
+        this.wrapAsStatusMessage(
+          "warn",
+          this.invalidSelectedOptionMessage(submissionDatum as string)
+        )
+      );
+
+      if (this.isRequired) {
+        return this.getUiPopulateObjectsEmptyAndRequired(statusMessages);
+      }
+      return [this.wrapAsUiObject(null, "", statusMessages)];
+    }
+
+    if (!this.isCorrectType(submissionDatum)) {
+      const message =
+        `_BAD_DATA_TYPE_' type: '${typeof submissionDatum}', value: '` +
+        JSON.stringify(submissionDatum).slice(0, 100) +
+        "'";
+      statusMessages.push(this.wrapAsStatusMessage("warn", message));
+
+      return [this.wrapAsUiObject(null, "", statusMessages)];
+    }
+
+    // if (this.fieldType === "select") {
+    //   return this.getUiPopulateObjectsSelect(
+    //     submissionDatum as string,
+    //     statusMessages
+    //   );
+    // }
+
+    const parsedValues = this.parseValues<string>(submissionDatum as string);
+    const uiidFieldIdMap = this.getUiidFieldIdMap();
+
+    if (!uiidFieldIdMap[parsedValues]) {
+      statusMessages.push(
+        this.wrapAsStatusMessage(
+          "warn",
+          this.invalidSelectedOptionMessage(submissionDatum as string)
+        )
+      );
+    }
+
+    return [
+      this.wrapAsUiObject(
+        uiidFieldIdMap[parsedValues] || this.fieldId,
+        parsedValues
+      ),
+      this.wrapAsUiObject(null, "null", statusMessages),
+    ];
+  }
+
+  x_getUiPopulateObjects(submissionDatum: string): TUiEvaluationObject[] {
     const statusMessages =
       this.createStatusMessageArrayWithStoredValue(submissionDatum);
 
@@ -69,4 +125,4 @@ class SelectEvaluator extends AbstractSelectOptionEvaluator {
   }
 }
 
-export { SelectEvaluator };
+export { RadioEvaluator };

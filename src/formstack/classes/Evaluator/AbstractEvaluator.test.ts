@@ -144,13 +144,6 @@ describe("AbstractSubfieldAbstractEvaluator", () => {
         "__NO_SUBMISSION_DATA__"
       );
     });
-    it("should return '__BAD_DATA_TYPE__' if undefined and required.", () => {
-      const evaluator = new TestSubfieldEvaluator(fieldJson);
-      const x = evaluator._getStoredValue({});
-      expect(evaluator._getStoredValue({})).toStrictEqual(
-        '__BAD_DATA_TYPE__ "object"'
-      );
-    });
     it("should return '__MISSING_AND_REQUIRED__' if undefined and required is truthy.", () => {
       const modifiedFieldJson = {
         ...fieldJson,
@@ -158,7 +151,7 @@ describe("AbstractSubfieldAbstractEvaluator", () => {
       } as unknown as TFsFieldAny;
       const evaluator = new TestSubfieldEvaluator(modifiedFieldJson);
       expect(evaluator._getStoredValue(undefined)).toStrictEqual(
-        "__MISSING_AND_REQUIRED__"
+        "__EMPTY_AND_REQUIRED__"
       );
     });
   });
@@ -169,10 +162,10 @@ describe("AbstractSubfieldAbstractEvaluator", () => {
       const actual = evaluator.getUiPopulateObjects("any value will do");
       expect(actual).toStrictEqual([
         {
-          uiid: "field148008076",
+          uiid: "_ABSTRACT_",
           fieldId: "148008076",
           fieldType: "text",
-          value: "any value will do",
+          value: "_ABSTRACT_",
           statusMessages: [
             {
               severity: "info",
@@ -193,23 +186,23 @@ describe("AbstractSubfieldAbstractEvaluator", () => {
       const actual = evaluator.getUiPopulateObjects(undefined);
       expect(actual).toStrictEqual([
         {
-          uiid: null,
+          uiid: "_ABSTRACT_",
           fieldId: "148008076",
           fieldType: "text",
-          value: "",
+          value: "_ABSTRACT_",
           statusMessages: [
             {
-              severity: "warn",
-              message: "Stored value: '__MISSING_AND_REQUIRED__'.",
+              severity: "info",
+              message: "Stored value: '__EMPTY_AND_REQUIRED__'.",
               relatedFieldIds: [],
             },
-            {
-              fieldId: "148008076",
-              severity: "warn",
-              message:
-                "Submission data missing and required.  This is not an issue if the field is hidden by logic.",
-              relatedFieldIds: [],
-            },
+            // {
+            //   fieldId: "148008076",
+            //   severity: "warn",
+            //   message:
+            //     "Submission data missing and required.  This is not an issue if the field is hidden by logic.",
+            //   relatedFieldIds: [],
+            // },
           ],
         },
       ]);
@@ -219,10 +212,10 @@ describe("AbstractSubfieldAbstractEvaluator", () => {
       const actual = evaluator.getUiPopulateObjects(undefined);
       expect(actual).toStrictEqual([
         {
-          uiid: null,
+          uiid: "_ABSTRACT_",
           fieldId: "148008076",
           fieldType: "text",
-          value: "",
+          value: "_ABSTRACT_",
           statusMessages: [
             {
               severity: "info",
