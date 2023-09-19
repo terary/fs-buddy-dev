@@ -177,7 +177,7 @@ describe("FsTreeFieldCollection", () => {
       ]);
     });
   });
-  it.only("Should return the value of the calculation given field values", () => {
+  it("Should return the value of the calculation given field values", () => {
     // logic/not required 147738154
     // required 148008076
     const getFieldJson = (fieldId: string) => {
@@ -330,7 +330,8 @@ const uiComponentsExpected = [
       {
         severity: "info",
         fieldId: "147738154",
-        message: "Stored value: '__EMPTY_SUBMISSION_DATA__'.",
+        // message: "Stored value: '__EMPTY_SUBMISSION_DATA__'.",
+        message: "Stored value: '__NO_SUBMISSION_DATA__'.",
         relatedFieldIds: [],
       },
     ],
@@ -772,12 +773,12 @@ const uiComponentsExpected = [
     uiid: "field148008076",
     fieldId: "148008076",
     fieldType: "text",
-    value: '__BAD_DATA_TYPE__ "string"',
+    value: "Short Answer - Copy 689",
     statusMessages: [
       {
         severity: "info",
         fieldId: "148008076",
-        message: "Stored value: '__BAD_DATA_TYPE__ \"string\"'.",
+        message: "Stored value: 'Short Answer - Copy 689'.",
         relatedFieldIds: [],
       },
     ],
