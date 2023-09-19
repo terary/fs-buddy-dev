@@ -67,6 +67,10 @@
           text-decoration: underline;
       }
   
+      .fsControlPanelSubsection {
+        border: 1px black solid;
+        margin: 5px;
+      }
     </style>
   <script>
      window.onmessage = function(e) {
@@ -518,9 +522,10 @@
 
     function hideAllPanels(){
       [
-        'fsBuddyControlPanelLogic', 
-        'fsBuddyControlPanelFieldStatus',
-         'fsBuddyControlPanelUserMessages'
+      'fsBuddyControlPanelSubmission',
+      'fsBuddyControlPanelLogic', 
+      'fsBuddyControlPanelFieldStatus',
+      'fsBuddyControlPanelUserMessages'
       ].forEach(panelId=>{
         document.getElementById(panelId).style.display = "none";
       })
@@ -553,29 +558,41 @@
  
       <table>
             <tr>
-                  <td>
-                        <button onclick="showOnly('fsBuddyControlPanelLogic')">Work with Logic</button>
-                  </td>
-                  <td>
-                        <button onclick="showOnly('fsBuddyControlPanelFieldStatus')">Work with Field Messages</button>
-                  </td>
-                  <td>
-                        <button onclick="console.log('to be done')">Evaluate Submission</button>
-                  </td>
-                  <td>
-                        <button onclick="showOnly('fsBuddyControlPanelUserMessages')">User Messages</button>
-                  </td>
+                <td>
+                  <button onclick="showOnly('fsBuddyControlPanelSubmission')">Submission Tool</button>
+                </td>
+                <td>
+                      <button onclick="showOnly('fsBuddyControlPanelLogic')">Logic Tool</button>
+                </td>
+                <td>
+                      <button onclick="showOnly('fsBuddyControlPanelFieldStatus')">Field Analysis</button>
+                </td>
+                <td>
+                      <button onclick="showOnly('fsBuddyControlPanelUserMessages')">Form Analysis</button>
+                </td>
             </tr>
-            
       </table>
-          
-      <div id='fsBuddyControlPanelLogic'>
+      <div id='fsBuddyControlPanelSubmission' class="fsControlPanelSubsection">
+        <h3>Submission Tool</h3>
+        <table>
+              <tr>
+                    <td>
+                          <button onclick="handleFetchSubmissionClick()">Load Submission</button>
+                    </td>
+                    <td>
+                          <input id="fsBuddyFetchSubmissionIdInput" value="1129952515"/>    
+                    </td>
+              </tr>
+        </table>
+      </div>
+      
+      <div id='fsBuddyControlPanelLogic' class="fsControlPanelSubsection">
             <h3>Logic Tool</h3>
             <button onclick="sendMessageToParent('getFieldsWithLogicRequest')">Get Fields With Logic</button>
 
       </div>
-      <div id='fsBuddyControlPanelFieldStatus'>
-            <h4>Field Status</h4>
+      <div id='fsBuddyControlPanelFieldStatus' class="fsControlPanelSubsection">
+            <h4>Field Analysis</h4>
             <table>
                   <tr>
                         <td>
@@ -601,21 +618,8 @@
                   </tr>
             </table>
       </div>
-      <div id='fsBuddyControlPanelSubmission'>
-        <h4>Submission</h4>
-        <table>
-              <tr>
-                    <td>
-                          <button onclick="handleFetchSubmissionClick()">Load Submission</button>
-                    </td>
-                    <td>
-                          <input id="fsBuddyFetchSubmissionIdInput" value="1129952515"/>    
-                    </td>
-              </tr>
-        </table>
-  </div>
-  <div id='fsBuddyControlPanelUserMessages'>
-            <h4>User Messages Go Here</h4>
+      <div id='fsBuddyControlPanelUserMessages' class="fsControlPanelSubsection">
+            <h4>Form Analysis</h4>
             <div style="height: 300px; overflow-y: auto;" id="fsBuddyUserMessagesDiv"></div>
       </div>
     </div>

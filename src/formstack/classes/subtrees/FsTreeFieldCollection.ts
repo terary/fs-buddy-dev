@@ -222,6 +222,15 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
   getUiPopulateObject(
     apiSubmissionJson: TSubmissionJson
   ): TUiEvaluationObject[] {
+    if (
+      !("data" in apiSubmissionJson) ||
+      !Array.isArray(apiSubmissionJson.data)
+    ) {
+      console.log("Do not not understand apiSubmissionJson");
+      console.log({ apiSubmissionJson });
+      return [];
+    }
+
     const mappedSubmissionData = apiSubmissionJson.data.reduce(
       (prev: any, cur: any) => {
         prev[cur.field] = cur.value;
@@ -229,6 +238,7 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
       },
       {}
     );
+    // need to make sure guard against non array types
     const submissionUiDataItems: TUiEvaluationObject[] = this.getAllFieldIds()
       .map((fieldId) => {
         const evaluator = this.getEvaluatorByFieldId(fieldId);
