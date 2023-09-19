@@ -1,9 +1,7 @@
-import { TFsFieldAddress } from "../../type.field";
-import { AbstractEvaluator } from "./AbstractEvaluator";
-import { AbstractSubfieldEvaluator } from "./AbstractSubfieldEvaluator";
+import { NamedSubfieldEvaluator } from "./NamedSubfieldEvaluator";
 
-class NameEvaluator extends AbstractSubfieldEvaluator {
-  private _supportedSubfieldIds = [
+class NameEvaluator extends NamedSubfieldEvaluator {
+  protected _supportedSubfieldIds = [
     "first",
     "last",
     "initial",
@@ -11,23 +9,15 @@ class NameEvaluator extends AbstractSubfieldEvaluator {
     "suffix",
     "middle",
   ];
-  get supportedSubfieldIds() {
-    return this._supportedSubfieldIds;
-  }
 
-  evaluateWithValues<S = string, T = string>(values: S): T {
-    return this.parseValues(values);
-  }
-
-  isCorrectType<T>(submissionDatum: T): boolean {
-    const parseSubmittedData = this.parseValues(submissionDatum);
-    // should we check if all keys are valid?
-    return (
-      typeof parseSubmittedData === "object" &&
-      parseSubmittedData !== null &&
-      Object.keys(parseSubmittedData).length > 0
-    );
-  }
+  // protected _supportedSubfieldIds: string[] = [
+  //   "address",
+  //   "address2",
+  //   "city",
+  //   "state",
+  //   "zip",
+  //   "country",
+  // ];
 }
 
 export { NameEvaluator };

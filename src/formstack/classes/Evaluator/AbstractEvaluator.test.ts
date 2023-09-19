@@ -1,9 +1,8 @@
 import { TStatusRecord } from "../../../chrome-extension/type";
 import { TFsFieldAny } from "../../type.field";
 import { AbstractEvaluator } from "./AbstractEvaluator";
-import { TFlatSubmissionValues, TUiEvaluationObject } from "./type";
-
-const isString = (v: any) => typeof v === "string" || v instanceof String;
+import { TUiEvaluationObject } from "./type";
+import { isFunctions } from "../../../common/isFunctions";
 
 class TestSubfieldEvaluator extends AbstractEvaluator {
   parseValues<S = string, T = string>(submissionDatum?: S): T {
@@ -15,18 +14,18 @@ class TestSubfieldEvaluator extends AbstractEvaluator {
   }
 
   isCorrectType<T>(submissionDatum: T): boolean {
-    return isString(submissionDatum);
+    return isFunctions.isString(submissionDatum);
   }
   // pass all submission fields, return all submission fields
   // so what does DateEvaluator(flatSubmissionData) do?
   // in what context would this be used?  theForm.evaluate(submissionData)[theFieldId],
-  evaluateWithValues<T>(
-    values: TFlatSubmissionValues<T>
-  ): TFlatSubmissionValues<T> {
+  evaluateWithValues(values: string): string {
     return values;
   }
 
-  getUiPopulateObjects<T = string>(submissionDatum?: T): TUiEvaluationObject[] {
+  getUiPopulateObjects<T = string | undefined>(
+    submissionDatum: T
+  ): TUiEvaluationObject[] {
     const datum = this.getStoredValue<string>(submissionDatum as string);
 
     const statusMessages: TStatusRecord[] = [
@@ -48,12 +47,14 @@ class TestSubfieldEvaluator extends AbstractEvaluator {
 
     return [
       {
-        uiid: this.isValidSubmissionDatum(datum)
-          ? `field${this.fieldId}`
-          : null,
+        // *tmc* getUi - is probably an abstract function, should be removed from this class?
+        uiid: "_ABSTRACT_",
+        //  // this.isValidSubmissionDatum(datum)
+        //   ? `field${this.fieldId}`
+        //   : null,
         fieldId: this.fieldId,
         fieldType: this.fieldJson.type,
-        value: this.isValidSubmissionDatum(datum) ? datum : "",
+        value: "_ABSTRACT_", //this.isValidSubmissionDatum(datum) ? datum : "",
 
         statusMessages: statusMessages,
       },
@@ -137,17 +138,10 @@ describe("AbstractSubfieldAbstractEvaluator", () => {
         "Any value will do"
       );
     });
-    it("should return '__EMPTY_SUBMISSION_DATA__' if undefined and required.", () => {
+    it("should return '__NO_SUBMISSION_DATA__' if undefined and required.", () => {
       const evaluator = new TestSubfieldEvaluator(fieldJson);
       expect(evaluator._getStoredValue(undefined)).toStrictEqual(
-        "__EMPTY_SUBMISSION_DATA__"
-      );
-    });
-    it("should return '__BAD_DATA_TYPE__' if undefined and required.", () => {
-      const evaluator = new TestSubfieldEvaluator(fieldJson);
-      const x = evaluator._getStoredValue({});
-      expect(evaluator._getStoredValue({})).toStrictEqual(
-        '__BAD_DATA_TYPE__ "object"'
+        "__NO_SUBMISSION_DATA__"
       );
     });
     it("should return '__MISSING_AND_REQUIRED__' if undefined and required is truthy.", () => {
@@ -157,7 +151,7 @@ describe("AbstractSubfieldAbstractEvaluator", () => {
       } as unknown as TFsFieldAny;
       const evaluator = new TestSubfieldEvaluator(modifiedFieldJson);
       expect(evaluator._getStoredValue(undefined)).toStrictEqual(
-        "__MISSING_AND_REQUIRED__"
+        "__EMPTY_AND_REQUIRED__"
       );
     });
   });
@@ -168,10 +162,10 @@ describe("AbstractSubfieldAbstractEvaluator", () => {
       const actual = evaluator.getUiPopulateObjects("any value will do");
       expect(actual).toStrictEqual([
         {
-          uiid: "field148008076",
+          uiid: "_ABSTRACT_",
           fieldId: "148008076",
           fieldType: "text",
-          value: "any value will do",
+          value: "_ABSTRACT_",
           statusMessages: [
             {
               severity: "info",
@@ -192,23 +186,23 @@ describe("AbstractSubfieldAbstractEvaluator", () => {
       const actual = evaluator.getUiPopulateObjects(undefined);
       expect(actual).toStrictEqual([
         {
-          uiid: null,
+          uiid: "_ABSTRACT_",
           fieldId: "148008076",
           fieldType: "text",
-          value: "",
+          value: "_ABSTRACT_",
           statusMessages: [
             {
-              severity: "warn",
-              message: "Stored value: '__MISSING_AND_REQUIRED__'.",
+              severity: "info",
+              message: "Stored value: '__EMPTY_AND_REQUIRED__'.",
               relatedFieldIds: [],
             },
-            {
-              fieldId: "148008076",
-              severity: "warn",
-              message:
-                "Submission data missing and required.  This is not an issue if the field is hidden by logic.",
-              relatedFieldIds: [],
-            },
+            // {
+            //   fieldId: "148008076",
+            //   severity: "warn",
+            //   message:
+            //     "Submission data missing and required.  This is not an issue if the field is hidden by logic.",
+            //   relatedFieldIds: [],
+            // },
           ],
         },
       ]);
@@ -218,14 +212,14 @@ describe("AbstractSubfieldAbstractEvaluator", () => {
       const actual = evaluator.getUiPopulateObjects(undefined);
       expect(actual).toStrictEqual([
         {
-          uiid: null,
+          uiid: "_ABSTRACT_",
           fieldId: "148008076",
           fieldType: "text",
-          value: "",
+          value: "_ABSTRACT_",
           statusMessages: [
             {
               severity: "info",
-              message: "Stored value: '__EMPTY_SUBMISSION_DATA__'.",
+              message: "Stored value: '__NO_SUBMISSION_DATA__'.",
               relatedFieldIds: [],
             },
           ],

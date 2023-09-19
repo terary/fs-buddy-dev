@@ -1,8 +1,6 @@
 import { TFsFieldAny, TFsFieldType } from "../../type.field";
 import type { TStatusRecord } from "../../../chrome-extension/type";
-import { TFlatSubmissionValues, TUiEvaluationObject } from "./type";
-
-type SeverityTypes = "debug" | "error" | "info" | "warn";
+import { TUiEvaluationObject, TStatusMessageSeverity } from "./type";
 
 abstract class AbstractEvaluator {
   private _fieldJson: TFsFieldAny;
@@ -25,10 +23,8 @@ abstract class AbstractEvaluator {
     return this.fieldJson.type.slice() as TFsFieldType;
   }
 
-  get isRequired() {
+  get isRequired(): boolean {
     const { required } = this.fieldJson;
-    // @ts-ignore - because field json is supposed to go through transformation that will
-    // that will type this boolean
     return required === "1" || required === true;
   }
 
@@ -36,26 +32,26 @@ abstract class AbstractEvaluator {
 
   abstract isCorrectType<T>(submissionDatum: T): boolean;
 
-  protected isValidSubmissionDatum(submissionDatum: string) {
-    return !(
-      ["__EMPTY_SUBMISSION_DATA__", "__MISSING_AND_REQUIRED__"].includes(
-        submissionDatum
-      ) || "__BAD_DATA_TYPE__ ".match(submissionDatum)
-    );
-  }
+  // protected isValidSubmissionDatum(submissionDatum: string) {
+  //   return !(
+  //     ["__EMPTY_SUBMISSION_DATA__", "__MISSING_AND_REQUIRED__"].includes(
+  //       submissionDatum
+  //     ) || "__BAD_DATA_TYPE__ ".match(submissionDatum)
+  //   );
+  // }
 
   protected getStoredValue<T = string>(submissionDatum?: T): T {
     if (this.isRequired && submissionDatum === undefined) {
-      return "__MISSING_AND_REQUIRED__" as T;
+      return "__EMPTY_AND_REQUIRED__" as T;
     }
 
     if (!this.isRequired && submissionDatum === undefined) {
-      return "__EMPTY_SUBMISSION_DATA__" as T;
+      return "__NO_SUBMISSION_DATA__" as T;
     }
 
-    if (!this.isCorrectType(submissionDatum)) {
-      return `__BAD_DATA_TYPE__ "${typeof submissionDatum}"` as T;
-    }
+    // if (!this.isCorrectType(submissionDatum)) {
+    //   return `__BAD_DATA_TYPE__ "${typeof submissionDatum}"` as T;
+    // }
 
     return submissionDatum as T;
   }
@@ -80,7 +76,7 @@ abstract class AbstractEvaluator {
     return [this.getStatusMessageStoredValue(submissionDatum)];
   }
 
-  protected getEmptyStatusMessageArray(): TStatusRecord[] {
+  private getEmptyStatusMessageArray(): TStatusRecord[] {
     return [];
   }
 
@@ -92,7 +88,7 @@ abstract class AbstractEvaluator {
   }
 
   protected wrapAsStatusMessage(
-    severity: SeverityTypes,
+    severity: TStatusMessageSeverity,
     message: string,
     relatedFieldIds: string[] = [],
     fieldId?: string
@@ -104,6 +100,7 @@ abstract class AbstractEvaluator {
       relatedFieldIds,
     };
   }
+
   protected wrapAsUiObject(
     uiid: string | null, // null -> on field, not on subfield, undefined => on form not on field/subfield, defined => attached to field/subfield
     value: string,

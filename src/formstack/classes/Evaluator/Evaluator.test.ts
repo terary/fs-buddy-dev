@@ -2,9 +2,8 @@ import { FieldTypeUnknownError } from "../../errors/FieldTypeUnknownError";
 import { TFsFieldAny, TFsFieldType } from "../../type.field";
 import { AbstractEvaluator } from "./AbstractEvaluator";
 import { Evaluator } from "./Evaluator";
-import { GenericEvaluator } from "./GenericEvaluator";
+import { ScalarEvaluator } from "./ScalarEvaluator";
 import allFieldTypesFormJson from "../../../test-dev-resources/form-json/allFields.json";
-import { TFsFieldAnyJson } from "../types";
 import { NonValueEvaluator } from "./NonValueEvaluator";
 import { ProductEvaluator } from "./ProductEvaluator";
 import { TUiEvaluationObject } from "./type";
@@ -80,12 +79,12 @@ describe("Evaluator", () => {
         new FieldTypeUnknownError("Unknown field type: 'unknown-field-type'.")
       );
     });
-    it('Should return GenericEvaluator for field type: "file".', () => {
+    it('Should return ScalarEvaluator for field type: "file".', () => {
       let evaluator = Evaluator.getEvaluatorWithFieldJson(
         getFieldByType("file")
       );
 
-      expect(evaluator).toBeInstanceOf(GenericEvaluator);
+      expect(evaluator).toBeInstanceOf(ScalarEvaluator);
       const actual = evaluator.evaluateWithValues({
         "147738167":
           "https://www.formstack.com/admin/download/file/15008940499",
@@ -97,12 +96,12 @@ describe("Evaluator", () => {
       };
       expect(actual).toStrictEqual(expected);
     });
-    it('Should return GenericEvaluator for field type: "signature".', () => {
+    it('Should return ScalarEvaluator for field type: "signature".', () => {
       let evaluator = Evaluator.getEvaluatorWithFieldJson(
         getFieldByType("signature")
       );
 
-      expect(evaluator).toBeInstanceOf(GenericEvaluator);
+      expect(evaluator).toBeInstanceOf(ScalarEvaluator);
       const actual = evaluator.evaluateWithValues({
         "147738172":
           "https://www.formstack.com/admin/download/file/15031945279",
@@ -114,12 +113,12 @@ describe("Evaluator", () => {
       };
       expect(actual).toStrictEqual(expected);
     });
-    it('Should return GenericEvaluator for field type: "textarea".', () => {
+    it('Should return ScalarEvaluator for field type: "textarea".', () => {
       let evaluator = Evaluator.getEvaluatorWithFieldJson(
         getFieldByType("textarea")
       );
 
-      expect(evaluator).toBeInstanceOf(GenericEvaluator);
+      expect(evaluator).toBeInstanceOf(ScalarEvaluator);
       const actual = evaluator.evaluateWithValues({
         "147738155":
           "645 Large Answer field can support big text and multiple lines",
@@ -131,12 +130,12 @@ describe("Evaluator", () => {
       };
       expect(actual).toStrictEqual(expected);
     });
-    it('Should return GenericEvaluator for field type: "phone".', () => {
+    it('Should return ScalarEvaluator for field type: "phone".', () => {
       let evaluator = Evaluator.getEvaluatorWithFieldJson(
         getFieldByType("phone")
       );
 
-      expect(evaluator).toBeInstanceOf(GenericEvaluator);
+      expect(evaluator).toBeInstanceOf(ScalarEvaluator);
       const actual = evaluator.evaluateWithValues({
         "147738159": "(323) 555-1212",
       });

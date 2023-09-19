@@ -1,110 +1,11 @@
 import { TFsFieldAny } from "../../type.field";
-import { MultiSelectEvaluator } from "./MultiSelectEvaluator";
+import { CheckboxEvaluator } from "./CheckboxEvaluator";
 
-describe("MultiSelectEvaluator", () => {
-  describe("Single select controls (radio, dropdown)", () => {
-    describe(".evaluateWithValues(...)", () => {
-      it("Should parse submittedData, return the same type and value as passed-in data.", () => {
-        //
-        const evaluator = new MultiSelectEvaluator(fieldJsonDropdown);
-        const actual = evaluator.evaluateWithValues(
-          submissionDataDropdown.value
-        );
-
-        expect(actual).toStrictEqual("OPT03");
-      });
-    });
-    describe(".getUiPopulateObjects(...)", () => {
-      it("Should return array of properly formatted UI instructions (shape of TUiEvaluationObject).", () => {
-        const testValue = "1";
-        const evaluator = new MultiSelectEvaluator(fieldJsonDropdown);
-        const actual = evaluator.getUiPopulateObjects(
-          submissionDataDropdown.value
-        );
-        expect(actual).toStrictEqual([
-          {
-            uiid: "field147738162",
-            fieldId: "147738162",
-            fieldType: "select",
-            value: "OPT03",
-            statusMessages: [
-              {
-                severity: "info",
-                fieldId: "147738162",
-                message: "Stored value: 'OPT03'.",
-                relatedFieldIds: [],
-              },
-            ],
-          },
-        ]);
-      });
-      it("Should return array of properly formatted UI instructions (radio).", () => {
-        const testValue = "1";
-        const evaluator = new MultiSelectEvaluator({
-          ...fieldJsonDropdown,
-          ...{ type: "radio" },
-        });
-        const actual = evaluator.getUiPopulateObjects(
-          submissionDataDropdown.value
-        );
-        expect(actual).toStrictEqual([
-          {
-            uiid: "field147738162_3",
-            fieldId: "147738162",
-            fieldType: "radio",
-            value: "OPT03",
-            statusMessages: [],
-          },
-          {
-            uiid: null,
-            fieldId: "147738162",
-            fieldType: "radio",
-            value: "null",
-            statusMessages: [
-              {
-                severity: "info",
-                fieldId: "147738162",
-                message: `Stored value: 'OPT03'.`,
-                relatedFieldIds: [],
-              },
-            ],
-          },
-        ]);
-      });
-      it("Should include statusMessage when the parsedValue is not one of the available options.", () => {
-        const testValue = "1";
-        const evaluator = new MultiSelectEvaluator(fieldJsonDropdown);
-        const actual = evaluator.getUiPopulateObjects("INVALID_OPTION");
-        expect(actual).toStrictEqual([
-          {
-            uiid: "field147738162",
-            fieldId: "147738162",
-            fieldType: "select",
-            value: "INVALID_OPTION",
-            statusMessages: [
-              {
-                severity: "info",
-                fieldId: "147738162",
-                message: "Stored value: 'INVALID_OPTION'.",
-                relatedFieldIds: [],
-              },
-              {
-                severity: "warn",
-                fieldId: "147738162",
-                message:
-                  "Failed to find valid option: 'INVALID_OPTION' within valid options: 'OPT01', 'OPT02', 'OPT03'.",
-                relatedFieldIds: [],
-              },
-            ],
-          },
-        ]);
-      });
-    });
-  });
+describe("CheckboxEvaluator", () => {
   describe("Multiple selectable options (checkbox)", () => {
     describe(".getUiPopulateObjects(...)", () => {
-      it("Should return array of properly formatted UI instructions (shape of TUiEvaluationObject).", () => {
-        const evaluator = new MultiSelectEvaluator(fieldJsonCheckbox);
+      it("Should return array of TUiEvaluationObject object when there is submission data.(ideal)", () => {
+        const evaluator = new CheckboxEvaluator(fieldJsonCheckbox);
         const actual = evaluator.getUiPopulateObjects(
           submissionDataCheckbox.value
         );
@@ -139,8 +40,8 @@ describe("MultiSelectEvaluator", () => {
           },
         ]);
       });
-      it("Should return TUiEvaluationObject[] with statusMessage indicating empty value and option not found, if datum is empty string.", () => {
-        const evaluator = new MultiSelectEvaluator({
+      it("Should return TUiEvaluationObject[], including status message for empty submission data.", () => {
+        const evaluator = new CheckboxEvaluator({
           ...fieldJsonCheckbox,
           ...{ required: "1" },
         } as unknown as TFsFieldAny);
@@ -162,15 +63,15 @@ describe("MultiSelectEvaluator", () => {
                 severity: "warn",
                 fieldId: "147738164",
                 message:
-                  "Failed to find valid option: '' within valid options: 'Option1', 'Option2', 'Option3'.",
+                  "Submission data missing and required.  This is not an issue if the field is hidden by logic.",
                 relatedFieldIds: [],
               },
             ],
           },
         ]);
       });
-      it("Should return TUiEvaluationObject[] with statusMessage indicating empty and require value, if datum is undefined.", () => {
-        const evaluator = new MultiSelectEvaluator({
+      it("Should return TUiEvaluationObject[], including status message for empty and require submission data.", () => {
+        const evaluator = new CheckboxEvaluator({
           ...fieldJsonCheckbox,
           ...{ required: "1" },
         } as unknown as TFsFieldAny);
@@ -183,9 +84,9 @@ describe("MultiSelectEvaluator", () => {
             value: "",
             statusMessages: [
               {
-                severity: "warn",
+                severity: "info",
                 fieldId: "147738164",
-                message: "Stored value: '__MISSING_AND_REQUIRED__'.",
+                message: "Stored value: '__EMPTY_AND_REQUIRED__'.",
                 relatedFieldIds: [],
               },
               {
@@ -199,29 +100,30 @@ describe("MultiSelectEvaluator", () => {
           },
         ]);
       });
-      it("Should return TUiEvaluationObject[] with statusMessage indicating bad data type if datum type not string. (radio/select)", () => {
-        const evaluator = new MultiSelectEvaluator({
+      it("Should return TUiEvaluationObject[], including status message corrupt/broken submission data.", () => {
+        const evaluator = new CheckboxEvaluator({
           ...fieldJsonCheckbox,
-          ...{ required: "1", type: "radio" },
+          ...{ required: "1" },
         } as unknown as TFsFieldAny);
         const actual = evaluator.getUiPopulateObjects([]);
         expect(actual).toStrictEqual([
           {
             uiid: null,
             fieldId: "147738164",
-            fieldType: "radio",
+            fieldType: "checkbox",
             value: "",
             statusMessages: [
               {
-                severity: "warn",
+                severity: "info",
                 fieldId: "147738164",
-                message: "Stored value: '__BAD_DATA_TYPE__ (object)'.",
+                message: "Stored value: '[]'.",
                 relatedFieldIds: [],
               },
               {
-                severity: "warn",
+                severity: "error",
                 fieldId: "147738164",
-                message: "stringified: []",
+                message: "_BAD_DATA_TYPE_' type: 'object', value: ''.",
+                // message: "stringified: []",
                 relatedFieldIds: [],
               },
             ],
@@ -229,7 +131,7 @@ describe("MultiSelectEvaluator", () => {
         ]);
       });
       it("Should empty return item with empty value and status message if field required and invalid selected.", () => {
-        const evaluator = new MultiSelectEvaluator(fieldJsonCheckbox);
+        const evaluator = new CheckboxEvaluator(fieldJsonCheckbox);
         const actual = evaluator.getUiPopulateObjects("_INVALID_OPTION_");
         expect(actual).toStrictEqual([
           {
@@ -245,18 +147,18 @@ describe("MultiSelectEvaluator", () => {
                 relatedFieldIds: [],
               },
               {
-                severity: "info",
+                severity: "warn",
                 fieldId: "147738164",
                 message:
-                  "Failed to find valid option: '_INVALID_OPTION_' within valid options: 'Option1', 'Option2', 'Option3' ",
+                  "Failed to find valid option: '_INVALID_OPTION_' within valid options: 'Option1', 'Option2', 'Option3'.",
                 relatedFieldIds: [],
               },
             ],
           },
         ]);
       });
-      it("Should empty return item with empty value and status message if field required and invalid selected.", () => {
-        const evaluator = new MultiSelectEvaluator(fieldJsonCheckbox);
+      it("Should status messages indicated any unrecognized selected option.", () => {
+        const evaluator = new CheckboxEvaluator(fieldJsonCheckbox);
         const actual = evaluator.getUiPopulateObjects(
           submissionDataCheckbox.value + "\n_INVALID_OPTION_"
         );
@@ -289,34 +191,10 @@ describe("MultiSelectEvaluator", () => {
                 relatedFieldIds: [],
               },
               {
-                severity: "info",
+                severity: "warn",
                 fieldId: "147738164",
                 message:
-                  "Failed to find valid option: '_INVALID_OPTION_' within valid options: 'Option1', 'Option2', 'Option3' ",
-                relatedFieldIds: [],
-              },
-            ],
-          },
-        ]);
-      });
-      it.skip("Should include statusMessage when the parsedValue is not one of the available options.", () => {
-        // skipped because this is using dropdown,
-        const evaluator = new MultiSelectEvaluator(fieldJsonDropdown);
-        const actual = evaluator.getUiPopulateObjects({
-          [submissionDataDropdown.field]: "INVALID_OPTION",
-        });
-        expect(actual).toStrictEqual([
-          {
-            uiid: "147738162",
-            fieldId: "147738162",
-            fieldType: "select",
-            value: "INVALID_OPTION",
-            statusMessages: [
-              {
-                severity: "warn",
-                fieldId: "147738162",
-                message:
-                  "Failed to find valid option: 'INVALID_OPTION' within valid options: 'OPT01', 'OPT02', 'OPT03' ",
+                  "Failed to find valid option: '_INVALID_OPTION_' within valid options: 'Option1', 'Option2', 'Option3'.",
                 relatedFieldIds: [],
               },
             ],
@@ -326,51 +204,6 @@ describe("MultiSelectEvaluator", () => {
     });
   });
 });
-const submissionDataDropdown = {
-  field: "147738162",
-  value: "OPT03",
-};
-const fieldJsonDropdown = {
-  id: "147738162",
-  label: "Dropdown List With Values And Labels",
-  hide_label: "0",
-  description: "",
-  name: "dropdown_list_with_values_and_labels",
-  type: "select",
-  options: [
-    {
-      label: "Option1",
-      value: "OPT01",
-      imageUrl: null,
-    },
-    {
-      label: "Option2",
-      value: "OPT02",
-      imageUrl: null,
-    },
-    {
-      label: "Option3",
-      value: "OPT03",
-      imageUrl: null,
-    },
-  ],
-  required: "0",
-  uniq: "0",
-  hidden: "0",
-  readonly: "0",
-  colspan: "1",
-  sort: "11",
-  logic: null,
-  calculation: "",
-  workflow_access: "write",
-  default: "",
-  select_size: 1,
-  option_layout: "vertical",
-  option_other: 0,
-  randomize_options: 0,
-  option_store: "value",
-  option_show_values: true,
-} as unknown as TFsFieldAny;
 
 const submissionDataCheckbox = {
   field: "147738164",

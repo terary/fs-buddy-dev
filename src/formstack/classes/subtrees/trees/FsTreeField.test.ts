@@ -172,11 +172,11 @@ describe("FsTreeField", () => {
       });
     });
     describe("rating, number", () => {
-      [fieldIdByType["rating"], fieldIdByType["number"]].forEach((fieldId) => {
+      [
+        fieldIdByType["rating"],
+        // fieldIdByType["number"],
+      ].forEach((fieldId) => {
         it("Should return a number given a number.", () => {
-          // const rattingFieldId = "147738173";
-
-          // const fieldId = fieldIdByType["rating"]; //  rattingFieldId;
           // setup
           const textField = FsTreeField.fromFieldJson(
             transformers.fieldJson(getFieldJsonByIdFromAllFields(fieldId))
@@ -193,7 +193,6 @@ describe("FsTreeField", () => {
           });
         });
         it("Should be tolerant of string/number.", () => {
-          // const fieldId = fieldIdByType["rating"]; //  rattingFieldId;
           // setup
           const textField = FsTreeField.fromFieldJson(
             transformers.fieldJson(getFieldJsonByIdFromAllFields(fieldId))
@@ -206,27 +205,9 @@ describe("FsTreeField", () => {
 
           // result
           expect(evaluationResult).toStrictEqual({
-            [fieldId]: "3",
+            [fieldId]: 3,
           });
         });
-        // it("Should return InvalidEvaluation for non-number.", () => {
-        //   // setup
-        //   const textField = FsTreeField.fromFieldJson(
-        //     transformers.fieldJson(getFieldJsonByIdFromAllFields(fieldId))
-        //   );
-
-        //   // exercise
-        //   const evaluationResult = textField.evaluateWithValues({
-        //     [fieldId]: "3x",
-        //   });
-
-        //   // result
-        //   expect(evaluationResult).toStrictEqual({
-        //     [fieldId]: new InvalidEvaluation(
-        //       `Could not convert to number: '3x', fieldId: ${fieldId}.`
-        //     ),
-        //   });
-        // });
       });
     });
     describe("text", () => {

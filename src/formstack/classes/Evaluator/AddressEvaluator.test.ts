@@ -1,9 +1,8 @@
 import { TFsFieldAny } from "../../type.field";
 import { AddressEvaluator } from "./AddressEvaluator";
-
 describe("AddressEvaluator", () => {
   describe(".getUiPopulateObjects(...)", () => {
-    it("Should return subfields ui descriptions", () => {
+    it("Should return array of TUiEvaluationObject object when there is submission data.(ideal)", () => {
       const evaluator = new AddressEvaluator(fieldJson);
       const actual = evaluator.getUiPopulateObjects(submissionData.value);
       expect(actual).toStrictEqual([
@@ -67,8 +66,90 @@ describe("AddressEvaluator", () => {
       ]);
       //     it("Should quietly ignore bad data if possible (non parsable string)", () => {
     });
+
+    it("Should return TUiEvaluationObject[], including status message for empty (undefined) submission data.", () => {
+      const evaluator = new AddressEvaluator(fieldJson);
+      const actual = evaluator.getUiPopulateObjects(undefined);
+      expect(actual).toStrictEqual([
+        {
+          uiid: null,
+          fieldId: "147738157",
+          fieldType: "address",
+          value: "",
+          statusMessages: [
+            {
+              severity: "info",
+              fieldId: "147738157",
+              message: "Stored value: '__NO_SUBMISSION_DATA__'.",
+              relatedFieldIds: [],
+            },
+          ],
+        },
+      ]);
+    });
+
+    it("Should return TUiEvaluationObject[], including status message for empty and require submission data.", () => {
+      const fieldJsonRequired = { ...fieldJson, ...{ required: "1" } };
+      const evaluator = new AddressEvaluator(fieldJsonRequired);
+      const actual = evaluator.getUiPopulateObjects(undefined);
+      expect(actual).toStrictEqual([
+        {
+          uiid: null,
+          fieldId: "147738157",
+          fieldType: "address",
+          value: "",
+          statusMessages: [
+            {
+              severity: "info",
+              fieldId: "147738157",
+              message: "Stored value: '__EMPTY_AND_REQUIRED__'.",
+              relatedFieldIds: [],
+            },
+            {
+              severity: "warn",
+              fieldId: "147738157",
+              message:
+                "Submission data missing and required.  This is not an issue if the field is hidden by logic.",
+              relatedFieldIds: [],
+            },
+          ],
+        },
+      ]);
+    });
+
+    it("Should return TUiEvaluationObject[], including status message corrupt/broken submission data.", () => {
+      const evaluator = new AddressEvaluator(fieldJson);
+      const actual = evaluator.getUiPopulateObjects(
+        new Date("1984-01-18T00:00:00.000Z")
+      );
+      expect(actual).toStrictEqual([
+        {
+          uiid: null,
+          fieldId: "147738157",
+          fieldType: "address",
+          value: "",
+          statusMessages: [
+            {
+              severity: "info",
+              fieldId: "147738157",
+              message: "Stored value: '\"1984-01-18T00:00:00.000Z\"'.",
+
+              relatedFieldIds: [],
+            },
+            {
+              severity: "error",
+              fieldId: "147738157",
+              message:
+                "No subfields with id: 'address', 'address2', 'city', 'state', 'zip', 'country' found in submission data: 'Tue Jan 17 1984 18:00:00 GMT-0600 (Central Standard Time)'.",
+              relatedFieldIds: [],
+            },
+          ],
+        },
+      ]);
+    });
   });
 });
+
 const submissionData = {
   field: "147738157",
   value:

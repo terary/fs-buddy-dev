@@ -2,8 +2,16 @@ import { TFsFieldAny } from "../../type.field";
 import { DateEvaluator } from "./DateEvaluator";
 
 describe("DateEvaluator", () => {
+  describe(".evaluateWithValues(...)", () => {
+    it.skip("Should parse submittedData", () => {
+      //
+      const evaluator = new DateEvaluator(fieldJson);
+      const actual = evaluator.evaluateWithValues("Just some plain text.");
+      expect(actual).toStrictEqual("Just some plain text.");
+    });
+  });
   describe(".getUiPopulateObjects(...)", () => {
-    it("Should parse submittedData", () => {
+    it("Should return array of TUiEvaluationObject object when there is submission data.(ideal)", () => {
       const evaluator = new DateEvaluator(fieldJson);
       const actual = evaluator.getUiPopulateObjects(submissionData.value);
       expect(actual).toStrictEqual([
@@ -65,6 +73,95 @@ describe("DateEvaluator", () => {
         },
       ]);
     });
+    it("Should return TUiEvaluationObject[], including status message for empty (undefined) submission data.", () => {
+      const evaluator = new DateEvaluator(fieldJson);
+      const actual = evaluator.getUiPopulateObjects(undefined);
+      expect(actual).toStrictEqual([
+        {
+          uiid: null,
+          fieldId: "147738166",
+          fieldType: "datetime",
+          value: "",
+          statusMessages: [
+            {
+              severity: "info",
+              fieldId: "147738166",
+              message: "Stored value: '__NO_SUBMISSION_DATA__'.",
+              relatedFieldIds: [],
+            },
+            {
+              severity: "warn",
+              fieldId: "147738166",
+              message:
+                "Failed to parse field. Date did not parse correctly. Date: 'undefined'",
+              relatedFieldIds: [],
+            },
+          ],
+        },
+      ]);
+    });
+    it("Should return TUiEvaluationObject[], including status message for empty and require submission data.", () => {
+      const fieldJsonRequired = { ...fieldJson, ...{ required: "1" } };
+      const evaluator = new DateEvaluator(fieldJsonRequired);
+      const actual = evaluator.getUiPopulateObjects(undefined);
+      expect(actual).toStrictEqual([
+        {
+          uiid: null,
+          fieldId: "147738166",
+          fieldType: "datetime",
+          value: "",
+          statusMessages: [
+            {
+              severity: "info",
+              fieldId: "147738166",
+              message: "Stored value: '__EMPTY_AND_REQUIRED__'.",
+              relatedFieldIds: [],
+            },
+            {
+              severity: "warn",
+              fieldId: "147738166",
+              message:
+                "Failed to parse field. Date did not parse correctly. Date: 'undefined'",
+              relatedFieldIds: [],
+            },
+            {
+              severity: "warn",
+              fieldId: "147738166",
+              message:
+                "Submission data missing and required.  This is not an issue if the field is hidden by logic.",
+              relatedFieldIds: [],
+            },
+          ],
+        },
+      ]);
+    });
+    it("Should return TUiEvaluationObject[], including status message corrupt/broken submission data.", () => {
+      const evaluator = new DateEvaluator(fieldJson);
+      const actual = evaluator.getUiPopulateObjects({});
+      expect(actual).toStrictEqual([
+        {
+          uiid: null,
+          fieldId: "147738166",
+          fieldType: "datetime",
+          value: "",
+          statusMessages: [
+            {
+              severity: "info",
+              fieldId: "147738166",
+              message: "Stored value: '[object Object]'.",
+              relatedFieldIds: [],
+            },
+            {
+              severity: "warn",
+              fieldId: "147738166",
+              message: "_BAD_DATA_TYPE_' type: 'object', value: '{}'",
+              relatedFieldIds: [],
+            },
+          ],
+        },
+      ]);
+    });
+    // Date specific tests
     it("Should include statusMessages if it fails to instantiate a Date type.", () => {
       const evaluator = new DateEvaluator(fieldJson);
       const actual = evaluator.getUiPopulateObjects("SOME_INVALID_DATE");
@@ -78,15 +175,14 @@ describe("DateEvaluator", () => {
             {
               severity: "info",
               fieldId: "147738166",
-              message: "Stored value: '__BAD_DATA_TYPE__ \"string\"'.",
-              // message: "Stored value: 'SOME_INVALID_DATE'.",
+              message: "Stored value: 'SOME_INVALID_DATE'.",
               relatedFieldIds: [],
             },
             {
-              severity: "error",
-              fieldId: "147738166", // if there is no field Id, the status message gets associated with form status messages,  maybe we want that here?
+              severity: "warn",
+              fieldId: "147738166",
               message:
-                "Failed to parse field. Date did not parse correctly. Date: 'SOME_INVALID_DATE'",
+                "_BAD_DATA_TYPE_' type: 'string', value: '\"SOME_INVALID_DATE\"'",
               relatedFieldIds: [],
             },
           ],
