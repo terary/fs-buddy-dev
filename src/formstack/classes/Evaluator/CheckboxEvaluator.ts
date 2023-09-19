@@ -48,7 +48,6 @@ class CheckboxEvaluator extends AbstractSelectOptionEvaluator {
     );
     const uiidFieldIdMap = this.getUiidFieldIdMap();
 
-    // this should be map
     selectedValues.forEach((selectedOption) => {
       if (uiidFieldIdMap[selectedOption]) {
         uiFields.push(

@@ -4,7 +4,6 @@ import { AbstractEvaluator } from "./AbstractEvaluator";
 import { Evaluator } from "./Evaluator";
 import { ScalarEvaluator } from "./ScalarEvaluator";
 import allFieldTypesFormJson from "../../../test-dev-resources/form-json/allFields.json";
-import { TFsFieldAnyJson } from "../types";
 import { NonValueEvaluator } from "./NonValueEvaluator";
 import { ProductEvaluator } from "./ProductEvaluator";
 import { TUiEvaluationObject } from "./type";
