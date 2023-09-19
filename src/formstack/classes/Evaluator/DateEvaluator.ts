@@ -51,16 +51,6 @@ class DateEvaluator extends ScalarEvaluator {
     const parsedValues = this.parseValues<string, Date>(
       submissionDatum as string
     );
-    // I think this is done above
-    // if (parsedValues.toString() === "Invalid Date") {
-    //   statusMessages.push(
-    //     this.wrapAsStatusMessage(
-    //       "error",
-    //       `Failed to parse field. Date did not parse correctly. Date: '${submissionDatum}'`
-    //     )
-    //   );
-    //   return [this.wrapAsUiObject(null, "", statusMessages)];
-    // }
 
     if (Math.abs(parsedValues.getTime()) < 86400000) {
       statusMessages.push(

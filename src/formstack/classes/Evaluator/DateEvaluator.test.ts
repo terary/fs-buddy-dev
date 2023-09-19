@@ -176,7 +176,6 @@ describe("DateEvaluator", () => {
               severity: "info",
               fieldId: "147738166",
               message: "Stored value: 'SOME_INVALID_DATE'.",
-              // message: "Stored value: 'SOME_INVALID_DATE'.",
               relatedFieldIds: [],
             },
             {

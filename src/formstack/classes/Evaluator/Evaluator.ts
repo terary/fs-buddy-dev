@@ -7,13 +7,13 @@ import { MatrixEvaluator } from "./MatrixEvaluator";
 import { CheckboxEvaluator } from "./CheckboxEvaluator";
 import { RadioEvaluator } from "./RadioEvaluator";
 import { SelectEvaluator } from "./SelectEvaluator";
+import { DateEvaluator } from "./DateEvaluator";
 //
 
 import { IEValuator } from "./IEvaluator";
 import { NumericOnlyEvaluator } from "./NumericOnlyEvaluator";
 import { NonValueEvaluator } from "./NonValueEvaluator";
 import { ProductEvaluator } from "./ProductEvaluator";
-import { DateEvaluator } from "./DateEvaluator";
 
 class Evaluator {
   static getEvaluatorWithFieldJson(fieldJson: TFsFieldAny): IEValuator {
