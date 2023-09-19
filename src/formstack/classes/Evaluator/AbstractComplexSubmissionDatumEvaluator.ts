@@ -6,8 +6,9 @@ import type { TSimpleDictionary } from "./type";
 type TComplexDatumField = TSimpleDictionary<string>;
 
 abstract class AbstractComplexSubmissionDatumEvaluator extends AbstractEvaluator {
-  // this should be on subclass so this class can be used with matrix and checkbox
-  // abstract get supportedSubfieldIds(): string[];
+  evaluateWithValues<S = string, T = string>(values: S): T {
+    return this.parseValues(values);
+  }
 
   parseValues<S = string, T = string>(submissionDatum?: S): T;
   parseValues(submissionDatum?: string): TComplexDatumField {

@@ -9,10 +9,10 @@ import { RadioEvaluator } from "./RadioEvaluator";
 import { SelectEvaluator } from "./SelectEvaluator";
 import { DateEvaluator } from "./DateEvaluator";
 import { ProductEvaluator } from "./ProductEvaluator";
-//
-import { IEValuator } from "./IEvaluator";
-import { NumericOnlyEvaluator } from "./NumericOnlyEvaluator";
+import { NumberEvaluator } from "./NumberEvaluator";
 import { NonValueEvaluator } from "./NonValueEvaluator";
+import { IEValuator } from "./IEvaluator";
+//
 
 class Evaluator {
   static getEvaluatorWithFieldJson(fieldJson: TFsFieldAny): IEValuator {
@@ -23,12 +23,13 @@ class Evaluator {
         return new NameEvaluator(fieldJson);
       case "matrix":
         return new MatrixEvaluator(fieldJson);
+
       case "product":
         return new ProductEvaluator(fieldJson);
 
       case "number":
       case "rating":
-        return new NumericOnlyEvaluator(fieldJson);
+        return new NumberEvaluator(fieldJson);
 
       case "checkbox":
         return new CheckboxEvaluator(fieldJson);

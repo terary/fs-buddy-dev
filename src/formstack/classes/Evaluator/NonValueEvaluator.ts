@@ -1,13 +1,9 @@
 import { AbstractEvaluator } from "./AbstractEvaluator";
-import { TFlatSubmissionValues, TUiEvaluationObject } from "./type";
+import { TUiEvaluationObject } from "./type";
 
 class NonValueEvaluator extends AbstractEvaluator {
-  // the overload may cause issues,  since it's original writing the definition
-  // was changed to use generics
   evaluateWithValues<S = string, T = string>(values: S): T;
-  evaluateWithValues(
-    values: string //
-  ): null {
+  evaluateWithValues(values: string): null {
     return null;
   }
 
@@ -23,7 +19,7 @@ class NonValueEvaluator extends AbstractEvaluator {
   }
 
   isCorrectType<T>(submissionDatum: T): boolean {
-    return true; // may want to check that submissionData is empty
+    return true;
   }
 
   parseValues<S = string, T = string>(submissionDatum?: S): T {
