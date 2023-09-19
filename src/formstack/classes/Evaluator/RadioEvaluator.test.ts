@@ -12,18 +12,11 @@ describe("RadioEvaluator", () => {
           fieldId: "147738163",
           fieldType: "radio",
           value: "Option2",
-          statusMessages: [],
-        },
-        {
-          uiid: null,
-          fieldId: "147738163",
-          fieldType: "radio",
-          value: "null",
           statusMessages: [
             {
               severity: "info",
               fieldId: "147738163",
-              message: `Stored value: 'Option2'.`,
+              message: "Stored value: 'Option2'.",
               relatedFieldIds: [],
             },
           ],
@@ -116,6 +109,33 @@ describe("RadioEvaluator", () => {
               severity: "warn",
               fieldId: "147738163",
               message: "_BAD_DATA_TYPE_' type: 'object', value: '[]'",
+              relatedFieldIds: [],
+            },
+          ],
+        },
+      ]);
+    });
+    it("Should status messages indicated any unrecognized selected option.", () => {
+      const evaluator = new RadioEvaluator(fieldJsonRadio);
+      const actual = evaluator.getUiPopulateObjects("_INVALID_OPTION_");
+      expect(actual).toStrictEqual([
+        {
+          uiid: null,
+          fieldId: "147738163",
+          fieldType: "radio",
+          value: "null",
+          statusMessages: [
+            {
+              severity: "info",
+              fieldId: "147738163",
+              message: "Stored value: '_INVALID_OPTION_'.",
+              relatedFieldIds: [],
+            },
+            {
+              severity: "warn",
+              fieldId: "147738163",
+              message:
+                "Failed to find valid option: '_INVALID_OPTION_' within valid options: 'Option1', 'Option2', 'Option3'.",
               relatedFieldIds: [],
             },
           ],

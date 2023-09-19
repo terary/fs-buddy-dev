@@ -35,7 +35,6 @@ class RadioEvaluator extends AbstractSelectOptionEvaluator {
       }
       return [this.wrapAsUiObject(null, "", statusMessages)];
     }
-
     if (!this.isCorrectType(submissionDatum)) {
       const message =
         `_BAD_DATA_TYPE_' type: '${typeof submissionDatum}', value: '` +
@@ -63,14 +62,15 @@ class RadioEvaluator extends AbstractSelectOptionEvaluator {
           this.invalidSelectedOptionMessage(submissionDatum as string)
         )
       );
+      return [this.wrapAsUiObject(null, "null", statusMessages)];
     }
 
     return [
       this.wrapAsUiObject(
         uiidFieldIdMap[parsedValues] || this.fieldId,
-        parsedValues
+        parsedValues,
+        statusMessages
       ),
-      this.wrapAsUiObject(null, "null", statusMessages),
     ];
   }
 
