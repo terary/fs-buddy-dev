@@ -1,16 +1,30 @@
 <html>
 	<head>
     <style>
-      .fsBuddy_obscure {
-          opacity: 0.5;
-          border: grey 3px solid;
+      .fsBuddy_obscure_field {
+          opacity: 0.2;
+          /* border: lightgray 3px dashed; */
       }
+ 
+      .fsBuddy_obscure_section {
+          /* opacity: 0.2; */
+          border: lightgray 3px dashed;
+          margin-bottom: 5px;
+          margin-bottom: 5px;
+      }
+
+      .fsBuddy_logic_focus {
+          border: rgb(139, 75, 157) 3px dashed;
+          margin-bottom: 5px;
+          margin-bottom: 5px;
+      }
+
       .fsBuddy_lightblue {
-          opacity: 0.5;
+          /* opacity: 0.5; */
           background-color: lightblue;
       }
       .fsBuddy_lightgreen {
-          opacity: 0.5;
+          /* opacity: 0.5; */
           background-color: lightgreen;
       }
       /* ----------------------------------------------------- */
@@ -180,7 +194,6 @@
       }
 
       const handleFieldIdSelected = (selectElementId, selectedValue)=>{
-        // console.log({selectElementId, selectedValue})
         sendMessageToParent('getFieldLogicDependentsRequest', {fieldId: selectedValue})
       }
 
@@ -208,9 +221,9 @@
 
 
         const dependentsByFieldId = payload;
-        removeAllCssName('fsBuddy_lightblue')
-        removeAllCssName('fsBuddy_obscure')
+        removeAllFsBuddyCss()
         removeAllCssName('fsBuddy_statusMessage_severity_error')
+        console.log({dependentsByFieldId})
 
         Object.entries(dependentsByFieldId).forEach(([fieldId, {dependentFieldIds, interdependentFieldIds}])=>{
          
@@ -219,9 +232,17 @@
                 return !dependentFieldIds.includes(childFieldId) && fieldId !== childFieldId && !interdependentFieldIds.includes(childFieldId)
               }); 
             addCssClassToFields('fsBuddy_lightblue', dependentFieldIds)
-            addCssClassToFields('fsBuddy_obscure', nonDependentFieldIds)
+            nonDependentFieldIdsNonPanel = nonDependentFieldIds.filter(fieldId=>fsBuddyHelper.fieldSummary[fieldId].type !== 'section')
+            nonDependentFieldIdsPanel = nonDependentFieldIds.filter(fieldId=>fsBuddyHelper.fieldSummary[fieldId].type === 'section')
+
+            addCssClassToFields('fsBuddy_obscure_field', nonDependentFieldIdsNonPanel)
+            addCssClassToFields('fsBuddy_obscure_section', nonDependentFieldIdsPanel)
+            // addCssClassToFields('fsBuddy_obscure', nonDependentFieldIds)
             addCssClassToFields('fsBuddy_statusMessage_severity_error', interdependentFieldIds)
         })
+
+        const logicFocusFieldIds = Object.keys(dependentsByFieldId);
+        addCssClassToFields('fsBuddy_logic_focus', logicFocusFieldIds)
       }
 
       const handelGetFieldStatusesResponse = (payload)=>{
@@ -538,9 +559,11 @@
     }
 
     function removeAllFsBuddyCss(){
-          removeAllCssName('fsBuddy_obscure'); 
+          removeAllCssName('fsBuddy_obscure_field'); 
+          removeAllCssName('fsBuddy_obscure_section'); 
           removeAllCssName('fsBuddy_lightblue');
           removeAllCssName('fsBuddy_lightgreen');
+          removeAllCssName('fsBuddy_logic_focus');
     }
 
     document.addEventListener("DOMContentLoaded",()=>{
@@ -562,7 +585,7 @@
                   <button onclick="showOnly('fsBuddyControlPanelSubmission')">Submission Tool</button>
                 </td>
                 <td>
-                      <button onclick="showOnly('fsBuddyControlPanelLogic')">Logic Tool</button>
+                      <button onclick="showOnly('fsBuddyControlPanelLogic');sendMessageToParent('getFieldsWithLogicRequest');">Logic Tool</button>
                 </td>
                 <td>
                       <button onclick="showOnly('fsBuddyControlPanelFieldStatus')">Field Analysis</button>
@@ -588,7 +611,9 @@
       
       <div id='fsBuddyControlPanelLogic' class="fsControlPanelSubsection">
             <h3>Logic Tool</h3>
-            <button onclick="sendMessageToParent('getFieldsWithLogicRequest')">Get Fields With Logic</button>
+            <h4>(formId: 5375703, for best example.)</h4>
+            <!-- button onclick="sendMessageToParent('getFieldsWithLogicRequest')">Get Fields With Logic</button -->
+            <button onclick="removeAllFsBuddyCss()">Clear Logic CSS</button>
 
       </div>
       <div id='fsBuddyControlPanelFieldStatus' class="fsControlPanelSubsection">

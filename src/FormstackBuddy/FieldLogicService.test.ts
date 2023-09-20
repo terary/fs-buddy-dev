@@ -75,10 +75,12 @@ describe("FieldLogicService", () => {
     });
   });
   describe(".getFieldIdsExtendedLogicOf(fieldId)", () => {
-    it("Should return all fieldIds for fields with logic", () => {
+    it.only("Should return all fieldIds for fields with logic", () => {
       const fieldLogic = new FieldLogicService(
         circularAndInterdependentJson.fields as unknown as TFsFieldAnyJson[]
       );
+      const x = fieldLogic.getFieldIdsExtendedLogicOf("148509465");
+      console.log({ x });
       expect(fieldLogic.getFieldIdsExtendedLogicOf("148509465")).toStrictEqual([
         "148509470",
         "148509478",
@@ -91,7 +93,7 @@ describe("FieldLogicService", () => {
   });
 
   describe(".getCircularReferenceFieldIds()", () => {
-    it.only("Should return an array of field ids with circular logic", () => {
+    it("Should return an array of field ids with circular logic", () => {
       const fieldLogicService = new FieldLogicService(
         circularAndInterdependentJson.fields as unknown as TFsFieldAnyJson[]
       );
