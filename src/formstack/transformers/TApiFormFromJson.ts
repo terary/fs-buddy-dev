@@ -4,14 +4,24 @@ import { TApiForm, TApiFormJson } from "../type.form";
 import { TFsFieldAnyFromJson } from "./TFsFieldAnyFromJson";
 
 const TApiFormFromJson = (formJson: TApiFormJson): TApiForm => {
-  // const fields: TFsFieldAny[] = [];
-  const fields = (formJson.fields || []).map((fieldJson: TFsFieldAnyJson) =>
+  // @ts-ignore - TApiForm and TApiFormJson are incompatible.
+  const theForm: TApiForm = { ...formJson };
+  theForm.inactive = formJson.inactive == "false" ? false : true;
+  theForm.is_workflow_form =
+    formJson.is_workflow_form == "true" || formJson.is_workflow_form == true;
+  theForm.is_workflow_published =
+    formJson.is_workflow_published == "true" ||
+    formJson.is_workflow_published == true;
+
+  theForm.fields = (formJson.fields || []).map((fieldJson: TFsFieldAnyJson) =>
     TFsFieldAnyFromJson(fieldJson)
   );
 
   // TFsFieldAnyFromJson
-  return { ...{ fields }, ...(formJson as TApiForm) };
+  // return { ...{ fields }, ...(formJson as TApiForm) };
+  return theForm;
 };
+
 export { TApiFormFromJson };
 // type TNumericBoolean = "0" | "1";
 // import type { TFsFieldAny } from "./type.field";

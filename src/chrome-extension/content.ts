@@ -2,6 +2,7 @@ import { FormstackBuddy } from "../FormstackBuddy/FormstackBuddy";
 import { FieldLogicService } from "../FormstackBuddy/FieldLogicService";
 import { FsTreeFieldCollection, TFsFieldAnyJson } from "../formstack";
 import type { TStatusRecord } from "./type";
+import { FormAnalytics } from "../FormstackBuddy/FormAnalytics";
 
 alert("Hello from content.js");
 function getFormIdFromLocation({ pathname }: Location = location) {
@@ -9,6 +10,7 @@ function getFormIdFromLocation({ pathname }: Location = location) {
   return regExp.exec(pathname)?.groups?.formId || null;
 }
 let fieldLogicService: FieldLogicService | null = null;
+let formAnalytic: FormAnalytics | null = null;
 
 type TFieldStatusMessages = {
   [fieldId: string]: TStatusRecord[];
@@ -70,6 +72,8 @@ function getFormAsJson() {
         currentFieldCollection = FsTreeFieldCollection.fromFieldJson(
           apiFormJson.fields
         );
+        formAnalytic =
+          FormstackBuddy.getInstance().getFormAnalyticService(apiFormJson);
 
         fieldLogicService = FormstackBuddy.getInstance().getFieldLogicService(
           (apiFormJson.fields as TFsFieldAnyJson[]) || []
@@ -172,7 +176,7 @@ function handleFetchSubmissionRequest(
   });
 }
 
-function handleGetFieldStatusesRequest(
+function x_handleGetFieldStatusesRequest(
   caller: MessageEventSource,
   payload: any
 ) {
@@ -235,11 +239,25 @@ function handleGetAllFieldInfoRequest(
 ) {
   /// getFieldIdsExtendedLogicOf
   const fieldSummary = fieldLogicService?.getAllFieldSummary();
-
+  const formStatusMessages = formAnalytic?.findKnownSetupIssues();
+  // const formStatusMessages = [
+  //   {
+  //     severity: "info",
+  //     fieldId: "147738157",
+  //     message: "Message Two",
+  //     relatedFieldIds: ["xxxx"],
+  //   },
+  //   {
+  //     severity: "info",
+  //     fieldId: "147738157",
+  //     message: "Message One",
+  //     relatedFieldIds: ["yyyy"],
+  //   },
+  // ];
   /// .getFieldIdsExtendedLogicOf(fieldId);
   caller.postMessage({
     messageType: "getAllFieldInfoResponse",
-    payload: { fieldSummary },
+    payload: { fieldSummary, formStatusMessages },
   });
 }
 
@@ -284,9 +302,9 @@ window.onmessage = function (e) {
     case "removeFsBuddyRequest":
       removeFormHtml();
       break;
-    case "getFieldStatusesRequest":
-      e.source && handleGetFieldStatusesRequest(e.source, e.data.payload);
-      break;
+    // case "getFieldStatusesRequest":
+    //   e.source && handleGetFieldStatusesRequest(e.source, e.data.payload);
+    //   break;
     case "fetchSubmissionRequest":
       console.log("receive message fetch submission");
       console.log({ payload: e.data.payload });

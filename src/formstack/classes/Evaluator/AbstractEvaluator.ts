@@ -32,13 +32,26 @@ abstract class AbstractEvaluator {
 
   abstract isCorrectType<T>(submissionDatum: T): boolean;
 
-  // protected isValidSubmissionDatum(submissionDatum: string) {
-  //   return !(
-  //     ["__EMPTY_SUBMISSION_DATA__", "__MISSING_AND_REQUIRED__"].includes(
-  //       submissionDatum
-  //     ) || "__BAD_DATA_TYPE__ ".match(submissionDatum)
-  //   );
-  // }
+  /**
+   * attempts to find any issues with form/field setup
+   */
+  findKnownSetupIssues(): TStatusRecord[] {
+    const nonVisibleTypes = ["section", "richtext", "embed"];
+    const messages: TStatusRecord[] = [];
+
+    if (!nonVisibleTypes.includes(this.fieldType) && !this._fieldJson.label) {
+      messages.push(
+        this.wrapAsStatusMessage(
+          "info",
+          `No label for type: '${this.fieldType}', fieldId: '${this.fieldId}'.`,
+          [],
+          this.fieldId
+        )
+      );
+    }
+
+    return messages;
+  }
 
   protected getStoredValue<T = string>(submissionDatum?: T): T {
     if (this.isRequired && submissionDatum === undefined) {
@@ -48,11 +61,6 @@ abstract class AbstractEvaluator {
     if (!this.isRequired && submissionDatum === undefined) {
       return "__NO_SUBMISSION_DATA__" as T;
     }
-
-    // if (!this.isCorrectType(submissionDatum)) {
-    //   return `__BAD_DATA_TYPE__ "${typeof submissionDatum}"` as T;
-    // }
-
     return submissionDatum as T;
   }
 
@@ -74,10 +82,6 @@ abstract class AbstractEvaluator {
     submissionDatum?: T
   ): TStatusRecord[] {
     return [this.getStatusMessageStoredValue(submissionDatum)];
-  }
-
-  private getEmptyStatusMessageArray(): TStatusRecord[] {
-    return [];
   }
 
   protected getUiPopulateObjectsEmptyAndRequired(

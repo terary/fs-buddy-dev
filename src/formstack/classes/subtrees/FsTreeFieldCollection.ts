@@ -50,7 +50,7 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
     return this.getAllFieldIds().length;
   }
 
-  private getAllFieldIds() {
+  getAllFieldIds() {
     return Object.keys(this._fieldIdNodeMap);
   }
 
