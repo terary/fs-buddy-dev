@@ -1,5 +1,7 @@
 import { TFsFieldAnyJson } from "../formstack";
+import { TApiForm } from "../formstack/type.form";
 import { FieldLogicService } from "./FieldLogicService";
+import { FormAnalytics } from "./FormAnalytics";
 
 class FormstackBuddy {
   private static _instance: FormstackBuddy;
@@ -9,6 +11,10 @@ class FormstackBuddy {
 
   getFieldLogicService(fieldJson: TFsFieldAnyJson[]): FieldLogicService {
     return new FieldLogicService(fieldJson);
+  }
+
+  getFormAnalyticService(formJson: TApiForm): FormAnalytics {
+    return new FormAnalytics(formJson);
   }
 
   static getInstance(): FormstackBuddy {

@@ -47,9 +47,17 @@ type TSubmissionJson = {
   form: string;
   data: TSubmissionDataItem[];
 };
-
+type OverridePropertyTypes =
+  | "fields"
+  | "inactive"
+  | "is_workflow_form"
+  | "is_workflow_published";
 // *tmc* type 'any' should be json type
-type TApiFormJson = Partial<Omit<TApiForm, "fields">> & {
+type TApiFormJson = Partial<Omit<TApiForm, OverridePropertyTypes>> & {
   fields: any; // TFsFieldAnyJson[];
+  inactive: string;
+  is_workflow_form: boolean | string;
+  is_workflow_published: boolean | string;
 };
+
 export type { TApiFormJson, TApiForm, TSubmissionDataItem, TSubmissionJson };

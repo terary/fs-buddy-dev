@@ -58,23 +58,26 @@
       .fsBuddy_statusMessageCell_relatedFieldIds {
           display: none;
       }
+      .fsBuddy_statusMessages{}
   
-      .fsBuddy_statusMessage_severity_debug {
+      .fsBuddy_statusMessages > .fsBuddyDebug {
           background-color: pink;
       }
   
-      .fsBuddy_statusMessage_severity_info{
+      .fsBuddy_statusMessages > .fsBuddyInfo{
           background-color: lightblue;
       }
   
-      .fsBuddy_statusMessage_severity_warn{
+      .fsBuddy_statusMessages > .fsBuddyWarn{
           background-color: yellow;
       }
   
-      .fsBuddy_statusMessage_severity_error {
+      .fsBuddy_statusMessages > .fsBuddyError {
           background-color: red;
       }
-  
+      .fsBuddyError {
+          background-color: red;
+      }
       .fsBuddy_statusMessage_link {
           color: blue;
           /*background-color: red;*/
@@ -87,6 +90,14 @@
       }
     </style>
   <script>
+      const cssClassBySeverity = {
+         // maybe make this part of fsBuddy or something similar?
+          debug: 'fsBuddyDebug',
+          info: 'fsBuddyInfo',
+          warn: 'fsBuddyWarn',
+          error: 'fsBuddyError'
+        }
+
      window.onmessage = function(e) {
     // listen/receive message  
       switch(e.data.messageType) {
@@ -97,9 +108,9 @@
           removeCssClassFromFields(e.data.payload.cssClassName, e.data.payload.fieldIds)
           break;
           
-        case 'getFieldStatusesResponse': 
-          handelGetFieldStatusesResponse(e.data.payload)
-        break;
+        // case 'getFieldStatusesResponse': 
+        //   handelGetFieldStatusesResponse(e.data.payload)
+        // break;
 
         case 'fetchSubmissionResponse': 
           handelFetchSubmissionResponse(e.data.payload)
@@ -183,9 +194,9 @@
       window.top.postMessage(message, '*')
 		}
 
-      const handleGetFieldStatusClick = ()=>{
-        sendMessageToParent('getFieldStatusesRequest', {})
-      }
+      // const handleGetFieldStatusClick = ()=>{
+      //   sendMessageToParent('getFieldStatusesRequest', {})
+      // }
 
       const handleFetchSubmissionClick = ()=>{
         const submissionIdContainer = document.getElementById("fsBuddyFetchSubmissionIdInput");
@@ -202,7 +213,44 @@
         fsBuddyHelper.getAllFieldIds = ()=>{
           return Object.keys(fsBuddyHelper['fieldSummary'])
         }
-        prependUserMessages([`Form has ${Object.keys(fieldInfoResponse.fieldSummary).length} fields`]);
+        const {formStatusMessages} = fieldInfoResponse;
+        formStatusMessages && prependUserMessages(...formStatusMessages);
+        (formStatusMessages ||[]).forEach(statusMessage=>{
+          const {relatedFieldIds} = statusMessage;
+          relatedFieldIds.forEach(fieldId=>{
+            appendFieldStatusMessages(fieldId, [statusMessage])
+          })
+        })
+
+        // // dev/debug
+        // for(let i=0; i<20; i++) {
+        // // dev/debug
+        //   prependUserMessages({
+        //     severity: "debug",
+        //     fieldId:null,
+        //     message: `_DEV_DEBUG_TEST_COLOR_DEBUG`,
+        //     relatedFieldIds: [],
+        //   });
+        //   prependUserMessages({
+        //     severity: "info",
+        //     fieldId:null,
+        //     message: `_DEV_DEBUG_TEST_COLOR_INFO`,
+        //     relatedFieldIds: [],
+        //   });
+        //   prependUserMessages({
+        //     severity: "warn",
+        //     fieldId:null,
+        //     message: `_DEV_DEBUG_TEST_COLOR_WARN`,
+        //     relatedFieldIds: [],
+        //   });
+        //   prependUserMessages({
+        //     severity: "error",
+        //     fieldId:null,
+        //     message: `_DEV_DEBUG_TEST_COLOR_ERROR`,
+        //     relatedFieldIds: [],
+        //   });
+        // }
+        
       }
  
       const handleGetFieldsWithLogicResponse = (fieldIds) => {
@@ -222,7 +270,7 @@
 
         const dependentsByFieldId = payload;
         removeAllFsBuddyCss()
-        removeAllCssName('fsBuddy_statusMessage_severity_error')
+        removeAllCssName('fsBuddy_statusMessages')
         console.log({dependentsByFieldId})
 
         Object.entries(dependentsByFieldId).forEach(([fieldId, {dependentFieldIds, interdependentFieldIds}])=>{
@@ -238,23 +286,16 @@
             addCssClassToFields('fsBuddy_obscure_field', nonDependentFieldIdsNonPanel)
             addCssClassToFields('fsBuddy_obscure_section', nonDependentFieldIdsPanel)
             // addCssClassToFields('fsBuddy_obscure', nonDependentFieldIds)
-            addCssClassToFields('fsBuddy_statusMessage_severity_error', interdependentFieldIds)
+            addCssClassToFields('fsBuddy_statusMessages', interdependentFieldIds)
+            addCssClassToFields('fsBuddyError', interdependentFieldIds)
+            
         })
 
         const logicFocusFieldIds = Object.keys(dependentsByFieldId);
         addCssClassToFields('fsBuddy_logic_focus', logicFocusFieldIds)
       }
 
-      const handelGetFieldStatusesResponse = (payload)=>{
-        const {fieldStatusMessages, formStatusMessages} = payload || {};
-        Object.entries(fieldStatusMessages).forEach(([fieldId, statusMessages])=>{
-          appendFieldStatusContainer(fieldId, statusMessages.statusMessages)
-        })
-        prependUserMessages(...formStatusMessages);
-      }
-
-
-
+ 
       const handelFetchSubmissionResponse = (payload)=>{
         const {submissionData } = payload;
         submissionData.forEach((fieldData)=>{
@@ -262,14 +303,14 @@
           
           if(uiid === null ) {
             if(statusMessages.length>0) {
-              appendFieldStatusContainer(fieldData.fieldId, statusMessages)
+              appendFieldStatusMessages(fieldData.fieldId, statusMessages)
             }
             return;
           }
 
           const htmlControl = document.getElementById(uiid);
           if(!htmlControl){
-            appendFieldStatusContainer(fieldId, [{
+            appendFieldStatusMessages(fieldId, [{
                 severity: "warn",
                 fieldId,
                 message:
@@ -306,7 +347,7 @@
 
           if(`field${fieldId}` === uiid) {
             // for non subfields
-            appendFieldStatusContainer(fieldId, statusMessages)
+            appendFieldStatusMessages(fieldId, statusMessages)
           }
         })
       }
@@ -323,28 +364,28 @@
       }
 
       // dev/debug
-    const userMessages = Array.from(Array(250).keys());  
-    userMessages.forEach((e,i)=>{
-      userMessages[i] = `This is a user message (${i})`;
-    })  
+    // const userMessages = Array.from(Array(250).keys());  
+    // userMessages.forEach((e,i)=>{
+    //   userMessages[i] = `This is a user message (${i})`;
+    // })  
 
 
       // ------------------  css/layout related
       const prependUserMessages= (...messages)=>{
-        const cssClassBySeverity = {
-          debug: 'fsBuddy_statusMessage_severity_debug',
-          info: 'fsBuddy_statusMessage_severity_info',
-          warn: 'fsBuddy_statusMessage_severity_warn',
-          error: 'fsBuddy_statusMessage_severity_error'
-        }
 
         const userMessageDiv = document.getElementById('fsBuddyUserMessagesDiv');
         messages.forEach(message=>{
           if(message.severity) {
-            let decoratedMessage = `<span class=${cssClassBySeverity[message.severity]}>`;
-              decoratedMessage += `(${message.severity}) ${message.message}, related fields: ${message?.relatedFieldIds?.join(', ')}`;
-              decoratedMessage += "</span>"
-            userMessageDiv.innerHTML = decoratedMessage + '<br />' + userMessageDiv.innerHTML;
+            const messageParts = [];
+              messageParts.push(`(${message.severity})`)
+              messageParts.push(message.message);
+              if(message.fieldId) {
+                appendFieldStatusMessages(message.fieldId, [message])
+                messageParts.push(`fieldId: '${message.fieldId}'`)
+              } 
+              Array.isArray(message?.relatedFieldIds) && message?.relatedFieldIds.length>0 &&  messageParts.push(`related fields: ${message?.relatedFieldIds?.join(', ')}`);
+              const decoratedMessage = `<div class='fsBuddy_statusMessages ${cssClassBySeverity[message.severity]}'>` + messageParts.join(', ') + "</div>";
+              userMessageDiv.innerHTML = decoratedMessage + userMessageDiv.innerHTML;
 
           } else if(typeof message  === 'object') {
             userMessageDiv.innerHTML = JSON.stringify(message) + `message type: ${typeof message}` + '<br />' + userMessageDiv.innerHTML;
@@ -419,10 +460,10 @@
         return SEVERITIES[collectionSeverity];
       }
   
-      const removeFsBuddyStatusContainers = ()=>{
-        const statusContainers = document.querySelectorAll('.fsBuddy_statusContainer')
-        statusContainers.forEach(container=>container.remove())
-      }
+      // const removeFsBuddyStatusContainers = ()=>{
+      //   const statusContainers = document.querySelectorAll('.fsBuddy_statusContainer')
+      //   statusContainers.forEach(container=>container.remove())
+      // }
 
       const getFieldContainer = (fieldId)=>{
         // I think all fields are in a section, 
@@ -435,39 +476,45 @@
 
       }
       
-      const appendFieldStatusContainer = (fieldId, statusMessages)=>{
-        // should check to see if container exists?
-        // should only add container if statusMessages is non empty
-        const containerId =`fsCell${fieldId}`;
-        const fieldContainer = getFieldContainer(fieldId);
-        const collectionSeverity = getMessageCollectionSeverity(statusMessages);
-
-
+      const getFieldStatusContainer = (fieldId, collectionSeverity)=>{
         let  statusContainer = document.getElementById(`fsBuddy_statusContainer_${fieldId}`)
         if(!statusContainer) {
           statusContainer = document.createElement('div');
           statusContainer.id = `fsBuddy_statusContainer_${fieldId}`;
           statusContainer.classList.add('fsBuddy_statusContainer');
+          statusContainer.classList.add('fsBuddy_statusMessages');
+
+          const divStatusHeadRow = document.createElement('div');
+          divStatusHeadRow.classList.add(`fsBuddy_statusRowHeader`);
+          divStatusHeadRow.classList.add(`fsBuddy_statusMessages`);
+          divStatusHeadRow.classList.add(`${collectionSeverity}`);
+          
+          const aExpandCollapseItemsLink = document.createElement('a');
+          aExpandCollapseItemsLink.innerHTML = `+/- FS Buddy fieldId: ${fieldId}.`;
+          aExpandCollapseItemsLink.onclick = ()=>{toggleExpandCollapseStatusItems(fieldId)}
+          aExpandCollapseItemsLink.classList.add('fsBuddy_statusMessage_link');
+
+          divStatusHeadRow.appendChild(aExpandCollapseItemsLink)
+          statusContainer.appendChild(divStatusHeadRow)
         }
+        return statusContainer;
+      }
 
+      const appendFieldStatusMessages = (fieldId, statusMessages)=>{
+        // should check to see if container exists?
+        // should only add container if statusMessages is non empty
+        const containerId =`fsCell${fieldId}`;
+        const fieldContainer = getFieldContainer(fieldId);
+        const collectionSeverity = getMessageCollectionSeverity(statusMessages);
+        const collectionSeverityCssClass = cssClassBySeverity[collectionSeverity]  || cssClassBySeverity['error']; 
+        const statusContainer = getFieldStatusContainer(fieldId, collectionSeverityCssClass);
 
-        const divStatusHeadRow = document.createElement('div');
-        divStatusHeadRow.classList.add(`fsBuddy_statusRowHeader`);
-        divStatusHeadRow.classList.add(`fsBuddy_statusMessage_severity_${collectionSeverity}`);
-        
-        const aExpandCollapseItemsLink = document.createElement('a');
-        aExpandCollapseItemsLink.innerHTML = `<a>expand/collapse</a> fieldId: ${fieldId} FS Buddy (${statusMessages.length})`;
-        aExpandCollapseItemsLink.onclick = ()=>{toggleExpandCollapseStatusItems(fieldId)}
-        aExpandCollapseItemsLink.classList.add('fsBuddy_statusMessage_link');
-
-        divStatusHeadRow.appendChild(aExpandCollapseItemsLink)
-        statusContainer.appendChild(divStatusHeadRow)
-        
-      //        {severity:'debug', message: 'The debug message', fieldId: '148111228',  relatedFieldIds:['147738154', '148111228', '147738157']},
+        //        {severity:'debug', message: 'The debug message', fieldId: '148111228',  relatedFieldIds:['147738154', '148111228', '147738157']},
         statusMessages.forEach(message=>{
             const divStatusRow = document.createElement('div');
             divStatusRow.classList.add(`fsBuddy_statusRow`);
-            divStatusRow.classList.add(`fsBuddy_statusMessage_severity_${message['severity']}`);
+            const severityCssClass = cssClassBySeverity[message['severity']]  || cssClassBySeverity['error']; 
+            divStatusRow.classList.add(severityCssClass);
             ['severity', 'message', 'fieldId', 'relatedFieldIds'].forEach(messagePart=>{
                 const divMessagePart = document.createElement('div');
                 switch(messagePart){
@@ -487,7 +534,7 @@
         })
         
         if(statusContainer.querySelector('.fsRow')) {
-          // want to make sure we are "ALWAYS" getting the correct parent
+          // trying to find the correct parent
 
           // its not a section
           if (fieldContainer.parentElement) {
@@ -546,7 +593,7 @@
       'fsBuddyControlPanelSubmission',
       'fsBuddyControlPanelLogic', 
       'fsBuddyControlPanelFieldStatus',
-      'fsBuddyControlPanelUserMessages'
+      // 'fsBuddyControlPanelUserMessages'
       ].forEach(panelId=>{
         document.getElementById(panelId).style.display = "none";
       })
@@ -559,11 +606,12 @@
     }
 
     function removeAllFsBuddyCss(){
-          removeAllCssName('fsBuddy_obscure_field'); 
-          removeAllCssName('fsBuddy_obscure_section'); 
-          removeAllCssName('fsBuddy_lightblue');
-          removeAllCssName('fsBuddy_lightgreen');
-          removeAllCssName('fsBuddy_logic_focus');
+      removeAllCssName('fsBuddy_obscure_field'); 
+      removeAllCssName('fsBuddy_obscure_section'); 
+      removeAllCssName('fsBuddy_lightblue');
+      removeAllCssName('fsBuddy_lightgreen');
+      removeAllCssName('fsBuddy_logic_focus');
+      removeAllCssName('fsBuddyError');
     }
 
     document.addEventListener("DOMContentLoaded",()=>{
@@ -590,9 +638,9 @@
                 <td>
                       <button onclick="showOnly('fsBuddyControlPanelFieldStatus')">Field Analysis</button>
                 </td>
-                <td>
+                <!-- <td>
                       <button onclick="showOnly('fsBuddyControlPanelUserMessages')">Form Analysis</button>
-                </td>
+                </td> -->
             </tr>
       </table>
       <div id='fsBuddyControlPanelSubmission' class="fsControlPanelSubsection">
@@ -618,11 +666,12 @@
       </div>
       <div id='fsBuddyControlPanelFieldStatus' class="fsControlPanelSubsection">
             <h4>Field Analysis</h4>
+            <div class="fsBuddy_statusMessages" style="background-color: white;height: 300px; overflow-y: auto;" id="fsBuddyUserMessagesDiv"></div>
             <table>
                   <tr>
-                        <td>
+                        <!-- <td>
                               <button onclick="handleGetFieldStatusClick()">Get Field Statuses</button>
-                        </td>
+                        </td> -->
                         <td>
                               <button onclick="collapseAllFsBuddyStatusItems()">Collapse Statuses</button>    
                         </td>
@@ -631,22 +680,22 @@
                         </td>
                   </tr>
                   <tr>
-                        <td>
+                        <!-- <td>
                               <button onclick="removeFsBuddyStatusContainers()">Remove Status Containers</button>
-                        </td>
+                        </td> -->
                         <td>
-                              <button onclick="removeAllCssName('fsHidden')">Remove All fsHidden</button>
+                              <button onclick="removeAllCssName('fsHidden');removeAllCssName('fsWorkflowHidden')">Remove All fsHidden</button>
                         </td>
-                        <td>
+                        <!-- <td>
                               <button onclick="removeAllFsBuddyCss()">Remove All fsBuddy</button>
-                        </td>
+                        </td> -->
                   </tr>
             </table>
       </div>
-      <div id='fsBuddyControlPanelUserMessages' class="fsControlPanelSubsection">
+      <!-- <div id='fsBuddyControlPanelUserMessages' class="fsControlPanelSubsection">
             <h4>Form Analysis</h4>
             <div style="height: 300px; overflow-y: auto;" id="fsBuddyUserMessagesDiv"></div>
-      </div>
+      </div> -->
     </div>
 	</body>
 </html>

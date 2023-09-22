@@ -57,8 +57,8 @@ class FsTreeField extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
     return subtree; // as IExpressionTree<TFsFieldTreeNodeTypes>;
   }
 
-  get fieldJson() {
-    return this._fieldJson;
+  get fieldJson(): TFsFieldAny {
+    return this._fieldJson as TFsFieldAny;
   }
 
   get fieldId() {
@@ -74,7 +74,7 @@ class FsTreeField extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
   }
 
   get label() {
-    return (this._fieldJson as Partial<TFsFieldAny>)["label"];
+    return this.fieldJson["label"];
   }
 
   private getNodesOfType<T extends AbstractFsTreeGeneric<any> | AbstractNode>(

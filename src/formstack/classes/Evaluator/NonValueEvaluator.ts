@@ -14,6 +14,10 @@ class NonValueEvaluator extends AbstractEvaluator {
           "debug",
           'Sections may have statusMessages but they will never get "parsed".'
         ),
+        this.wrapAsStatusMessage(
+          "info",
+          `non-printable type: '${this.fieldType}'.`
+        ),
       ]),
     ];
   }
