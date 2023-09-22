@@ -90,6 +90,14 @@
       }
     </style>
   <script>
+      const cssClassBySeverity = {
+         // maybe make this part of fsBuddy or something similar?
+          debug: 'fsBuddyDebug',
+          info: 'fsBuddyInfo',
+          warn: 'fsBuddyWarn',
+          error: 'fsBuddyError'
+        }
+
      window.onmessage = function(e) {
     // listen/receive message  
       switch(e.data.messageType) {
@@ -364,12 +372,6 @@
 
       // ------------------  css/layout related
       const prependUserMessages= (...messages)=>{
-        const cssClassBySeverity = {
-          debug: 'fsBuddyDebug',
-          info: 'fsBuddyInfo',
-          warn: 'fsBuddyWarn',
-          error: 'fsBuddyError'
-        }
 
         const userMessageDiv = document.getElementById('fsBuddyUserMessagesDiv');
         messages.forEach(message=>{
@@ -504,13 +506,15 @@
         const containerId =`fsCell${fieldId}`;
         const fieldContainer = getFieldContainer(fieldId);
         const collectionSeverity = getMessageCollectionSeverity(statusMessages);
-        const statusContainer = getFieldStatusContainer(fieldId, collectionSeverity);
+        const collectionSeverityCssClass = cssClassBySeverity[collectionSeverity]  || cssClassBySeverity['error']; 
+        const statusContainer = getFieldStatusContainer(fieldId, collectionSeverityCssClass);
 
         //        {severity:'debug', message: 'The debug message', fieldId: '148111228',  relatedFieldIds:['147738154', '148111228', '147738157']},
         statusMessages.forEach(message=>{
             const divStatusRow = document.createElement('div');
             divStatusRow.classList.add(`fsBuddy_statusRow`);
-            divStatusRow.classList.add(`${message['severity']}`);
+            const severityCssClass = cssClassBySeverity[message['severity']]  || cssClassBySeverity['error']; 
+            divStatusRow.classList.add(severityCssClass);
             ['severity', 'message', 'fieldId', 'relatedFieldIds'].forEach(messagePart=>{
                 const divMessagePart = document.createElement('div');
                 switch(messagePart){
