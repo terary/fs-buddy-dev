@@ -36,6 +36,12 @@ describe("FormAnalytics", () => {
         },
         {
           severity: "info",
+          fieldId: null,
+          message: "Total Fields: 7.",
+          relatedFieldIds: [],
+        },
+        {
+          severity: "info",
           fieldId: "151757196",
           message: "No label for type: 'text', fieldId: '151757196'.",
           relatedFieldIds: [],
@@ -74,6 +80,12 @@ describe("FormAnalytics", () => {
           severity: "info",
           fieldId: null,
           message: 'Form/Workflow type: "workflow".',
+          relatedFieldIds: [],
+        },
+        {
+          severity: "info",
+          fieldId: null,
+          message: "Total Fields: 9.",
           relatedFieldIds: [],
         },
         {
