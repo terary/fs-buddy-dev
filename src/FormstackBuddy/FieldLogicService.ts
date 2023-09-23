@@ -80,10 +80,20 @@ class FieldLogicService {
       }, []);
   }
 
+  getAggregateTree(fieldId: string): FsTreeLogicDeep {
+    return this._fieldCollection.aggregateLogicTree(fieldId);
+  }
+
+  devDebug_getExtendedTree2(fieldId: string): FsTreeLogicDeep {
+    return this._fieldCollection.devDebug_getExtendedTree2(fieldId);
+  }
+
   getFieldIdsExtendedLogicOf(fieldId: string): string[] {
-    return this._fieldCollection
-      .aggregateLogicTree(fieldId)
-      .getDependantFieldIds();
+    const a = this._fieldCollection.aggregateLogicTree(fieldId);
+    return a.getDependantFieldIds();
+    // return this._fieldCollection
+    //   .aggregateLogicTree(fieldId)
+    //   .getDependantFieldIds();
   }
 
   wrapFieldIdsIntoLabelOptionList(fieldIds: string[]) {

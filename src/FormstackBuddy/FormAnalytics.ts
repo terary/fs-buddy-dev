@@ -8,9 +8,7 @@ import {
   TStatusMessageSeverity,
 } from "../formstack/classes/Evaluator/type";
 import { TApiForm } from "../formstack/type.form";
-import { IEValuator } from "../formstack/classes/Evaluator/IEvaluator";
 import { Evaluator } from "../formstack/classes/Evaluator";
-import { TFsFieldAny } from "../formstack/type.field";
 import { TStatusRecord } from "../chrome-extension/type";
 
 class FormAnalytics {

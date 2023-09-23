@@ -1,4 +1,7 @@
-import { AbstractExpressionTree } from "predicate-tree-advanced-poc/dist/src";
+import {
+  AbstractExpressionTree,
+  IExpressionTree,
+} from "predicate-tree-advanced-poc/dist/src";
 
 import { TFsFieldAnyJson } from "../types";
 import { FsTreeLogicDeep } from "./trees/FsTreeLogicDeep";
@@ -20,6 +23,7 @@ import { FsTreeLogic } from "./trees/FsTreeLogic";
 import { TUiEvaluationObject } from "../Evaluator/type";
 import { TSubmissionJson } from "../../type.form";
 import { IEValuator } from "../Evaluator/IEvaluator";
+import { symbolName } from "typescript";
 class FsTreeFieldCollection extends AbstractExpressionTree<
   TTreeFieldNode | FsFormRootNode
 > {
@@ -58,13 +62,15 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
     return this._fieldIdNodeMap[fieldId];
   }
 
-  private getExtendedTree<T extends FsTreeLogicDeep = FsTreeLogicDeep>(
+  private getExtendedTree_save<T extends FsTreeLogicDeep = FsTreeLogicDeep>(
     field: FsTreeField,
     atNodeId?: string,
     extendedTree?: FsTreeLogicDeep
   ): T {
     const logicTree = field.getLogicTree() as FsTreeLogic;
+
     if (logicTree === null) {
+      //
       if (extendedTree !== undefined) {
         extendedTree.appendChildNodeWithContent(
           atNodeId || extendedTree.rootNodeId,
@@ -74,13 +80,13 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
         );
         return extendedTree as T;
       } else {
-        const t = new FsTreeLogicDeep(
+        const newExtendedTree = new FsTreeLogicDeep(
           field.fieldId,
           // @ts-ignore
           new FsLogicLeafNode(field.fieldId, "condition", "option")
         );
-        t.ownerFieldId = field.fieldId;
-        return t as T;
+        newExtendedTree.ownerFieldId = field.fieldId;
+        return newExtendedTree as T;
       }
     }
 
@@ -129,6 +135,173 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
       return exTree as T;
     }
     // technically logicTree should always have children but in reality it's sometimes missing.
+    // look at merge move clone
+    // its the same
+    //       - if current node is leaf and parameter of extend tree, append leaf to parameter return tree
+    //       - if current node is leaf and parameter extTree==undefined, create tree, append node return tree
+
+    //       - if current node is isBranch, append current node content walk the branches adding leafs/branches
+
+    //       This is fine except we need node, build extended.
+
+    //       getLogicTree logic tree should have visisibility?
+
+    logicTree
+      .getChildrenNodeIdsOf(logicTree.rootNodeId)
+      .forEach((logicChildNodeId: string) => {
+        const childContent = logicTree.getChildContentAt(
+          logicChildNodeId
+        ) as TFsFieldLogicCheckLeaf;
+
+        const childField = this.getFieldTreeByFieldId(
+          childContent.fieldId
+        ) as FsTreeField;
+
+        if (exTree.isExistInDependencyChain(childField)) {
+          exTree.appendChildNodeWithContent(
+            currentBranchNodeId,
+            new FsCircularDependencyNode(
+              exTree.ownerFieldId,
+              childField.fieldId,
+              exTree.getDependantFieldIds()
+            )
+          );
+        } else if (childField.getLogicTree() === null) {
+          const { fieldId, condition, option } = childContent;
+          exTree.appendChildNodeWithContent(
+            currentBranchNodeId,
+            new FsLogicLeafNode(fieldId, condition, option)
+          );
+        } else {
+          this.getExtendedTree_save(childField, atNodeId, exTree); //(childFieldId)
+        }
+      });
+
+    return exTree as T;
+  }
+
+  private extendedTreeOrNew(
+    fieldId: string,
+    extendedTree?: FsTreeLogicDeep
+  ): FsTreeLogicDeep {
+    if (extendedTree) {
+      return extendedTree;
+    }
+
+    const newTree = new FsTreeLogicDeep(
+      fieldId,
+      // @ts-ignore
+      new FsLogicLeafNode(fieldId, "condition", "option")
+    );
+    newTree.ownerFieldId = fieldId;
+    return newTree;
+  }
+
+  private getExtendedTree<T extends FsTreeLogicDeep = FsTreeLogicDeep>(
+    field: FsTreeField,
+    atNodeId?: string,
+    extendedTree?: FsTreeLogicDeep
+  ): T {
+    const logicTree = field.getLogicTree() as FsTreeLogic;
+
+    if (logicTree === null) {
+      let newNode: FsCircularDependencyNode | FsLogicLeafNode;
+      if (extendedTree !== undefined) {
+        if (extendedTree.getDependantFieldIds().includes(field.fieldId)) {
+          newNode = new FsCircularDependencyNode(
+            extendedTree.ownerFieldId,
+            field.fieldId,
+            extendedTree.getDependantFieldIds()
+          );
+        } else {
+          // @ts-ignore
+          newNode = new FsLogicLeafNode(field.fieldId, "condition", "option");
+        }
+        extendedTree.appendChildNodeWithContent(
+          atNodeId || extendedTree.rootNodeId,
+          newNode
+          // // if a field has no logic do we return ExtendTree with 1 and 1 one node?
+          // //@ts-ignore
+          // new FsLogicLeafNode(field.fieldId, "condition", "option")
+        );
+        return extendedTree as T;
+      } else {
+        const newExtendedTree = new FsTreeLogicDeep(
+          field.fieldId,
+          // @ts-ignore
+          new FsLogicLeafNode(field.fieldId, "condition", "option")
+        );
+        newExtendedTree.ownerFieldId = field.fieldId;
+        return newExtendedTree as T;
+      }
+    }
+
+    const rootNodeContent = logicTree.getChildContentAt(
+      logicTree.rootNodeId //
+    ) as TFsFieldLogicJunction<TLogicJunctionOperators>;
+
+    let exTree: FsTreeLogicDeep;
+    let currentBranchNodeId: string;
+    const { conditional, action, fieldJson } = rootNodeContent;
+    const newBranchNode = new FsLogicBranchNode(
+      field.fieldId,
+      // @ts-ignore - doesn't like '$in'
+      (conditional || "$and") as TLogicJunctionOperators,
+      action || null,
+      fieldJson
+    );
+
+    if (extendedTree === undefined) {
+      const { conditional, action, fieldJson } =
+        rootNodeContent as TFsFieldLogicJunction<TLogicJunctionOperators>;
+
+      exTree = new FsTreeLogicDeep(field.fieldId, newBranchNode);
+      exTree.ownerFieldId = field.fieldId;
+      atNodeId = exTree.rootNodeId;
+      currentBranchNodeId = exTree.rootNodeId;
+    } else {
+      // assert(atNodeId !== undefined);
+      // !!atNodeId && throw new Error('Expected something');
+      if (extendedTree.isInDependentsFields(field.fieldId)) {
+        currentBranchNodeId = extendedTree.appendChildNodeWithContent(
+          atNodeId || "",
+          new FsCircularDependencyNode(
+            field.fieldId,
+            atNodeId || "__FIELD_ID__",
+            extendedTree.getDependantFieldIds()
+          )
+        );
+        return extendedTree as T;
+      }
+      exTree = extendedTree; // because possible undefined
+      currentBranchNodeId = extendedTree.appendChildNodeWithContent(
+        atNodeId || "",
+        newBranchNode
+      );
+    }
+
+    if (
+      // this should be more intelligent
+      exTree.getTreeNodeIdsAt(exTree.rootNodeId).length >
+      FsTreeFieldCollection.MAX_DEPTH
+    ) {
+      exTree.appendChildNodeWithContent(
+        currentBranchNodeId,
+        new FsMaxDepthExceededNode()
+      );
+      return exTree as T;
+    }
+    // technically logicTree should always have children but in reality it's sometimes missing.
+    // look at merge move clone
+    // its the same
+    //       - if current node is leaf and parameter of extend tree, append leaf to parameter return tree
+    //       - if current node is leaf and parameter extTree==undefined, create tree, append node return tree
+
+    //       - if current node is isBranch, append current node content walk the branches adding leafs/branches
+
+    //       This is fine except we need node, build extended.
+
+    //       getLogicTree logic tree should have visisibility?
 
     logicTree
       .getChildrenNodeIdsOf(logicTree.rootNodeId)
@@ -166,9 +339,59 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
 
   aggregateLogicTree(fieldId: string): FsTreeLogicDeep {
     const field = this.getFieldTreeByFieldId(fieldId) as FsTreeField;
-
-    //@ts-ignore
+    const panel = field.getVisibilityNode()?.parentNode;
+    if (panel) {
+      const pE = panel ? this.getExtendedTree(panel as FsTreeField) : undefined;
+      if (pE) {
+        const e2 = this.getExtendedTree(field, pE.rootNodeId, pE);
+        return e2;
+      }
+      return this.getExtendedTree(field);
+    }
     return this.getExtendedTree(field);
+    // return e2;
+    // get logic Tree
+    // add that
+    // const x = this.getExtendedTree(field);
+    // const c = x.cloneAt(x.rootNodeId);
+    // const y = field.getVisibilityNode();
+    // const p = y?.parentNode;
+    // const p2 = p?.getDependantFieldIds();
+    // c.appendTreeAt(c.rootNodeId, y?.parentNode as IExpressionTree<any>);
+    // I believe this finds it but it's not very eloquent.
+    // There should be a merge tree option and we need/want to getEffectiveTree()
+    // return this.getExtendedTree(field);
+  }
+
+  //  Just for fun,  build a function builds the tree similar to here (using branch, LeafNode etc)
+  // the tree should have property merge tree
+  // these should be the same type tree newTree<TYPE_X>.merge(otherTree<TYPE_X>);
+  devDebug_getExtendedTree2(fieldId: string): FsTreeLogicDeep {
+    const field = this.getFieldTreeByFieldId(fieldId) as FsTreeField;
+    const panel = field.getVisibilityNode()?.parentNode;
+    const e1 = this.getExtendedTree(field);
+    const e1Count = e1.getTreeNodeIdsAt(e1.rootNodeId);
+    const e1DepChain = e1.getDependantFieldIds(); // .getTreeNodeIdsAt(e1.rootNodeId);
+    const pE = this.getExtendedTree(panel as FsTreeField);
+    const e2 = this.getExtendedTree(field, pE.rootNodeId, pE);
+    `
+    Why two leaf nodes are circular reference? Should get caught at branch? or not?
+
+`;
+    const pECount = pE.getTreeNodeIdsAt(pE.rootNodeId);
+    const peDepChain = pE.getDependantFieldIds(); // .getTreeNodeIdsAt(e1.rootNodeId);
+    const e2Count = e2.getTreeNodeIdsAt(e2.rootNodeId);
+    const e2DepChain = e2.getDependantFieldIds(); // .getTreeNodeIdsAt(e1.rootNodeId);
+
+    const extLogicTree = this.getExtendedTree(field, field.rootNodeId, pE);
+    // appendTree should be an override?
+    // should do same walk-through as extendTree (Circular, Root, Branch, etc)
+    // should be able to do copy/paste modify
+    extLogicTree.appendTreeAt(
+      extLogicTree.rootNodeId,
+      this.getExtendedTree(field.getVisibilityNode()?.parentNode as FsTreeField)
+    );
+    return extLogicTree;
   }
 
   getFieldTreeByFieldId(fieldId: string): FsTreeField | undefined {

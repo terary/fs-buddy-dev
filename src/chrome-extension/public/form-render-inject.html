@@ -75,9 +75,15 @@
       .fsBuddy_statusMessages > .fsBuddyError {
           background-color: red;
       }
+
       .fsBuddyError {
           background-color: red;
       }
+
+      .fsBuddyLogicError {
+          border: 3px dotted red;
+      }
+
       .fsBuddy_statusMessage_link {
           color: blue;
           /*background-color: red;*/
@@ -254,9 +260,12 @@
       }
  
       const handleGetFieldsWithLogicResponse = (fieldIds) => {
-        const divWithSelect = optionListToSelectElement('selectFieldIdWithLogic', handleFieldIdSelected, fieldIds.fieldIds)
-        const logicBuddyContainer = document.getElementById('fsBuddyControlPanelLogic');
-        logicBuddyContainer.appendChild(divWithSelect);
+
+        if (document.getElementById('selectFieldIdWithLogic') === null) {
+          const divWithSelect = optionListToSelectElement('selectFieldIdWithLogic', handleFieldIdSelected, fieldIds.fieldIds)
+          const logicBuddyContainer = document.getElementById('fsBuddyControlPanelLogic');
+          logicBuddyContainer.appendChild(divWithSelect);
+        }
         removeAllCssName('fsHidden'); // show all fields
       }
 
@@ -286,9 +295,9 @@
             addCssClassToFields('fsBuddy_obscure_field', nonDependentFieldIdsNonPanel)
             addCssClassToFields('fsBuddy_obscure_section', nonDependentFieldIdsPanel)
             // addCssClassToFields('fsBuddy_obscure', nonDependentFieldIds)
-            addCssClassToFields('fsBuddy_statusMessages', interdependentFieldIds)
-            addCssClassToFields('fsBuddyError', interdependentFieldIds)
-            
+            // addCssClassToFields('fsBuddy_statusMessages', interdependentFieldIds)
+            // addCssClassToFields('fsBuddyError', interdependentFieldIds)
+            addCssClassToFields('fsBuddyLogicError', interdependentFieldIds)
         })
 
         const logicFocusFieldIds = Object.keys(dependentsByFieldId);
@@ -612,6 +621,7 @@
       removeAllCssName('fsBuddy_lightgreen');
       removeAllCssName('fsBuddy_logic_focus');
       removeAllCssName('fsBuddyError');
+      removeAllCssName('fsBuddyLogicError');
     }
 
     document.addEventListener("DOMContentLoaded",()=>{

@@ -222,6 +222,7 @@ function handleGetFieldLogicDependentsRequest(
   const fieldIds = fieldLogicService?.getFieldIdsExtendedLogicOf(fieldId);
   const interdependentFieldIds =
     fieldLogicService?.getCircularReferenceFieldIds(fieldId);
+
   caller.postMessage({
     messageType: "getFieldLogicDependentsResponse",
     payload: {
@@ -237,24 +238,9 @@ function handleGetAllFieldInfoRequest(
   caller: MessageEventSource,
   payload: any
 ) {
-  /// getFieldIdsExtendedLogicOf
   const fieldSummary = fieldLogicService?.getAllFieldSummary();
   const formStatusMessages = formAnalytic?.findKnownSetupIssues();
-  // const formStatusMessages = [
-  //   {
-  //     severity: "info",
-  //     fieldId: "147738157",
-  //     message: "Message Two",
-  //     relatedFieldIds: ["xxxx"],
-  //   },
-  //   {
-  //     severity: "info",
-  //     fieldId: "147738157",
-  //     message: "Message One",
-  //     relatedFieldIds: ["yyyy"],
-  //   },
-  // ];
-  /// .getFieldIdsExtendedLogicOf(fieldId);
+
   caller.postMessage({
     messageType: "getAllFieldInfoResponse",
     payload: { fieldSummary, formStatusMessages },

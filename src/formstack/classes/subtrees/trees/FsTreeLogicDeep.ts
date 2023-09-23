@@ -17,6 +17,7 @@ import { FsLogicLeafNode } from "./nodes/FsLogicLeafNode";
 import { FsMaxDepthExceededNode } from "./nodes/FsMaxDepthExceededNode";
 import { FsTreeField } from "./FsTreeField";
 import { TFsFieldAny } from "../../../type.field";
+type TFromToMap = { from: string; to: string };
 
 type LogicTreeNodeTypes = // we choose to export this, we should give it a different name
 
@@ -40,8 +41,40 @@ class FsTreeLogicDeep extends AbstractFsTreeLogic<LogicTreeNodeTypes> {
       return nodeContent.ownerFieldId;
     } else if (nodeContent instanceof FsLogicLeafNode) {
       return nodeContent.fieldId;
+    } else if (nodeContent instanceof FsCircularDependencyNode) {
+      return nodeContent.targetFieldId;
     }
     return null;
+  }
+
+  x_appendTreeAt(
+    targetNodeId: string,
+    sourceTree: FsTreeLogicDeep,
+    sourceBranchRootNodeId?: string | undefined
+  ): TFromToMap[] {
+    let effectiveTargetNodeId = targetNodeId;
+
+    // I think setting nodeContent to null is dangerous
+    // do we want to is root as junction?
+    if (this.isLeaf(targetNodeId)) {
+      const originalContent = this.getChildContentAt(targetNodeId);
+      this.replaceNodeContent(targetNodeId, this.defaultJunction(targetNodeId));
+      effectiveTargetNodeId = this.appendChildNodeWithContent(
+        targetNodeId,
+        originalContent
+      );
+    }
+
+    const fromToMap = super.appendTreeAt(
+      effectiveTargetNodeId,
+      sourceTree,
+      sourceBranchRootNodeId
+    );
+    if (effectiveTargetNodeId !== targetNodeId) {
+      fromToMap.push({ from: targetNodeId, to: effectiveTargetNodeId });
+    }
+
+    return fromToMap;
   }
 
   getDependantFieldIds(): string[] {
@@ -81,6 +114,11 @@ class FsTreeLogicDeep extends AbstractFsTreeLogic<LogicTreeNodeTypes> {
     parentNodeId: string,
     nodeContent: TGenericNodeContent<TFsLogicNode>
   ): string {
+    // @ts-ignore - may be null
+    const fieldId = this.extractFieldIdFromNodeContent(nodeContent);
+    if (fieldId === null) {
+      console.log("Found a null");
+    }
     this._dependantFieldIds.push(
       // @ts-ignore - may be null
       this.extractFieldIdFromNodeContent(nodeContent)
