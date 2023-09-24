@@ -122,9 +122,10 @@ describe("FsTreeFieldCollection", () => {
       );
       const actualAgTree = tree.aggregateLogicTree(fieldId);
       const actualAgTreeContent = actualAgTree.getTreeContentAt() || [];
-      const treeJson = actualAgTree.toPojoAt();
-      const actualJson = actualAgTree.toPojoAt();
-      expect(expectedTreeJson).toStrictEqual(actualJson);
+
+      const actualTreeJson = actualAgTree.toPojoAt();
+      expect(expectedTreeJson).toStrictEqual(actualTreeJson);
+
       expect(actualAgTreeContent.length).toBe(8);
       expect(actualAgTreeContent[0]).toBeInstanceOf(FsLogicBranchNode);
       expect((actualAgTreeContent[0] as FsLogicBranchNode).ownerFieldId).toBe(

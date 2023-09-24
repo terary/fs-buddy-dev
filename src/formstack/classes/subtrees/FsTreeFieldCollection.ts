@@ -232,6 +232,65 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
     }
   }
 
+  private createLogicBranchNode(
+    fieldId: string,
+    nodeContent: TFsFieldLogicJunction<TLogicJunctionOperators>
+  ): FsLogicBranchNode {
+    const { conditional, action, logicJson } = nodeContent;
+    return new FsLogicBranchNode(
+      fieldId,
+      // @ts-ignore - doesn't like '$in'
+      (conditional || "$and") as TLogicJunctionOperators,
+      action || null,
+      logicJson
+    );
+  }
+
+  private _logicUseOrCreateExtendedTree(
+    fieldId: string,
+    newBranchNode: FsLogicBranchNode,
+    atNodeId?: string,
+    extendedTree?: FsTreeLogicDeep
+  ): {
+    exTree: FsTreeLogicDeep;
+    currentBranchNodeId: string;
+    lastNodeId?: string;
+  } {
+    //
+    let exTree: FsTreeLogicDeep;
+    let currentBranchNodeId: string;
+    if (extendedTree === undefined) {
+      exTree = new FsTreeLogicDeep(fieldId, newBranchNode);
+      exTree.ownerFieldId = fieldId;
+      atNodeId = exTree.rootNodeId;
+      currentBranchNodeId = exTree.rootNodeId;
+    } else {
+      exTree = extendedTree; // because possible undefined
+      // if (extendedTree.isInDependentsFields(fieldId)) {
+      //   currentBranchNodeId = extendedTree.appendChildNodeWithContent(
+      //     atNodeId || "",
+      //     new FsCircularDependencyNode(
+      //       fieldId,
+      //       atNodeId || "__FIELD_ID__",
+      //       extendedTree.getDependantFieldIds()
+      //     )
+      //   );
+      //   return {
+      //     exTree: extendedTree,
+      //     currentBranchNodeId,
+      //     lastNodeId: atNodeId,
+      //   };
+      // }
+
+      currentBranchNodeId = extendedTree.appendChildNodeWithContent(
+        atNodeId || "",
+        newBranchNode
+      );
+    }
+
+    return { exTree, currentBranchNodeId, lastNodeId: atNodeId };
+  }
+
   private getExtendedTree<T extends FsTreeLogicDeep = FsTreeLogicDeep>(
     field: FsTreeField,
     atNodeId?: string,
@@ -248,48 +307,67 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
     }
 
     const rootNodeContent = logicTree.getChildContentAt(logicTree.rootNodeId);
-    const { conditional, action, logicJson } =
-      rootNodeContent as TFsFieldLogicJunction<TLogicJunctionOperators>;
-    const newBranchNode = new FsLogicBranchNode(
+
+    const newBranchNode = this.createLogicBranchNode(
       field.fieldId,
-      // @ts-ignore - doesn't like '$in'
-      (conditional || "$and") as TLogicJunctionOperators,
-      action || null,
-      logicJson
+      rootNodeContent as TFsFieldLogicJunction<TLogicJunctionOperators>
     );
-
-    let exTree: FsTreeLogicDeep;
-    let currentBranchNodeId: string;
-
-    if (extendedTree === undefined) {
-      const { conditional, action, logicJson } =
-        rootNodeContent as TFsFieldLogicJunction<TLogicJunctionOperators>;
-
-      exTree = new FsTreeLogicDeep(field.fieldId, newBranchNode);
-      exTree.ownerFieldId = field.fieldId;
-      atNodeId = exTree.rootNodeId;
-      currentBranchNodeId = exTree.rootNodeId;
-    } else {
-      // assert(atNodeId !== undefined);
-      // !!atNodeId && throw new Error('Expected something');
-      if (extendedTree.isInDependentsFields(field.fieldId)) {
-        currentBranchNodeId = extendedTree.appendChildNodeWithContent(
-          atNodeId || "",
-          new FsCircularDependencyNode(
-            field.fieldId,
-            atNodeId || "__FIELD_ID__",
-            extendedTree.getDependantFieldIds()
-          )
-        );
-        return extendedTree as T;
-      }
-      exTree = extendedTree; // because possible undefined
-      currentBranchNodeId = extendedTree.appendChildNodeWithContent(
+    if (extendedTree && extendedTree.isInDependentsFields(field.fieldId)) {
+      extendedTree.appendChildNodeWithContent(
         atNodeId || "",
-        newBranchNode
+        new FsCircularDependencyNode(
+          field.fieldId,
+          atNodeId || "__FIELD_ID__",
+          extendedTree.getDependantFieldIds()
+        )
       );
+      return extendedTree as T;
     }
 
+    // const { conditional, action, logicJson } =
+    //   rootNodeContent as TFsFieldLogicJunction<TLogicJunctionOperators>;
+    // const newBranchNode = new FsLogicBranchNode(
+    //   field.fieldId,
+    //   // @ts-ignore - doesn't like '$in'
+    //   (conditional || "$and") as TLogicJunctionOperators,
+    //   action || null,
+    //   logicJson
+    // );
+
+    // let exTree: FsTreeLogicDeep;
+    // let currentBranchNodeId: string;
+
+    // if (extendedTree === undefined) {
+    //   exTree = new FsTreeLogicDeep(field.fieldId, newBranchNode);
+    //   exTree.ownerFieldId = field.fieldId;
+    //   atNodeId = exTree.rootNodeId;
+    //   currentBranchNodeId = exTree.rootNodeId;
+    // } else {
+    //   exTree = extendedTree; // because possible undefined
+    //   if (extendedTree.isInDependentsFields(field.fieldId)) {
+    //     currentBranchNodeId = extendedTree.appendChildNodeWithContent(
+    //       atNodeId || "",
+    //       new FsCircularDependencyNode(
+    //         field.fieldId,
+    //         atNodeId || "__FIELD_ID__",
+    //         extendedTree.getDependantFieldIds()
+    //       )
+    //     );
+    //     return extendedTree as T;
+    //   }
+    //   currentBranchNodeId = extendedTree.appendChildNodeWithContent(
+    //     atNodeId || "",
+    //     newBranchNode
+    //   );
+    // }
+
+    const { exTree, currentBranchNodeId, lastNodeId } =
+      this._logicUseOrCreateExtendedTree(
+        field.fieldId,
+        newBranchNode,
+        atNodeId,
+        extendedTree
+      );
     if (
       // this should be more intelligent
       exTree.getTreeNodeIdsAt(exTree.rootNodeId).length >
@@ -347,7 +425,7 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
             new FsLogicLeafNode(fieldId, condition, option, predicateJson)
           );
         } else {
-          this.getExtendedTree(childField, atNodeId, exTree); //(childFieldId)
+          this.getExtendedTree(childField, lastNodeId, exTree); //(childFieldId)
         }
       });
 
