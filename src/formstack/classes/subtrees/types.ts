@@ -38,6 +38,7 @@ type TFsFieldLogicCheckLeaf = {
   fieldId: string; // fieldId
   condition: TFsLeafOperators;
   option: TFsVisibilityModes;
+  fieldJson: any;
 };
 
 // because - we refer to it as fieldId - not field
@@ -47,7 +48,7 @@ type TFsFieldLogicCheckLeafJson = Omit<
 > & { field: string | undefined };
 
 type TFsFieldLogicJunction<C> = {
-  fieldJson: any;
+  logicJson: any;
   action: TFsVisibilityModes;
   conditional: C; // TLogicJunctionOperators;
   // 'ownerFieldId', doesn't belong here, because the json version will not have it.

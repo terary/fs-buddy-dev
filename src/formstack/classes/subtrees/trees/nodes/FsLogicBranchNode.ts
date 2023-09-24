@@ -16,7 +16,7 @@ class FsLogicBranchNode
   private _ownerFieldId: string;
   private _conditional: "$and" | "$or";
   private _action: TFsVisibilityModes;
-  private _fieldJson: TFsFieldLogicJunctionJson;
+  private _logicJson: TFsFieldLogicJunctionJson;
   // private _option: TFsVisibilityModes;
   // condition: "equals" | "greaterThan"; // not sure greaterThan is valid. Need to find all valid
   // option: TFsVisibilityModes; // values of the target field (not the same as TFsFieldLogic.action)
@@ -24,13 +24,13 @@ class FsLogicBranchNode
     ownerFieldId: string,
     conditional: "$and" | "$or" = "$and", // bad idea to implement business logic here
     action: TFsVisibilityModes,
-    fieldJson: any
+    logicJson: any
   ) {
     super();
     this._ownerFieldId = ownerFieldId;
     this._conditional = conditional;
     this._action = action;
-    this._fieldJson = fieldJson;
+    this._logicJson = logicJson;
   }
 
   get ownerFieldId() {
@@ -45,8 +45,8 @@ class FsLogicBranchNode
     return this._action;
   }
 
-  get fieldJson() {
-    return this._fieldJson;
+  get logicJson() {
+    return this._logicJson;
   }
 }
 

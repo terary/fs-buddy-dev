@@ -9,6 +9,7 @@ import { FsLogicLeafNode } from "./trees/nodes/FsLogicLeafNode";
 import formWithAllFieldsJson from "../../../test-dev-resources/form-json/5358471.json";
 import submissionWithAllFieldsJson from "../../../test-dev-resources/submission-json/1129952515-form5358471.json";
 import { TSubmissionJson } from "../../type.form";
+import { FsLogicBranchNode } from "./trees/nodes/FsLogicBranchNode";
 
 describe("FsTreeFieldCollection", () => {
   describe("Creation", () => {
@@ -105,6 +106,62 @@ describe("FsTreeFieldCollection", () => {
       expect(
         noLogicField.getChildContentAt(noLogicField.rootNodeId)
       ).toBeInstanceOf(FsLogicLeafNode);
+    });
+    it.only("Should include visibility panel (parent container) logic tree", () => {
+      // 148456734 known to have circular dependencies
+      // 148509470 first dependant
+      // 148509465 panel containing co dependencies
+      // 148509474 (B1) Leaf node
+      // 148509476 (B) Branch Node
+      const fieldId = "148509476";
+      // const x1 = fieldLogic.devDebug_getExtendedTree2(fieldId);
+      // const x2 = fieldLogic.getCircularReferenceFieldIds(fieldId);
+
+      const tree = FsTreeFieldCollection.fromFieldJson(
+        circularAndInterdependentJson.fields as unknown as TFsFieldAnyJson[]
+      );
+      const actualAgTree = tree.aggregateLogicTree(fieldId);
+      const actualAgTreeContent = actualAgTree.getTreeContentAt() || [];
+      const treeJson = actualAgTree.toPojoAt();
+      const actualJson = actualAgTree.toPojoAt();
+      expect(expectedTreeJson).toStrictEqual(actualJson);
+      expect(actualAgTreeContent.length).toBe(8);
+      expect(actualAgTreeContent[0]).toBeInstanceOf(FsLogicBranchNode);
+      expect((actualAgTreeContent[0] as FsLogicBranchNode).ownerFieldId).toBe(
+        "148509470"
+      );
+      expect(actualAgTreeContent[1]).toBeInstanceOf(FsLogicLeafNode);
+      expect((actualAgTreeContent[1] as FsLogicLeafNode).fieldId).toBe(
+        "148509478"
+      );
+      expect(actualAgTreeContent[2]).toBeInstanceOf(FsLogicLeafNode);
+      expect((actualAgTreeContent[2] as FsLogicLeafNode).fieldId).toBe(
+        "148509475"
+      );
+      expect(actualAgTreeContent[3]).toBeInstanceOf(FsLogicBranchNode);
+      expect((actualAgTreeContent[3] as FsLogicBranchNode).ownerFieldId).toBe(
+        "148509476"
+      );
+      expect(actualAgTreeContent[4]).toBeInstanceOf(FsLogicLeafNode);
+      expect((actualAgTreeContent[4] as FsLogicLeafNode).fieldId).toBe(
+        "148509477"
+      );
+      expect(actualAgTreeContent[5]).toBeInstanceOf(FsLogicLeafNode);
+      expect((actualAgTreeContent[5] as FsLogicLeafNode).fieldId).toBe(
+        "148509474"
+      );
+      expect(actualAgTreeContent[6]).toBeInstanceOf(FsCircularDependencyNode);
+      expect(
+        (actualAgTreeContent[6] as FsCircularDependencyNode).targetFieldId
+      ).toBe("148509465");
+      expect(actualAgTreeContent[7]).toBeInstanceOf(FsLogicBranchNode);
+      expect((actualAgTreeContent[7] as FsLogicBranchNode).ownerFieldId).toBe(
+        "148509465"
+      );
+
+      expect(
+        actualAgTree.getChildContentAt(actualAgTree.rootNodeId)
+      ).toBeInstanceOf(FsLogicBranchNode);
     });
     it("Should return the full tree.", () => {
       // two leafs
@@ -835,3 +892,157 @@ const uiComponentsExpected = [
     ],
   },
 ];
+
+const expectedTreeJson = {
+  "148509465": {
+    parentId: "148509465",
+    nodeContent: {
+      conditional: "all",
+      action: "show",
+      logicJson: {
+        action: "show",
+        conditional: "all",
+        checks: [
+          {
+            field: 148509470,
+            condition: "equals",
+            option: "True",
+          },
+          {
+            field: 148509476,
+            condition: "equals",
+            option: "True",
+          },
+        ],
+      },
+      ownerFieldId: "148509465",
+    },
+  },
+  "148509465:0": {
+    parentId: "148509465",
+    nodeContent: {
+      conditional: "all",
+      action: "show",
+      logicJson: {
+        action: "show",
+        conditional: "all",
+        checks: [
+          {
+            field: 148509478,
+            condition: "equals",
+            option: "True",
+          },
+          {
+            field: 148509475,
+            condition: "equals",
+            option: "True",
+          },
+        ],
+      },
+      ownerFieldId: "148509470",
+    },
+  },
+  "148509465:0:1": {
+    parentId: "148509465:0",
+    nodeContent: {
+      fieldId: "148509478",
+      condition: "equals",
+      option: "True",
+      fieldJson: {
+        field: 148509478,
+        condition: "equals",
+        option: "True",
+      },
+      predicateJson: {
+        field: 148509478,
+        condition: "equals",
+        option: "True",
+      },
+    },
+  },
+  "148509465:0:2": {
+    parentId: "148509465:0",
+    nodeContent: {
+      fieldId: "148509475",
+      condition: "equals",
+      option: "True",
+      fieldJson: {
+        field: 148509475,
+        condition: "equals",
+        option: "True",
+      },
+      predicateJson: {
+        field: 148509475,
+        condition: "equals",
+        option: "True",
+      },
+    },
+  },
+  "148509465:3": {
+    parentId: "148509465",
+    nodeContent: {
+      conditional: "all",
+      action: "show",
+      logicJson: {
+        action: "show",
+        conditional: "all",
+        checks: [
+          {
+            field: 148509477,
+            condition: "equals",
+            option: "True",
+          },
+          {
+            field: 148509474,
+            condition: "equals",
+            option: "True",
+          },
+        ],
+      },
+      ownerFieldId: "148509476",
+    },
+  },
+  "148509465:3:4": {
+    parentId: "148509465:3",
+    nodeContent: {
+      fieldId: "148509477",
+      condition: "equals",
+      option: "True",
+      fieldJson: {
+        field: 148509477,
+        condition: "equals",
+        option: "True",
+      },
+      predicateJson: {
+        field: 148509477,
+        condition: "equals",
+        option: "True",
+      },
+    },
+  },
+  "148509465:3:5": {
+    parentId: "148509465:3",
+    nodeContent: {
+      fieldId: "148509474",
+      condition: "equals",
+      option: "True",
+      fieldJson: {
+        field: 148509474,
+        condition: "equals",
+        option: "True",
+      },
+      predicateJson: {
+        field: 148509474,
+        condition: "equals",
+        option: "True",
+      },
+    },
+  },
+  "148509465:6": {
+    parentId: "148509465",
+    nodeContent: {
+      asJson:
+        '{"_sourceFieldId":"148509476","_targetFieldId":"148509465","_dependentChainFieldIds":["148509470","148509478","148509475","148509476","148509477","148509474"]}',
+    },
+  },
+};

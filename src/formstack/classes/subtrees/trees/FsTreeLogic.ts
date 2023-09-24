@@ -151,7 +151,7 @@ class FsTreeLogic extends AbstractFsTreeLogic<TFsLogicNode> {
     const rootNode: TFsFieldLogicJunctionJson = {
       action,
       conditional,
-      fieldJson: logicJson,
+      logicJson,
       checks: undefined, // we won't use this,  this becomes children
     };
 

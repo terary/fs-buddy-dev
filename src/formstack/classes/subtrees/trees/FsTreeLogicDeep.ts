@@ -1,6 +1,8 @@
 import {
   IExpressionTree,
   TGenericNodeContent,
+  TNodePojo,
+  TTreePojo,
 } from "predicate-tree-advanced-poc/dist/src";
 import { TFsFieldAnyJson } from "../../types";
 import {
@@ -26,12 +28,46 @@ type LogicTreeNodeTypes = // we choose to export this, we should give it a diffe
     | FsLogicLeafNode
     | FsMaxDepthExceededNode;
 
+const fromDeepLogicTreeToPojo = (nodeContent: any): TNodePojo<any> => {
+  if (nodeContent instanceof FsLogicBranchNode) {
+    const { conditional, action, logicJson, ownerFieldId } = nodeContent;
+    return {
+      // @ts-ignore - doesn't like conditional
+      conditional,
+      action,
+      logicJson,
+      ownerFieldId,
+    };
+  }
+  if (nodeContent instanceof FsLogicLeafNode) {
+    const { fieldId, condition, option, fieldJson, predicateJson } =
+      nodeContent;
+
+    return {
+      // @ts-ignore - doesn't like fieldId
+      fieldId,
+      condition,
+      option,
+      fieldJson,
+      predicateJson,
+    };
+  }
+  return {
+    // @ts-ignore - doesn't like asJson
+    asJson: JSON.stringify(nodeContent),
+  };
+};
+
 class FsTreeLogicDeep extends AbstractFsTreeLogic<LogicTreeNodeTypes> {
   private _dependantFieldIds: string[] = [];
 
   createSubtreeAt(nodeId: string): IExpressionTree<LogicTreeNodeTypes> {
     // *tmc* needs to make this a real thing, I guess: or add it to the abstract?
     return new FsTreeLogicDeep();
+  }
+
+  toPojoAt(nodeId?: string | undefined): TTreePojo<LogicTreeNodeTypes> {
+    return super.toPojoAt(nodeId, fromDeepLogicTreeToPojo);
   }
 
   private extractFieldIdFromNodeContent(
@@ -45,36 +81,6 @@ class FsTreeLogicDeep extends AbstractFsTreeLogic<LogicTreeNodeTypes> {
       return nodeContent.targetFieldId;
     }
     return null;
-  }
-
-  x_appendTreeAt(
-    targetNodeId: string,
-    sourceTree: FsTreeLogicDeep,
-    sourceBranchRootNodeId?: string | undefined
-  ): TFromToMap[] {
-    let effectiveTargetNodeId = targetNodeId;
-
-    // I think setting nodeContent to null is dangerous
-    // do we want to is root as junction?
-    if (this.isLeaf(targetNodeId)) {
-      const originalContent = this.getChildContentAt(targetNodeId);
-      this.replaceNodeContent(targetNodeId, this.defaultJunction(targetNodeId));
-      effectiveTargetNodeId = this.appendChildNodeWithContent(
-        targetNodeId,
-        originalContent
-      );
-    }
-
-    const fromToMap = super.appendTreeAt(
-      effectiveTargetNodeId,
-      sourceTree,
-      sourceBranchRootNodeId
-    );
-    if (effectiveTargetNodeId !== targetNodeId) {
-      fromToMap.push({ from: targetNodeId, to: effectiveTargetNodeId });
-    }
-
-    return fromToMap;
   }
 
   getDependantFieldIds(): string[] {
@@ -156,8 +162,14 @@ class FsTreeLogicDeep extends AbstractFsTreeLogic<LogicTreeNodeTypes> {
     );
 
     leafExpressions.forEach((childNode: TFsLogicNode) => {
-      const { condition, fieldId, option } = childNode as FsLogicLeafNode;
-      const leafNode = new FsLogicLeafNode(fieldId, condition, option);
+      const { condition, fieldId, option, predicateJson } =
+        childNode as FsLogicLeafNode;
+      const leafNode = new FsLogicLeafNode(
+        fieldId,
+        condition,
+        option,
+        predicateJson
+      );
       tree.appendChildNodeWithContent(tree.rootNodeId, leafNode);
       // should this be done at a different level. I mean calculated?
     });

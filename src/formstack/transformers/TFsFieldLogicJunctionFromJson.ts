@@ -21,7 +21,7 @@ const TFsFieldLogicJunctionFromJson = (
   const conditional: TLogicJunctionOperators =
     fieldLogicJson.conditional === "any" ? "$or" : "$and";
   return {
-    fieldJson: fieldLogicJson,
+    logicJson: fieldLogicJson,
     action,
     conditional,
     ownerFieldId,
