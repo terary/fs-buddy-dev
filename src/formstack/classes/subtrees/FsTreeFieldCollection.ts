@@ -291,11 +291,27 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
     return { exTree, currentBranchNodeId, lastNodeId: atNodeId };
   }
 
-  private getExtendedTree<T extends FsTreeLogicDeep = FsTreeLogicDeep>(
+  private appendCircularReferenceNodeAndReturnTree(
+    sourceFieldId: string,
+    targetFieldId: string,
+    extendedTree: FsTreeLogicDeep
+  ): FsTreeLogicDeep {
+    extendedTree.appendChildNodeWithContent(
+      sourceFieldId,
+      new FsCircularDependencyNode(
+        targetFieldId,
+        sourceFieldId,
+        extendedTree.getDependantFieldIds()
+      )
+    );
+    return extendedTree;
+  }
+
+  private getExtendedTree(
     field: FsTreeField,
     atNodeId?: string,
     extendedTree?: FsTreeLogicDeep
-  ): T {
+  ): FsTreeLogicDeep {
     const logicTree = field.getLogicTree() as FsTreeLogic;
 
     if (logicTree === null) {
@@ -303,63 +319,35 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
         field.fieldId,
         atNodeId,
         extendedTree
-      ) as T;
+      );
+    }
+
+    if (extendedTree && extendedTree.isInDependentsFields(field.fieldId)) {
+      return this.appendCircularReferenceNodeAndReturnTree(
+        atNodeId || field.fieldId,
+        field.fieldId,
+        extendedTree
+      );
+    }
+
+    if (
+      // this should be more intelligent
+      extendedTree &&
+      extendedTree.getTreeNodeIdsAt(extendedTree.rootNodeId).length >
+        FsTreeFieldCollection.MAX_DEPTH
+    ) {
+      extendedTree.appendChildNodeWithContent(
+        extendedTree.rootNodeId,
+        new FsMaxDepthExceededNode()
+      );
+      return extendedTree;
     }
 
     const rootNodeContent = logicTree.getChildContentAt(logicTree.rootNodeId);
-
     const newBranchNode = this.createLogicBranchNode(
       field.fieldId,
       rootNodeContent as TFsFieldLogicJunction<TLogicJunctionOperators>
     );
-    if (extendedTree && extendedTree.isInDependentsFields(field.fieldId)) {
-      extendedTree.appendChildNodeWithContent(
-        atNodeId || "",
-        new FsCircularDependencyNode(
-          field.fieldId,
-          atNodeId || "__FIELD_ID__",
-          extendedTree.getDependantFieldIds()
-        )
-      );
-      return extendedTree as T;
-    }
-
-    // const { conditional, action, logicJson } =
-    //   rootNodeContent as TFsFieldLogicJunction<TLogicJunctionOperators>;
-    // const newBranchNode = new FsLogicBranchNode(
-    //   field.fieldId,
-    //   // @ts-ignore - doesn't like '$in'
-    //   (conditional || "$and") as TLogicJunctionOperators,
-    //   action || null,
-    //   logicJson
-    // );
-
-    // let exTree: FsTreeLogicDeep;
-    // let currentBranchNodeId: string;
-
-    // if (extendedTree === undefined) {
-    //   exTree = new FsTreeLogicDeep(field.fieldId, newBranchNode);
-    //   exTree.ownerFieldId = field.fieldId;
-    //   atNodeId = exTree.rootNodeId;
-    //   currentBranchNodeId = exTree.rootNodeId;
-    // } else {
-    //   exTree = extendedTree; // because possible undefined
-    //   if (extendedTree.isInDependentsFields(field.fieldId)) {
-    //     currentBranchNodeId = extendedTree.appendChildNodeWithContent(
-    //       atNodeId || "",
-    //       new FsCircularDependencyNode(
-    //         field.fieldId,
-    //         atNodeId || "__FIELD_ID__",
-    //         extendedTree.getDependantFieldIds()
-    //       )
-    //     );
-    //     return extendedTree as T;
-    //   }
-    //   currentBranchNodeId = extendedTree.appendChildNodeWithContent(
-    //     atNodeId || "",
-    //     newBranchNode
-    //   );
-    // }
 
     const { exTree, currentBranchNodeId, lastNodeId } =
       this._logicUseOrCreateExtendedTree(
@@ -368,28 +356,6 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
         atNodeId,
         extendedTree
       );
-    if (
-      // this should be more intelligent
-      exTree.getTreeNodeIdsAt(exTree.rootNodeId).length >
-      FsTreeFieldCollection.MAX_DEPTH
-    ) {
-      exTree.appendChildNodeWithContent(
-        currentBranchNodeId,
-        new FsMaxDepthExceededNode()
-      );
-      return exTree as T;
-    }
-    // technically logicTree should always have children but in reality it's sometimes missing.
-    // look at merge move clone
-    // its the same
-    //       - if current node is leaf and parameter of extend tree, append leaf to parameter return tree
-    //       - if current node is leaf and parameter extTree==undefined, create tree, append node return tree
-
-    //       - if current node is isBranch, append current node content walk the branches adding leafs/branches
-
-    //       This is fine except we need node, build extended.
-
-    //       getLogicTree logic tree should have visisibility?
 
     logicTree
       .getChildrenNodeIdsOf(logicTree.rootNodeId)
@@ -411,15 +377,16 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
               exTree.getDependantFieldIds()
             )
           );
-        } else if (childField.getLogicTree() === null) {
-          /// TFsFieldLogicCheckLeaf
+          return exTree;
+        }
+
+        if (childField.getLogicTree() === null) {
           const {
             fieldId,
             condition,
             option,
             fieldJson: predicateJson,
           } = childContent;
-          //  TFsFieldLogicCheckLeaf
           exTree.appendChildNodeWithContent(
             currentBranchNodeId,
             new FsLogicLeafNode(fieldId, condition, option, predicateJson)
@@ -429,7 +396,7 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
         }
       });
 
-    return exTree as T;
+    return exTree;
   }
 
   aggregateLogicTree(fieldId: string): FsTreeLogicDeep {
