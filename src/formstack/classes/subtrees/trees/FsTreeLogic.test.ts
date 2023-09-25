@@ -118,7 +118,7 @@ describe("FsTreeLogic", () => {
       );
       expect(tree.evaluateWithValues(valueJson)).toStrictEqual(true);
     });
-    describe.skip(".evaluateShowHide(...)", () => {
+    describe(".evaluateShowHide(...)", () => {
       let tree: FsTreeLogic;
       const valueJson = {
         "147462595": "True",

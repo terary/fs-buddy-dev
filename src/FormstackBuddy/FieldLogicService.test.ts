@@ -115,22 +115,36 @@ describe("FieldLogicService", () => {
       // const x1 = fieldLogic.getAggregateTree("148509474");
 
       const x = fieldLogic.getCircularReferenceFieldIds("148509474");
-      // maybe the simple version is get extendTree, visibilitityNode.getExtendedTree, get dependencies chain of each
       const circularRefFieldIds =
         fieldLogic.getCircularReferenceFieldIds("148509470");
 
       const extLogicFieldIds =
         fieldLogic.getFieldIdsExtendedLogicOf("148509465");
 
-      expect({ extLogicFieldIds, circularRefFieldIds }).toStrictEqual({});
-      expect(fieldLogic.getFieldIdsExtendedLogicOf("148509465")).toStrictEqual([
+      // expect({ extLogicFieldIds, circularRefFieldIds }).toStrictEqual({});
+      expect(extLogicFieldIds).toStrictEqual([
         "148509470",
         "148509478",
         "148509475",
         "148509476",
         "148509477",
         "148509474",
+        "151678347",
       ]);
+      expect(circularRefFieldIds).toStrictEqual(["151678347", "148509465"]);
+      expect(
+        fieldLogic.getFieldIdsExtendedLogicOf("148509465").sort()
+      ).toStrictEqual(
+        [
+          "151678347",
+          "148509470",
+          "148509474",
+          "148509475",
+          "148509476",
+          "148509477",
+          "148509478",
+        ].sort()
+      );
     });
     it("Should return all fieldIds for fields with logic", () => {
       const fieldLogic = new FieldLogicService(

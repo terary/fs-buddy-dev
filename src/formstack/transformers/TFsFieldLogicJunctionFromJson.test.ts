@@ -8,7 +8,8 @@ describe("TFsFieldLogicJunctionFromJson", () => {
   let logicJunctionJson: TFsFieldLogicJunctionJson;
   beforeEach(() => {
     logicJunctionJson = {
-      fieldJson: {},
+      logicJson: {},
+      //fieldJson: {},
       action: "Show",
       conditional: "any", // TLogicJunctionOperators;
       checks: [],
@@ -23,7 +24,7 @@ describe("TFsFieldLogicJunctionFromJson", () => {
     expect(actual.ownerFieldId).toEqual("theOwnerId");
     expect(actual.conditional).toEqual("$or");
 
-    expect(actual.fieldJson).toStrictEqual(logicJunctionJson);
+    expect(actual.logicJson).toStrictEqual(logicJunctionJson);
 
     // @ts-ignore - 'checks' not a property of...
     expect(actual.checks).toBeUndefined();

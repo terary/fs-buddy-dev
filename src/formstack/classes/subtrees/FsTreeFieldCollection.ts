@@ -259,6 +259,7 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
     //
     let exTree: FsTreeLogicDeep;
     let currentBranchNodeId: string;
+
     if (extendedTree === undefined) {
       exTree = new FsTreeLogicDeep(fieldId, newBranchNode);
       exTree.ownerFieldId = fieldId;
@@ -266,21 +267,6 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
       currentBranchNodeId = exTree.rootNodeId;
     } else {
       exTree = extendedTree; // because possible undefined
-      // if (extendedTree.isInDependentsFields(fieldId)) {
-      //   currentBranchNodeId = extendedTree.appendChildNodeWithContent(
-      //     atNodeId || "",
-      //     new FsCircularDependencyNode(
-      //       fieldId,
-      //       atNodeId || "__FIELD_ID__",
-      //       extendedTree.getDependantFieldIds()
-      //     )
-      //   );
-      //   return {
-      //     exTree: extendedTree,
-      //     currentBranchNodeId,
-      //     lastNodeId: atNodeId,
-      //   };
-      // }
 
       currentBranchNodeId = extendedTree.appendChildNodeWithContent(
         atNodeId || "",
