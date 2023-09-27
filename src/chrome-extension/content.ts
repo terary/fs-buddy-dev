@@ -70,7 +70,8 @@ function getFormAsJson() {
           devDebugFieldIds.push(field.id);
         });
         currentFieldCollection = FsTreeFieldCollection.fromFieldJson(
-          apiFormJson.fields
+          apiFormJson
+          // apiFormJson.fields
         );
         formAnalytic =
           FormstackBuddy.getInstance().getFormAnalyticService(apiFormJson);

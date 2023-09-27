@@ -2,6 +2,7 @@ import { FieldLogicService } from "./FieldLogicService";
 import circularAndInterdependentJson from "../test-dev-resources/form-json/5375703.20230922.json";
 import goofFormJson from "../test-dev-resources/form-json/5375703-goof.json";
 import { TFsFieldAnyJson } from "../formstack";
+import { TApiForm } from "../formstack/type.form";
 
 // getFieldIdsAll
 // getFieldIdsWithLogic
@@ -11,7 +12,7 @@ describe("FieldLogicService", () => {
   describe(".getFieldIdsWithLogic() (aka branches)", () => {
     it("Should return all fieldIds for fields with logic", () => {
       const fieldLogic = new FieldLogicService(
-        circularAndInterdependentJson.fields as unknown as TFsFieldAnyJson[]
+        circularAndInterdependentJson as unknown as TApiForm
       );
       expect(fieldLogic.getFieldIdsWithLogic()).toStrictEqual([
         "148456734",
@@ -32,7 +33,7 @@ describe("FieldLogicService", () => {
   describe(".getFieldIdsWithoutLogic() (aka leaves)", () => {
     it("Should return all fieldIds for fields with logic", () => {
       const fieldLogic = new FieldLogicService(
-        circularAndInterdependentJson.fields as unknown as TFsFieldAnyJson[]
+        circularAndInterdependentJson as unknown as TApiForm
       );
       expect(fieldLogic.getFieldIdsWithoutLogic()).toStrictEqual([
         "148456700",
@@ -49,7 +50,7 @@ describe("FieldLogicService", () => {
   describe(".getFieldIdsAll()", () => {
     it("Should return all fieldIds for fields with logic", () => {
       const fieldLogic = new FieldLogicService(
-        circularAndInterdependentJson.fields as unknown as TFsFieldAnyJson[]
+        circularAndInterdependentJson as unknown as TApiForm
       );
       expect(fieldLogic.getFieldIdsAll()).toStrictEqual([
         "148456734",
@@ -78,7 +79,7 @@ describe("FieldLogicService", () => {
   describe(".getFieldIdsExtendedLogicOf(fieldId)", () => {
     it.only("Should be awesome", () => {
       const fieldLogic = new FieldLogicService(
-        goofFormJson.fields as unknown as TFsFieldAnyJson[]
+        goofFormJson as unknown as TApiForm
         // circularAndInterdependentJson.fields as unknown as TFsFieldAnyJson[]
       );
       //
@@ -148,7 +149,7 @@ describe("FieldLogicService", () => {
     });
     it("Should return all fieldIds for fields with logic", () => {
       const fieldLogic = new FieldLogicService(
-        circularAndInterdependentJson.fields as unknown as TFsFieldAnyJson[]
+        circularAndInterdependentJson as unknown as TApiForm
       );
       expect(fieldLogic.getFieldIdsExtendedLogicOf("148509465")).toStrictEqual([
         "148509470",
@@ -164,7 +165,7 @@ describe("FieldLogicService", () => {
   describe(".getCircularReferenceFieldIds()", () => {
     it("Should return an array of field ids with circular logic", () => {
       const fieldLogicService = new FieldLogicService(
-        circularAndInterdependentJson.fields as unknown as TFsFieldAnyJson[]
+        circularAndInterdependentJson as unknown as TApiForm
       );
       expect(
         fieldLogicService.getCircularReferenceFieldIds("148456739")
@@ -174,7 +175,7 @@ describe("FieldLogicService", () => {
   describe(".getFieldIdsWithCircularReferences()", () => {
     it("Should return an array of field ids with circular logic", () => {
       const fieldLogicService = new FieldLogicService(
-        circularAndInterdependentJson.fields as unknown as TFsFieldAnyJson[]
+        circularAndInterdependentJson as unknown as TApiForm
       );
       expect(
         fieldLogicService.getFieldIdsWithCircularReferences()
@@ -194,7 +195,7 @@ describe("FieldLogicService", () => {
   describe(".wrapFieldIdsIntoLabelOptionList(...)", () => {
     it("Should return a list of value/label pairs.", () => {
       const fieldLogic = new FieldLogicService(
-        circularAndInterdependentJson.fields as unknown as TFsFieldAnyJson[]
+        circularAndInterdependentJson as unknown as TApiForm
       );
 
       const labelValueList = fieldLogic.wrapFieldIdsIntoLabelOptionList([

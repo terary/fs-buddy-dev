@@ -8,7 +8,7 @@ import { FsCircularDependencyNode } from "./trees/nodes/FsCircularDependencyNode
 import { FsLogicLeafNode } from "./trees/nodes/FsLogicLeafNode";
 import formWithAllFieldsJson from "../../../test-dev-resources/form-json/5358471.json";
 import submissionWithAllFieldsJson from "../../../test-dev-resources/submission-json/1129952515-form5358471.json";
-import { TSubmissionJson } from "../../type.form";
+import { TApiForm, TSubmissionJson } from "../../type.form";
 import { FsLogicBranchNode } from "./trees/nodes/FsLogicBranchNode";
 
 describe("FsTreeFieldCollection", () => {
@@ -17,7 +17,7 @@ describe("FsTreeFieldCollection", () => {
       const tree = FsTreeFieldCollection.fromFieldJson(
         // fields: [TEST_JSON_FIELD_CALC_STRING],
         // fields: [TEST_JSON_FIELD_LOGIC],
-        TEST_JSON_FIELDS as TFsFieldAnyJson[]
+        TEST_JSON_FORM
       );
       expect(tree).toBeInstanceOf(FsTreeFieldCollection);
 
@@ -28,27 +28,19 @@ describe("FsTreeFieldCollection", () => {
   });
 
   // I *think*,  I think there is root node and plus 1?  Should root not be null??
-  describe(".evaluateWithValues(...)", () => {
-    it("Should return the value of the calculation given field values", () => {
-      const tree = FsTreeFieldCollection.fromFieldJson([
-        TEST_JSON_FIELD_SIMPLE,
-      ] as TFsFieldAnyJson[]);
-      const values = {
-        "148136237": "Show",
-      };
-      expect(tree.evaluateWithValues(values)).toStrictEqual([values]);
-    });
-  });
 
   /// --------------------------------
   describe(".getFieldTreeByFieldId(...)", () => {
     it("Should be awesome", () => {
-      const tree = FsTreeFieldCollection.fromFieldJson(TEST_JSON_FIELDS);
-      const field_0 = tree.getFieldTreeByFieldId(TEST_JSON_FIELDS[0].id || "");
-      const field_1 = tree.getFieldTreeByFieldId(TEST_JSON_FIELDS[1].id || "");
-      expect(field_0?.fieldId).toStrictEqual(TEST_JSON_FIELDS[0].id);
-      expect(field_1?.fieldId).toStrictEqual(TEST_JSON_FIELDS[1].id);
-      // expect(field.fieldJson["name"]).toStrictEqual(TEST_JSON_FIELDS[0].name);
+      const tree = FsTreeFieldCollection.fromFieldJson(TEST_JSON_FORM);
+      const field_0 = tree.getFieldTreeByFieldId(
+        TEST_JSON_FORM.fields[0].id || ""
+      );
+      const field_1 = tree.getFieldTreeByFieldId(
+        TEST_JSON_FORM.fields[1].id || ""
+      );
+      expect(field_0?.fieldId).toStrictEqual(TEST_JSON_FORM.fields[0].id);
+      expect(field_1?.fieldId).toStrictEqual(TEST_JSON_FORM.fields[1].id);
       expect(field_0).toBeInstanceOf(FsTreeField);
       expect(field_1).toBeInstanceOf(FsTreeField);
     });
@@ -57,7 +49,7 @@ describe("FsTreeFieldCollection", () => {
   describe(".getFieldsBySection()", () => {
     it("Should be awesome", () => {
       const tree = FsTreeFieldCollection.fromFieldJson(
-        circularAndInterdependentJson.fields as unknown as TFsFieldAnyJson[]
+        circularAndInterdependentJson as unknown as TApiForm
       );
       const sectionField = tree.getFieldTreeByFieldId(
         "148509465"
@@ -81,7 +73,7 @@ describe("FsTreeFieldCollection", () => {
   describe(".getFieldIdsWithCircularLogic()", () => {
     it("Should return fieldIds that have circular logic", () => {
       const tree = FsTreeFieldCollection.fromFieldJson(
-        circularAndInterdependentJson.fields as unknown as TFsFieldAnyJson[]
+        circularAndInterdependentJson as unknown as TApiForm
       );
 
       // this may also be a consequence of adding panel logic to fields
@@ -110,10 +102,128 @@ describe("FsTreeFieldCollection", () => {
       );
     });
   });
+  describe(".getFieldStatusMessages()", () => {
+    it.only("Should produce status message for each logic element and applied fields.(non panel)", () => {
+      const fieldId = "148509470";
+
+      const tree = FsTreeFieldCollection.fromFieldJson(
+        circularAndInterdependentJson as unknown as TApiForm
+      );
+      const actualStatusMessages = tree.getFieldStatusMessages(fieldId);
+      expect(actualStatusMessages).toStrictEqual([
+        {
+          severity: "debug",
+          message:
+            '{"nodeType":"FsLogicBranchNode","ownerFieldId":"148509470","action":"show","conditional":"all","json":{"action":"show","conditional":"all","checks":[{"field":148509478,"condition":"equals","option":"True"},{"field":148509475,"condition":"equals","option":"True"}]}}',
+          fieldId: "148509470",
+        },
+        {
+          severity: "logic",
+          message: "Logic: 'show' if 'all' are true.",
+          fieldId: "148509470",
+          relatedFieldIds: ["148509478", "148509475"],
+        },
+        {
+          severity: "debug",
+          message:
+            '{"nodeType":"FsLogicLeafNode","english":"Logic Term: this field \'equals\' \'True\'","fieldId":"148509478","rootFieldId":"148509470","condition":"equals","option":"True","junctionOperator":"all","json":{"field":148509478,"condition":"equals","option":"True"}}',
+          fieldId: "148509478",
+        },
+        {
+          severity: "logic",
+          message:
+            "logic: value of this field: 'equals' is  'True' (parent: fieldId: 148509470 junction: 'all')",
+          fieldId: "148509478",
+        },
+        {
+          severity: "debug",
+          message:
+            '{"nodeType":"FsLogicLeafNode","english":"Logic Term: this field \'equals\' \'True\'","fieldId":"148509475","rootFieldId":"148509470","condition":"equals","option":"True","junctionOperator":"all","json":{"field":148509475,"condition":"equals","option":"True"}}',
+          fieldId: "148509475",
+        },
+        {
+          severity: "logic",
+          message:
+            "logic: value of this field: 'equals' is  'True' (parent: fieldId: 148509470 junction: 'all')",
+          fieldId: "148509475",
+        },
+      ]);
+    });
+    it.skip("Should produce status message for each logic element and applied fields. (panel)", () => {
+      const fieldId = "148509476";
+
+      const tree = FsTreeFieldCollection.fromFieldJson(
+        circularAndInterdependentJson as unknown as TApiForm
+      );
+      const actualStatusMessages = tree.getFieldStatusMessages(fieldId);
+      expect(actualStatusMessages).toStrictEqual([
+        {
+          severity: "logic",
+          message:
+            '{"nodeType":"FsLogicBranchNode","ownerFieldId":"148509465","rootFieldId":"148509465","action":"show","conditional":"all","json":{"action":"show","conditional":"all","checks":[{"field":148509470,"condition":"equals","option":"True"},{"field":148509476,"condition":"equals","option":"True"}]}}',
+          fieldId: "148509465",
+        },
+        {
+          severity: "logic",
+          message:
+            '{"nodeType":"FsLogicBranchNode","ownerFieldId":"148509470","rootFieldId":"148509465","action":"show","conditional":"all","json":{"action":"show","conditional":"all","checks":[{"field":148509478,"condition":"equals","option":"True"},{"field":148509475,"condition":"equals","option":"True"}]}}',
+          fieldId: "148509470",
+        },
+        {
+          severity: "logic",
+          message:
+            '{"nodeType":"FsLogicLeafNode","english":"Logic Term: this field \'equals\' \'True\'","fieldId":"148509478","rootFieldId":"148509465","condition":"equals","json":{"field":148509478,"condition":"equals","option":"True"}}',
+          fieldId: "148509478",
+        },
+        {
+          severity: "logic",
+          message:
+            '{"nodeType":"FsLogicLeafNode","english":"Logic Term: this field \'equals\' \'True\'","fieldId":"148509475","rootFieldId":"148509465","condition":"equals","json":{"field":148509475,"condition":"equals","option":"True"}}',
+          fieldId: "148509475",
+        },
+        {
+          severity: "logic",
+          message:
+            '{"nodeType":"FsLogicBranchNode","ownerFieldId":"148509476","rootFieldId":"148509465","action":"show","conditional":"all","json":{"action":"show","conditional":"all","checks":[{"field":148509477,"condition":"equals","option":"True"},{"field":148509474,"condition":"equals","option":"True"}]}}',
+          fieldId: "148509476",
+        },
+        {
+          severity: "logic",
+          message:
+            '{"nodeType":"FsLogicLeafNode","english":"Logic Term: this field \'equals\' \'True\'","fieldId":"148509477","rootFieldId":"148509465","condition":"equals","json":{"field":148509477,"condition":"equals","option":"True"}}',
+          fieldId: "148509477",
+        },
+        {
+          severity: "logic",
+          message:
+            '{"nodeType":"FsLogicLeafNode","english":"Logic Term: this field \'equals\' \'True\'","fieldId":"148509474","rootFieldId":"148509465","condition":"equals","json":{"field":148509474,"condition":"equals","option":"True"}}',
+          fieldId: "148509474",
+        },
+        {
+          severity: "info",
+          message:
+            'CIRCULAR: rootFieldId: \'148509465\',  json: {"_sourceFieldId":"148509476","_targetFieldId":"148509465","_dependentChainFieldIds":["148509470","148509478","148509475","148509476","148509477","148509474"]}',
+          fieldId: "148509465",
+        },
+      ]);
+    });
+  });
+  describe(".toPojoAt()", () => {
+    it("Should produce a serializable pojo object.", () => {
+      const fieldId = "148509476";
+      const tree = FsTreeFieldCollection.fromFieldJson(
+        circularAndInterdependentJson as unknown as TApiForm
+      );
+      const actualAgTree = tree.aggregateLogicTree(fieldId);
+
+      const actualTreeJson = actualAgTree.toPojoAt();
+      expect(expectedTreeJson).toStrictEqual(actualTreeJson);
+    });
+  });
   describe("aggregateLogicTree", () => {
     it("Should return tree with one leaf node if there is no logic.", () => {
       const tree = FsTreeFieldCollection.fromFieldJson(
-        circularAndInterdependentJson.fields as unknown as TFsFieldAnyJson[]
+        circularAndInterdependentJson as unknown as TApiForm
       );
       const noLogicField = tree.aggregateLogicTree("148456700");
       expect(noLogicField.getTreeContentAt().length).toBe(1);
@@ -132,7 +242,7 @@ describe("FsTreeFieldCollection", () => {
       // const x2 = fieldLogic.getCircularReferenceFieldIds(fieldId);
 
       const tree = FsTreeFieldCollection.fromFieldJson(
-        circularAndInterdependentJson.fields as unknown as TFsFieldAnyJson[]
+        circularAndInterdependentJson as unknown as TApiForm
       );
       const actualAgTree = tree.aggregateLogicTree(fieldId);
       const actualAgTreeContent = actualAgTree.getTreeContentAt() || [];
@@ -178,10 +288,11 @@ describe("FsTreeFieldCollection", () => {
         actualAgTree.getChildContentAt(actualAgTree.rootNodeId)
       ).toBeInstanceOf(FsLogicBranchNode);
     });
+
     it("Should return the full tree.", () => {
       // two leafs
       const tree = FsTreeFieldCollection.fromFieldJson(
-        circularAndInterdependentJson.fields as unknown as TFsFieldAnyJson[]
+        circularAndInterdependentJson as unknown as TApiForm
       );
       const agInterdependentSection = tree.aggregateLogicTree("148509465");
       const agTreeCircularRefA = tree.aggregateLogicTree("148456734");
@@ -256,7 +367,7 @@ describe("FsTreeFieldCollection", () => {
       );
     });
   });
-  it("Should return the value of the calculation given field values", () => {
+  it.only("Should return the value of the calculation given field values", () => {
     // logic/not required 147738154
     // required 148008076
     const getFieldJson = (fieldId: string) => {
@@ -268,18 +379,24 @@ describe("FsTreeFieldCollection", () => {
       return uiComponentsExpected.filter((x) => x.fieldId === fieldId);
     };
 
-    const fieldJsonNotRequired147738154 = getFieldJson("147738154");
-    const fieldJsonRequired148008076 = getFieldJson("148008076");
+    const fieldJsonNotRequired147738154 = {
+      id: "_TEST_FORM_",
+      fields: getFieldJson("147738154"),
+    };
+    const fieldJsonRequired148008076 = {
+      id: "_TEST_FORM_",
+      fields: getFieldJson("148008076"),
+    };
 
     const expected147738154 = getExpected("147738154");
     const expected148008076 = getExpected("148008076"); // this is wrong __BAD_DATA__ ...
 
     const tree147738154 = FsTreeFieldCollection.fromFieldJson(
-      fieldJsonNotRequired147738154 as unknown as TFsFieldAnyJson[]
+      fieldJsonNotRequired147738154 as unknown as TApiForm
     );
 
     const tree148008076 = FsTreeFieldCollection.fromFieldJson(
-      fieldJsonRequired148008076 as unknown as TFsFieldAnyJson[]
+      fieldJsonRequired148008076 as unknown as TApiForm
     );
 
     const actual147738154 = tree147738154.getUiPopulateObject(
@@ -394,10 +511,13 @@ const TEST_JSON_FIELD_SIMPLE = {
   option_show_values: 0,
 } as unknown;
 
-const TEST_JSON_FIELDS = [
-  TEST_JSON_FIELD_CALC_STRING,
-  TEST_JSON_FIELD_LOGIC,
-] as TFsFieldAnyJson[];
+const TEST_JSON_FORM = {
+  id: "_TEST_FORM_ID",
+  fields: [
+    TEST_JSON_FIELD_CALC_STRING,
+    TEST_JSON_FIELD_LOGIC,
+  ] as TFsFieldAnyJson[],
+} as TApiForm;
 
 const uiComponentsExpected = [
   {

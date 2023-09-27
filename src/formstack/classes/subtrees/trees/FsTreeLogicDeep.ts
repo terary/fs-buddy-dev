@@ -19,6 +19,7 @@ import { FsLogicLeafNode } from "./nodes/FsLogicLeafNode";
 import { FsMaxDepthExceededNode } from "./nodes/FsMaxDepthExceededNode";
 import { FsTreeField } from "./FsTreeField";
 import { TFsFieldAny } from "../../../type.field";
+import { TStatusRecord } from "../../../../chrome-extension/type";
 type TFromToMap = { from: string; to: string };
 
 type LogicTreeNodeTypes = // we choose to export this, we should give it a different name
@@ -60,10 +61,115 @@ const fromDeepLogicTreeToPojo = (nodeContent: any): TNodePojo<any> => {
 
 class FsTreeLogicDeep extends AbstractFsTreeLogic<LogicTreeNodeTypes> {
   private _dependantFieldIds: string[] = [];
+  private _rootFieldId!: string;
 
   createSubtreeAt(nodeId: string): IExpressionTree<LogicTreeNodeTypes> {
     // *tmc* needs to make this a real thing, I guess: or add it to the abstract?
     return new FsTreeLogicDeep();
+  }
+
+  public getFieldStatusMessages(): TStatusRecord[] {
+    return this.nodesToStatusMessages(this.rootNodeId);
+  }
+
+  private getParentJunctionOperator(nodeId: string) {
+    const nodeContent = this.getChildContentAt(nodeId);
+
+    if (nodeContent instanceof FsLogicBranchNode) {
+      return nodeContent.conditional;
+    }
+  }
+
+  private nodesToStatusMessages(
+    nodeId: string,
+    statusMessages: TStatusRecord[] = []
+  ) {
+    const node = this.getChildContentAt(nodeId);
+    if (node instanceof FsLogicBranchNode) {
+      statusMessages.push(
+        ...node.getStatusMessage(this.getDependantFieldIds())
+      );
+      // this.getDependantFieldIds()
+      // const debugMessage = JSON.stringify({
+      //   nodeType: "FsLogicBranchNode",
+      //   // fieldId: node.fieldId,
+      //   ownerFieldId: node.ownerFieldId,
+      //   rootFieldId: this.rootFieldId,
+      //   action: node.action,
+      //   conditional: node.conditional,
+      //   json: node.logicJson,
+      // });
+
+      // statusMessages.push(
+      //   {
+      //     severity: "debug",
+      //     message: debugMessage,
+      //     fieldId: node.ownerFieldId,
+      //   },
+      //   {
+      //     severity: "logic",
+      //     message: `Logic: ${node.action} if ${node.conditional} are true.`,
+      //     fieldId: node.ownerFieldId,
+      //   }
+      // );
+      this.getChildrenNodeIdsOf(nodeId).forEach((childId) => {
+        this.nodesToStatusMessages(childId, statusMessages);
+      });
+    } else if (node instanceof FsLogicLeafNode) {
+      statusMessages.push(...node.getStatusMessage());
+      // const debugMessage = JSON.stringify({
+      //   nodeType: "FsLogicLeafNode",
+      //   english: `Logic Term: this field '${node.condition}' '${node.option}'`,
+      //   fieldId: node.fieldId,
+      //   rootFieldId: this.rootFieldId,
+      //   condition: node.condition,
+      //   option: node.option,
+      //   junctionOperator: this.getParentJunctionOperator(nodeId),
+      //   json: node.fieldJson,
+      // });
+      // // maybe it makes sense to add getStatusMessage on FsLogicLeafNode
+      // // this/it would need to reference parent (operator all/any, options)
+      // const logicMessage = `logic: value of this field: '${
+      //   node.condition
+      // }' is  '${node.option}' (parent: fieldId: ${
+      //   node.fieldId
+      // } junction: ${this.getParentJunctionOperator(this.rootFieldId)})`;
+
+      // statusMessages.push(
+      //   {
+      //     severity: "debug",
+      //     message: debugMessage,
+      //     fieldId: node.fieldId,
+      //   },
+      //   {
+      //     severity: "logic",
+      //     message: logicMessage,
+      //     fieldId: node.fieldId,
+      //   }
+      // );
+    } else if (node instanceof FsCircularDependencyNode) {
+      const message = `CIRCULAR: rootFieldId: '${
+        this.rootFieldId
+      }',  json: ${JSON.stringify(node)}`;
+
+      statusMessages.push({
+        severity: "info",
+        message,
+        fieldId: node.targetFieldId,
+      });
+    }
+    return statusMessages;
+  }
+
+  get rootFieldId() {
+    if (!this._rootFieldId) {
+      const nodeContent = this.getChildContentAt(this.rootNodeId);
+
+      if (nodeContent instanceof FsLogicBranchNode) {
+        this._rootFieldId = nodeContent.ownerFieldId;
+      }
+    }
+    return this._rootFieldId;
   }
 
   toPojoAt(nodeId?: string | undefined): TTreePojo<LogicTreeNodeTypes> {
@@ -168,7 +274,8 @@ class FsTreeLogicDeep extends AbstractFsTreeLogic<LogicTreeNodeTypes> {
         fieldId,
         condition,
         option,
-        predicateJson
+        predicateJson,
+        rootNode
       );
       tree.appendChildNodeWithContent(tree.rootNodeId, leafNode);
       // should this be done at a different level. I mean calculated?

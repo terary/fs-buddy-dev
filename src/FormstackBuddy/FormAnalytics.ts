@@ -17,9 +17,7 @@ class FormAnalytics {
 
   //TApiForm
   constructor(formJson: TApiForm) {
-    this._fieldCollection = FsTreeFieldCollection.fromFieldJson(
-      formJson.fields
-    );
+    this._fieldCollection = FsTreeFieldCollection.fromFieldJson(formJson);
     this._fieldJson = formJson;
   }
 

@@ -21,9 +21,10 @@ import { FsMaxDepthExceededNode } from "./trees/nodes/FsMaxDepthExceededNode";
 import { FsLogicBranchNode } from "./trees/nodes/FsLogicBranchNode";
 import { FsTreeLogic } from "./trees/FsTreeLogic";
 import { TUiEvaluationObject } from "../Evaluator/type";
-import { TSubmissionJson } from "../../type.form";
+import { TApiForm, TSubmissionJson } from "../../type.form";
 import { IEValuator } from "../Evaluator/IEvaluator";
 import { symbolName } from "typescript";
+import { TStatusRecord } from "../../../chrome-extension/type";
 class FsTreeFieldCollection extends AbstractExpressionTree<
   TTreeFieldNode | FsFormRootNode
 > {
@@ -48,6 +49,11 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
     subtree._incrementor = this._incrementor;
 
     return subtree;
+  }
+
+  getFieldStatusMessages(fieldId: string): TStatusRecord[] {
+    const agTree = this.aggregateLogicTree(fieldId, false);
+    return agTree.getFieldStatusMessages();
   }
 
   getFormFieldsCount() {
@@ -175,7 +181,13 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
           } = childContent;
           exTree.appendChildNodeWithContent(
             currentBranchNodeId,
-            new FsLogicLeafNode(fieldId, condition, option, predicateJson)
+            new FsLogicLeafNode(
+              fieldId,
+              condition,
+              option,
+              predicateJson,
+              newBranchNode
+            )
           );
         } else {
           this.getExtendedTree_save(childField, atNodeId, exTree); //(childFieldId)
@@ -375,7 +387,13 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
           } = childContent;
           exTree.appendChildNodeWithContent(
             currentBranchNodeId,
-            new FsLogicLeafNode(fieldId, condition, option, predicateJson)
+            new FsLogicLeafNode(
+              fieldId,
+              condition,
+              option,
+              predicateJson,
+              newBranchNode
+            )
           );
         } else {
           this.getExtendedTree(childField, lastNodeId, exTree); //(childFieldId)
@@ -385,26 +403,27 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
     return exTree;
   }
 
-  aggregateLogicTree(fieldId: string): FsTreeLogicDeep {
+  aggregateLogicTree(
+    fieldId: string,
+    shouldIncludePanel: boolean = true
+  ): FsTreeLogicDeep {
     const field = this.getFieldTreeByFieldId(fieldId) as FsTreeField;
 
     if (field.getVisibilityNode() === null) {
       return this.getExtendedTree(field);
     }
 
-    const visibilityPanel = (
-      field.getVisibilityNode() as FsFieldVisibilityLinkNode
-    ).parentNode;
+    let initialTree: FsTreeLogicDeep;
 
-    const visibilityExtendTree = this.getExtendedTree(
-      visibilityPanel as FsTreeField
-    );
-
-    return this.getExtendedTree(
-      field,
-      visibilityExtendTree.rootNodeId,
-      visibilityExtendTree
-    );
+    if (shouldIncludePanel) {
+      const visibilityPanel = (
+        field.getVisibilityNode() as FsFieldVisibilityLinkNode
+      ).parentNode;
+      initialTree = this.getExtendedTree(visibilityPanel as FsTreeField);
+      return this.getExtendedTree(field, initialTree.rootNodeId, initialTree);
+    } else {
+      return this.getExtendedTree(field);
+    }
   }
 
   //  Just for fun,  build a function builds the tree similar to here (using branch, LeafNode etc)
@@ -519,10 +538,15 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
     return submissionUiDataItems;
   }
   static fromFieldJson(
-    fieldsJson: TFsFieldAnyJson[],
-    formId = "_FORM_ID_"
+    formJson: TApiForm
+    // fieldsJson: TFsFieldAnyJson[],
+    // formId = "_FORM_ID_"
   ): FsTreeFieldCollection {
-    const tree = new FsTreeFieldCollection(formId, new FsFormRootNode(formId));
+    const { id: formId, fields: fieldsJson } = formJson;
+    const tree = new FsTreeFieldCollection(
+      formId || "_FORM_ID_",
+      new FsFormRootNode(formId)
+    );
 
     (fieldsJson || []).forEach((fieldJson) => {
       const field = FsTreeField.fromFieldJson(
