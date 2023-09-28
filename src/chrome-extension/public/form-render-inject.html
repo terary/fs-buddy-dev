@@ -76,9 +76,14 @@
           background-color: red;
       }
 
+      .fsBuddy_statusMessages > .fsBuddyLogicInfo {
+          background-color: lightblue;
+      }
+
       .fsBuddyError {
           background-color: red;
       }
+
 
       .fsBuddyLogicError {
           border: 3px dotted red;
@@ -101,7 +106,8 @@
           debug: 'fsBuddyDebug',
           info: 'fsBuddyInfo',
           warn: 'fsBuddyWarn',
-          error: 'fsBuddyError'
+          error: 'fsBuddyError',
+          logic: 'fsBuddyLogicInfo'
         }
 
      window.onmessage = function(e) {

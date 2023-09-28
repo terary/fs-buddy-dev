@@ -3,6 +3,7 @@ import { FieldLogicService } from "../FormstackBuddy/FieldLogicService";
 import { FsTreeFieldCollection, TFsFieldAnyJson } from "../formstack";
 import type { TStatusRecord } from "./type";
 import { FormAnalytics } from "../FormstackBuddy/FormAnalytics";
+import { transformers } from "../formstack/transformers";
 
 alert("Hello from content.js");
 function getFormIdFromLocation({ pathname }: Location = location) {
@@ -77,7 +78,8 @@ function getFormAsJson() {
           FormstackBuddy.getInstance().getFormAnalyticService(apiFormJson);
 
         fieldLogicService = FormstackBuddy.getInstance().getFieldLogicService(
-          (apiFormJson.fields as TFsFieldAnyJson[]) || []
+          transformers.formJson(apiFormJson)
+          // (apiFormJson.fields as TFsFieldAnyJson[]) || []
         );
       }
     );

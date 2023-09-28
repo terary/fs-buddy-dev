@@ -9,8 +9,8 @@ class FormstackBuddy {
   private _fieldLogicService!: FieldLogicService;
   private constructor() {}
 
-  getFieldLogicService(fieldJson: TFsFieldAnyJson[]): FieldLogicService {
-    return new FieldLogicService(fieldJson);
+  getFieldLogicService(formJson: TApiForm): FieldLogicService {
+    return new FieldLogicService(formJson);
   }
 
   getFormAnalyticService(formJson: TApiForm): FormAnalytics {

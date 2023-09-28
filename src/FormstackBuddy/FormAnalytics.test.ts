@@ -41,10 +41,58 @@ describe("FormAnalytics", () => {
           relatedFieldIds: [],
         },
         {
+          severity: "debug",
+          message:
+            '{"nodeType":"FsLogicLeafNode","english":"Logic Term: this field \'condition\' \'option\'","fieldId":"151757114","condition":"condition","option":"option"}',
+          fieldId: "151757114",
+        },
+        {
+          severity: "logic",
+          message:
+            "logic: value of this field: 'condition' is  'option' (parent: fieldId: undefined junction: 'undefined')",
+          fieldId: "151757114",
+        },
+        {
+          severity: "debug",
+          message:
+            '{"nodeType":"FsLogicLeafNode","english":"Logic Term: this field \'condition\' \'option\'","fieldId":"151757116","condition":"condition","option":"option"}',
+          fieldId: "151757116",
+        },
+        {
+          severity: "logic",
+          message:
+            "logic: value of this field: 'condition' is  'option' (parent: fieldId: undefined junction: 'undefined')",
+          fieldId: "151757116",
+        },
+        {
+          severity: "debug",
+          message:
+            '{"nodeType":"FsLogicLeafNode","english":"Logic Term: this field \'condition\' \'option\'","fieldId":"151757119","condition":"condition","option":"option"}',
+          fieldId: "151757119",
+        },
+        {
+          severity: "logic",
+          message:
+            "logic: value of this field: 'condition' is  'option' (parent: fieldId: undefined junction: 'undefined')",
+          fieldId: "151757119",
+        },
+        {
           severity: "info",
           fieldId: "151757196",
           message: "No label for type: 'text', fieldId: '151757196'.",
           relatedFieldIds: [],
+        },
+        {
+          severity: "debug",
+          message:
+            '{"nodeType":"FsLogicLeafNode","english":"Logic Term: this field \'condition\' \'option\'","fieldId":"151757196","condition":"condition","option":"option"}',
+          fieldId: "151757196",
+        },
+        {
+          severity: "logic",
+          message:
+            "logic: value of this field: 'condition' is  'option' (parent: fieldId: undefined junction: 'undefined')",
+          fieldId: "151757196",
         },
         {
           severity: "warn",
@@ -53,10 +101,46 @@ describe("FormAnalytics", () => {
           relatedFieldIds: [],
         },
         {
+          severity: "debug",
+          message:
+            '{"nodeType":"FsLogicLeafNode","english":"Logic Term: this field \'condition\' \'option\'","fieldId":"151757231","condition":"condition","option":"option"}',
+          fieldId: "151757231",
+        },
+        {
+          severity: "logic",
+          message:
+            "logic: value of this field: 'condition' is  'option' (parent: fieldId: undefined junction: 'undefined')",
+          fieldId: "151757231",
+        },
+        {
+          severity: "debug",
+          message:
+            '{"nodeType":"FsLogicLeafNode","english":"Logic Term: this field \'condition\' \'option\'","fieldId":"151757248","condition":"condition","option":"option"}',
+          fieldId: "151757248",
+        },
+        {
+          severity: "logic",
+          message:
+            "logic: value of this field: 'condition' is  'option' (parent: fieldId: undefined junction: 'undefined')",
+          fieldId: "151757248",
+        },
+        {
           severity: "warn",
           fieldId: "151757283",
           message: "Select options have 0 options.",
           relatedFieldIds: [],
+        },
+        {
+          severity: "debug",
+          message:
+            '{"nodeType":"FsLogicLeafNode","english":"Logic Term: this field \'condition\' \'option\'","fieldId":"151757283","condition":"condition","option":"option"}',
+          fieldId: "151757283",
+        },
+        {
+          severity: "logic",
+          message:
+            "logic: value of this field: 'condition' is  'option' (parent: fieldId: undefined junction: 'undefined')",
+          fieldId: "151757283",
         },
         {
           severity: "warn",
@@ -87,6 +171,114 @@ describe("FormAnalytics", () => {
           fieldId: null,
           message: "Total Fields: 9.",
           relatedFieldIds: [],
+        },
+        {
+          severity: "debug",
+          message:
+            '{"nodeType":"FsLogicLeafNode","english":"Logic Term: this field \'condition\' \'option\'","fieldId":"151773730","condition":"condition","option":"option"}',
+          fieldId: "151773730",
+        },
+        {
+          severity: "logic",
+          message:
+            "logic: value of this field: 'condition' is  'option' (parent: fieldId: undefined junction: 'undefined')",
+          fieldId: "151773730",
+        },
+        {
+          severity: "debug",
+          message:
+            '{"nodeType":"FsLogicLeafNode","english":"Logic Term: this field \'condition\' \'option\'","fieldId":"151773737","condition":"condition","option":"option"}',
+          fieldId: "151773737",
+        },
+        {
+          severity: "logic",
+          message:
+            "logic: value of this field: 'condition' is  'option' (parent: fieldId: undefined junction: 'undefined')",
+          fieldId: "151773737",
+        },
+        {
+          severity: "debug",
+          message:
+            '{"nodeType":"FsLogicLeafNode","english":"Logic Term: this field \'condition\' \'option\'","fieldId":"151773741","condition":"condition","option":"option"}',
+          fieldId: "151773741",
+        },
+        {
+          severity: "logic",
+          message:
+            "logic: value of this field: 'condition' is  'option' (parent: fieldId: undefined junction: 'undefined')",
+          fieldId: "151773741",
+        },
+        {
+          severity: "debug",
+          message:
+            '{"nodeType":"FsLogicLeafNode","english":"Logic Term: this field \'condition\' \'option\'","fieldId":"151773733","condition":"condition","option":"option"}',
+          fieldId: "151773733",
+        },
+        {
+          severity: "logic",
+          message:
+            "logic: value of this field: 'condition' is  'option' (parent: fieldId: undefined junction: 'undefined')",
+          fieldId: "151773733",
+        },
+        {
+          severity: "debug",
+          message:
+            '{"nodeType":"FsLogicLeafNode","english":"Logic Term: this field \'condition\' \'option\'","fieldId":"151773738","condition":"condition","option":"option"}',
+          fieldId: "151773738",
+        },
+        {
+          severity: "logic",
+          message:
+            "logic: value of this field: 'condition' is  'option' (parent: fieldId: undefined junction: 'undefined')",
+          fieldId: "151773738",
+        },
+        {
+          severity: "debug",
+          message:
+            '{"nodeType":"FsLogicLeafNode","english":"Logic Term: this field \'condition\' \'option\'","fieldId":"151773756","condition":"condition","option":"option"}',
+          fieldId: "151773756",
+        },
+        {
+          severity: "logic",
+          message:
+            "logic: value of this field: 'condition' is  'option' (parent: fieldId: undefined junction: 'undefined')",
+          fieldId: "151773756",
+        },
+        {
+          severity: "debug",
+          message:
+            '{"nodeType":"FsLogicLeafNode","english":"Logic Term: this field \'condition\' \'option\'","fieldId":"151773732","condition":"condition","option":"option"}',
+          fieldId: "151773732",
+        },
+        {
+          severity: "logic",
+          message:
+            "logic: value of this field: 'condition' is  'option' (parent: fieldId: undefined junction: 'undefined')",
+          fieldId: "151773732",
+        },
+        {
+          severity: "debug",
+          message:
+            '{"nodeType":"FsLogicLeafNode","english":"Logic Term: this field \'condition\' \'option\'","fieldId":"151773739","condition":"condition","option":"option"}',
+          fieldId: "151773739",
+        },
+        {
+          severity: "logic",
+          message:
+            "logic: value of this field: 'condition' is  'option' (parent: fieldId: undefined junction: 'undefined')",
+          fieldId: "151773739",
+        },
+        {
+          severity: "debug",
+          message:
+            '{"nodeType":"FsLogicLeafNode","english":"Logic Term: this field \'condition\' \'option\'","fieldId":"151773757","condition":"condition","option":"option"}',
+          fieldId: "151773757",
+        },
+        {
+          severity: "logic",
+          message:
+            "logic: value of this field: 'condition' is  'option' (parent: fieldId: undefined junction: 'undefined')",
+          fieldId: "151773757",
         },
         {
           severity: "warn",

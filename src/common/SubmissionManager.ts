@@ -64,11 +64,6 @@ class SubmissionManager {
         submissionId,
       });
       this._submissions[submissionId] = submissionJson;
-      // this._fieldLogicService =
-      //   FormstackBuddy.getInstance().getFieldLogicService(
-      //     formJson.fields || []
-      //   );
-
       return this._submissions[submissionId];
     }
   }

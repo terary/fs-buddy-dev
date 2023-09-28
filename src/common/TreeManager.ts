@@ -1,6 +1,7 @@
 import { TApiFormJson } from "../formstack/type.form";
 import { FormstackBuddy } from "../FormstackBuddy/FormstackBuddy";
 import { FieldLogicService } from "../FormstackBuddy/FieldLogicService";
+import { transformers } from "../formstack/transformers";
 
 const getFormJsonFromApi = async (message: any): Promise<TApiFormJson> => {
   const { apiKey, formId } = message;
@@ -60,7 +61,8 @@ class TreeManager {
       this._formTrees[formId] = formJson;
       this._fieldLogicService =
         FormstackBuddy.getInstance().getFieldLogicService(
-          formJson.fields || []
+          transformers.formJson(formJson)
+          // formJson.fields || []
         );
 
       return this._formTrees[formId];

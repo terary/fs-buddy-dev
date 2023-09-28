@@ -107,6 +107,11 @@ class FormAnalytics {
     this._fieldJson.fields.forEach((fieldJson) => {
       const evaluator = Evaluator.getEvaluatorWithFieldJson(fieldJson);
       messages.push(...evaluator.findKnownSetupIssues());
+      this seems to be duplicating
+      messages.push(
+        ...this._fieldCollection.getFieldStatusMessages(fieldJson.id)
+      );
+
     });
 
     const labelUsageFrequency = this.getLabelsWithAssociatedFieldIds();

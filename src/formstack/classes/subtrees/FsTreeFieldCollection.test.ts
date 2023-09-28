@@ -107,6 +107,56 @@ describe("FsTreeFieldCollection", () => {
     });
   });
   describe(".getFieldStatusMessages()", () => {
+    it("Should produce status message for each logic element and applied fields.(b.0 ideal).", () => {
+      const fieldId = "148509475";
+
+      const tree = FsTreeFieldCollection.fromFieldJson(
+        circularAndInterdependentJson as unknown as TApiForm
+      );
+      // `
+      // this should only have one or two status message.
+      //   fs buddy shows two but parent is undefined.
+
+      //   this test show 17
+      // `
+      const actualStatusMessages = tree.getFieldStatusMessages(fieldId);
+      expect(actualStatusMessages).toStrictEqual([
+        {
+          severity: "debug",
+          message:
+            '{"nodeType":"FsLogicLeafNode","english":"Logic Term: this field \'condition\' \'option\'","fieldId":"151678347","condition":"condition","option":"option"}',
+          fieldId: "151678347",
+        },
+        {
+          severity: "logic",
+          message:
+            "logic: value of this field: 'condition' is  'option' (parent: fieldId: undefined junction: 'undefined')",
+          fieldId: "151678347",
+        },
+      ]);
+    });
+    it("Should produce status message for each logic element and applied fields.(Switzerland).", () => {
+      const fieldId = "151678347";
+
+      const tree = FsTreeFieldCollection.fromFieldJson(
+        circularAndInterdependentJson as unknown as TApiForm
+      );
+      const actualStatusMessages = tree.getFieldStatusMessages(fieldId);
+      expect(actualStatusMessages).toStrictEqual([
+        {
+          severity: "debug",
+          message:
+            '{"nodeType":"FsLogicLeafNode","english":"Logic Term: this field \'condition\' \'option\'","fieldId":"151678347","condition":"condition","option":"option"}',
+          fieldId: "151678347",
+        },
+        {
+          severity: "logic",
+          message:
+            "logic: value of this field: 'condition' is  'option' (parent: fieldId: undefined junction: 'undefined')",
+          fieldId: "151678347",
+        },
+      ]);
+    });
     it("Should produce status message for each logic element and applied fields.(non panel, simple, ideal).", () => {
       // const fieldId = "148509470";
       const fieldId = "152139062";
