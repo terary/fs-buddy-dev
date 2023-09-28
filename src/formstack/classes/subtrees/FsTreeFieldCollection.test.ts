@@ -1,13 +1,16 @@
 import { FsTreeFieldCollection } from "./FsTreeFieldCollection";
 import { TFsFieldAnyJson } from "../types";
 import { FsTreeField } from "./trees/FsTreeField";
-import circularAndInterdependentJson from "../../../test-dev-resources/form-json/5375703.20230922.json";
+
+import circularAndInterdependentJson from "../../../test-dev-resources/form-json/5375703.json";
+// import circularAndInterdependentJson from "../../../test-dev-resources/form-json/5375703.20230922.json";
+import submissionWithAllFieldsJson from "../../../test-dev-resources/submission-json/1129952515-form5358471.json";
+
 import { TFsFieldAny } from "../../type.field";
 import { FsTreeLogic } from "./trees/FsTreeLogic";
 import { FsCircularDependencyNode } from "./trees/nodes/FsCircularDependencyNode";
 import { FsLogicLeafNode } from "./trees/nodes/FsLogicLeafNode";
 import formWithAllFieldsJson from "../../../test-dev-resources/form-json/5358471.json";
-import submissionWithAllFieldsJson from "../../../test-dev-resources/submission-json/1129952515-form5358471.json";
 import { TApiForm, TSubmissionJson } from "../../type.form";
 import { FsLogicBranchNode } from "./trees/nodes/FsLogicBranchNode";
 
@@ -64,7 +67,7 @@ describe("FsTreeFieldCollection", () => {
           "148509476",
           "148509477",
           "148509478",
-          "148509721",
+          // "148509721",
         ].sort()
       );
     });
@@ -98,13 +101,15 @@ describe("FsTreeFieldCollection", () => {
           "148604234",
           "148604235",
           "148604236",
+          "151701616",
         ].sort()
       );
     });
   });
   describe(".getFieldStatusMessages()", () => {
-    it.only("Should produce status message for each logic element and applied fields.(non panel)", () => {
-      const fieldId = "148509470";
+    it("Should produce status message for each logic element and applied fields.(non panel, simple, ideal).", () => {
+      // const fieldId = "148509470";
+      const fieldId = "152139062";
 
       const tree = FsTreeFieldCollection.fromFieldJson(
         circularAndInterdependentJson as unknown as TApiForm
@@ -114,15 +119,62 @@ describe("FsTreeFieldCollection", () => {
         {
           severity: "debug",
           message:
-            '{"nodeType":"FsLogicBranchNode","ownerFieldId":"148509470","action":"show","conditional":"all","json":{"action":"show","conditional":"all","checks":[{"field":148509478,"condition":"equals","option":"True"},{"field":148509475,"condition":"equals","option":"True"}]}}',
-          fieldId: "148509470",
+            '{"nodeType":"FsLogicLeafNode","english":"Logic Term: this field \'equals\' \'True\'","fieldId":"152139063","rootFieldId":"152139062","condition":"equals","option":"True","junctionOperator":"all","json":{"field":152139063,"condition":"equals","option":"True"}}',
+          fieldId: "152139063",
+        },
+        {
+          severity: "logic",
+          message:
+            "logic: value of this field: 'equals' is  'True' (parent: fieldId: 152139062 junction: 'all')",
+          fieldId: "152139063",
+        },
+        {
+          severity: "debug",
+          message:
+            '{"nodeType":"FsLogicLeafNode","english":"Logic Term: this field \'equals\' \'True\'","fieldId":"152139066","rootFieldId":"152139062","condition":"equals","option":"True","junctionOperator":"all","json":{"field":152139066,"condition":"equals","option":"True"}}',
+          fieldId: "152139066",
+        },
+        {
+          severity: "logic",
+          message:
+            "logic: value of this field: 'equals' is  'True' (parent: fieldId: 152139062 junction: 'all')",
+          fieldId: "152139066",
+        },
+        {
+          severity: "debug",
+          message:
+            '{"nodeType":"FsLogicBranchNode","ownerFieldId":"152139062","action":"show","conditional":"all","json":{"action":"show","conditional":"all","checks":[{"field":152139063,"condition":"equals","option":"True"},{"field":152139066,"condition":"equals","option":"True"}]}}',
+          fieldId: "152139062",
         },
         {
           severity: "logic",
           message: "Logic: 'show' if 'all' are true.",
-          fieldId: "148509470",
-          relatedFieldIds: ["148509478", "148509475"],
+          fieldId: "152139062",
+          relatedFieldIds: ["152139063", "152139066"],
         },
+        // {
+        //   severity: "debug",
+        //   message:
+        //     '{"nodeType":"FsLogicLeafNode","english":"Logic Term: this field \'condition\' \'option\'","fieldId":"152139061","condition":"condition","option":"option"}',
+        //   fieldId: "152139061",
+        // },
+        // {
+        //   severity: "logic",
+        //   message:
+        //     "logic: value of this field: 'condition' is  'option' (parent: fieldId: undefined junction: 'undefined')",
+        //   fieldId: "152139061",
+        // },
+      ]);
+    });
+    it("Should produce status message for each logic element and applied fields.(panel, implied logic).", () => {
+      const fieldId = "148509470";
+      // const fieldId = "152139062";
+
+      const tree = FsTreeFieldCollection.fromFieldJson(
+        circularAndInterdependentJson as unknown as TApiForm
+      );
+      const actualStatusMessages = tree.getFieldStatusMessages(fieldId);
+      expect(actualStatusMessages).toStrictEqual([
         {
           severity: "debug",
           message:
@@ -146,6 +198,112 @@ describe("FsTreeFieldCollection", () => {
           message:
             "logic: value of this field: 'equals' is  'True' (parent: fieldId: 148509470 junction: 'all')",
           fieldId: "148509475",
+        },
+        {
+          severity: "debug",
+          message:
+            '{"nodeType":"FsLogicBranchNode","ownerFieldId":"148509470","action":"show","conditional":"all","json":{"action":"show","conditional":"all","checks":[{"field":148509478,"condition":"equals","option":"True"},{"field":148509475,"condition":"equals","option":"True"}]}}',
+          fieldId: "148509470",
+        },
+        {
+          severity: "logic",
+          message: "Logic: 'show' if 'all' are true.",
+          fieldId: "148509470",
+          relatedFieldIds: [
+            "148509470",
+            "148509478",
+            "148509475",
+            "148509476",
+            "148509477",
+            "148509474",
+            "151678347",
+            "148509465",
+          ],
+        },
+        {
+          severity: "debug",
+          message:
+            '{"nodeType":"FsLogicLeafNode","english":"Logic Term: this field \'equals\' \'True\'","fieldId":"148509477","rootFieldId":"148509476","condition":"equals","option":"True","junctionOperator":"all","json":{"field":148509477,"condition":"equals","option":"True"}}',
+          fieldId: "148509477",
+        },
+        {
+          severity: "logic",
+          message:
+            "logic: value of this field: 'equals' is  'True' (parent: fieldId: 148509476 junction: 'all')",
+          fieldId: "148509477",
+        },
+        {
+          severity: "debug",
+          message:
+            '{"nodeType":"FsLogicLeafNode","english":"Logic Term: this field \'equals\' \'True\'","fieldId":"148509474","rootFieldId":"148509476","condition":"equals","option":"True","junctionOperator":"all","json":{"field":148509474,"condition":"equals","option":"True"}}',
+          fieldId: "148509474",
+        },
+        {
+          severity: "logic",
+          message:
+            "logic: value of this field: 'equals' is  'True' (parent: fieldId: 148509476 junction: 'all')",
+          fieldId: "148509474",
+        },
+        {
+          severity: "debug",
+          message:
+            '{"nodeType":"FsLogicBranchNode","ownerFieldId":"148509476","action":"show","conditional":"all","json":{"action":"show","conditional":"all","checks":[{"field":148509477,"condition":"equals","option":"True"},{"field":148509474,"condition":"equals","option":"True"}]}}',
+          fieldId: "148509476",
+        },
+        {
+          severity: "logic",
+          message: "Logic: 'show' if 'all' are true.",
+          fieldId: "148509476",
+          relatedFieldIds: [
+            "148509470",
+            "148509478",
+            "148509475",
+            "148509476",
+            "148509477",
+            "148509474",
+            "151678347",
+            "148509465",
+          ],
+        },
+        {
+          severity: "debug",
+          message:
+            '{"nodeType":"FsLogicLeafNode","english":"Logic Term: this field \'equals\' \'Neutral\'","fieldId":"151678347","rootFieldId":"148509465","condition":"equals","option":"Neutral","junctionOperator":"all","json":{"field":151678347,"condition":"equals","option":"Neutral"}}',
+          fieldId: "151678347",
+        },
+        {
+          severity: "logic",
+          message:
+            "logic: value of this field: 'equals' is  'Neutral' (parent: fieldId: 148509465 junction: 'all')",
+          fieldId: "151678347",
+        },
+        {
+          severity: "logic",
+          message:
+            'Logic: circular reference. source fieldId: \'148509465\', last visited fieldId: \'148509465\', dependency chain: "148509470", "148509470", "148509478", "148509475", "148509476", "148509477", "148509474", "151678347", "148509465".',
+          fieldId: "148509465",
+          relatedFieldIds: undefined,
+        },
+        {
+          severity: "debug",
+          message:
+            '{"nodeType":"FsLogicBranchNode","ownerFieldId":"148509465","action":"show","conditional":"all","json":{"action":"show","conditional":"all","checks":[{"field":"148509470","condition":"equals","option":"True"},{"field":"148509476","condition":"equals","option":"True"},{"field":151678347,"condition":"equals","option":"Neutral"}]}}',
+          fieldId: "148509465",
+        },
+        {
+          severity: "logic",
+          message: "Logic: 'show' if 'all' are true.",
+          fieldId: "148509465",
+          relatedFieldIds: [
+            "148509470",
+            "148509478",
+            "148509475",
+            "148509476",
+            "148509477",
+            "148509474",
+            "151678347",
+            "148509465",
+          ],
         },
       ]);
     });
@@ -232,14 +390,7 @@ describe("FsTreeFieldCollection", () => {
       ).toBeInstanceOf(FsLogicLeafNode);
     });
     it("Should include visibility panel (parent container) logic tree", () => {
-      // 148456734 known to have circular dependencies
-      // 148509470 first dependant
-      // 148509465 panel containing co dependencies
-      // 148509474 (B1) Leaf node
-      // 148509476 (B) Branch Node
       const fieldId = "148509476";
-      // const x1 = fieldLogic.devDebug_getExtendedTree2(fieldId);
-      // const x2 = fieldLogic.getCircularReferenceFieldIds(fieldId);
 
       const tree = FsTreeFieldCollection.fromFieldJson(
         circularAndInterdependentJson as unknown as TApiForm
@@ -250,7 +401,7 @@ describe("FsTreeFieldCollection", () => {
       const actualTreeJson = actualAgTree.toPojoAt();
       expect(expectedTreeJson).toStrictEqual(actualTreeJson);
 
-      expect(actualAgTreeContent.length).toBe(8);
+      expect(actualAgTreeContent.length).toBe(9);
       expect(actualAgTreeContent[0]).toBeInstanceOf(FsLogicBranchNode);
       expect((actualAgTreeContent[0] as FsLogicBranchNode).ownerFieldId).toBe(
         "148509470"
@@ -275,12 +426,18 @@ describe("FsTreeFieldCollection", () => {
       expect((actualAgTreeContent[5] as FsLogicLeafNode).fieldId).toBe(
         "148509474"
       );
-      expect(actualAgTreeContent[6]).toBeInstanceOf(FsCircularDependencyNode);
+      expect(actualAgTreeContent[6]).toBeInstanceOf(FsLogicLeafNode);
+      expect((actualAgTreeContent[6] as FsLogicLeafNode).fieldId).toBe(
+        "151678347"
+      );
+
+      expect(actualAgTreeContent[7]).toBeInstanceOf(FsCircularDependencyNode);
       expect(
-        (actualAgTreeContent[6] as FsCircularDependencyNode).targetFieldId
+        (actualAgTreeContent[7] as FsCircularDependencyNode).targetFieldId
       ).toBe("148509465");
-      expect(actualAgTreeContent[7]).toBeInstanceOf(FsLogicBranchNode);
-      expect((actualAgTreeContent[7] as FsLogicBranchNode).ownerFieldId).toBe(
+
+      expect(actualAgTreeContent[8]).toBeInstanceOf(FsLogicBranchNode);
+      expect((actualAgTreeContent[8] as FsLogicBranchNode).ownerFieldId).toBe(
         "148509465"
       );
 
@@ -349,7 +506,7 @@ describe("FsTreeFieldCollection", () => {
         agBigDipperCircularRefNodes[0].dependentChainFieldIds.sort()
       ).toStrictEqual(
         [
-          "148604159",
+          // "148604159",
           "148604161", // it's here in the list because big dipper's handle is 148604161
           "148604234",
           "148604235",
@@ -363,11 +520,17 @@ describe("FsTreeFieldCollection", () => {
       expect(
         agLittleDipperCircularRefNodes[0].dependentChainFieldIds.sort()
       ).toStrictEqual(
-        ["148604159", "148604234", "148604235", "148604236", "148604236"].sort()
+        [
+          // "148604159",
+          "148604234",
+          "148604235",
+          "148604236",
+          "148604236",
+        ].sort()
       );
     });
   });
-  it.only("Should return the value of the calculation given field values", () => {
+  it("Should return the value of the calculation given field values", () => {
     // logic/not required 147738154
     // required 148008076
     const getFieldJson = (fieldId: string) => {
@@ -1046,14 +1209,19 @@ const expectedTreeJson = {
         conditional: "all",
         checks: [
           {
-            field: 148509470,
+            field: "148509470",
             condition: "equals",
             option: "True",
           },
           {
-            field: 148509476,
+            field: "148509476",
             condition: "equals",
             option: "True",
+          },
+          {
+            field: 151678347,
+            condition: "equals",
+            option: "Neutral",
           },
         ],
       },
@@ -1183,8 +1351,26 @@ const expectedTreeJson = {
   "148509465:6": {
     parentId: "148509465",
     nodeContent: {
+      fieldId: "151678347",
+      condition: "equals",
+      option: "Neutral",
+      fieldJson: {
+        field: 151678347,
+        condition: "equals",
+        option: "Neutral",
+      },
+      predicateJson: {
+        field: 151678347,
+        condition: "equals",
+        option: "Neutral",
+      },
+    },
+  },
+  "148509465:7": {
+    parentId: "148509465",
+    nodeContent: {
       asJson:
-        '{"_sourceFieldId":"148509476","_targetFieldId":"148509465","_dependentChainFieldIds":["148509470","148509478","148509475","148509476","148509477","148509474"]}',
+        '{"_sourceFieldId":"148509476","_targetFieldId":"148509465","_dependentChainFieldIds":["148509470","148509478","148509475","148509476","148509477","148509474","151678347"]}',
     },
   },
 };

@@ -1,3 +1,4 @@
+import { TStatusRecord } from "../../../../../chrome-extension/type";
 import { FsTreeField } from "../FsTreeField";
 import { FsTreeLogic } from "../FsTreeLogic";
 import { AbstractNode } from "./AbstractNode";
@@ -25,6 +26,17 @@ class FsFieldVisibilityLinkNode extends AbstractNode {
     //
     // Need to put dependancy guard, throws error 'ErrorCircularLogic'
     return this._isUltimatelyFn;
+  }
+  getStatusMessage(dependentChainFieldIds?: string[]): TStatusRecord[] {
+    return [
+      {
+        severity: "debug",
+        message:
+          'FsFieldVisibilityLinkNode - this should be invisible as it is a "virtual" node.',
+        fieldId: this.parentNode?.fieldId,
+        relatedFieldIds: [],
+      },
+    ];
   }
 }
 

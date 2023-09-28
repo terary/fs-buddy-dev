@@ -52,7 +52,7 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
   }
 
   getFieldStatusMessages(fieldId: string): TStatusRecord[] {
-    const agTree = this.aggregateLogicTree(fieldId, false);
+    const agTree = this.aggregateLogicTree(fieldId, true);
     return agTree.getFieldStatusMessages();
   }
 

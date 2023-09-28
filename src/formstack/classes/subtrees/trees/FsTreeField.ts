@@ -124,7 +124,14 @@ class FsTreeField extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
     if (visibilityNodes && visibilityNodes?.length > 1) {
       return null;
     }
-    return visibilityNodes.pop() || null;
+
+    const visibilityNode = visibilityNodes.pop();
+    if (visibilityNode?.parentNode?.getLogicTree()) {
+      return visibilityNode;
+    } else {
+      return null;
+    }
+    // return visibilityNodes.pop() || null;
   }
 
   protected getCalcStringTree(): FsTreeCalcString | null {
@@ -208,7 +215,7 @@ class FsTreeField extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
     };
   }
 
-  private getVisibilityLogicChain() {}
+  // private getVisibilityLogicChain() {}
 
   getInterdependentFieldIdsOf(subjectField: FsTreeField): string[] {
     const thisLogic = this.getLogicTree();

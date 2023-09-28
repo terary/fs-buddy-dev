@@ -59,16 +59,19 @@ class FsLogicLeafNode extends AbstractNode implements TFsFieldLogicCheckLeaf {
       nodeType: "FsLogicLeafNode",
       english: `Logic Term: this field '${this.condition}' '${this.option}'`,
       fieldId: this.fieldId,
-      rootFieldId: this.parentBranchNode.ownerFieldId,
+      rootFieldId: this.parentBranchNode?.ownerFieldId,
       condition: this.condition,
       option: this.option,
-      junctionOperator: this.parentBranchNode.conditional,
+      junctionOperator: this.parentBranchNode?.conditional,
       json: this.fieldJson,
     });
     // maybe it makes sense to add getStatusMessage on FsLogicLeafNode
     // this/it would need to reference parent (operator all/any, options)
-    const logicMessage = `logic: value of this field: '${this.condition}' is  '${this.option}' (parent: fieldId: ${this.parentBranchNode.ownerFieldId} junction: '${this.parentBranchNode.conditional}')`;
+    const logicMessage = `logic: value of this field: '${this.condition}' is  '${this.option}' (parent: fieldId: ${this.parentBranchNode?.ownerFieldId} junction: '${this.parentBranchNode?.conditional}')`;
 
+    if (!this.fieldId || !this.parentBranchNode?.ownerFieldId) {
+      console.log("Something aint right.");
+    }
     return [
       {
         severity: "debug",
