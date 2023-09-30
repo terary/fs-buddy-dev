@@ -150,11 +150,6 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
             currentBranchNodeId,
             // @ts-ignore TFsLogicField not compatible with Abstract
             this.getCorrectCircularNode(exTree, childField, childContent)
-            // new FsCircularDependencyNode(
-            //   exTree.ownerFieldId,
-            //   childField.fieldId,
-            //   exTree.getDependantFieldIds()
-            // )
           );
         } else if (childField.getLogicTree() === null) {
           const { fieldId, condition, option } = childContent;
@@ -208,6 +203,7 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
     const isMutualExclusiveConflict = this.isTwoConditionsMutuallyExclusive(
       logicSubjectTreeField.fieldJson,
       childContent,
+      // @ts-ignore - this is a known issue, should be using interfaces?
       existingChildContent
     );
 
@@ -216,6 +212,7 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
         exTree.ownerFieldId,
         childField.fieldId,
         exTree.getDependantFieldIds(),
+        // @ts-ignore - this is a known issue, should be using interfaces?
         { conditionalA: childContent, conditionalB: existingChildContent }
       );
     } else {
@@ -223,6 +220,7 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
         exTree.ownerFieldId,
         childField.fieldId,
         exTree.getDependantFieldIds(),
+        // @ts-ignore - this is a known issue, should be using interfaces?
         { conditionalA: childContent, conditionalB: existingChildContent }
       );
     }
