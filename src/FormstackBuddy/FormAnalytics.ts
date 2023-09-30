@@ -20,6 +20,7 @@ class FormAnalytics {
   //TApiForm
   constructor(formJson: TApiForm) {
     this._fieldCollection = FsTreeFieldCollection.fromFieldJson(
+      // @ts-ignore - bad typing
       formJson.fields
     );
     this._fieldJson = formJson;
@@ -74,8 +75,7 @@ class FormAnalytics {
       let label =
         field.fieldType === "section" ? field.section_heading : field.label;
 
-      !label &&
-        (label = "_NO_LABEL_FOUND_" + (fieldJson as TFsFieldAnyJson).type);
+      !label && (label = "_NO_LABEL_FOUND_" + (fieldJson as TFsFieldAny).type);
 
       // const label =
       //   (fieldJson as TFsFieldAnyJson).label ||

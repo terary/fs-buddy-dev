@@ -26,6 +26,7 @@ class TestAbstractFsTreeGeneric extends AbstractFsTreeGeneric<TFsFieldAnyJson> {
   ): TestAbstractFsTreeGeneric {
     const tree = new TestAbstractFsTreeGeneric(
       fieldJson.id,
+      // @ts-ignore - bad typing
       fieldJsonToNodeContent(fieldJson)
     );
     return tree;
@@ -56,6 +57,7 @@ describe("AbstractFsTreeGeneric", () => {
       };
       const subtree = tree.createSubtreeFromFieldJson(
         tree.rootNodeId,
+        // @ts-ignore - bad typing
         fieldJson,
         subtreeConstructor
       );

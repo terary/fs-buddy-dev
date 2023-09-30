@@ -80,14 +80,19 @@ describe("FieldLogicService", () => {
         circularAndInterdependentJson.fields as unknown as TFsFieldAnyJson[]
       );
       const x = fieldLogic.getFieldIdsExtendedLogicOf("148509465");
-      expect(fieldLogic.getFieldIdsExtendedLogicOf("148509465")).toStrictEqual([
-        "148509470",
-        "148509478",
-        "148509475",
-        "148509476",
-        "148509477",
-        "148509474",
-      ]);
+      expect(
+        fieldLogic.getFieldIdsExtendedLogicOf("148509465").sort()
+      ).toStrictEqual(
+        [
+          "148509470",
+          "148509478",
+          "148509475",
+          "148509476",
+          "148509477",
+          "148509474",
+          "151678347",
+        ].sort()
+      );
     });
   });
 

@@ -230,7 +230,8 @@ class FsTreeField extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
   }
 
   static fromFieldJson(fieldJson: TFsFieldAny): FsTreeField {
-    const field = new FsTreeField("_FIELD_ID_", {
+    // I think there is issues with using fieldId and the way subtree get rooted and re-rooted
+    const field = new FsTreeField(`_FIELD_ID_: ${fieldJson.id}`, {
       // @ts-ignore
       fieldId: fieldJson.id,
       label: fieldJson.label,

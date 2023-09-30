@@ -132,9 +132,6 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
       );
       return exTree as T;
     }
-    if (logicTree.rootNodeId !== currentBranchNodeId) {
-      console.log("sometimes these are different");
-    }
 
     // technically logicTree should always have children but in reality it's sometimes missing.
     logicTree
