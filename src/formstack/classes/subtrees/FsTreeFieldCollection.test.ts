@@ -117,9 +117,21 @@ describe("FsTreeFieldCollection", () => {
         formJson5469299.fields as unknown as TFsFieldAnyJson[]
       );
 
-      const agTree148456742 = tree5375703.aggregateLogicTree("148456742");
       const agTree152290546 = tree5469299.aggregateLogicTree("152290546");
+      const agTree148456742 = tree5375703.aggregateLogicTree("148456742");
 
+      const mutuallyExclusiveLogic =
+        tree5469299.aggregateLogicTree("152293116");
+      const mutuallyInclusiveLogic =
+        tree5469299.aggregateLogicTree("152297010");
+
+      const pojo = {
+        agTree152290546: agTree152290546.toPojoAt(),
+        agTree148456742: agTree148456742.toPojoAt(),
+        mutuallyExclusiveLogic: mutuallyExclusiveLogic.toPojoAt(),
+        mutuallyInclusiveLogic: mutuallyInclusiveLogic.toPojoAt(),
+      };
+      expect(pojo).toStrictEqual({});
       expect(agTree148456742.toPojoAt()).toStrictEqual({});
       expect(agTree152290546.toPojoAt()).toStrictEqual({});
     });

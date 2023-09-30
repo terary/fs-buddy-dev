@@ -1,6 +1,8 @@
 import {
   IExpressionTree,
   TGenericNodeContent,
+  TNodePojo,
+  TTreePojo,
 } from "predicate-tree-advanced-poc/dist/src";
 import { TFsFieldAnyJson } from "../../types";
 import {
@@ -9,6 +11,7 @@ import {
   TFsLogicNode,
   TFsLogicNodeJson,
   TLogicJunctionOperators,
+  TSimpleDictionary,
 } from "../types";
 import { AbstractFsTreeLogic } from "./AbstractFsTreeLogic";
 import { FsCircularDependencyNode } from "./nodes/FsCircularDependencyNode";
@@ -26,7 +29,10 @@ type LogicTreeNodeTypes = // we choose to export this, we should give it a diffe
     | FsMaxDepthExceededNode;
 
 class FsTreeLogicDeep extends AbstractFsTreeLogic<LogicTreeNodeTypes> {
-  private _dependantFieldIds: string[] = [];
+  //  private _dependantFieldIds: string[] = [];
+  #dependantFieldIds: TSimpleDictionary<LogicTreeNodeTypes> = {};
+  dependantFieldIds_dev_debug_hard_private: TSimpleDictionary<LogicTreeNodeTypes> =
+    {};
 
   createSubtreeAt(nodeId: string): IExpressionTree<LogicTreeNodeTypes> {
     // *tmc* needs to make this a real thing, I guess: or add it to the abstract?
@@ -44,11 +50,29 @@ class FsTreeLogicDeep extends AbstractFsTreeLogic<LogicTreeNodeTypes> {
     return null;
   }
 
+  getChildContentByFieldId(fieldId: string) {
+    return this.#dependantFieldIds[fieldId];
+  }
+
+  private appendFieldIdNode(fieldId: string, node: LogicTreeNodeTypes) {
+    // this or do a look-up of nodeId vs fieldId which is subject to change
+    // node here should ALWAYS point to the same object so this is a better approach.
+    //
+    // one more reason to encapsulate this class, all methods that update/remove/add nodes will need to be overwritten
+
+    this.#dependantFieldIds[fieldId] = node;
+    this.dependantFieldIds_dev_debug_hard_private[fieldId] = node;
+  }
+
+  private get dependantFieldIds() {
+    return Object.keys(this.#dependantFieldIds);
+  }
+
   getDependantFieldIds(): string[] {
     // this can be calculated also doing something like (tree.getTreeContent().filter...).
     // This method guarantees order, filtering nodes does not guarantee order but is a
     //  better source of truth
-    return this._dependantFieldIds.slice();
+    return this.dependantFieldIds;
   }
 
   getDependentFieldIds(): string[] {
@@ -67,8 +91,17 @@ class FsTreeLogicDeep extends AbstractFsTreeLogic<LogicTreeNodeTypes> {
       });
   }
 
+  toPojoAt(
+    nodeId?: string | undefined
+    // transformer?: (<T>(nodeContent: T) => TNodePojo<T>) | undefined
+  ): TTreePojo<LogicTreeNodeTypes> {
+    const transformer = (nodeContent: LogicTreeNodeTypes) => nodeContent;
+    // @ts-ignore
+    return super.toPojoAt(nodeId, transformer);
+  }
+
   isInDependentsFields(fieldId: string): boolean {
-    return this._dependantFieldIds.includes(fieldId);
+    return this.dependantFieldIds.includes(fieldId);
   }
 
   getCircularLogicNodes(): FsCircularDependencyNode[] {
@@ -81,10 +114,10 @@ class FsTreeLogicDeep extends AbstractFsTreeLogic<LogicTreeNodeTypes> {
     parentNodeId: string,
     nodeContent: TGenericNodeContent<TFsLogicNode>
   ): string {
-    this._dependantFieldIds.push(
-      // @ts-ignore - may be null
-      this.extractFieldIdFromNodeContent(nodeContent)
-    );
+    // @ts-ignore - no null
+    const fieldId = this.extractFieldIdFromNodeContent(nodeContent);
+    // @ts-ignore - no null
+    this.appendFieldIdNode(fieldId, nodeContent);
 
     return super.appendChildNodeWithContent(parentNodeId, nodeContent);
   }

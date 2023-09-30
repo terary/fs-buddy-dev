@@ -9,6 +9,7 @@ import { FsFieldVisibilityLinkNode, FsFormRootNode } from "./trees/nodes";
 import {
   TFsFieldLogicCheckLeaf,
   TFsFieldLogicJunction,
+  TFsLogicNode,
   TLogicJunctionOperators,
   TTreeFieldNode,
 } from "./types";
@@ -20,6 +21,9 @@ import { FsTreeLogic } from "./trees/FsTreeLogic";
 import { TUiEvaluationObject } from "../Evaluator/type";
 import { TSubmissionJson } from "../../type.form";
 import { IEValuator } from "../Evaluator/IEvaluator";
+import { TFsFieldAny } from "../../type.field";
+import { FsCircularMutualInclusiveNode } from "./trees/nodes/FsCircularMutualInclusiveNode";
+import { FsCircularMutualExclusiveNode } from "./trees/nodes/FsCircularMutualExclusiveNode";
 class FsTreeFieldCollection extends AbstractExpressionTree<
   TTreeFieldNode | FsFormRootNode
 > {
@@ -128,8 +132,11 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
       );
       return exTree as T;
     }
-    // technically logicTree should always have children but in reality it's sometimes missing.
+    if (logicTree.rootNodeId !== currentBranchNodeId) {
+      console.log("sometimes these are different");
+    }
 
+    // technically logicTree should always have children but in reality it's sometimes missing.
     logicTree
       .getChildrenNodeIdsOf(logicTree.rootNodeId)
       .forEach((logicChildNodeId: string) => {
@@ -144,11 +151,12 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
         if (exTree.isExistInDependencyChain(childField)) {
           exTree.appendChildNodeWithContent(
             currentBranchNodeId,
-            new FsCircularDependencyNode(
-              exTree.ownerFieldId,
-              childField.fieldId,
-              exTree.getDependantFieldIds()
-            )
+            this.getCorrectCircularNode(exTree, childField, childContent)
+            // new FsCircularDependencyNode(
+            //   exTree.ownerFieldId,
+            //   childField.fieldId,
+            //   exTree.getDependantFieldIds()
+            // )
           );
         } else if (childField.getLogicTree() === null) {
           const { fieldId, condition, option } = childContent;
@@ -162,6 +170,69 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
       });
 
     return exTree as T;
+  }
+
+  private isTwoConditionsMutuallyExclusive(
+    fieldJson: TFsFieldAny,
+    conditionA: TFsFieldLogicCheckLeaf,
+    conditionB: TFsFieldLogicCheckLeaf
+  ) {
+    if (
+      ["select", "radio"].includes(fieldJson.type) &&
+      conditionA.condition === conditionB.condition &&
+      conditionA.option === conditionB.option
+    ) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private getCorrectCircularNode(
+    exTree: FsTreeLogicDeep,
+    childField: FsTreeField,
+    childContent: TFsFieldLogicCheckLeaf
+  ): TFsLogicNode {
+    // const { fieldId, condition, option } = childContent;
+    const existingChildContent = exTree.getChildContentByFieldId(
+      childContent.fieldId
+    ) as TFsFieldLogicCheckLeaf;
+    const logicSubjectTreeField = this.getFieldById(childField.fieldId);
+
+    if (!childContent || !existingChildContent) {
+      return new FsCircularDependencyNode(
+        exTree.ownerFieldId,
+        childField.fieldId,
+        exTree.getDependantFieldIds()
+      );
+    }
+
+    const isMutualExclusiveConflict = this.isTwoConditionsMutuallyExclusive(
+      logicSubjectTreeField.fieldJson,
+      childContent,
+      existingChildContent
+    );
+
+    if (isMutualExclusiveConflict) {
+      return new FsCircularMutualExclusiveNode(
+        exTree.ownerFieldId,
+        childField.fieldId,
+        exTree.getDependantFieldIds(),
+        { conditionalA: childContent, conditionalB: existingChildContent }
+      );
+    } else {
+      return new FsCircularMutualInclusiveNode(
+        exTree.ownerFieldId,
+        childField.fieldId,
+        exTree.getDependantFieldIds(),
+        { conditionalA: childContent, conditionalB: existingChildContent }
+      );
+    }
+    return new FsCircularDependencyNode(
+      exTree.ownerFieldId,
+      childField.fieldId,
+      exTree.getDependantFieldIds()
+    );
   }
 
   aggregateLogicTree(fieldId: string): FsTreeLogicDeep {

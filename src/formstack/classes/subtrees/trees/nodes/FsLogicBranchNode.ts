@@ -5,11 +5,11 @@ import type {
   TFsFieldLogicJunction,
   TLogicJunctionOperators,
 } from "../../types";
-import { AbstractNode } from "./AbstractNode";
+import { AbstractLogicNode } from "./AbstractLogicNode";
 
 //TFsFieldLogicJunction
 class FsLogicBranchNode
-  extends AbstractNode
+  extends AbstractLogicNode
   implements TFsFieldLogicJunction<TLogicJunctionOperators>
 {
   //<TLogicJunctionOperators>

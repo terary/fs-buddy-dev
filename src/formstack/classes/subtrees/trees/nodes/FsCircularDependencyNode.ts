@@ -1,4 +1,6 @@
-class FsCircularDependencyNode {
+import { AbstractLogicNode } from "./AbstractLogicNode";
+
+class FsCircularDependencyNode extends AbstractLogicNode {
   _sourceFieldId: string;
   _targetFieldId: string;
   private _dependentChainFieldIds: string[];
@@ -8,6 +10,7 @@ class FsCircularDependencyNode {
     targetFieldId: string,
     dependentChainFieldIds: string[]
   ) {
+    super();
     this._sourceFieldId = sourceFieldId;
     this._targetFieldId = targetFieldId;
     this._dependentChainFieldIds = dependentChainFieldIds;
