@@ -25,5 +25,21 @@ class FsCircularMutualInclusiveNode extends FsCircularDependencyNode {
   getLastVisitedFieldId() {
     return this._targetFieldId;
   }
+
+  toPojo(): object {
+    const {
+      conditionalB: { condition, option, fieldId },
+    } = this.ruleConflict;
+
+    return {
+      nodeType: this.nodeType,
+      ruleConflict: {
+        // because there is some weird typing issue
+        conditionalB: { condition, option, fieldId },
+        conditionalA: this.ruleConflict.conditionalA,
+      },
+      ...super.toPojo(),
+    };
+  }
 }
 export { FsCircularMutualInclusiveNode };

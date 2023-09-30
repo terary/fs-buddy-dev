@@ -20,27 +20,28 @@ import { FsLogicLeafNode } from "./nodes/FsLogicLeafNode";
 import { FsMaxDepthExceededNode } from "./nodes/FsMaxDepthExceededNode";
 import { FsTreeField } from "./FsTreeField";
 import { TFsFieldAny } from "../../../type.field";
+import { AbstractLogicNode } from "./nodes/AbstractLogicNode";
 
-type LogicTreeNodeTypes = // we choose to export this, we should give it a different name
+// type LogicTreeNodeTypes = // we choose to export this, we should give it a different name
 
-    | FsCircularDependencyNode
-    | FsLogicBranchNode
-    | FsLogicLeafNode
-    | FsMaxDepthExceededNode;
+//     | FsCircularDependencyNode
+//     | FsLogicBranchNode
+//     | FsLogicLeafNode
+//     | FsMaxDepthExceededNode;
 
-class FsTreeLogicDeep extends AbstractFsTreeLogic<LogicTreeNodeTypes> {
+class FsTreeLogicDeep extends AbstractFsTreeLogic<AbstractLogicNode> {
   //  private _dependantFieldIds: string[] = [];
-  #dependantFieldIds: TSimpleDictionary<LogicTreeNodeTypes> = {};
-  dependantFieldIds_dev_debug_hard_private: TSimpleDictionary<LogicTreeNodeTypes> =
+  #dependantFieldIds: TSimpleDictionary<AbstractLogicNode> = {};
+  dependantFieldIds_dev_debug_hard_private: TSimpleDictionary<AbstractLogicNode> =
     {};
 
-  createSubtreeAt(nodeId: string): IExpressionTree<LogicTreeNodeTypes> {
+  createSubtreeAt(nodeId: string): IExpressionTree<AbstractLogicNode> {
     // *tmc* needs to make this a real thing, I guess: or add it to the abstract?
     return new FsTreeLogicDeep();
   }
 
   private extractFieldIdFromNodeContent(
-    nodeContent: LogicTreeNodeTypes
+    nodeContent: AbstractLogicNode
   ): string | null {
     if (nodeContent instanceof FsLogicBranchNode) {
       return nodeContent.ownerFieldId;
@@ -50,11 +51,11 @@ class FsTreeLogicDeep extends AbstractFsTreeLogic<LogicTreeNodeTypes> {
     return null;
   }
 
-  getChildContentByFieldId(fieldId: string) {
-    return this.#dependantFieldIds[fieldId];
+  getChildContentByFieldId<T = AbstractLogicNode>(fieldId: string) {
+    return this.#dependantFieldIds[fieldId] as T;
   }
 
-  private appendFieldIdNode(fieldId: string, node: LogicTreeNodeTypes) {
+  private appendFieldIdNode(fieldId: string, node: AbstractLogicNode) {
     // this or do a look-up of nodeId vs fieldId which is subject to change
     // node here should ALWAYS point to the same object so this is a better approach.
     //
@@ -94,9 +95,10 @@ class FsTreeLogicDeep extends AbstractFsTreeLogic<LogicTreeNodeTypes> {
   toPojoAt(
     nodeId?: string | undefined
     // transformer?: (<T>(nodeContent: T) => TNodePojo<T>) | undefined
-  ): TTreePojo<LogicTreeNodeTypes> {
-    const transformer = (nodeContent: LogicTreeNodeTypes) => nodeContent;
-    // @ts-ignore
+  ): TTreePojo<AbstractLogicNode> {
+    const transformer = (nodeContent: AbstractLogicNode) =>
+      nodeContent.toPojo();
+    // @ts-ignore - doesn't like generic and the signature, I think the generic is goofed
     return super.toPojoAt(nodeId, transformer);
   }
 
@@ -112,14 +114,15 @@ class FsTreeLogicDeep extends AbstractFsTreeLogic<LogicTreeNodeTypes> {
 
   public appendChildNodeWithContent(
     parentNodeId: string,
-    nodeContent: TGenericNodeContent<TFsLogicNode>
+    nodeContent: AbstractLogicNode
+    // nodeContent: TGenericNodeContent<TFsLogicNode>
   ): string {
-    // @ts-ignore - no null
     const fieldId = this.extractFieldIdFromNodeContent(nodeContent);
     // @ts-ignore - no null
     this.appendFieldIdNode(fieldId, nodeContent);
 
     return super.appendChildNodeWithContent(parentNodeId, nodeContent);
+    // return super.appendChildNodeWithContent(parentNodeId, nodeContent as TGenericNodeContent<AbstractLogicNode>);
   }
 
   static fromFieldJson(fieldJson: TFsFieldAny): FsTreeLogicDeep {
@@ -150,6 +153,7 @@ class FsTreeLogicDeep extends AbstractFsTreeLogic<LogicTreeNodeTypes> {
       tree.fieldJson as TFsFieldLogicJunctionJson
     );
 
+    // @ts-ignore
     leafExpressions.forEach((childNode: TFsLogicNode) => {
       const { condition, fieldId, option } = childNode as FsLogicLeafNode;
       const leafNode = new FsLogicLeafNode(fieldId, condition, option);

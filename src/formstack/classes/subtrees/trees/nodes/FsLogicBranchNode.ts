@@ -12,14 +12,10 @@ class FsLogicBranchNode
   extends AbstractLogicNode
   implements TFsFieldLogicJunction<TLogicJunctionOperators>
 {
-  //<TLogicJunctionOperators>
   private _ownerFieldId: string;
   private _conditional: "$and" | "$or";
   private _action: TFsVisibilityModes;
   private _fieldJson: TFsFieldLogicJunctionJson;
-  // private _option: TFsVisibilityModes;
-  // condition: "equals" | "greaterThan"; // not sure greaterThan is valid. Need to find all valid
-  // option: TFsVisibilityModes; // values of the target field (not the same as TFsFieldLogic.action)
   constructor(
     ownerFieldId: string,
     conditional: "$and" | "$or" = "$and", // bad idea to implement business logic here
@@ -47,6 +43,15 @@ class FsLogicBranchNode
 
   get fieldJson() {
     return this._fieldJson;
+  }
+
+  toPojo(): object {
+    return {
+      nodeType: this.nodeType,
+      ownerFieldId: this.ownerFieldId,
+      action: this.action,
+      conditional: this.conditional,
+    };
   }
 }
 

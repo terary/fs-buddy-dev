@@ -131,9 +131,7 @@ describe("FsTreeFieldCollection", () => {
         mutuallyExclusiveLogic: mutuallyExclusiveLogic.toPojoAt(),
         mutuallyInclusiveLogic: mutuallyInclusiveLogic.toPojoAt(),
       };
-      expect(pojo).toStrictEqual({});
-      expect(agTree148456742.toPojoAt()).toStrictEqual({});
-      expect(agTree152290546.toPojoAt()).toStrictEqual({});
+      expect(pojo).toStrictEqual(dev_debug_expected_pojo);
     });
     it("Should return the full tree.", () => {
       // two leafs
@@ -864,3 +862,251 @@ const uiComponentsExpected = [
     ],
   },
 ];
+
+const dev_debug_expected_pojo = {
+  agTree152290546: {
+    "152290546": {
+      parentId: "152290546",
+      nodeContent: {
+        nodeType: "FsLogicBranchNode",
+        ownerFieldId: "152290546",
+        action: "show",
+        conditional: "all",
+      },
+    },
+    "152290546:0": {
+      parentId: "152290546",
+      nodeContent: {
+        nodeType: "FsLogicBranchNode",
+        ownerFieldId: "152290547",
+        action: "show",
+        conditional: "all",
+      },
+    },
+    "152290546:0:4": {
+      parentId: "152290546:0",
+      nodeContent: {
+        nodeType: "FsLogicLeafNode",
+        fieldId: "152293117",
+        condition: "equals",
+        option: "One",
+      },
+    },
+    "152290546:1": {
+      parentId: "152290546",
+      nodeContent: {
+        nodeType: "FsLogicBranchNode",
+        ownerFieldId: "152290548",
+        action: "show",
+        conditional: "all",
+      },
+    },
+    "152290546:2": {
+      parentId: "152290546",
+      nodeContent: {
+        nodeType: "FsLogicBranchNode",
+        ownerFieldId: "152290549",
+        action: "show",
+        conditional: "all",
+      },
+    },
+    "152290546:2:3": {
+      parentId: "152290546:2",
+      nodeContent: {
+        nodeType: "FsLogicLeafNode",
+        fieldId: "152290545",
+        condition: "equals",
+        option: "OptionA",
+      },
+    },
+    "152290546:5": {
+      parentId: "152290546",
+      nodeContent: {
+        nodeType: "FsCircularMutualExclusiveNode",
+        ruleConflict: {
+          conditionalB: {
+            condition: "equals",
+            option: "One",
+            fieldId: "152293117",
+          },
+          conditionalA: {
+            fieldId: "152293117",
+            fieldJson: {
+              field: 152293117,
+              condition: "equals",
+              option: "Zero",
+            },
+            condition: "equals",
+            option: "Zero",
+          },
+        },
+        sourceFieldId: "152290546",
+        targetSourceId: "152293117",
+        dependentChainFieldIds: [
+          "152290546",
+          "152290545",
+          "152290547",
+          "152290548",
+          "152290549",
+          "152293117",
+          "152293117",
+        ],
+      },
+    },
+  },
+  agTree148456742: {
+    "148456742": {
+      parentId: "148456742",
+      nodeContent: {
+        nodeType: "FsLogicBranchNode",
+        ownerFieldId: "148456742",
+        action: "show",
+        conditional: "all",
+      },
+    },
+    "148456742:0": {
+      parentId: "148456742",
+      nodeContent: {
+        nodeType: "FsLogicBranchNode",
+        ownerFieldId: "148456741",
+        action: "show",
+        conditional: "all",
+      },
+    },
+    "148456742:1": {
+      parentId: "148456742",
+      nodeContent: {
+        nodeType: "FsLogicBranchNode",
+        ownerFieldId: "148456740",
+        action: "show",
+        conditional: "all",
+      },
+    },
+    "148456742:2": {
+      parentId: "148456742",
+      nodeContent: {
+        nodeType: "FsLogicBranchNode",
+        ownerFieldId: "148456739",
+        action: "show",
+        conditional: "all",
+      },
+    },
+    "148456742:3": {
+      parentId: "148456742",
+      nodeContent: {
+        nodeType: "FsLogicBranchNode",
+        ownerFieldId: "148456734",
+        action: "show",
+        conditional: "all",
+      },
+    },
+    "148456742:3:4": {
+      parentId: "148456742:3",
+      nodeContent: {
+        nodeType: "FsCircularDependencyNode",
+        sourceFieldId: "148456742",
+        targetSourceId: "148456742",
+        dependentChainFieldIds: [
+          "148456742",
+          "148456734",
+          "148456739",
+          "148456740",
+          "148456741",
+          "148456742",
+        ],
+      },
+    },
+  },
+  mutuallyExclusiveLogic: {
+    "152293116": {
+      parentId: "152293116",
+      nodeContent: {
+        nodeType: "FsLogicBranchNode",
+        ownerFieldId: "152293116",
+        action: "show",
+        conditional: "all",
+      },
+    },
+    "152293116:0": {
+      parentId: "152293116",
+      nodeContent: {
+        nodeType: "FsLogicLeafNode",
+        fieldId: "152293117",
+        condition: "equals",
+        option: "Zero",
+      },
+    },
+    "152293116:1": {
+      parentId: "152293116",
+      nodeContent: {
+        nodeType: "FsCircularMutualExclusiveNode",
+        ruleConflict: {
+          conditionalB: {
+            condition: "equals",
+            option: "Zero",
+            fieldId: "152293117",
+          },
+          conditionalA: {
+            fieldId: "152293117",
+            fieldJson: {
+              field: "152293117",
+              condition: "equals",
+              option: "One",
+            },
+            condition: "equals",
+            option: "One",
+          },
+        },
+        sourceFieldId: "152293116",
+        targetSourceId: "152293117",
+        dependentChainFieldIds: ["152293116", "152293117", "152293117"],
+      },
+    },
+  },
+  mutuallyInclusiveLogic: {
+    "152297010": {
+      parentId: "152297010",
+      nodeContent: {
+        nodeType: "FsLogicBranchNode",
+        ownerFieldId: "152297010",
+        action: "show",
+        conditional: "all",
+      },
+    },
+    "152297010:0": {
+      parentId: "152297010",
+      nodeContent: {
+        nodeType: "FsLogicLeafNode",
+        fieldId: "152293117",
+        condition: "equals",
+        option: "Zero",
+      },
+    },
+    "152297010:1": {
+      parentId: "152297010",
+      nodeContent: {
+        nodeType: "FsCircularMutualInclusiveNode",
+        ruleConflict: {
+          conditionalB: {
+            condition: "equals",
+            option: "Zero",
+            fieldId: "152293117",
+          },
+          conditionalA: {
+            fieldId: "152293117",
+            fieldJson: {
+              field: 152293117,
+              condition: "equals",
+              option: "Zero",
+            },
+            condition: "equals",
+            option: "Zero",
+          },
+        },
+        sourceFieldId: "152297010",
+        targetSourceId: "152293117",
+        dependentChainFieldIds: ["152297010", "152293117", "152293117"],
+      },
+    },
+  },
+};

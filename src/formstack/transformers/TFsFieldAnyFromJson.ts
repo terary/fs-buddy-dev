@@ -11,10 +11,12 @@ const TFsFieldAnyFromJson = (fieldJson: TFsFieldAnyJson): TFsFieldAny => {
     fieldJson.logic === null
       ? null
       : TFsFieldLogicJunctionFromJson(
+          // @ts-ignore - this is part of a larger issue (any/all, $or/$and)
           fieldJson.logic as TFsFieldLogicJunction<TFsJunctionOperators>,
           fieldJson.id || "_MISSING_ID_" // or throw?
         );
 
+  // @ts-ignore - this is part of a larger issue (any/all, $or/$and)
   return { ...{ logic }, ...(fieldJson as TFsFieldAny) };
 };
 

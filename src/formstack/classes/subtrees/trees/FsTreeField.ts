@@ -242,7 +242,7 @@ class FsTreeField extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
 
     if (fieldJson.calculation) {
       const subtreeConstructor = (fieldJson: TFsFieldAny) =>
-        FsTreeCalcString.fromFieldJson(fieldJson);
+        FsTreeCalcString.fromFieldJson(fieldJson as unknown as TFsFieldAnyJson);
 
       FsTreeField.createSubtreeFromFieldJson(
         field,
@@ -253,8 +253,8 @@ class FsTreeField extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
     }
 
     if (fieldJson.logic) {
-      const subtreeConstructor = (fieldJson: TFsFieldAnyJson) =>
-        FsTreeLogic.fromFieldJson(fieldJson);
+      const subtreeConstructor = (fieldJson: TFsFieldAny) =>
+        FsTreeLogic.fromFieldJson(fieldJson as unknown as TFsFieldAnyJson);
 
       FsTreeField.createSubtreeFromFieldJson(
         field,

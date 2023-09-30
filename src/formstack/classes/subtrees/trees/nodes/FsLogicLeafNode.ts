@@ -34,6 +34,15 @@ class FsLogicLeafNode
   get option() {
     return this._option;
   }
+
+  toPojo(): object {
+    return {
+      nodeType: this.nodeType,
+      fieldId: this.fieldId,
+      condition: this.condition,
+      option: this.option,
+    };
+  }
 }
 
 export { FsLogicLeafNode };

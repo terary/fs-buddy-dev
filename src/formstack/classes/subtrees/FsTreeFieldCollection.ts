@@ -151,6 +151,7 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
         if (exTree.isExistInDependencyChain(childField)) {
           exTree.appendChildNodeWithContent(
             currentBranchNodeId,
+            // @ts-ignore TFsLogicField not compatible with Abstract
             this.getCorrectCircularNode(exTree, childField, childContent)
             // new FsCircularDependencyNode(
             //   exTree.ownerFieldId,
@@ -193,10 +194,10 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
     childField: FsTreeField,
     childContent: TFsFieldLogicCheckLeaf
   ): TFsLogicNode {
-    // const { fieldId, condition, option } = childContent;
-    const existingChildContent = exTree.getChildContentByFieldId(
-      childContent.fieldId
-    ) as TFsFieldLogicCheckLeaf;
+    const existingChildContent =
+      exTree.getChildContentByFieldId<TFsFieldLogicCheckLeaf>(
+        childContent.fieldId
+      );
     const logicSubjectTreeField = this.getFieldById(childField.fieldId);
 
     if (!childContent || !existingChildContent) {
@@ -356,7 +357,7 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
     for (let childNode of sortedNodes) {
       // order is necessary
       const { fieldId, field } = childNode;
-      const { type: fieldType } = field?.fieldJson as TFsFieldAnyJson;
+      const { type: fieldType } = field?.fieldJson as TFsFieldAny;
 
       if (fieldType && fieldType === "section") {
         currentSection = field;
@@ -384,8 +385,8 @@ const sortBySortProperty = (
   fieldNodeA: TTreeFieldNode,
   fieldNodeB: TTreeFieldNode
 ) => {
-  const fieldAJson = fieldNodeA.field.fieldJson as TFsFieldAnyJson;
-  const fieldBJson = fieldNodeB.field.fieldJson as TFsFieldAnyJson;
+  const fieldAJson = fieldNodeA.field.fieldJson as TFsFieldAny;
+  const fieldBJson = fieldNodeB.field.fieldJson as TFsFieldAny;
 
   if (fieldAJson.sort === undefined || fieldBJson.sort === undefined) {
     return 1;
