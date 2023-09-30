@@ -2,6 +2,8 @@ import { FsTreeFieldCollection } from "./FsTreeFieldCollection";
 import { TFsFieldAnyJson } from "../types";
 import { FsTreeField } from "./trees/FsTreeField";
 import circularAndInterdependentJson from "../../../test-dev-resources/form-json/5375703.json";
+import formJson5375703 from "../../../test-dev-resources/form-json/5375703.json";
+import formJson5469299 from "../../../test-dev-resources/form-json/5469299.json";
 import { TFsFieldAny } from "../../type.field";
 import { FsTreeLogic } from "./trees/FsTreeLogic";
 import { FsCircularDependencyNode } from "./trees/nodes/FsCircularDependencyNode";
@@ -105,6 +107,21 @@ describe("FsTreeFieldCollection", () => {
       expect(
         noLogicField.getChildContentAt(noLogicField.rootNodeId)
       ).toBeInstanceOf(FsLogicLeafNode);
+    });
+    it.only("dev debug.", () => {
+      const tree5375703 = FsTreeFieldCollection.fromFieldJson(
+        formJson5375703.fields as unknown as TFsFieldAnyJson[]
+      );
+
+      const tree5469299 = FsTreeFieldCollection.fromFieldJson(
+        formJson5469299.fields as unknown as TFsFieldAnyJson[]
+      );
+
+      const agTree148456742 = tree5375703.aggregateLogicTree("148456742");
+      const agTree152290546 = tree5469299.aggregateLogicTree("152290546");
+
+      expect(agTree148456742.toPojoAt()).toStrictEqual({});
+      expect(agTree152290546.toPojoAt()).toStrictEqual({});
     });
     it("Should return the full tree.", () => {
       // two leafs
