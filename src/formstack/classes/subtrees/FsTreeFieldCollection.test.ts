@@ -100,7 +100,7 @@ describe("FsTreeFieldCollection", () => {
     });
   });
   describe("aggregateLogicTree", () => {
-    it("Should return tree with one leaf node if there is no logic.", () => {
+    it("Should return tree with no nodes if there is no logic.", () => {
       const tree = FsTreeFieldCollection.fromFieldJson(
         circularAndInterdependentJson.fields as unknown as TFsFieldAnyJson[]
       );
@@ -108,7 +108,7 @@ describe("FsTreeFieldCollection", () => {
       expect(noLogicField.countTotalNodes()).toBe(1);
       expect(
         noLogicField.getChildContentAt(noLogicField.rootNodeId)
-      ).toBeInstanceOf(FsLogicLeafNode);
+      ).toBeNull();
     });
     it("dev debug.", () => {
       const tree5375703 = FsTreeFieldCollection.fromFieldJson(

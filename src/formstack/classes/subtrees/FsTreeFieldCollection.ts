@@ -75,9 +75,9 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
     const logicTree = field.getLogicTree() as FsTreeLogic;
     if (logicTree === null) {
       const t = new FsTreeLogicDeep(
-        field.fieldId,
-        // @ts-ignore
-        new FsLogicLeafNode(field.fieldId, "condition", "option")
+        field.fieldId
+        // // @ts-ignore
+        // new FsLogicLeafNode(field.fieldId, "condition", "option")
       );
       t.ownerFieldId = field.fieldId;
       return t as T;
