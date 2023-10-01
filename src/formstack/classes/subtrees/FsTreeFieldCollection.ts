@@ -196,7 +196,7 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
       return new FsCircularDependencyNode(
         exTree.ownerFieldId,
         childField.fieldId,
-        exTree.getDependantFieldIds()
+        exTree.getDependentFieldIds()
       );
     }
 
@@ -211,7 +211,7 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
       return new FsCircularMutualExclusiveNode(
         exTree.ownerFieldId,
         childField.fieldId,
-        exTree.getDependantFieldIds(),
+        exTree.getDependentFieldIds(),
         // @ts-ignore - this is a known issue, should be using interfaces?
         { conditionalA: childContent, conditionalB: existingChildContent }
       );
@@ -219,7 +219,7 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
       return new FsCircularMutualInclusiveNode(
         exTree.ownerFieldId,
         childField.fieldId,
-        exTree.getDependantFieldIds(),
+        exTree.getDependentFieldIds(),
         // @ts-ignore - this is a known issue, should be using interfaces?
         { conditionalA: childContent, conditionalB: existingChildContent }
       );
@@ -227,7 +227,7 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
     return new FsCircularDependencyNode(
       exTree.ownerFieldId,
       childField.fieldId,
-      exTree.getDependantFieldIds()
+      exTree.getDependentFieldIds()
     );
   }
 

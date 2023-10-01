@@ -79,7 +79,6 @@ describe("FieldLogicService", () => {
       const fieldLogic = new FieldLogicService(
         circularAndInterdependentJson.fields as unknown as TFsFieldAnyJson[]
       );
-      const x = fieldLogic.getFieldIdsExtendedLogicOf("148509465");
       expect(
         fieldLogic.getFieldIdsExtendedLogicOf("148509465").sort()
       ).toStrictEqual(

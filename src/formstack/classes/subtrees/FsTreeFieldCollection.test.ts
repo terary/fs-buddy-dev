@@ -152,10 +152,10 @@ describe("FsTreeFieldCollection", () => {
       // this *needs* to be subclassed maybe facade
       // this requires stricter typing to work properly (intensive use of instance of)
       const counts = {
-        agInterdependentSection: agInterdependentSection.getDependantFieldIds(),
-        agTreeCircularRefA: agTreeCircularRefA.getDependantFieldIds(),
-        agTreeCircularRefB: agTreeCircularRefB.getDependantFieldIds(),
-        agBigDipper: agBigDipper.getDependantFieldIds(),
+        agInterdependentSection: agInterdependentSection.getDependentFieldIds(),
+        agTreeCircularRefA: agTreeCircularRefA.getDependentFieldIds(),
+        agTreeCircularRefB: agTreeCircularRefB.getDependentFieldIds(),
+        agBigDipper: agBigDipper.getDependentFieldIds(),
       };
 
       // // These are not getting loaded in correctly.

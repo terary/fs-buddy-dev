@@ -226,7 +226,7 @@ class FsTreeLogicDeep {
     // return this.#dependantFieldIds[fieldId] as T;
   }
 
-  getDependantFieldIds(): string[] {
+  x_getDependantFieldIds(): string[] {
     return this._fsDeepLogicTree.getDependantFieldIds();
   }
 
