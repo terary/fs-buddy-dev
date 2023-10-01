@@ -63,9 +63,8 @@ class FsTreeLogicDeep {
     return this._fsDeepLogicTree.rootNodeId;
   }
 
-  toPojoAt(nodeId?: string | undefined): TTreePojo<AbstractLogicNode> {
-    // this will almost always be root is it necessary are a parameter here?
-    return this._fsDeepLogicTree.toPojoAt(nodeId);
+  toPojoAt(): TTreePojo<AbstractLogicNode> {
+    return this._fsDeepLogicTree.toPojoAt(this._fsDeepLogicTree.rootNodeId);
   }
 
   static fromFieldJson(fieldJson: TFsFieldAny): FsTreeLogicDeep {

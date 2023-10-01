@@ -8,6 +8,7 @@ import { FsFieldVisibilityLinkNode, FsFormRootNode } from "./trees/nodes";
 import {
   TFsFieldLogicCheckLeaf,
   TFsFieldLogicJunction,
+  TFsLeafOperators,
   TFsLogicNode,
   TLogicJunctionOperators,
   TTreeFieldNode,
@@ -22,13 +23,6 @@ import {
   FsCircularMutualInclusiveNode,
   FsCircularMutualExclusiveNode,
 } from "./trees/FsTreeLogicDeep";
-
-// import { FsLogicLeafNode } from "./trees/nodes/FsLogicLeafNode";
-// import { FsCircularDependencyNode } from "./trees/nodes/FsCircularDependencyNode";
-// import { FsMaxDepthExceededNode } from "./trees/nodes/FsMaxDepthExceededNode";
-// import { FsLogicBranchNode } from "./trees/nodes/FsLogicBranchNode";
-// import { FsCircularMutualInclusiveNode } from "./trees/nodes/FsCircularMutualInclusiveNode";
-// import { FsCircularMutualExclusiveNode } from "./trees/nodes/FsCircularMutualExclusiveNode";
 
 import { FsTreeLogic } from "./trees/FsTreeLogic";
 import { TUiEvaluationObject } from "../Evaluator/type";
@@ -80,23 +74,31 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
   ): T {
     const logicTree = field.getLogicTree() as FsTreeLogic;
     if (logicTree === null) {
-      if (extendedTree !== undefined) {
-        extendedTree.appendChildNodeWithContent(
-          atNodeId || extendedTree.rootNodeId,
-          // if a field has no logic do we return ExtendTree with 1 and 1 one node?
-          //@ts-ignore
-          new FsLogicLeafNode(field.fieldId, "condition", "option")
-        );
-        return extendedTree as T;
-      } else {
-        const t = new FsTreeLogicDeep(
-          field.fieldId,
-          // @ts-ignore
-          new FsLogicLeafNode(field.fieldId, "condition", "option")
-        );
-        t.ownerFieldId = field.fieldId;
-        return t as T;
-      }
+      const t = new FsTreeLogicDeep(
+        field.fieldId,
+        // @ts-ignore
+        new FsLogicLeafNode(field.fieldId, "condition", "option")
+      );
+      t.ownerFieldId = field.fieldId;
+      return t as T;
+
+      // if (extendedTree !== undefined) {
+      //   extendedTree.appendChildNodeWithContent(
+      //     atNodeId || extendedTree.rootNodeId,
+      //     // if a field has no logic do we return ExtendTree with 1 and 1 one node?
+      //     //@ts-ignore
+      //     new FsLogicLeafNode(field.fieldId, "condition", "option")
+      //   );
+      //   return extendedTree as T;
+      // } else {
+      //   const t = new FsTreeLogicDeep(
+      //     field.fieldId,
+      //     // @ts-ignore - typing is wrong
+      //     new FsLogicLeafNode(field.fieldId, "condition", "option")
+      //   );
+      //   t.ownerFieldId = field.fieldId;
+      //   return t as T;
+      // }
     }
 
     const rootNodeContent = logicTree.getChildContentAt(
@@ -131,6 +133,9 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
         newBranchNode
       );
     }
+
+    // the tree needs to determine what type of node?
+    // or error nodes contain nodeContent?
 
     if (
       // this should be more intelligent
@@ -235,11 +240,6 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
         { conditionalA: childContent, conditionalB: existingChildContent }
       );
     }
-    return new FsCircularDependencyNode(
-      exTree.ownerFieldId,
-      childField.fieldId,
-      exTree.getDependentFieldIds()
-    );
   }
 
   aggregateLogicTree(fieldId: string): FsTreeLogicDeep {
