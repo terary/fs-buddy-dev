@@ -3,11 +3,12 @@ import type { TFsFieldAnyJson } from "../formstack";
 import { FsTreeField } from "../formstack/classes/subtrees/trees";
 import { FsTreeLogicDeep } from "../formstack";
 import { FsFormRootNode } from "../formstack/classes/subtrees/trees/nodes";
+import { TApiForm } from "../formstack/type.form";
 
 class FieldLogicService {
   private _fieldCollection: FsTreeFieldCollection;
-  constructor(fieldsJson: TFsFieldAnyJson[]) {
-    this._fieldCollection = FsTreeFieldCollection.fromFieldJson(fieldsJson);
+  constructor(formJson: TApiForm) {
+    this._fieldCollection = FsTreeFieldCollection.fromApiFormJson(formJson);
   }
 
   private getAllFieldNodes(): TTreeFieldNode[] {

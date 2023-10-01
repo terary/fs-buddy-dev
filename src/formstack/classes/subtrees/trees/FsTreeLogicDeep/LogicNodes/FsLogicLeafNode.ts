@@ -13,12 +13,8 @@ class FsLogicLeafNode
   private _fieldId: string;
   private _condition: TFsLeafOperators;
 
-  private _option: TFsVisibilityModes;
-  constructor(
-    fieldId: string,
-    condition: TFsLeafOperators,
-    option: TFsVisibilityModes
-  ) {
+  private _option: string;
+  constructor(fieldId: string, condition: TFsLeafOperators, option: string) {
     super();
     this._fieldId = fieldId;
     this._condition = condition;

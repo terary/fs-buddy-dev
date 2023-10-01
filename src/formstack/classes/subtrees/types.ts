@@ -37,9 +37,10 @@ type TLogicLeaf = {
 type TFsVisibilityModes = "Show" | "Hide" | null; // null indicates the logic failed to evaluated (circular reference or similar error)
 
 type TFsFieldLogicCheckLeaf = {
+  // [fieldId] $eq [option] (condition -> $eq)
   fieldId: string; // fieldId
   condition: TFsLeafOperators;
-  option: TFsVisibilityModes;
+  option: string; // TFsVisibilityModes;
 };
 
 // because - we refer to it as fieldId - not field
