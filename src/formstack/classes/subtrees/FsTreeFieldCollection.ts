@@ -95,7 +95,7 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
 
     let exTree: FsTreeLogicDeep;
     let currentBranchNodeId: string;
-    const { conditional, action, fieldJson } = rootNodeContent;
+    const { conditional, action, fieldJson, checks } = rootNodeContent;
     const newBranchNode = new FsLogicBranchNode(
       field.fieldId,
       // @ts-ignore - doesn't like '$in'
@@ -105,25 +105,17 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
     );
 
     if (extendedTree === undefined) {
-      const { conditional, action, fieldJson } =
-        rootNodeContent as TFsFieldLogicJunction<TLogicJunctionOperators>;
-
       exTree = new FsTreeLogicDeep(field.fieldId, newBranchNode);
       exTree.ownerFieldId = field.fieldId;
       atNodeId = exTree.rootNodeId;
       currentBranchNodeId = exTree.rootNodeId;
     } else {
-      // assert(atNodeId !== undefined);
-      // !!atNodeId && throw new Error('Expected something');
       exTree = extendedTree;
       currentBranchNodeId = exTree.appendChildNodeWithContent(
         atNodeId || "",
         newBranchNode
       );
     }
-
-    // the tree needs to determine what type of node?
-    // or error nodes contain nodeContent?
 
     if (
       // this should be more intelligent
@@ -170,6 +162,15 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
           this.getExtendedTree(childField, atNodeId, exTree); //(childFieldId)
         }
       });
+
+    (checks || []).forEach((check) => {
+      const { fieldId, condition, option } = check;
+      exTree.appendChildNodeWithContent(
+        currentBranchNodeId || "",
+        // @ts-ignore "field" is not a member of check
+        new FsLogicLeafNode(fieldId || check?.field || "__", condition, option)
+      );
+    });
 
     return exTree as T;
   }
@@ -364,6 +365,7 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
           return currentSection.evaluateWithValues(values) || false;
         };
 
+        // because sections can't be in sections
         field.appendChildNodeWithContent(
           field.rootNodeId,
           new FsFieldVisibilityLinkNode(isUltimatelyVisible, currentSection)

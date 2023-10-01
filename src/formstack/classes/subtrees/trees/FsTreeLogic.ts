@@ -98,12 +98,13 @@ class FsTreeLogic extends AbstractFsTreeLogic<TFsLogicNode> {
 
     const logicJson: TFsLogicNodeJson =
       fieldJson.logic as TFsFieldLogicJunctionJson;
-    const { action, conditional } = logicJson;
+    const { action, conditional, checks } = logicJson;
     const rootNode = {
       fieldId: fieldJson.id || "__MISSING_ID__",
       conditional,
       action: action || "Show", // *tmc* shouldn't be implementing business logic here
       logicJson,
+      checks,
     };
 
     const tree = new FsTreeLogic(
@@ -197,11 +198,14 @@ const transformLogicLeafJsonToLogicLeafs = (
   const op = conditional === "all" ? "$and" : "$or";
 
   const leafExpressions = (checks || []).map((check) => {
-    const { condition, field, option } = check;
+    const { condition, field, option } =
+      check as unknown as TFsFieldLogicCheckLeafJson;
     return {
       fieldId: field + "" || "__MISSING_ID__",
       fieldJson: check,
-      condition: convertFsOperatorToOp(check),
+      condition: convertFsOperatorToOp(
+        check as unknown as TFsFieldLogicCheckLeafJson
+      ),
       option,
     };
   });

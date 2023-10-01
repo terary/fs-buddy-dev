@@ -89,6 +89,7 @@ class FsTreeLogicDeepInternal extends AbstractFsTreeLogic<AbstractLogicNode> {
   isInDependentsFields(fieldId: string): boolean {
     return this.dependantFieldIds.includes(fieldId);
   }
+
   toPojoAt(
     nodeId?: string | undefined
     // transformer?: (<T>(nodeContent: T) => TNodePojo<T>) | undefined
@@ -149,11 +150,11 @@ const transformLogicLeafJsonToLogicLeafs = (
 ) => {
   const { action, conditional, checks } = logicJson || {};
   const op = conditional === "all" ? "$and" : "$or";
-
+  // this doesn't look right, we're not use "op", "action", "conditional" ?
   const leafExpressions = (checks || []).map((check) => {
-    const { condition, field, option } = check;
+    const { condition, fieldId, option } = check;
     return {
-      fieldId: field + "" || "__MISSING_ID__",
+      fieldId: fieldId + "" || "__MISSING_ID__",
       fieldJson: check,
       condition: check.condition,
       option,

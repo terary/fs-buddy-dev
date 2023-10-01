@@ -2,3 +2,4 @@ build
 dist
 dist.save
 node_modules
+bad-branch

@@ -53,6 +53,7 @@ type TFsFieldLogicJunction<C> = {
   fieldJson: any;
   action: TFsVisibilityModes;
   conditional: C; // TLogicJunctionOperators;
+  checks?: null | "" | TFsFieldLogicCheckLeaf[];
   // 'ownerFieldId', doesn't belong here, because the json version will not have it.
   ownerFieldId: string; // all logic is has a field it belongs to
 };
