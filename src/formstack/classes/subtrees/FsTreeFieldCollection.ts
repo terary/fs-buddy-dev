@@ -1,8 +1,6 @@
 import { AbstractExpressionTree } from "predicate-tree-advanced-poc/dist/src";
 
-import { TFsFieldAnyJson } from "../types";
 import { FsTreeField } from "./trees/FsTreeField";
-import { transformers } from "../../transformers";
 
 import { FsFieldVisibilityLinkNode, FsFormRootNode } from "./trees/nodes";
 import {
@@ -26,9 +24,21 @@ import {
 
 import { FsTreeLogic } from "./trees/FsTreeLogic";
 import { TUiEvaluationObject } from "../Evaluator/type";
-import { TSubmissionJson } from "../../type.form";
+import { TApiForm, TSubmissionJson } from "../../type.form";
 import { IEValuator } from "../Evaluator/IEvaluator";
 import { TFsFieldAny } from "../../type.field";
+
+interface ILogicCheck {
+  fieldId: string;
+  // fieldJson: {
+  //   field: 152293117,
+  //   condition: "equals",
+  //   option: "Zero",
+  // },
+  condition: TFsLeafOperators;
+  option: string;
+}
+
 class FsTreeFieldCollection extends AbstractExpressionTree<
   TTreeFieldNode | FsFormRootNode
 > {
@@ -74,31 +84,9 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
   ): T {
     const logicTree = field.getLogicTree() as FsTreeLogic;
     if (logicTree === null) {
-      const t = new FsTreeLogicDeep(
-        field.fieldId
-        // // @ts-ignore
-        // new FsLogicLeafNode(field.fieldId, "condition", "option")
-      );
+      const t = new FsTreeLogicDeep(field.fieldId);
       t.ownerFieldId = field.fieldId;
       return t as T;
-
-      // if (extendedTree !== undefined) {
-      //   extendedTree.appendChildNodeWithContent(
-      //     atNodeId || extendedTree.rootNodeId,
-      //     // if a field has no logic do we return ExtendTree with 1 and 1 one node?
-      //     //@ts-ignore
-      //     new FsLogicLeafNode(field.fieldId, "condition", "option")
-      //   );
-      //   return extendedTree as T;
-      // } else {
-      //   const t = new FsTreeLogicDeep(
-      //     field.fieldId,
-      //     // @ts-ignore - typing is wrong
-      //     new FsLogicLeafNode(field.fieldId, "condition", "option")
-      //   );
-      //   t.ownerFieldId = field.fieldId;
-      //   return t as T;
-      // }
     }
 
     const rootNodeContent = logicTree.getChildContentAt(
@@ -164,8 +152,13 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
         if (exTree.isExistInDependencyChain(childField)) {
           exTree.appendChildNodeWithContent(
             currentBranchNodeId,
-            // @ts-ignore TFsLogicField not compatible with Abstract
-            this.getCorrectCircularNode(exTree, childField, childContent)
+            // @ts-ignore
+            this.getCorrectCircularNode(
+              exTree,
+              // @ts-ignore
+              childField,
+              childContent as unknown as TFsFieldLogicCheckLeaf // TFsFieldLogicCheckLeaf
+            )
           );
         } else if (childField.getLogicTree() === null) {
           const { fieldId, condition, option } = childContent;
@@ -183,8 +176,8 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
 
   private isTwoConditionsMutuallyExclusive(
     fieldJson: TFsFieldAny,
-    conditionA: TFsFieldLogicCheckLeaf,
-    conditionB: TFsFieldLogicCheckLeaf
+    conditionA: ILogicCheck, // TFsFieldLogicCheckLeaf,
+    conditionB: ILogicCheck //TFsFieldLogicCheckLeaf
   ) {
     if (
       ["select", "radio"].includes(fieldJson.type) &&
@@ -199,13 +192,15 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
 
   private getCorrectCircularNode(
     exTree: FsTreeLogicDeep,
+    // childField: ILogicCheck,
+    // childContent: ILogicCheck
     childField: FsTreeField,
     childContent: TFsFieldLogicCheckLeaf
   ): TFsLogicNode {
     const existingChildContent =
       exTree.getChildContentByFieldId<TFsFieldLogicCheckLeaf>(
         childContent.fieldId
-      );
+      ) as FsLogicLeafNode;
     const logicSubjectTreeField = this.getFieldById(childField.fieldId);
 
     if (!childContent || !existingChildContent) {
@@ -219,7 +214,6 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
     const isMutualExclusiveConflict = this.isTwoConditionsMutuallyExclusive(
       logicSubjectTreeField.fieldJson,
       childContent,
-      // @ts-ignore - this is a known issue, should be using interfaces?
       existingChildContent
     );
 
@@ -228,7 +222,6 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
         exTree.ownerFieldId,
         childField.fieldId,
         exTree.getDependentFieldIds(),
-        // @ts-ignore - this is a known issue, should be using interfaces?
         { conditionalA: childContent, conditionalB: existingChildContent }
       );
     } else {
@@ -236,7 +229,6 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
         exTree.ownerFieldId,
         childField.fieldId,
         exTree.getDependentFieldIds(),
-        // @ts-ignore - this is a known issue, should be using interfaces?
         { conditionalA: childContent, conditionalB: existingChildContent }
       );
     }
@@ -245,7 +237,6 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
   aggregateLogicTree(fieldId: string): FsTreeLogicDeep {
     const field = this.getFieldTreeByFieldId(fieldId) as FsTreeField;
 
-    //@ts-ignore
     return this.getExtendedTree(field);
   }
 
@@ -284,7 +275,6 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
         const { fieldId, field } = fieldNode;
 
         const visibilityNode = field.getVisibilityNode();
-        // return x?.parentNode?.fieldId === section.fieldId;
 
         return Object.is(visibilityNode?.parentNode, section);
       })
@@ -304,7 +294,7 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
       !("data" in apiSubmissionJson) ||
       !Array.isArray(apiSubmissionJson.data)
     ) {
-      console.log("Do not not understand apiSubmissionJson");
+      console.log("Did not understand apiSubmissionJson");
       console.log({ apiSubmissionJson });
       return [];
     }
@@ -329,25 +319,24 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
 
     return submissionUiDataItems;
   }
-  static fromFieldJson(
-    fieldsJson: TFsFieldAnyJson[],
+
+  static fromApiFormJson(
+    formJson: TApiForm,
     formId = "_FORM_ID_"
   ): FsTreeFieldCollection {
+    const fieldsJson = formJson.fields;
+
     const tree = new FsTreeFieldCollection(formId, new FsFormRootNode(formId));
 
     (fieldsJson || []).forEach((fieldJson) => {
-      const field = FsTreeField.fromFieldJson(
-        transformers.fieldJson(fieldJson)
-      );
+      const field = FsTreeField.fromFieldJson(fieldJson);
 
-      // this doesn't belong in the loop ??
       tree.appendChildNodeWithContent(tree.rootNodeId, {
         fieldId: field.fieldId,
         field,
       });
     });
 
-    //
     tree.getChildrenContentOf(tree.rootNodeId).forEach((childContent) => {
       const { fieldId, field } = childContent as TTreeFieldNode;
       tree._fieldIdNodeMap[fieldId] = field;
@@ -371,7 +360,7 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
         const isUltimatelyVisible = (values: {
           [fieldId: string]: any;
         }): boolean => {
-          // @ts-ignore - current section may be null
+          // @ts-ignore - section may be null. This depends on 'evaluateWithValues' which is not complete
           return currentSection.evaluateWithValues(values) || false;
         };
 

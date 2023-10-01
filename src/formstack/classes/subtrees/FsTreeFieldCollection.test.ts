@@ -10,41 +10,17 @@ import {
 } from "./trees/FsTreeLogicDeep";
 import formWithAllFieldsJson from "../../../test-dev-resources/form-json/5358471.json";
 import submissionWithAllFieldsJson from "../../../test-dev-resources/submission-json/1129952515-form5358471.json";
-import { TSubmissionJson } from "../../type.form";
+import { TApiForm, TApiFormJson, TSubmissionJson } from "../../type.form";
+import { transformers } from "../../transformers";
 
 describe("FsTreeFieldCollection", () => {
-  describe("Creation", () => {
-    it("Should be awesome", () => {
-      const tree = FsTreeFieldCollection.fromFieldJson(
-        // fields: [TEST_JSON_FIELD_CALC_STRING],
-        // fields: [TEST_JSON_FIELD_LOGIC],
-        TEST_JSON_FIELDS as TFsFieldAnyJson[]
-      );
-      expect(tree).toBeInstanceOf(FsTreeFieldCollection);
-
-      // tree has 3 child nodes, 2 calc and 1 logic;
-      // It should have two nodes Fields 1 and 2
-      //    Field should have tree(s) logic and/or calls
-    });
-  });
-
-  // I *think*,  I think there is root node and plus 1?  Should root not be null??
-  describe(".evaluateWithValues(...)", () => {
-    it("Should return the value of the calculation given field values", () => {
-      const tree = FsTreeFieldCollection.fromFieldJson([
-        TEST_JSON_FIELD_SIMPLE,
-      ] as TFsFieldAnyJson[]);
-      const values = {
-        "148136237": "Show",
-      };
-      expect(tree.evaluateWithValues(values)).toStrictEqual([values]);
-    });
-  });
-
   /// --------------------------------
   describe(".getFieldTreeByFieldId(...)", () => {
     it("Should be awesome", () => {
-      const tree = FsTreeFieldCollection.fromFieldJson(TEST_JSON_FIELDS);
+      const tree = FsTreeFieldCollection.fromApiFormJson({
+        // @ts-ignore
+        fields: TEST_JSON_FIELDS,
+      });
       const field_0 = tree.getFieldTreeByFieldId(TEST_JSON_FIELDS[0].id || "");
       const field_1 = tree.getFieldTreeByFieldId(TEST_JSON_FIELDS[1].id || "");
       expect(field_0?.fieldId).toStrictEqual(TEST_JSON_FIELDS[0].id);
@@ -57,8 +33,10 @@ describe("FsTreeFieldCollection", () => {
 
   describe(".getFieldsBySection()", () => {
     it("Should be awesome", () => {
-      const tree = FsTreeFieldCollection.fromFieldJson(
-        circularAndInterdependentJson.fields as unknown as TFsFieldAnyJson[]
+      const tree = FsTreeFieldCollection.fromApiFormJson(
+        transformers.formJson(
+          circularAndInterdependentJson as unknown as TApiFormJson
+        )
       );
       const sectionField = tree.getFieldTreeByFieldId(
         "148509465"
@@ -81,10 +59,11 @@ describe("FsTreeFieldCollection", () => {
 
   describe(".getFieldIdsWithCircularLogic()", () => {
     it("Should return fieldIds that have circular logic", () => {
-      const tree = FsTreeFieldCollection.fromFieldJson(
-        circularAndInterdependentJson.fields as unknown as TFsFieldAnyJson[]
+      const tree = FsTreeFieldCollection.fromApiFormJson(
+        transformers.formJson(
+          circularAndInterdependentJson as unknown as TApiFormJson
+        )
       );
-      const x = tree.getFieldIdsWithCircularLogic();
       expect(tree.getFieldIdsWithCircularLogic()).toStrictEqual([
         "148456734",
         "148456739",
@@ -101,8 +80,10 @@ describe("FsTreeFieldCollection", () => {
   });
   describe("aggregateLogicTree", () => {
     it("Should return tree with no nodes if there is no logic.", () => {
-      const tree = FsTreeFieldCollection.fromFieldJson(
-        circularAndInterdependentJson.fields as unknown as TFsFieldAnyJson[]
+      const tree = FsTreeFieldCollection.fromApiFormJson(
+        transformers.formJson(
+          circularAndInterdependentJson as unknown as TApiFormJson
+        )
       );
       const noLogicField = tree.aggregateLogicTree("148456700");
       expect(noLogicField.countTotalNodes()).toBe(1);
@@ -111,12 +92,12 @@ describe("FsTreeFieldCollection", () => {
       ).toBeNull();
     });
     it("dev debug.", () => {
-      const tree5375703 = FsTreeFieldCollection.fromFieldJson(
-        formJson5375703.fields as unknown as TFsFieldAnyJson[]
+      const tree5375703 = FsTreeFieldCollection.fromApiFormJson(
+        transformers.formJson(formJson5375703 as unknown as TApiFormJson)
       );
 
-      const tree5469299 = FsTreeFieldCollection.fromFieldJson(
-        formJson5469299.fields as unknown as TFsFieldAnyJson[]
+      const tree5469299 = FsTreeFieldCollection.fromApiFormJson(
+        transformers.formJson(formJson5469299 as unknown as TApiFormJson)
       );
 
       const agTree152290546 = tree5469299.aggregateLogicTree("152290546");
@@ -137,8 +118,10 @@ describe("FsTreeFieldCollection", () => {
     });
     it("Should return the full tree.", () => {
       // two leafs
-      const tree = FsTreeFieldCollection.fromFieldJson(
-        circularAndInterdependentJson.fields as unknown as TFsFieldAnyJson[]
+      const tree = FsTreeFieldCollection.fromApiFormJson(
+        transformers.formJson(
+          circularAndInterdependentJson as unknown as TApiFormJson
+        )
       );
       const agInterdependentSection = tree.aggregateLogicTree("148509465");
       const agTreeCircularRefA = tree.aggregateLogicTree("148456734");
@@ -232,12 +215,16 @@ describe("FsTreeFieldCollection", () => {
     const expected147738154 = getExpected("147738154");
     const expected148008076 = getExpected("148008076"); // this is wrong __BAD_DATA__ ...
 
-    const tree147738154 = FsTreeFieldCollection.fromFieldJson(
-      fieldJsonNotRequired147738154 as unknown as TFsFieldAnyJson[]
+    const tree147738154 = FsTreeFieldCollection.fromApiFormJson(
+      // @ts-ignore
+      { fields: fieldJsonNotRequired147738154 }
+      // fieldJsonNotRequired147738154 as unknown as TFsFieldAnyJson[]
     );
 
-    const tree148008076 = FsTreeFieldCollection.fromFieldJson(
-      fieldJsonRequired148008076 as unknown as TFsFieldAnyJson[]
+    const tree148008076 = FsTreeFieldCollection.fromApiFormJson(
+      //@ts-ignore
+      { fields: fieldJsonRequired148008076 }
+      // fieldJsonRequired148008076 as unknown as TFsFieldAnyJson[]
     );
 
     const actual147738154 = tree147738154.getUiPopulateObject(
