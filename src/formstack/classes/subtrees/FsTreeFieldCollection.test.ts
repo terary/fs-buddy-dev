@@ -91,7 +91,7 @@ describe("FsTreeFieldCollection", () => {
         noLogicField.getChildContentAt(noLogicField.rootNodeId)
       ).toBeNull();
     });
-    it("dev debug.", () => {
+    it.skip("dev debug.", () => {
       const tree5375703 = FsTreeFieldCollection.fromApiFormJson(
         transformers.formJson(formJson5375703 as unknown as TApiFormJson)
       );
@@ -116,7 +116,7 @@ describe("FsTreeFieldCollection", () => {
       };
       expect(pojo).toStrictEqual(dev_debug_expected_pojo);
     });
-    it.only("dev debug.", () => {
+    it("dev debug.", () => {
       const tree5375703 = FsTreeFieldCollection.fromApiFormJson(
         transformers.formJson(formJson5375703 as unknown as TApiFormJson)
       );

@@ -1,3 +1,4 @@
+import { TStatusRecord } from "../../../../../../chrome-extension/type";
 import {
   TFsFieldLogicCheckLeaf,
   TFsLeafOperators,
@@ -38,6 +39,34 @@ class FsLogicLeafNode
       condition: this.condition,
       option: this.option,
     };
+  }
+
+  getStatusMessage(): TStatusRecord[] {
+    const debugMessage = JSON.stringify({
+      nodeType: "FsLogicLeafNode",
+      english: `Logic Term: this field '${this.condition}' '${this.option}'`,
+      fieldId: this.fieldId,
+      // rootFieldId: this.parentBranchNode?.ownerFieldId,
+      condition: this.condition,
+      option: this.option,
+      // junctionOperator: this.parentBranchNode?.conditional,
+      // json: this.fieldJson,
+    });
+
+    const logicMessage = `
+      logic:  '${this.condition}' is  '${this.option}' `;
+    return [
+      {
+        severity: "debug",
+        fieldId: this.fieldId,
+        message: debugMessage,
+      },
+      {
+        severity: "logic",
+        fieldId: this.fieldId,
+        message: logicMessage,
+      },
+    ];
   }
 }
 
