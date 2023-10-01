@@ -2,7 +2,7 @@ import {
   TFsFieldLogicCheckLeaf,
   TFsLeafOperators,
   TFsVisibilityModes,
-} from "../../types";
+} from "../../../types";
 import { AbstractLogicNode } from "./AbstractLogicNode";
 
 //TFsFieldLogicCheckLeaf

@@ -4,21 +4,21 @@ import {
   TGenericNodeContent,
   TTreePojo,
 } from "predicate-tree-advanced-poc/dist/src";
-import { TFsFieldAnyJson } from "../../types";
+import { TFsFieldAnyJson } from "../../../types";
 import {
   TFsFieldLogicJunction,
   TFsFieldLogicJunctionJson,
   TFsLogicNode,
   TLogicJunctionOperators,
   TSimpleDictionary,
-} from "../types";
-import { AbstractFsTreeLogic } from "./AbstractFsTreeLogic";
-import { FsCircularDependencyNode } from "./nodes/FsCircularDependencyNode";
-import { FsLogicBranchNode } from "./nodes/FsLogicBranchNode";
-import { FsLogicLeafNode } from "./nodes/FsLogicLeafNode";
-import { FsTreeField } from "./FsTreeField";
-import { TFsFieldAny } from "../../../type.field";
-import { AbstractLogicNode } from "./nodes/AbstractLogicNode";
+} from "../../types";
+import { AbstractFsTreeLogic } from "../AbstractFsTreeLogic";
+import { FsCircularDependencyNode } from "./LogicNodes/FsCircularDependencyNode";
+import { FsLogicBranchNode } from "./LogicNodes/FsLogicBranchNode";
+import { FsLogicLeafNode } from "./LogicNodes/FsLogicLeafNode";
+import { FsTreeField } from "../FsTreeField";
+import { TFsFieldAny } from "../../../../type.field";
+import { AbstractLogicNode } from "./LogicNodes/AbstractLogicNode";
 
 class FsTreeLogicDeepInternal extends AbstractFsTreeLogic<AbstractLogicNode> {
   //  private _dependantFieldIds: string[] = [];

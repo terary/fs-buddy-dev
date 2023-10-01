@@ -1,4 +1,4 @@
-import { TFsFieldLogicCheckLeaf } from "../../types";
+import { TFsFieldLogicCheckLeaf } from "../../../types";
 import { FsCircularDependencyNode } from "./FsCircularDependencyNode";
 
 type RuleConflictType = {
@@ -6,7 +6,7 @@ type RuleConflictType = {
   conditionalB: TFsFieldLogicCheckLeaf;
 };
 
-class FsCircularMutualInclusiveNode extends FsCircularDependencyNode {
+class FsCircularMutualExclusiveNode extends FsCircularDependencyNode {
   private _ruleConflict: RuleConflictType;
   constructor(
     sourceFieldId: string,
@@ -42,4 +42,4 @@ class FsCircularMutualInclusiveNode extends FsCircularDependencyNode {
     };
   }
 }
-export { FsCircularMutualInclusiveNode };
+export { FsCircularMutualExclusiveNode };

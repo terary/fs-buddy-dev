@@ -4,10 +4,10 @@ import { FsTreeField } from "./trees/FsTreeField";
 import circularAndInterdependentJson from "../../../test-dev-resources/form-json/5375703.json";
 import formJson5375703 from "../../../test-dev-resources/form-json/5375703.json";
 import formJson5469299 from "../../../test-dev-resources/form-json/5469299.json";
-import { TFsFieldAny } from "../../type.field";
-import { FsTreeLogic } from "./trees/FsTreeLogic";
-import { FsCircularDependencyNode } from "./trees/nodes/FsCircularDependencyNode";
-import { FsLogicLeafNode } from "./trees/nodes/FsLogicLeafNode";
+import {
+  FsCircularDependencyNode,
+  FsLogicLeafNode,
+} from "./trees/FsTreeLogicDeep";
 import formWithAllFieldsJson from "../../../test-dev-resources/form-json/5358471.json";
 import submissionWithAllFieldsJson from "../../../test-dev-resources/submission-json/1129952515-form5358471.json";
 import { TSubmissionJson } from "../../type.form";

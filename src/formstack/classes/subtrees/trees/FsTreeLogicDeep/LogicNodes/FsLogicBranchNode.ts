@@ -4,7 +4,7 @@ import type {
   TFsVisibilityModes,
   TFsFieldLogicJunction,
   TLogicJunctionOperators,
-} from "../../types";
+} from "../../../types";
 import { AbstractLogicNode } from "./AbstractLogicNode";
 
 //TFsFieldLogicJunction
