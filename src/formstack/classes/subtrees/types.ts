@@ -1,6 +1,8 @@
 import { FsTreeField } from "./trees";
-import { FsCircularDependencyNode } from "./trees/nodes/FsCircularDependencyNode";
-import { FsMaxDepthExceededNode } from "./trees/nodes/FsMaxDepthExceededNode";
+import {
+  FsCircularDependencyNode,
+  FsMaxDepthExceededNode,
+} from "./trees/FsTreeLogicDeep";
 
 type TFsArithmeticOperator = { operator: "+" | "*" | "-" | "/" };
 type TFsArithmeticLeaf = {

@@ -1,2 +1,0 @@
-class FsMaxDepthExceededNode {}
-export { FsMaxDepthExceededNode };

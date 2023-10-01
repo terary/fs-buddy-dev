@@ -2,11 +2,14 @@ import {
   TFsFieldLogicCheckLeaf,
   TFsLeafOperators,
   TFsVisibilityModes,
-} from "../../types";
-import { AbstractNode } from "./AbstractNode";
+} from "../../../types";
+import { AbstractLogicNode } from "./AbstractLogicNode";
 
 //TFsFieldLogicCheckLeaf
-class FsLogicLeafNode extends AbstractNode implements TFsFieldLogicCheckLeaf {
+class FsLogicLeafNode
+  extends AbstractLogicNode
+  implements TFsFieldLogicCheckLeaf
+{
   private _fieldId: string;
   private _condition: TFsLeafOperators;
 
@@ -30,6 +33,15 @@ class FsLogicLeafNode extends AbstractNode implements TFsFieldLogicCheckLeaf {
   }
   get option() {
     return this._option;
+  }
+
+  toPojo(): object {
+    return {
+      nodeType: this.nodeType,
+      fieldId: this.fieldId,
+      condition: this.condition,
+      option: this.option,
+    };
   }
 }
 

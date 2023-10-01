@@ -108,6 +108,7 @@ class FsTreeLogic extends AbstractFsTreeLogic<TFsLogicNode> {
 
     const tree = new FsTreeLogic(
       fieldJson.id || "_calc_tree_",
+      // @ts-ignore - there is a little confuse about a tree node and a logic node
       rootNode as TFsLogicNode
     );
     tree._action = action || null;
@@ -118,6 +119,7 @@ class FsTreeLogic extends AbstractFsTreeLogic<TFsLogicNode> {
       tree.fieldJson as TFsFieldLogicJunctionJson
     );
 
+    // @ts-ignore - there is a little confuse about a tree node and a logic node
     leafExpressions.forEach((childNode: TFsLogicNode) => {
       // const { condition, fieldId, option } =
       //   childNode as TFsFieldLogicCheckLeaf;

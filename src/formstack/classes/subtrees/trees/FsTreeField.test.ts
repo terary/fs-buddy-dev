@@ -1,7 +1,7 @@
 import { FsTreeField } from "./FsTreeField";
 import { TFsFieldAnyJson } from "../../types";
 import { FsTreeLogic } from "./FsTreeLogic";
-import type { TFsFieldType } from "../../../type.field";
+import type { TFsFieldAny, TFsFieldType } from "../../../type.field";
 // TFsFieldType
 import { MultipleLogicTreeError } from "../../../errors/MultipleLogicTreeError";
 import { FsTreeCalcString } from "./FsTreeCalcString";
@@ -417,7 +417,7 @@ describe("FsTreeField", () => {
         transformers.fieldJson(TEST_JSON_FIELD as TFsFieldAnyJson)
       );
 
-      const subtreeConstructor = (fieldJson: TFsFieldAnyJson) =>
+      const subtreeConstructor = (fieldJson: TFsFieldAny) =>
         FsTreeLogic.fromFieldJson(TEST_JSON_FIELD as TFsFieldAnyJson);
 
       FsTreeField.createSubtreeFromFieldJson(
@@ -466,7 +466,7 @@ describe("FsTreeField", () => {
         transformers.fieldJson(TEST_JSON_FIELD as TFsFieldAnyJson)
       );
 
-      const subtreeConstructor = (fieldJson: TFsFieldAnyJson) =>
+      const subtreeConstructor = (fieldJson: TFsFieldAny) =>
         FsTreeCalcString.fromFieldJson(TEST_JSON_FIELD as TFsFieldAnyJson);
 
       FsTreeField.createSubtreeFromFieldJson(

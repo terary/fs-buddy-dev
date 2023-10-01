@@ -1,7 +1,6 @@
 import { AbstractExpressionTree } from "predicate-tree-advanced-poc/dist/src";
 
 import { TFsFieldAnyJson } from "../types";
-import { FsTreeLogicDeep } from "./trees/FsTreeLogicDeep";
 import { FsTreeField } from "./trees/FsTreeField";
 import { transformers } from "../../transformers";
 
@@ -9,17 +8,27 @@ import { FsFieldVisibilityLinkNode, FsFormRootNode } from "./trees/nodes";
 import {
   TFsFieldLogicCheckLeaf,
   TFsFieldLogicJunction,
+  TFsLeafOperators,
+  TFsLogicNode,
   TLogicJunctionOperators,
   TTreeFieldNode,
 } from "./types";
-import { FsLogicLeafNode } from "./trees/nodes/FsLogicLeafNode";
-import { FsCircularDependencyNode } from "./trees/nodes/FsCircularDependencyNode";
-import { FsMaxDepthExceededNode } from "./trees/nodes/FsMaxDepthExceededNode";
-import { FsLogicBranchNode } from "./trees/nodes/FsLogicBranchNode";
+
+import {
+  FsTreeLogicDeep,
+  FsLogicLeafNode,
+  FsCircularDependencyNode,
+  FsMaxDepthExceededNode,
+  FsLogicBranchNode,
+  FsCircularMutualInclusiveNode,
+  FsCircularMutualExclusiveNode,
+} from "./trees/FsTreeLogicDeep";
+
 import { FsTreeLogic } from "./trees/FsTreeLogic";
 import { TUiEvaluationObject } from "../Evaluator/type";
 import { TSubmissionJson } from "../../type.form";
 import { IEValuator } from "../Evaluator/IEvaluator";
+import { TFsFieldAny } from "../../type.field";
 class FsTreeFieldCollection extends AbstractExpressionTree<
   TTreeFieldNode | FsFormRootNode
 > {
@@ -65,23 +74,31 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
   ): T {
     const logicTree = field.getLogicTree() as FsTreeLogic;
     if (logicTree === null) {
-      if (extendedTree !== undefined) {
-        extendedTree.appendChildNodeWithContent(
-          atNodeId || extendedTree.rootNodeId,
-          // if a field has no logic do we return ExtendTree with 1 and 1 one node?
-          //@ts-ignore
-          new FsLogicLeafNode(field.fieldId, "condition", "option")
-        );
-        return extendedTree as T;
-      } else {
-        const t = new FsTreeLogicDeep(
-          field.fieldId,
-          // @ts-ignore
-          new FsLogicLeafNode(field.fieldId, "condition", "option")
-        );
-        t.ownerFieldId = field.fieldId;
-        return t as T;
-      }
+      const t = new FsTreeLogicDeep(
+        field.fieldId,
+        // @ts-ignore
+        new FsLogicLeafNode(field.fieldId, "condition", "option")
+      );
+      t.ownerFieldId = field.fieldId;
+      return t as T;
+
+      // if (extendedTree !== undefined) {
+      //   extendedTree.appendChildNodeWithContent(
+      //     atNodeId || extendedTree.rootNodeId,
+      //     // if a field has no logic do we return ExtendTree with 1 and 1 one node?
+      //     //@ts-ignore
+      //     new FsLogicLeafNode(field.fieldId, "condition", "option")
+      //   );
+      //   return extendedTree as T;
+      // } else {
+      //   const t = new FsTreeLogicDeep(
+      //     field.fieldId,
+      //     // @ts-ignore - typing is wrong
+      //     new FsLogicLeafNode(field.fieldId, "condition", "option")
+      //   );
+      //   t.ownerFieldId = field.fieldId;
+      //   return t as T;
+      // }
     }
 
     const rootNodeContent = logicTree.getChildContentAt(
@@ -117,10 +134,13 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
       );
     }
 
+    // the tree needs to determine what type of node?
+    // or error nodes contain nodeContent?
+
     if (
       // this should be more intelligent
-      exTree.getTreeNodeIdsAt(exTree.rootNodeId).length >
-      FsTreeFieldCollection.MAX_DEPTH
+      // exTree.getTreeNodeIdsAt(exTree.rootNodeId).length >
+      exTree.countTotalNodes() > FsTreeFieldCollection.MAX_DEPTH
     ) {
       exTree.appendChildNodeWithContent(
         currentBranchNodeId,
@@ -128,8 +148,8 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
       );
       return exTree as T;
     }
-    // technically logicTree should always have children but in reality it's sometimes missing.
 
+    // technically logicTree should always have children but in reality it's sometimes missing.
     logicTree
       .getChildrenNodeIdsOf(logicTree.rootNodeId)
       .forEach((logicChildNodeId: string) => {
@@ -144,11 +164,8 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
         if (exTree.isExistInDependencyChain(childField)) {
           exTree.appendChildNodeWithContent(
             currentBranchNodeId,
-            new FsCircularDependencyNode(
-              exTree.ownerFieldId,
-              childField.fieldId,
-              exTree.getDependantFieldIds()
-            )
+            // @ts-ignore TFsLogicField not compatible with Abstract
+            this.getCorrectCircularNode(exTree, childField, childContent)
           );
         } else if (childField.getLogicTree() === null) {
           const { fieldId, condition, option } = childContent;
@@ -162,6 +179,67 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
       });
 
     return exTree as T;
+  }
+
+  private isTwoConditionsMutuallyExclusive(
+    fieldJson: TFsFieldAny,
+    conditionA: TFsFieldLogicCheckLeaf,
+    conditionB: TFsFieldLogicCheckLeaf
+  ) {
+    if (
+      ["select", "radio"].includes(fieldJson.type) &&
+      conditionA.condition === conditionB.condition &&
+      conditionA.option === conditionB.option
+    ) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private getCorrectCircularNode(
+    exTree: FsTreeLogicDeep,
+    childField: FsTreeField,
+    childContent: TFsFieldLogicCheckLeaf
+  ): TFsLogicNode {
+    const existingChildContent =
+      exTree.getChildContentByFieldId<TFsFieldLogicCheckLeaf>(
+        childContent.fieldId
+      );
+    const logicSubjectTreeField = this.getFieldById(childField.fieldId);
+
+    if (!childContent || !existingChildContent) {
+      return new FsCircularDependencyNode(
+        exTree.ownerFieldId,
+        childField.fieldId,
+        exTree.getDependentFieldIds()
+      );
+    }
+
+    const isMutualExclusiveConflict = this.isTwoConditionsMutuallyExclusive(
+      logicSubjectTreeField.fieldJson,
+      childContent,
+      // @ts-ignore - this is a known issue, should be using interfaces?
+      existingChildContent
+    );
+
+    if (isMutualExclusiveConflict) {
+      return new FsCircularMutualExclusiveNode(
+        exTree.ownerFieldId,
+        childField.fieldId,
+        exTree.getDependentFieldIds(),
+        // @ts-ignore - this is a known issue, should be using interfaces?
+        { conditionalA: childContent, conditionalB: existingChildContent }
+      );
+    } else {
+      return new FsCircularMutualInclusiveNode(
+        exTree.ownerFieldId,
+        childField.fieldId,
+        exTree.getDependentFieldIds(),
+        // @ts-ignore - this is a known issue, should be using interfaces?
+        { conditionalA: childContent, conditionalB: existingChildContent }
+      );
+    }
   }
 
   aggregateLogicTree(fieldId: string): FsTreeLogicDeep {
@@ -285,7 +363,7 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
     for (let childNode of sortedNodes) {
       // order is necessary
       const { fieldId, field } = childNode;
-      const { type: fieldType } = field?.fieldJson as TFsFieldAnyJson;
+      const { type: fieldType } = field?.fieldJson as TFsFieldAny;
 
       if (fieldType && fieldType === "section") {
         currentSection = field;
@@ -313,8 +391,8 @@ const sortBySortProperty = (
   fieldNodeA: TTreeFieldNode,
   fieldNodeB: TTreeFieldNode
 ) => {
-  const fieldAJson = fieldNodeA.field.fieldJson as TFsFieldAnyJson;
-  const fieldBJson = fieldNodeB.field.fieldJson as TFsFieldAnyJson;
+  const fieldAJson = fieldNodeA.field.fieldJson as TFsFieldAny;
+  const fieldBJson = fieldNodeB.field.fieldJson as TFsFieldAny;
 
   if (fieldAJson.sort === undefined || fieldBJson.sort === undefined) {
     return 1;

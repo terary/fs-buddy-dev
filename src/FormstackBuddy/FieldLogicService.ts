@@ -83,7 +83,7 @@ class FieldLogicService {
   getFieldIdsExtendedLogicOf(fieldId: string): string[] {
     return this._fieldCollection
       .aggregateLogicTree(fieldId)
-      .getDependantFieldIds();
+      .getDependentFieldIds();
   }
 
   wrapFieldIdsIntoLabelOptionList(fieldIds: string[]) {

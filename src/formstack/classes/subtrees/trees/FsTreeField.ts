@@ -9,7 +9,7 @@ import { FsFieldVisibilityLinkNode } from "./nodes/FsFieldVisibilityLinkNode";
 import { AbstractFsTreeGeneric } from "./AbstractFsTreeGeneric";
 import { TFsVisibilityModes } from "../types";
 import { MultipleLogicTreeError } from "../../../errors/MultipleLogicTreeError";
-import { FsCircularDependencyNode } from "./nodes/FsCircularDependencyNode";
+import { FsCircularDependencyNode } from "./FsTreeLogicDeep";
 import { AbstractNode } from "./nodes/AbstractNode";
 import {
   TFsFieldAny,
@@ -230,7 +230,8 @@ class FsTreeField extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
   }
 
   static fromFieldJson(fieldJson: TFsFieldAny): FsTreeField {
-    const field = new FsTreeField("_FIELD_ID_", {
+    // I think there is issues with using fieldId and the way subtree get rooted and re-rooted
+    const field = new FsTreeField(`_FIELD_ID_: ${fieldJson.id}`, {
       // @ts-ignore
       fieldId: fieldJson.id,
       label: fieldJson.label,
@@ -242,7 +243,7 @@ class FsTreeField extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
 
     if (fieldJson.calculation) {
       const subtreeConstructor = (fieldJson: TFsFieldAny) =>
-        FsTreeCalcString.fromFieldJson(fieldJson);
+        FsTreeCalcString.fromFieldJson(fieldJson as unknown as TFsFieldAnyJson);
 
       FsTreeField.createSubtreeFromFieldJson(
         field,
@@ -253,8 +254,8 @@ class FsTreeField extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
     }
 
     if (fieldJson.logic) {
-      const subtreeConstructor = (fieldJson: TFsFieldAnyJson) =>
-        FsTreeLogic.fromFieldJson(fieldJson);
+      const subtreeConstructor = (fieldJson: TFsFieldAny) =>
+        FsTreeLogic.fromFieldJson(fieldJson as unknown as TFsFieldAnyJson);
 
       FsTreeField.createSubtreeFromFieldJson(
         field,
