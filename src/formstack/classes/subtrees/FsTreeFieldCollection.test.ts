@@ -91,11 +91,12 @@ describe("FsTreeFieldCollection", () => {
         noLogicField.getChildContentAt(noLogicField.rootNodeId)
       ).toBeNull();
     });
-    it.skip("dev debug.", () => {
+    it.only("dev debug....", () => {
       const tree5375703 = FsTreeFieldCollection.fromApiFormJson(
         transformers.formJson(formJson5375703 as unknown as TApiFormJson)
       );
       const agTree148456742 = tree5375703.aggregateLogicTree("148456742");
+      const statusMessages = agTree148456742.getStatusMessage();
 
       // const tree5469299 = FsTreeFieldCollection.fromApiFormJson(
       //   transformers.formJson(formJson5469299 as unknown as TApiFormJson)
@@ -109,6 +110,7 @@ describe("FsTreeFieldCollection", () => {
       //   tree5469299.aggregateLogicTree("152297010");
 
       const pojo = {
+        statusMessages,
         // agTree152290546: agTree152290546.toPojoAt(),
         agTree148456742: agTree148456742.toPojoAt(),
         // mutuallyExclusiveLogic: mutuallyExclusiveLogic.toPojoAt(),

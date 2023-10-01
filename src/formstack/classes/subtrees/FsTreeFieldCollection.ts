@@ -101,7 +101,9 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
       // @ts-ignore - doesn't like '$in'
       (conditional || "$and") as TLogicJunctionOperators,
       action || null,
-      fieldJson
+      checks,
+      // @ts-ignore - logicJson isn't a member (logicJson should be fieldJson)
+      fieldJson || rootNodeContent.logicJson
     );
 
     if (extendedTree === undefined) {

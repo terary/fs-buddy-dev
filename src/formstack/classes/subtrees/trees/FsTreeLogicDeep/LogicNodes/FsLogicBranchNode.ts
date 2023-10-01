@@ -16,17 +16,20 @@ class FsLogicBranchNode
   private _ownerFieldId: string;
   private _conditional: "$and" | "$or";
   private _action: TFsVisibilityModes;
+  private _checks: TFsFieldLogicCheckLeaf[];
   private _fieldJson: TFsFieldLogicJunctionJson;
   constructor(
     ownerFieldId: string,
     conditional: "$and" | "$or" = "$and", // bad idea to implement business logic here
     action: TFsVisibilityModes,
+    checks: TFsFieldLogicCheckLeaf[],
     fieldJson: any
   ) {
     super();
     this._ownerFieldId = ownerFieldId;
     this._conditional = conditional;
     this._action = action;
+    this._checks = checks;
     this._fieldJson = fieldJson;
   }
 

@@ -109,13 +109,14 @@ class FsTreeLogicDeepInternal extends AbstractFsTreeLogic<AbstractLogicNode> {
       // @ts-ignore - what is this supposed to be ?
       fieldJson.logic as TFsFieldLogicJunction<TLogicJunctionOperators>;
 
-    const { action, conditional } = logicJson;
+    const { action, conditional, checks } = logicJson;
 
     const rootNode = new FsLogicBranchNode(
       fieldJson.id || "__MISSING_ID__",
       // @ts-ignore - maybe doesn't like '$in' potentially $and/$or
       conditional as TLogicJunctionOperators,
       action || "Show", // *tmc* shouldn't be implementing business logic here
+      checks,
       logicJson
     );
     const tree = new FsTreeLogicDeepInternal(

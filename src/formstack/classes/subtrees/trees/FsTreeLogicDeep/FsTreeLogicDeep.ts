@@ -4,6 +4,7 @@ import { FsTreeField } from "../FsTreeField";
 import { TFsFieldAny } from "../../../../type.field";
 import { AbstractLogicNode } from "./LogicNodes/AbstractLogicNode";
 import { FsTreeLogicDeepInternal } from "./FsTreeLogicDeepInternal";
+import { TStatusRecord } from "../../../../../chrome-extension/type";
 
 class FsTreeLogicDeep {
   private _fsDeepLogicTree!: FsTreeLogicDeepInternal;
@@ -61,6 +62,16 @@ class FsTreeLogicDeep {
 
   get rootNodeId() {
     return this._fsDeepLogicTree.rootNodeId;
+  }
+
+  getStatusMessage(dependentChainFieldIds?: string[]): TStatusRecord[] {
+    const statusMessages: TStatusRecord[] = [];
+    this._fsDeepLogicTree.getTreeContentAt().forEach((logicNode) => {
+      if (logicNode instanceof AbstractLogicNode) {
+        statusMessages.push(...logicNode.getStatusMessage());
+      }
+    });
+    return statusMessages;
   }
 
   toPojoAt(): TTreePojo<AbstractLogicNode> {
