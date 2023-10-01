@@ -105,7 +105,7 @@ describe("FsTreeFieldCollection", () => {
         circularAndInterdependentJson.fields as unknown as TFsFieldAnyJson[]
       );
       const noLogicField = tree.aggregateLogicTree("148456700");
-      expect(noLogicField.getTreeContentAt().length).toBe(1);
+      expect(noLogicField.countTotalNodes()).toBe(1);
       expect(
         noLogicField.getChildContentAt(noLogicField.rootNodeId)
       ).toBeInstanceOf(FsLogicLeafNode);

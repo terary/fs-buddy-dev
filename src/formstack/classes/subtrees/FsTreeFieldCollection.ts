@@ -123,8 +123,8 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
 
     if (
       // this should be more intelligent
-      exTree.getTreeNodeIdsAt(exTree.rootNodeId).length >
-      FsTreeFieldCollection.MAX_DEPTH
+      // exTree.getTreeNodeIdsAt(exTree.rootNodeId).length >
+      exTree.countTotalNodes() > FsTreeFieldCollection.MAX_DEPTH
     ) {
       exTree.appendChildNodeWithContent(
         currentBranchNodeId,
