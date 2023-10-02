@@ -12,7 +12,8 @@ import formWithAllFieldsJson from "../../../test-dev-resources/form-json/5358471
 import submissionWithAllFieldsJson from "../../../test-dev-resources/submission-json/1129952515-form5358471.json";
 import { TApiForm, TApiFormJson, TSubmissionJson } from "../../type.form";
 import { transformers } from "../../transformers";
-
+import { TSimpleDictionary } from "./types";
+import { TStatusMessageSeverity, TStatusRecord } from "../Evaluator/type";
 describe("FsTreeFieldCollection", () => {
   /// --------------------------------
   describe(".getFieldTreeByFieldId(...)", () => {
@@ -91,13 +92,36 @@ describe("FsTreeFieldCollection", () => {
         noLogicField.getChildContentAt(noLogicField.rootNodeId)
       ).toBeNull();
     });
-    it.only("dev debug....", () => {
+    it.skip("dev debug....", () => {
       const tree5375703 = FsTreeFieldCollection.fromApiFormJson(
         transformers.formJson(formJson5375703 as unknown as TApiFormJson)
       );
-      const agTree148456742 = tree5375703.aggregateLogicTree("148456742");
-      const statusMessages = agTree148456742.getStatusMessage();
 
+      const filterMessagesBy = (
+        severity: TStatusMessageSeverity[] = ["debug", "logic"],
+        s: TStatusRecord[]
+      ) => {
+        return s
+          .filter((message) => ["logic", "debug"].includes(message.severity))
+          .reduce((p, c) => {
+            if ("fieldId" in c && c.fieldId) {
+              if (!Array.isArray(p[c.fieldId])) {
+                p[c.fieldId] = [];
+              }
+              p[c.fieldId].push(c);
+            }
+            return p;
+          }, {} as TSimpleDictionary<TStatusRecord[]>);
+      };
+
+      const agTree148456742 = tree5375703.aggregateLogicTree("148456742");
+      const agTree152139062 = tree5375703.aggregateLogicTree("152139062");
+
+      const statusMessages = agTree148456742.getStatusMessage();
+      const filteredStatusMessages = filterMessagesBy(
+        ["logic"],
+        statusMessages
+      );
       // const tree5469299 = FsTreeFieldCollection.fromApiFormJson(
       //   transformers.formJson(formJson5469299 as unknown as TApiFormJson)
       // );

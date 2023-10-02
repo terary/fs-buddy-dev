@@ -1,4 +1,4 @@
-import { TStatusRecord } from "../../../../../../chrome-extension/type";
+import type { TStatusRecord } from "../../../../Evaluator/type";
 import {
   TFsFieldLogicCheckLeaf,
   TFsLeafOperators,
@@ -40,8 +40,10 @@ class FsLogicLeafNode
       option: this.option,
     };
   }
-
-  getStatusMessage(): TStatusRecord[] {
+  getStatusMessage(
+    rootFieldId: string,
+    dependentChainFieldIds?: string[]
+  ): TStatusRecord[] {
     const debugMessage = JSON.stringify({
       nodeType: "FsLogicLeafNode",
       english: `Logic Term: this field '${this.condition}' '${this.option}'`,

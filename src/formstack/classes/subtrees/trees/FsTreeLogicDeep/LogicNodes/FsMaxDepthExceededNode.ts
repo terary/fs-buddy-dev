@@ -1,4 +1,4 @@
-import { TStatusRecord } from "../../../../../../chrome-extension/type";
+import type { TStatusRecord } from "../../../../Evaluator/type";
 import { AbstractLogicNode } from "./AbstractLogicNode";
 
 class FsMaxDepthExceededNode extends AbstractLogicNode {
@@ -8,7 +8,10 @@ class FsMaxDepthExceededNode extends AbstractLogicNode {
       error: "MAX_BRANCH_DEPTH_EXCEEDED",
     };
   }
-  getStatusMessage(dependentChainFieldIds?: string[]): TStatusRecord[] {
+  getStatusMessage(
+    rootFieldId: string,
+    dependentChainFieldIds?: string[]
+  ): TStatusRecord[] {
     return [
       {
         severity: "logic",

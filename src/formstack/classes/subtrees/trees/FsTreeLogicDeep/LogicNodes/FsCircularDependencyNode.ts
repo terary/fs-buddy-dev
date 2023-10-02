@@ -1,6 +1,6 @@
 import { TNodePojo } from "predicate-tree-advanced-poc/dist/src";
 import { AbstractLogicNode } from "./AbstractLogicNode";
-import { TStatusRecord } from "../../../../../../chrome-extension/type";
+import type { TStatusRecord } from "../../../../Evaluator/type";
 
 class FsCircularDependencyNode extends AbstractLogicNode {
   _sourceFieldId: string;
@@ -45,7 +45,10 @@ class FsCircularDependencyNode extends AbstractLogicNode {
     };
   }
 
-  getStatusMessage(dependentChainFieldIds?: string[]): TStatusRecord[] {
+  getStatusMessage(
+    rootFieldId: string,
+    dependentChainFieldIds?: string[]
+  ): TStatusRecord[] {
     const message = `Logic: circular reference. source fieldId: '${
       this.targetFieldId
     }', last visited fieldId: '${this.getLastVisitedFieldId()}', dependency chain: "${this.dependentChainFieldIds.join(

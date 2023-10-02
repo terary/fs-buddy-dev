@@ -1,7 +1,7 @@
-import { TUiEvaluationObject } from "./type";
+import { TStatusRecord, TUiEvaluationObject } from "./type";
+
 import { isFunctions } from "../../../common/isFunctions";
 import { AbstractSelectOptionEvaluator } from "./AbstractSelectOptionEvaluator";
-import { TStatusRecord } from "../../../chrome-extension/type";
 
 class RadioEvaluator extends AbstractSelectOptionEvaluator {
   private isValueInSelectOptions(value: string): boolean {

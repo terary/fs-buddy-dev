@@ -1,5 +1,5 @@
 import { AbstractComplexSubmissionDatumEvaluator } from "./AbstractComplexSubmissionDatumEvaluator";
-import { TSimpleDictionary, TUiEvaluationObject } from "./type";
+import { TUiEvaluationObject } from "./type";
 
 abstract class AbstractNamedSubfieldEvaluator extends AbstractComplexSubmissionDatumEvaluator {
   abstract get supportedSubfieldIds(): string[];

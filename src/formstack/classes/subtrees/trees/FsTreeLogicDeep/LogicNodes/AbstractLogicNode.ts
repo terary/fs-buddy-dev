@@ -1,5 +1,4 @@
-import { TNodePojo } from "predicate-tree-advanced-poc/dist/src";
-import { TStatusRecord } from "../../../../../../chrome-extension/type";
+import type { TStatusRecord } from "../../../../Evaluator/type";
 
 abstract class AbstractLogicNode {
   abstract toPojo(): object;
@@ -7,6 +6,9 @@ abstract class AbstractLogicNode {
     return this.constructor.name;
   }
 
-  abstract getStatusMessage(dependentChainFieldIds?: string[]): TStatusRecord[];
+  abstract getStatusMessage(
+    rootFieldId: string,
+    dependentChainFieldIds?: string[]
+  ): TStatusRecord[];
 }
 export { AbstractLogicNode };

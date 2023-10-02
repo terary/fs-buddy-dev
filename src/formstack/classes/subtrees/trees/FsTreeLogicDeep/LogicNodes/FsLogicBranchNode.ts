@@ -1,4 +1,4 @@
-import { TStatusRecord } from "../../../../../../chrome-extension/type";
+import type { TStatusRecord } from "../../../../Evaluator/type";
 import type {
   TFsFieldLogicCheckLeaf,
   TFsFieldLogicJunctionJson,
@@ -63,8 +63,13 @@ class FsLogicBranchNode
     return { action, conditional, checks };
   }
 
-  getStatusMessage(dependentChainFieldIds?: string[]): TStatusRecord[] {
+  getStatusMessage(
+    rootFieldId: string,
+    dependentChainFieldIds?: string[]
+  ): TStatusRecord[] {
     // branch status message should list all children with their conditions
+    const statusMessage: TStatusRecord[] = [];
+
     const debugMessage = JSON.stringify({
       nodeType: "FsLogicBranchNode",
       // fieldId: node.fieldId,
@@ -78,21 +83,31 @@ class FsLogicBranchNode
     const message = `action: '${action}', conditional: '${conditional}', checks: '${JSON.stringify(
       checks
     )}'.`;
-    // const message = `requirement x=y for field id:${this.ownerFieldId}, "${this.ownerFieldLabel}"`;
-    return [
-      {
-        severity: "debug",
-        fieldId: this.ownerFieldId,
-        message: debugMessage,
-      },
-      {
+
+    statusMessage.push({
+      severity: "debug",
+      fieldId: this.ownerFieldId,
+      message: debugMessage,
+    });
+
+    if (this.ownerFieldId === rootFieldId) {
+      statusMessage.push({
         severity: "logic",
         fieldId: this.ownerFieldId,
         message,
-        // message: `Logic: '${this.action}' if '${this.conditional}' are true.`,
         relatedFieldIds: dependentChainFieldIds,
-      },
-    ];
+      });
+    } else {
+      statusMessage.push({
+        severity: "logic",
+        fieldId: this.ownerFieldId,
+        message: `${rootFieldId} depends on this visibility of this panel.`,
+        relatedFieldIds: dependentChainFieldIds,
+      });
+    }
+
+    // const message = `requirement x=y for field id:${this.ownerFieldId}, "${this.ownerFieldLabel}"`;
+    return statusMessage;
   }
 }
 

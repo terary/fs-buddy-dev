@@ -1,7 +1,9 @@
 import { TFsFieldAny, TFsFieldType } from "../../type.field";
-import type { TStatusRecord } from "../../../chrome-extension/type";
-import { TUiEvaluationObject, TStatusMessageSeverity } from "./type";
-
+import type {
+  TUiEvaluationObject,
+  TStatusMessageSeverity,
+  TStatusRecord,
+} from "./type";
 abstract class AbstractEvaluator {
   private _fieldJson: TFsFieldAny;
   private _fieldId: string;

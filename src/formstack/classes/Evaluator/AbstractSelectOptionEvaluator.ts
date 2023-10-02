@@ -1,8 +1,5 @@
-import { TStatusRecord } from "../../../chrome-extension/type";
 import { TFsFieldAny, TFsSelectOption } from "../../type.field";
-import { AbstractEvaluator } from "./AbstractEvaluator";
 import { TSimpleDictionary, TUiEvaluationObject } from "./type";
-import { isFunctions } from "../../../common/isFunctions";
 import { AbstractComplexSubmissionDatumEvaluator } from "./AbstractComplexSubmissionDatumEvaluator";
 
 abstract class AbstractSelectOptionEvaluator extends AbstractComplexSubmissionDatumEvaluator {
