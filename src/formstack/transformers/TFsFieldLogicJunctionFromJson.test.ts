@@ -21,26 +21,23 @@ describe("TFsFieldLogicJunctionFromJson", () => {
     );
     expect(actual.action).toEqual("Show");
     expect(actual.ownerFieldId).toEqual("theOwnerId");
-    expect(actual.conditional).toEqual("$or");
-
+    expect(actual.conditional).toEqual("any");
     expect(actual.fieldJson).toStrictEqual(logicJunctionJson);
-
-    // @ts-ignore - 'checks' not a property of...
-    expect(actual.checks).toBeUndefined();
+    expect(actual.checks).toStrictEqual([]);
   });
   it("Should convert .json.conditional 'any' to '$or'.", () => {
     const actual = TFsFieldLogicJunctionFromJson(
       logicJunctionJson,
       "theOwnerId"
     );
-    expect(actual.conditional).toEqual("$or");
+    expect(actual.conditional).toEqual("any");
   });
   it("Should convert .json.conditional 'all' to '$and'.", () => {
     const actual = TFsFieldLogicJunctionFromJson(
       { ...logicJunctionJson, ...{ conditional: "all" } },
       "theOwnerId"
     );
-    expect(actual.conditional).toEqual("$and");
+    expect(actual.conditional).toEqual("all");
   });
 
   it("Should set .json.action to null if missing from json.", () => {

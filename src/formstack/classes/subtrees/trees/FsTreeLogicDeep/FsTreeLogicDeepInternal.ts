@@ -6,8 +6,9 @@ import {
   TFsFieldLogicJunction,
   TFsFieldLogicJunctionJson,
   TFsLogicNode,
-  TLogicJunctionOperators,
+  TFsJunctionOperators,
   TSimpleDictionary,
+  TFsFieldLogicCheckLeaf,
 } from "../../types";
 import { AbstractFsTreeLogic } from "../AbstractFsTreeLogic";
 import { FsCircularDependencyNode } from "./LogicNodes/FsCircularDependencyNode";
@@ -105,20 +106,20 @@ class FsTreeLogicDeepInternal extends AbstractFsTreeLogic<AbstractLogicNode> {
     // const logicJson: TFsLogicNodeJson = fieldJson.logic;
     // or maybe always get the whole json?
 
-    const logicJson: TFsFieldLogicJunction<TLogicJunctionOperators> =
+    const logicJson: TFsFieldLogicJunction<TFsJunctionOperators> =
       // @ts-ignore - what is this supposed to be ?
-      fieldJson.logic as TFsFieldLogicJunction<TLogicJunctionOperators>;
+      fieldJson.logic as TFsFieldLogicJunction<TFsJunctionOperators>;
 
     const { action, conditional, checks } = logicJson;
 
     const rootNode = new FsLogicBranchNode(
-      fieldJson.id || "__MISSING_ID__",
-      // @ts-ignore - maybe doesn't like '$in' potentially $and/$or
-      conditional as TLogicJunctionOperators,
-      action || "Show", // *tmc* shouldn't be implementing business logic here
-      checks,
+      `${fieldJson.id}`,
+      conditional,
+      action,
+      checks as TFsFieldLogicCheckLeaf[],
       logicJson
     );
+
     const tree = new FsTreeLogicDeepInternal(
       fieldJson.id || "_calc_tree_",
       rootNode

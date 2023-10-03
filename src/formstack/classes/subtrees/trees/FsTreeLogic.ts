@@ -11,7 +11,7 @@ import type {
   TFsLogicNode,
   TFsLogicNodeJson,
   TFsVisibilityModes,
-  TLogicJunctionOperators,
+  TFsJunctionOperators,
 } from "../types";
 import { AbstractFsTreeLogic } from "./AbstractFsTreeLogic";
 
@@ -47,7 +47,7 @@ class FsTreeLogic extends AbstractFsTreeLogic<TFsLogicNode> {
   evaluateWithValues<T>(values: { [fieldId: string]: any }): T | undefined {
     const parent = this.getChildContentAt(
       this.rootNodeId
-    ) as TFsFieldLogicJunction<TLogicJunctionOperators>;
+    ) as unknown as TFsFieldLogicJunction<TFsJunctionOperators>;
     const { conditional } = parent;
     const children = this.getChildrenContentOf(
       this.rootNodeId
@@ -63,11 +63,11 @@ class FsTreeLogic extends AbstractFsTreeLogic<TFsLogicNode> {
       }
     });
 
-    if (conditional === "$and") {
+    if (conditional === "all") {
       // @ts-ignore - not happy about typing of 'andReducer'
       return evaluatedChildren.reduce(andReducer, true) as T;
     }
-    if (conditional === "$or") {
+    if (conditional === "any") {
       // @ts-ignore - not happy about typing of 'orReducer'
       return evaluatedChildren.reduce(orReducer, false) as T;
     }
@@ -77,18 +77,6 @@ class FsTreeLogic extends AbstractFsTreeLogic<TFsLogicNode> {
 
   evaluateShowHide(values: { [fieldId: string]: any }): TFsVisibilityModes {
     return this.evaluateWithValues<boolean>(values) ? this.action : null;
-  }
-
-  x_setActionAndOwnerFieldIDAndJson(
-    action: TFsVisibilityModes = "Show",
-    fieldJson: TFsFieldLogicJunctionJson,
-    ownerFieldId: string
-  ) {
-    // this should probably be done in the constructor
-    // put here as a temporary hack, to be called at/about instantiation time
-    this._action = action;
-    this._fieldJson = fieldJson;
-    this._ownerFieldId = ownerFieldId;
   }
 
   static fromFieldJson(fieldJson: TFsFieldAnyJson): FsTreeLogic {

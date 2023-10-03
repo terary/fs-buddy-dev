@@ -46,7 +46,7 @@ class FsLogicLeafNode
   ): TStatusRecord[] {
     const debugMessage = JSON.stringify({
       nodeType: "FsLogicLeafNode",
-      english: `Logic Term: this field '${this.condition}' '${this.option}'`,
+      // english: `Logic Term: this field '${this.condition}' '${this.option}'`,
       fieldId: this.fieldId,
       // rootFieldId: this.parentBranchNode?.ownerFieldId,
       condition: this.condition,
@@ -55,8 +55,7 @@ class FsLogicLeafNode
       // json: this.fieldJson,
     });
 
-    const logicMessage = `
-      logic:  '${this.condition}' is  '${this.option}' `;
+    const logicMessage = `logic: (root fieldId: ${rootFieldId}) requires this field to '${this.condition}' ->  '${this.option}' `;
     return [
       {
         severity: "debug",
@@ -67,6 +66,7 @@ class FsLogicLeafNode
         severity: "logic",
         fieldId: this.fieldId,
         message: logicMessage,
+        relatedFieldIds: dependentChainFieldIds,
       },
     ];
   }

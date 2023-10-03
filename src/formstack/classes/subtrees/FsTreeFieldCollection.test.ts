@@ -92,7 +92,7 @@ describe("FsTreeFieldCollection", () => {
         noLogicField.getChildContentAt(noLogicField.rootNodeId)
       ).toBeNull();
     });
-    it.skip("dev debug....", () => {
+    it.only("dev debug....", () => {
       const tree5375703 = FsTreeFieldCollection.fromApiFormJson(
         transformers.formJson(formJson5375703 as unknown as TApiFormJson)
       );
@@ -102,7 +102,7 @@ describe("FsTreeFieldCollection", () => {
         s: TStatusRecord[]
       ) => {
         return s
-          .filter((message) => ["logic", "debug"].includes(message.severity))
+          .filter((message) => severity.includes(message.severity))
           .reduce((p, c) => {
             if ("fieldId" in c && c.fieldId) {
               if (!Array.isArray(p[c.fieldId])) {
@@ -117,11 +117,16 @@ describe("FsTreeFieldCollection", () => {
       const agTree148456742 = tree5375703.aggregateLogicTree("148456742");
       const agTree152139062 = tree5375703.aggregateLogicTree("152139062");
 
-      const statusMessages = agTree148456742.getStatusMessage();
-      const filteredStatusMessages = filterMessagesBy(
+      const statusMessages148456742 = filterMessagesBy(
         ["logic"],
-        statusMessages
+        agTree148456742.getStatusMessage()
       );
+
+      const statusMessages152139062 = filterMessagesBy(
+        ["logic"],
+        agTree152139062.getStatusMessage()
+      );
+
       // const tree5469299 = FsTreeFieldCollection.fromApiFormJson(
       //   transformers.formJson(formJson5469299 as unknown as TApiFormJson)
       // );
@@ -133,8 +138,16 @@ describe("FsTreeFieldCollection", () => {
       // const mutuallyInclusiveLogic =
       //   tree5469299.aggregateLogicTree("152297010");
 
+      // leaves are duplicating because fieldId is sometimes String, sometimes number
+      // statusMessages152139062 should have 3 status message but they have 5
+      // root
+      //    child 0
+      //    child 1
+      // currently there are 2 status message for each child
+      // they are almost identical except one, the field id is a number - not a string
       const pojo = {
-        statusMessages,
+        statusMessages152139062,
+        statusMessages148456742,
         // agTree152290546: agTree152290546.toPojoAt(),
         agTree148456742: agTree148456742.toPojoAt(),
         // mutuallyExclusiveLogic: mutuallyExclusiveLogic.toPojoAt(),

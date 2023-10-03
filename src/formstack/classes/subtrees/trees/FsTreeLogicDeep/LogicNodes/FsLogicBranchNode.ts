@@ -2,25 +2,25 @@ import type { TStatusRecord } from "../../../../Evaluator/type";
 import type {
   TFsFieldLogicCheckLeaf,
   TFsFieldLogicJunctionJson,
-  TFsVisibilityModes,
   TFsFieldLogicJunction,
-  TLogicJunctionOperators,
+  TFsJunctionOperators,
+  TFsVisibilityModes,
 } from "../../../types";
 import { AbstractLogicNode } from "./AbstractLogicNode";
 
 //TFsFieldLogicJunction
 class FsLogicBranchNode
   extends AbstractLogicNode
-  implements TFsFieldLogicJunction<TLogicJunctionOperators>
+  implements TFsFieldLogicJunction<TFsJunctionOperators>
 {
   private _ownerFieldId: string;
-  private _conditional: "$and" | "$or";
+  private _conditional: TFsJunctionOperators;
   private _action: TFsVisibilityModes;
   private _checks: TFsFieldLogicCheckLeaf[];
   private _fieldJson: TFsFieldLogicJunctionJson;
   constructor(
     ownerFieldId: string,
-    conditional: "$and" | "$or" = "$and", // bad idea to implement business logic here
+    conditional: TFsJunctionOperators, // bad idea to implement business logic here
     action: TFsVisibilityModes,
     checks: TFsFieldLogicCheckLeaf[],
     fieldJson: any
@@ -80,9 +80,9 @@ class FsLogicBranchNode
       json: this.fieldJson,
     });
     const { action, conditional, checks } = this.getLogicElements();
-    const message = `action: '${action}', conditional: '${conditional}', checks: '${JSON.stringify(
-      checks
-    )}'.`;
+    const message = `action: '${action}', conditional: '${conditional}', checks(${
+      (checks || []).length
+    }): '${JSON.stringify(checks)}'.`;
 
     statusMessage.push({
       severity: "debug",

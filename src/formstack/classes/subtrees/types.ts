@@ -10,8 +10,8 @@ type TFsArithmeticLeaf = {
   isFieldReference: boolean;
 };
 type TFsArithmeticNode = TFsArithmeticLeaf | TFsArithmeticOperator;
-type TLogicJunctionOperators = "$and" | "$or" | "$in"; // maybe not?
-type TLogicLeafOperators = "$eq" | "$ne" | "$gt" | "$lt"; // maybe not?,  I think *not* gets encoded? '$ne' not($gt) == $lte ?
+type xTLogicJunctionOperators = "$and" | "$or" | "$in"; // maybe not?
+type xTLogicLeafOperators = "$eq" | "$ne" | "$gt" | "$lt"; // maybe not?,  I think *not* gets encoded? '$ne' not($gt) == $lte ?
 type TFsLeafOperators =
   // these probably need to be confirmed
   | "lt" // numeric operators
@@ -23,16 +23,16 @@ type TFsLeafOperators =
   | "dateAfter"
   | "dateBefore"
   | "dateIsNotBetween" // (range)
-  | "dateIsBetween"; // (range);
-
+  | "dateIsBetween" // (range);
+  | "equals";
 type TFsJunctionOperators = "any" | "all"; /// these may actually be any/or
 
-type TLogicJunction = { operator: TLogicJunctionOperators };
-type TLogicLeaf = {
-  fieldId: string;
-  operator: TLogicLeafOperators;
-  value?: number | string | Date | null;
-};
+// type TLogicJunction = { operator: TLogicJunctionOperators };
+// type TLogicLeaf = {
+//   fieldId: string;
+//   operator: TLogicLeafOperators;
+//   value?: number | string | Date | null;
+// };
 
 type TFsVisibilityModes = "Show" | "Hide" | null; // null indicates the logic failed to evaluated (circular reference or similar error)
 
@@ -71,7 +71,7 @@ type TFsFieldLogicJunctionJson = Partial<
 };
 
 type TFsLogicNode =
-  | TFsFieldLogicJunction<TLogicJunctionOperators>
+  | TFsFieldLogicJunction<TFsLeafOperators>
   | TFsFieldLogicCheckLeaf
   | FsCircularDependencyNode
   | FsMaxDepthExceededNode;
@@ -92,7 +92,7 @@ export type {
   TFsLogicNode,
   TFsLogicNodeJson,
   TFsVisibilityModes,
-  TLogicJunctionOperators,
+  // TLogicJunctionOperators,
   TSimpleDictionary,
   TTreeFieldNode,
 };

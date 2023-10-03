@@ -6,9 +6,11 @@ import { FsFieldVisibilityLinkNode, FsFormRootNode } from "./trees/nodes";
 import {
   TFsFieldLogicCheckLeaf,
   TFsFieldLogicJunction,
+  // TFsFieldLogicJunctionJson,
+  TFsJunctionOperators,
   TFsLeafOperators,
   TFsLogicNode,
-  TLogicJunctionOperators,
+  // TLogicJunctionOperators,
   TTreeFieldNode,
 } from "./types";
 
@@ -91,17 +93,17 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
 
     const rootNodeContent = logicTree.getChildContentAt(
       logicTree.rootNodeId //
-    ) as TFsFieldLogicJunction<TLogicJunctionOperators>;
+    ) as unknown as TFsFieldLogicJunction<TFsJunctionOperators>;
 
     let exTree: FsTreeLogicDeep;
     let currentBranchNodeId: string;
+
     const { conditional, action, fieldJson, checks } = rootNodeContent;
     const newBranchNode = new FsLogicBranchNode(
       field.fieldId,
-      // @ts-ignore - doesn't like '$in'
-      (conditional || "$and") as TLogicJunctionOperators,
+      (conditional || "all") as TFsJunctionOperators,
       action || null,
-      checks,
+      checks as TFsFieldLogicCheckLeaf[],
       // @ts-ignore - logicJson isn't a member (logicJson should be fieldJson)
       fieldJson || rootNodeContent.logicJson
     );
@@ -165,14 +167,13 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
         }
       });
 
-    (checks || []).forEach((check) => {
-      const { fieldId, condition, option } = check;
-      exTree.appendChildNodeWithContent(
-        currentBranchNodeId || "",
-        // @ts-ignore "field" is not a member of check
-        new FsLogicLeafNode(fieldId || check?.field || "__", condition, option)
-      );
-    });
+    // (checks || []).forEach((check) => {
+    //   const { fieldId, condition, option } = check;
+    //   exTree.appendChildNodeWithContent(
+    //     currentBranchNodeId || "",
+    //     new FsLogicLeafNode(`${fieldId}`, condition, option)
+    //   );
+    // });
 
     return exTree as T;
   }
