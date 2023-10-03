@@ -25,7 +25,7 @@ import {
 } from "./trees/FsTreeLogicDeep";
 
 import { FsTreeLogic } from "./trees/FsTreeLogic";
-import { TUiEvaluationObject } from "../Evaluator/type";
+import { TStatusRecord, TUiEvaluationObject } from "../Evaluator/type";
 import { TApiForm, TSubmissionJson } from "../../type.form";
 import { IEValuator } from "../Evaluator/IEvaluator";
 import { TFsFieldAny } from "../../type.field";
@@ -242,6 +242,22 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
     const field = this.getFieldTreeByFieldId(fieldId) as FsTreeField;
 
     return this.getExtendedTree(field);
+  }
+
+  getAllLogicStatusMessages(): TStatusRecord[] {
+    const allFieldIds = Object.keys(this._fieldIdNodeMap);
+
+    const statusMessages: TStatusRecord[] = [];
+    // does _dependantFieldIds ever get used?
+
+    allFieldIds.forEach((fieldId) => {
+      const agTree = this.aggregateLogicTree(fieldId);
+      //
+      statusMessages.push(...agTree.getStatusMessage());
+    });
+    return statusMessages.filter(
+      (statusMessage) => statusMessage.severity === "logic"
+    );
   }
 
   getFieldTreeByFieldId(fieldId: string): FsTreeField | undefined {

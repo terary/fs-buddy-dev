@@ -127,25 +127,9 @@ describe("FsTreeFieldCollection", () => {
         agTree152139062.getStatusMessage()
       );
 
-      // const tree5469299 = FsTreeFieldCollection.fromApiFormJson(
-      //   transformers.formJson(formJson5469299 as unknown as TApiFormJson)
-      // );
-
-      // const agTree152290546 = tree5469299.aggregateLogicTree("152290546");
-
-      // const mutuallyExclusiveLogic =
-      //   tree5469299.aggregateLogicTree("152293116");
-      // const mutuallyInclusiveLogic =
-      //   tree5469299.aggregateLogicTree("152297010");
-
-      // leaves are duplicating because fieldId is sometimes String, sometimes number
-      // statusMessages152139062 should have 3 status message but they have 5
-      // root
-      //    child 0
-      //    child 1
-      // currently there are 2 status message for each child
-      // they are almost identical except one, the field id is a number - not a string
+      const allStatusMessage = tree5375703.getAllLogicStatusMessages();
       const pojo = {
+        allStatusMessage,
         statusMessages152139062,
         statusMessages148456742,
         // agTree152290546: agTree152290546.toPojoAt(),

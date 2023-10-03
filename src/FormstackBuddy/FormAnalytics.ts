@@ -120,6 +120,8 @@ class FormAnalytics {
       }
     });
 
+    messages.push(...this._fieldCollection.getAllLogicStatusMessages());
+    // FsTreeFieldCollection
     return messages;
   }
 

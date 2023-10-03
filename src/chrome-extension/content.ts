@@ -77,15 +77,11 @@ function getFormAsJson() {
         currentFieldCollection = FsTreeFieldCollection.fromApiFormJson(
           transformers.formJson(apiFormJson)
         );
-        // .fromFieldJson(
-        //   apiFormJson.fields
-        // );
-
         formAnalytic =
           FormstackBuddy.getInstance().getFormAnalyticService(apiFormJson);
 
         fieldLogicService = FormstackBuddy.getInstance().getFieldLogicService(
-          (apiFormJson.fields as TFsFieldAnyJson[]) || []
+          transformers.formJson(apiFormJson)
         );
       }
     );
@@ -181,44 +177,6 @@ function handleFetchSubmissionRequest(
           ],
         },
       ],
-    },
-  });
-}
-
-function x_handleGetFieldStatusesRequest(
-  caller: MessageEventSource,
-  payload: any
-) {
-  const fieldStatusMessage = devDebugFieldIds.reduce(
-    (prev, current, cIdx, ary) => {
-      return { ...factoryStatusMessage(current), ...prev };
-    },
-    {}
-  );
-
-  const formStatusMessages = ["error", "warn", "info", "debug"].map(
-    (severity) => {
-      return {
-        severity,
-        message:
-          `The ${severity} message. This message should be long enough to cause "wrap" effect if applicable. Now I am just added text to make sure it's long enough. ` +
-          Math.random(),
-        relatedFieldIds: ["147738154", "148111228", "147738157"],
-      } as TStatusRecord;
-    }
-  );
-  formStatusMessages.push({
-    severity: "info",
-    message: `Status Retrieved At: '${new Date().toUTCString()}'.`,
-    // fieldId: null,
-    relatedFieldIds: null,
-  });
-  caller.postMessage({
-    messageType: "getFieldStatusesResponse",
-
-    payload: {
-      formStatusMessages: formStatusMessages as TStatusRecord[],
-      fieldStatusMessages: fieldStatusMessage as TFieldStatusMessages,
     },
   });
 }

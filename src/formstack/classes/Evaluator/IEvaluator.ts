@@ -1,5 +1,4 @@
-import { TStatusRecord } from "../../../chrome-extension/type";
-import { TUiEvaluationObject } from "./type";
+import { TStatusRecord, TUiEvaluationObject } from "./type";
 
 interface IEValuator {
   evaluateWithValues<S = string, T = string>(values: S): T;
