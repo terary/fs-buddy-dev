@@ -39,10 +39,7 @@
   
       .fsBuddy_statusRow
       {
-        margin: 3px;
-        padding: 0.5em;
-        overflow-wrap: break-word;
-        border-radius: 10px;
+          padding-left: 1em;
       }
   
       .fsBuddy_statusRow_hidden
@@ -78,20 +75,9 @@
       .fsBuddy_statusMessages > .fsBuddyError {
           background-color: red;
       }
-
-      .fsBuddy_statusMessages > .fsBuddyLogicInfo {
-          background-color: lightblue;
-      }
-
       .fsBuddyError {
           background-color: red;
       }
-
-
-      .fsBuddyLogicError {
-          border: 3px dotted red;
-      }
-
       .fsBuddy_statusMessage_link {
           color: blue;
           /*background-color: red;*/
@@ -109,8 +95,7 @@
           debug: 'fsBuddyDebug',
           info: 'fsBuddyInfo',
           warn: 'fsBuddyWarn',
-          error: 'fsBuddyError',
-          logic: 'fsBuddyLogicInfo'
+          error: 'fsBuddyError'
         }
 
      window.onmessage = function(e) {
@@ -269,12 +254,9 @@
       }
  
       const handleGetFieldsWithLogicResponse = (fieldIds) => {
-
-        if (document.getElementById('selectFieldIdWithLogic') === null) {
-          const divWithSelect = optionListToSelectElement('selectFieldIdWithLogic', handleFieldIdSelected, fieldIds.fieldIds)
-          const logicBuddyContainer = document.getElementById('fsBuddyControlPanelLogic');
-          logicBuddyContainer.appendChild(divWithSelect);
-        }
+        const divWithSelect = optionListToSelectElement('selectFieldIdWithLogic', handleFieldIdSelected, fieldIds.fieldIds)
+        const logicBuddyContainer = document.getElementById('fsBuddyControlPanelLogic');
+        logicBuddyContainer.appendChild(divWithSelect);
         removeAllCssName('fsHidden'); // show all fields
       }
 
@@ -304,9 +286,9 @@
             addCssClassToFields('fsBuddy_obscure_field', nonDependentFieldIdsNonPanel)
             addCssClassToFields('fsBuddy_obscure_section', nonDependentFieldIdsPanel)
             // addCssClassToFields('fsBuddy_obscure', nonDependentFieldIds)
-            // addCssClassToFields('fsBuddy_statusMessages', interdependentFieldIds)
-            // addCssClassToFields('fsBuddyError', interdependentFieldIds)
-            addCssClassToFields('fsBuddyLogicError', interdependentFieldIds)
+            addCssClassToFields('fsBuddy_statusMessages', interdependentFieldIds)
+            addCssClassToFields('fsBuddyError', interdependentFieldIds)
+            
         })
 
         const logicFocusFieldIds = Object.keys(dependentsByFieldId);
@@ -630,7 +612,6 @@
       removeAllCssName('fsBuddy_lightgreen');
       removeAllCssName('fsBuddy_logic_focus');
       removeAllCssName('fsBuddyError');
-      removeAllCssName('fsBuddyLogicError');
     }
 
     document.addEventListener("DOMContentLoaded",()=>{
