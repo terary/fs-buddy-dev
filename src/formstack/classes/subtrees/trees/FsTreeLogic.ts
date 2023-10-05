@@ -30,9 +30,17 @@ class FsTreeLogic extends AbstractFsTreeLogic<TFsLogicNode> {
     // *tmc* needs to make this a real thing, I guess: or add it to the abstract?
     return new FsTreeLogic();
   }
+
+  protected defaultJunction(nodeId: string): TFsLogicNode {
+    // @ts-ignore - doesn't match shape of proper junction (no fieldJson or fieldId).  But this is
+    // only used for creating 'virtual' trees with field and panel logic, hence no nodeContent or then 'all'
+    return { conditional: "all", fieldJson: {} };
+  }
+
   getDependantFieldIds() {
     return this.getShallowDependantFieldIds();
   }
+
   getShallowDependantFieldIds(): string[] {
     const children = this.getChildrenContentOf(
       this.rootNodeId

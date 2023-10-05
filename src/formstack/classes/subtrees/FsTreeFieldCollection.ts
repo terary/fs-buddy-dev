@@ -86,6 +86,7 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
   ): T {
     const logicTree = field.getLogicTree() as FsTreeLogic;
     if (logicTree === null) {
+      // *tmc* probably what to type check null or undefined
       const t = new FsTreeLogicDeep(field.fieldId);
       t.ownerFieldId = field.fieldId;
       return t as T;
@@ -240,18 +241,18 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
 
   aggregateLogicTree(fieldId: string): FsTreeLogicDeep {
     const field = this.getFieldTreeByFieldId(fieldId) as FsTreeField;
-    const xTree = this.getExtendedTree(field);
-    const f = field.getVisibilityNode();
-    const visibilityExtTree =
-      f && f.parentNode ? this.getExtendedTree(f.parentNode) : null;
+    // const xTree = this.getExtendedTree(field);
+    // const f = field.getVisibilityNode();
+    // const visibilityExtTree =
+    //   f && f.parentNode ? this.getExtendedTree(f.parentNode) : null;
 
-    const primaryExtTree = this.getExtendedTree(field) as FsTreeLogicDeep;
+    // const primaryExtTree = this.getExtendedTree(field) as FsTreeLogicDeep;
 
-    const resultTree = this.getExtendedTree(
-      field,
-      visibilityExtTree?.rootNodeId,
-      visibilityExtTree || undefined
-    );
+    // const resultTree = this.getExtendedTree(
+    //   field,
+    //   visibilityExtTree?.rootNodeId,
+    //   visibilityExtTree || undefined
+    // );
 
     return this.getExtendedTree(field);
   }

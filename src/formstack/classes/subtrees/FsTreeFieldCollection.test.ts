@@ -100,12 +100,12 @@ describe("FsTreeFieldCollection", () => {
       const tree5375703 = FsTreeFieldCollection.fromApiFormJson(
         transformers.formJson(formJson5375703 as unknown as TApiFormJson)
       );
+      const agTree148509477 = tree5375703.aggregateLogicTree("148509477");
+      const x = agTree148509477.getStatusMessage();
 
-      const agTree148509478 = tree5375703.aggregateLogicTree("148509478");
-      const x = agTree148509478.getStatusMessage();
+      const agTree152290560 = tree5469299.aggregateLogicTree("152290560");
 
       const agTree148509465 = tree5375703.aggregateLogicTree("148509465");
-      const agTree152290560 = tree5469299.aggregateLogicTree("152290560");
 
       const filterMessagesBy = (
         severity: TStatusMessageSeverity[] = ["debug", "logic"],

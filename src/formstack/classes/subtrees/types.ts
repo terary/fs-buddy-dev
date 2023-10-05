@@ -25,7 +25,7 @@ type TFsLeafOperators =
   | "dateIsNotBetween" // (range)
   | "dateIsBetween" // (range);
   | "equals";
-type TFsJunctionOperators = "any" | "all"; /// these may actually be any/or
+type TFsJunctionOperators = "any" | "all" | "$not"; /// $not - extends FS junction operators
 
 // type TLogicJunction = { operator: TLogicJunctionOperators };
 // type TLogicLeaf = {
@@ -71,7 +71,7 @@ type TFsFieldLogicJunctionJson = Partial<
 };
 
 type TFsLogicNode =
-  | TFsFieldLogicJunction<TFsLeafOperators>
+  | TFsFieldLogicJunction<TFsJunctionOperators>
   | TFsFieldLogicCheckLeaf
   | FsCircularDependencyNode
   | FsMaxDepthExceededNode;

@@ -109,10 +109,37 @@ class FsTreeField extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
     return (logicTrees.pop() as unknown as T) || null;
   }
 
+  private getVisibilityLogicTree() {
+    const visNode = this.getVisibilityNode();
+    const visualLogicTree = visNode?.parentNode?.getLogicTree() || null;
+    return visualLogicTree;
+  }
+
   public getLogicTree(): FsTreeLogic | null {
-    const x = this.getSingleTreeOfType<FsTreeLogic>(FsTreeLogic);
-    const y = this.getVisibilityNode();
-    return this.getSingleTreeOfType<FsTreeLogic>(FsTreeLogic);
+    const simpleLogicTree = this.getSingleTreeOfType<FsTreeLogic>(FsTreeLogic);
+    const visualLogicTree = this.getVisibilityLogicTree();
+
+    let newTree: FsTreeLogic;
+    if (visualLogicTree) {
+      const visibilityFieldId = this.getVisibilityNode()?.parentNode?.fieldId;
+
+      the result tree doe not look correct. It appears there is root -> uknonwn node -> visualLogic
+      also this uses 'defaultJunction'  which works but dont have values for fieldJson etc 
+      meaning this is calling a junction once after we create the tree - hence two junctions when we one only 1
+
+      // @ts-ignore - conditional all is not a leaf
+      newTree = new FsTreeLogic(this.fieldId, {
+        conditional: "all",
+        fieldJson: {}, //
+        fieldId: visibilityFieldId || "_MISSING_FIELD_ID_",
+      });
+      newTree.appendTreeAt(newTree.rootNodeId, visualLogicTree);
+      simpleLogicTree &&
+        newTree.appendTreeAt(newTree.rootNodeId, simpleLogicTree);
+      //  .appendTree(...)   "appears" to work, but the nodeId look like 'root:0:0:appendTree:3'
+      return newTree;
+    }
+    return simpleLogicTree;
   }
 
   public getVisibilityNode(): FsFieldVisibilityLinkNode | null {

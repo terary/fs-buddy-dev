@@ -79,7 +79,9 @@ class FsLogicBranchNode
       conditional: this.conditional,
       json: this.fieldJson,
     });
-    const { action, conditional, checks } = this.getLogicElements();
+
+    const { action, conditional, checks } = this.getLogicElements(); // maybe destruct with defaults?
+
     const message = `action: '${action}', conditional: '${conditional}', checks(${
       (checks || []).length
     }): '${JSON.stringify(checks)}'.`;
