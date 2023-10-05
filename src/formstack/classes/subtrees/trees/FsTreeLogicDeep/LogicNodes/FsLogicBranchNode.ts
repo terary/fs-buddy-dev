@@ -101,12 +101,11 @@ class FsLogicBranchNode
       statusMessage.push({
         severity: "logic",
         fieldId: this.ownerFieldId,
-        message: `${rootFieldId} depends on this visibility of this panel.`,
+        message: `${rootFieldId} depends on the visibility of this field.`,
         relatedFieldIds: dependentChainFieldIds,
       });
     }
 
-    // const message = `requirement x=y for field id:${this.ownerFieldId}, "${this.ownerFieldLabel}"`;
     return statusMessage;
   }
 }

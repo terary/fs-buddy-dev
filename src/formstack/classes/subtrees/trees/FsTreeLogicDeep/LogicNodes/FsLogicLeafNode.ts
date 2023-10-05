@@ -55,7 +55,7 @@ class FsLogicLeafNode
       // json: this.fieldJson,
     });
 
-    const logicMessage = `logic: (root fieldId: ${rootFieldId}) requires this field to '${this.condition}' ->  '${this.option}' `;
+    const logicMessage = `logic: (root fieldId: ${rootFieldId}) requires  this field to '${this.condition}' ->  '${this.option}' `;
     return [
       {
         severity: "debug",

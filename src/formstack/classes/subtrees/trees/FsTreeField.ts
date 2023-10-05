@@ -110,6 +110,8 @@ class FsTreeField extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
   }
 
   public getLogicTree(): FsTreeLogic | null {
+    const x = this.getSingleTreeOfType<FsTreeLogic>(FsTreeLogic);
+    const y = this.getVisibilityNode();
     return this.getSingleTreeOfType<FsTreeLogic>(FsTreeLogic);
   }
 
@@ -208,7 +210,7 @@ class FsTreeField extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
     };
   }
 
-  private getVisibilityLogicChain() {}
+  // private getVisibilityLogicChain() {}
 
   getInterdependentFieldIdsOf(subjectField: FsTreeField): string[] {
     const thisLogic = this.getLogicTree();

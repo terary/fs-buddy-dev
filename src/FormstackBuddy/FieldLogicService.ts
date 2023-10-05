@@ -87,6 +87,11 @@ class FieldLogicService {
       .getDependentFieldIds();
   }
 
+  getStatusMessagesFieldId(fieldId: string) {
+    const agTree = this._fieldCollection.aggregateLogicTree(fieldId);
+    return agTree.getStatusMessage();
+  }
+
   wrapFieldIdsIntoLabelOptionList(fieldIds: string[]) {
     return fieldIds.map((fieldId) => {
       const field = this._fieldCollection.getFieldTreeByFieldId(fieldId);

@@ -15,13 +15,13 @@ import {
 } from "./types";
 
 import {
-  FsTreeLogicDeep,
-  FsLogicLeafNode,
   FsCircularDependencyNode,
-  FsMaxDepthExceededNode,
-  FsLogicBranchNode,
   FsCircularMutualInclusiveNode,
   FsCircularMutualExclusiveNode,
+  FsLogicBranchNode,
+  FsLogicLeafNode,
+  FsMaxDepthExceededNode,
+  FsTreeLogicDeep,
 } from "./trees/FsTreeLogicDeep";
 
 import { FsTreeLogic } from "./trees/FsTreeLogic";
@@ -240,23 +240,35 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
 
   aggregateLogicTree(fieldId: string): FsTreeLogicDeep {
     const field = this.getFieldTreeByFieldId(fieldId) as FsTreeField;
+    const xTree = this.getExtendedTree(field);
+    const f = field.getVisibilityNode();
+    const visibilityExtTree =
+      f && f.parentNode ? this.getExtendedTree(f.parentNode) : null;
+
+    const primaryExtTree = this.getExtendedTree(field) as FsTreeLogicDeep;
+
+    const resultTree = this.getExtendedTree(
+      field,
+      visibilityExtTree?.rootNodeId,
+      visibilityExtTree || undefined
+    );
 
     return this.getExtendedTree(field);
   }
 
   getAllLogicStatusMessages(): TStatusRecord[] {
     const allFieldIds = Object.keys(this._fieldIdNodeMap);
+    // const allFieldIds = ["152290546", "152290563"]; // *tmc* debug
 
     const statusMessages: TStatusRecord[] = [];
     // does _dependantFieldIds ever get used?
 
     allFieldIds.forEach((fieldId) => {
       const agTree = this.aggregateLogicTree(fieldId);
-      //
       statusMessages.push(...agTree.getStatusMessage());
     });
     return statusMessages.filter(
-      (statusMessage) => statusMessage.severity === "logic"
+      (statusMessage) => statusMessage.severity !== "debug" // filter probably shouldn't be here
     );
   }
 

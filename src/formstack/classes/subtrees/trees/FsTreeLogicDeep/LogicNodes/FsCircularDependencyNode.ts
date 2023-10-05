@@ -21,6 +21,7 @@ class FsCircularDependencyNode extends AbstractLogicNode {
   getLastVisitedFieldId() {
     return this._targetFieldId;
   }
+
   get dependentChainFieldIds() {
     return [
       this._sourceFieldId,
@@ -57,6 +58,12 @@ class FsCircularDependencyNode extends AbstractLogicNode {
     return [
       {
         severity: "logic",
+        fieldId: this.targetFieldId,
+        message,
+        relatedFieldIds: dependentChainFieldIds,
+      },
+      {
+        severity: "error", // duplicate message is intentional
         fieldId: this.targetFieldId,
         message,
         relatedFieldIds: dependentChainFieldIds,

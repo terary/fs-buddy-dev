@@ -43,6 +43,8 @@
         padding: 0.5em;
         overflow-wrap: break-word;
         border-radius: 10px;
+        border: 1px solid black;
+        background-color: white;
       }
   
       .fsBuddy_statusRow_hidden
@@ -52,6 +54,7 @@
   
       .fsBuddy_statusMessageCell_
       {}
+
       .fsBuddy_statusMessageCell_severity,
       .fsBuddy_statusMessageCell_message {
           display: inline
@@ -61,7 +64,14 @@
       .fsBuddy_statusMessageCell_relatedFieldIds {
           display: none;
       }
-      .fsBuddy_statusMessages{}
+
+      .fsBuddy_statusMessages{
+        margin: 3px;
+        padding: 0.5em;
+        overflow-wrap: break-word;
+        border-radius: 10px;
+        border: 1px solid black;
+      }
   
       .fsBuddy_statusMessages > .fsBuddyDebug {
           background-color: pink;
@@ -114,7 +124,7 @@
         }
 
      window.onmessage = function(e) {
-    // listen/receive message  
+    // listen/receive message  f
       switch(e.data.messageType) {
         case 'addCssClassToFieldIdList':
           addCssClassToFields(e.data.payload.cssClassName, e.data.payload.fieldIds)
@@ -122,10 +132,6 @@
         case 'removeClassFromFieldIdList':
           removeCssClassFromFields(e.data.payload.cssClassName, e.data.payload.fieldIds)
           break;
-          
-        // case 'getFieldStatusesResponse': 
-        //   handelGetFieldStatusesResponse(e.data.payload)
-        // break;
 
         case 'fetchSubmissionResponse': 
           handelFetchSubmissionResponse(e.data.payload)
@@ -219,7 +225,7 @@
         
       }
 
-      const handleFieldIdSelected = (selectElementId, selectedValue)=>{
+      const handleLogicFieldIdSelected = (selectElementId, selectedValue)=>{
         sendMessageToParent('getFieldLogicDependentsRequest', {fieldId: selectedValue})
       }
 
@@ -237,41 +243,12 @@
           })
         })
 
-        // // dev/debug
-        // for(let i=0; i<20; i++) {
-        // // dev/debug
-        //   prependUserMessages({
-        //     severity: "debug",
-        //     fieldId:null,
-        //     message: `_DEV_DEBUG_TEST_COLOR_DEBUG`,
-        //     relatedFieldIds: [],
-        //   });
-        //   prependUserMessages({
-        //     severity: "info",
-        //     fieldId:null,
-        //     message: `_DEV_DEBUG_TEST_COLOR_INFO`,
-        //     relatedFieldIds: [],
-        //   });
-        //   prependUserMessages({
-        //     severity: "warn",
-        //     fieldId:null,
-        //     message: `_DEV_DEBUG_TEST_COLOR_WARN`,
-        //     relatedFieldIds: [],
-        //   });
-        //   prependUserMessages({
-        //     severity: "error",
-        //     fieldId:null,
-        //     message: `_DEV_DEBUG_TEST_COLOR_ERROR`,
-        //     relatedFieldIds: [],
-        //   });
-        // }
-        
       }
  
       const handleGetFieldsWithLogicResponse = (fieldIds) => {
 
         if (document.getElementById('selectFieldIdWithLogic') === null) {
-          const divWithSelect = optionListToSelectElement('selectFieldIdWithLogic', handleFieldIdSelected, fieldIds.fieldIds)
+          const divWithSelect = optionListToSelectElement('selectFieldIdWithLogic', handleLogicFieldIdSelected, fieldIds.fieldIds)
           const logicBuddyContainer = document.getElementById('fsBuddyControlPanelLogic');
           logicBuddyContainer.appendChild(divWithSelect);
         }
@@ -290,9 +267,14 @@
         removeAllFsBuddyCss()
         removeAllCssName('fsBuddy_statusMessages')
         console.log({dependentsByFieldId})
+        
+        Object.entries(dependentsByFieldId).forEach(([fieldId, {dependentFieldIds, interdependentFieldIds, statusMessages}])=>{
+          console.log({statusMessages});
+          statusMessages.forEach(statusMessage => {
+            appendFieldStatusMessages(statusMessage.fieldId, [statusMessage])
+          });
 
-        Object.entries(dependentsByFieldId).forEach(([fieldId, {dependentFieldIds, interdependentFieldIds}])=>{
-         
+
           const nonDependentFieldIds = fsBuddyHelper.getAllFieldIds()
               .filter( (childFieldId)=>{
                 return !dependentFieldIds.includes(childFieldId) && fieldId !== childFieldId && !interdependentFieldIds.includes(childFieldId)
@@ -374,10 +356,12 @@
         error: 0,
         warn: 50,
         info: 100,
+        logic: 101,
         debug: 500,
         0: 'error',
         50: 'warn',
         100: 'info',
+        101: 'logic',
         500: 'debug',
       }
 
@@ -532,6 +516,7 @@
             const divStatusRow = document.createElement('div');
             divStatusRow.classList.add(`fsBuddy_statusRow`);
             const severityCssClass = cssClassBySeverity[message['severity']]  || cssClassBySeverity['error']; 
+
             divStatusRow.classList.add(severityCssClass);
             ['severity', 'message', 'fieldId', 'relatedFieldIds'].forEach(messagePart=>{
                 const divMessagePart = document.createElement('div');

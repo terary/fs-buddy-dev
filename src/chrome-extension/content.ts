@@ -187,12 +187,14 @@ function handleGetFieldLogicDependentsRequest(
 ) {
   const { fieldId } = payload;
   const fieldIds = fieldLogicService?.getFieldIdsExtendedLogicOf(fieldId);
+  const statusMessages = fieldLogicService?.getStatusMessagesFieldId(fieldId);
   const interdependentFieldIds =
     fieldLogicService?.getCircularReferenceFieldIds(fieldId);
   caller.postMessage({
     messageType: "getFieldLogicDependentsResponse",
     payload: {
       [fieldId]: {
+        statusMessages: statusMessages,
         dependentFieldIds: fieldIds,
         interdependentFieldIds: interdependentFieldIds,
       },

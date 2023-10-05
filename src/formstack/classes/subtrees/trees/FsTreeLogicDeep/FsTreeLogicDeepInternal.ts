@@ -29,18 +29,13 @@ class FsTreeLogicDeepInternal extends AbstractFsTreeLogic<AbstractLogicNode> {
     nodeContent: AbstractLogicNode
   ): string {
     const fieldId = this.extractFieldIdFromNodeContent(nodeContent);
-    // @ts-ignore - no null
-    this.appendFieldIdNode(fieldId, nodeContent);
+
+    fieldId !== null && this.appendFieldIdNode(fieldId, nodeContent);
 
     return super.appendChildNodeWithContent(parentNodeId, nodeContent);
   }
 
   private appendFieldIdNode(fieldId: string, node: AbstractLogicNode) {
-    // this or do a look-up of nodeId vs fieldId which is subject to change
-    // node here should ALWAYS point to the same object so this is a better approach.
-    //
-    // one more reason to encapsulate this class, all methods that update/remove/add nodes will need to be overwritten
-
     this.#dependantFieldIds[fieldId] = node;
     this.dependantFieldIds_dev_debug_hard_private[fieldId] = node;
   }
@@ -61,6 +56,8 @@ class FsTreeLogicDeepInternal extends AbstractFsTreeLogic<AbstractLogicNode> {
       return nodeContent.ownerFieldId;
     } else if (nodeContent instanceof FsLogicLeafNode) {
       return nodeContent.fieldId;
+    } else if (nodeContent instanceof FsCircularDependencyNode) {
+      return nodeContent._targetFieldId; // + "-circular";
     }
     return null;
   }

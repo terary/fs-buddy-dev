@@ -93,9 +93,19 @@ describe("FsTreeFieldCollection", () => {
       ).toBeNull();
     });
     it.only("dev debug....", () => {
+      const tree5469299 = FsTreeFieldCollection.fromApiFormJson(
+        transformers.formJson(formJson5469299 as unknown as TApiFormJson)
+      );
+
       const tree5375703 = FsTreeFieldCollection.fromApiFormJson(
         transformers.formJson(formJson5375703 as unknown as TApiFormJson)
       );
+
+      const agTree148509478 = tree5375703.aggregateLogicTree("148509478");
+      const x = agTree148509478.getStatusMessage();
+
+      const agTree148509465 = tree5375703.aggregateLogicTree("148509465");
+      const agTree152290560 = tree5469299.aggregateLogicTree("152290560");
 
       const filterMessagesBy = (
         severity: TStatusMessageSeverity[] = ["debug", "logic"],
@@ -114,13 +124,15 @@ describe("FsTreeFieldCollection", () => {
           }, {} as TSimpleDictionary<TStatusRecord[]>);
       };
 
-      const agTree148456742 = tree5375703.aggregateLogicTree("148456742");
       const agTree152139062 = tree5375703.aggregateLogicTree("152139062");
 
-      const statusMessages148456742 = filterMessagesBy(
-        ["logic"],
-        agTree148456742.getStatusMessage()
-      );
+      const agTree152290546 = tree5469299.aggregateLogicTree("152290546");
+      const sm = agTree152290546.getStatusMessage();
+
+      // const statusMessages148456742 = filterMessagesBy(
+      //   ["logic", "error"],
+      //   agTree148456742.getStatusMessage()
+      // );
 
       const statusMessages152139062 = filterMessagesBy(
         ["logic"],
@@ -131,9 +143,7 @@ describe("FsTreeFieldCollection", () => {
       const pojo = {
         allStatusMessage,
         statusMessages152139062,
-        statusMessages148456742,
         // agTree152290546: agTree152290546.toPojoAt(),
-        agTree148456742: agTree148456742.toPojoAt(),
         // mutuallyExclusiveLogic: mutuallyExclusiveLogic.toPojoAt(),
         // mutuallyInclusiveLogic: mutuallyInclusiveLogic.toPojoAt(),
       };
