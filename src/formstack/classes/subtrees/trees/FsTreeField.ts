@@ -114,8 +114,12 @@ class FsTreeField extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
     const visualLogicTree = visNode?.parentNode?.getLogicTree() || null;
     return visualLogicTree;
   }
-
   public getLogicTree(): FsTreeLogic | null {
+    const simpleLogicTree = this.getSingleTreeOfType<FsTreeLogic>(FsTreeLogic);
+    return simpleLogicTree;
+  }
+
+  public x_getLogicTree(): FsTreeLogic | null {
     const simpleLogicTree = this.getSingleTreeOfType<FsTreeLogic>(FsTreeLogic);
     const visualLogicTree = this.getVisibilityLogicTree();
 
@@ -123,9 +127,9 @@ class FsTreeField extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
     if (visualLogicTree) {
       const visibilityFieldId = this.getVisibilityNode()?.parentNode?.fieldId;
 
-      the result tree doe not look correct. It appears there is root -> uknonwn node -> visualLogic
-      also this uses 'defaultJunction'  which works but dont have values for fieldJson etc 
-      meaning this is calling a junction once after we create the tree - hence two junctions when we one only 1
+      // the result tree doe not look correct. It appears there is root -> uknonwn node -> visualLogic
+      // also this uses 'defaultJunction'  which works but dont have values for fieldJson etc
+      // meaning this is calling a junction once after we create the tree - hence two junctions when we one only 1
 
       // @ts-ignore - conditional all is not a leaf
       newTree = new FsTreeLogic(this.fieldId, {

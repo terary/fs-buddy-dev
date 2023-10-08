@@ -33,6 +33,8 @@ class FsTreeLogicDeepInternal extends AbstractFsTreeLogic<AbstractLogicNode> {
     fieldId !== null && this.appendFieldIdNode(fieldId, nodeContent);
 
     return super.appendChildNodeWithContent(parentNodeId, nodeContent);
+
+    this.dependantFieldIds_dev_debug_hard_private = this.#dependantFieldIds;
   }
 
   private appendFieldIdNode(fieldId: string, node: AbstractLogicNode) {
@@ -65,6 +67,7 @@ class FsTreeLogicDeepInternal extends AbstractFsTreeLogic<AbstractLogicNode> {
   getChildContentByFieldId<T = AbstractLogicNode>(fieldId: string) {
     return this.#dependantFieldIds[fieldId] as T;
   }
+
   getCircularLogicNodes(): FsCircularDependencyNode[] {
     return this.findAllNodesOfType<FsCircularDependencyNode>(
       FsCircularDependencyNode
@@ -77,9 +80,10 @@ class FsTreeLogicDeepInternal extends AbstractFsTreeLogic<AbstractLogicNode> {
     //  better source of truth
     return this.dependantFieldIds;
   }
+
   public isExistInDependencyChain(field: FsTreeField): boolean {
     return (
-      this.ownerFieldId === field.fieldId ||
+      // this.ownerFieldId === field.fieldId ||
       this.isInDependentsFields(field.fieldId)
     );
   }

@@ -29,6 +29,7 @@ import { TStatusRecord, TUiEvaluationObject } from "../Evaluator/type";
 import { TApiForm, TSubmissionJson } from "../../type.form";
 import { IEValuator } from "../Evaluator/IEvaluator";
 import { TFsFieldAny } from "../../type.field";
+import { AbstractLogicNode } from "./trees/FsTreeLogicDeep/LogicNodes/AbstractLogicNode";
 
 interface ILogicCheck {
   fieldId: string;
@@ -80,6 +81,14 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
   }
 
   private getExtendedTree<T extends FsTreeLogicDeep = FsTreeLogicDeep>(
+    field: FsTreeField,
+    atNodeId?: string,
+    extendedTree?: FsTreeLogicDeep
+  ): FsTreeLogicDeep | null {
+    return FsTreeLogicDeep.fromFieldCollection(field.fieldId, this);
+  }
+
+  private x_getExtendedTree<T extends FsTreeLogicDeep = FsTreeLogicDeep>(
     field: FsTreeField,
     atNodeId?: string,
     extendedTree?: FsTreeLogicDeep
@@ -216,6 +225,12 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
       );
     }
 
+    if (existingChildContent.condition) {
+    }
+    // I think if you're going to use the virtual root option - something has to be done with fieldId?
+    // I think Deep tree should have function fromFieldCollection, and all of this gets handled there
+    // if virtualRoot - look into append tree again - see why/how to use it - it should  work, I think
+    // I think LogicTree and LogicTreeDeep - should be using the same nodes - I think?
     const isMutualExclusiveConflict = this.isTwoConditionsMutuallyExclusive(
       logicSubjectTreeField.fieldJson,
       childContent,
@@ -241,19 +256,8 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
 
   aggregateLogicTree(fieldId: string): FsTreeLogicDeep {
     const field = this.getFieldTreeByFieldId(fieldId) as FsTreeField;
-    // const xTree = this.getExtendedTree(field);
-    // const f = field.getVisibilityNode();
-    // const visibilityExtTree =
-    //   f && f.parentNode ? this.getExtendedTree(f.parentNode) : null;
 
-    // const primaryExtTree = this.getExtendedTree(field) as FsTreeLogicDeep;
-
-    // const resultTree = this.getExtendedTree(
-    //   field,
-    //   visibilityExtTree?.rootNodeId,
-    //   visibilityExtTree || undefined
-    // );
-
+    // @ts-ignore - possible null
     return this.getExtendedTree(field);
   }
 
@@ -266,7 +270,8 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
 
     allFieldIds.forEach((fieldId) => {
       const agTree = this.aggregateLogicTree(fieldId);
-      statusMessages.push(...agTree.getStatusMessage());
+      if (agTree instanceof AbstractLogicNode)
+        statusMessages.push(...agTree.getStatusMessage());
     });
     return statusMessages.filter(
       (statusMessage) => statusMessage.severity !== "debug" // filter probably shouldn't be here
@@ -282,9 +287,11 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
   getFieldIdsWithCircularLogic(): string[] {
     const allFieldIds = Object.keys(this._fieldIdNodeMap);
     return allFieldIds.filter((fieldId) => {
-      return (
-        this.aggregateLogicTree(fieldId).getCircularLogicNodes().length > 0
-      );
+      const agTree = this.aggregateLogicTree(fieldId);
+      if (agTree) {
+        return agTree.getCircularLogicNodes().length > 0;
+      }
+      // return false; // necessary?
     });
   }
 

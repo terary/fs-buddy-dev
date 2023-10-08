@@ -4,9 +4,11 @@ import { FsTreeField } from "./trees/FsTreeField";
 import circularAndInterdependentJson from "../../../test-dev-resources/form-json/5375703.json";
 import formJson5375703 from "../../../test-dev-resources/form-json/5375703.json";
 import formJson5469299 from "../../../test-dev-resources/form-json/5469299.json";
+
 import {
   FsCircularDependencyNode,
   FsLogicLeafNode,
+  FsTreeLogicDeep,
 } from "./trees/FsTreeLogicDeep";
 import formWithAllFieldsJson from "../../../test-dev-resources/form-json/5358471.json";
 import submissionWithAllFieldsJson from "../../../test-dev-resources/submission-json/1129952515-form5358471.json";
@@ -86,7 +88,9 @@ describe("FsTreeFieldCollection", () => {
           circularAndInterdependentJson as unknown as TApiFormJson
         )
       );
-      const noLogicField = tree.aggregateLogicTree("148456700");
+      const noLogicField = tree.aggregateLogicTree(
+        "148456700"
+      ) as FsTreeLogicDeep;
       expect(noLogicField.countTotalNodes()).toBe(1);
       expect(
         noLogicField.getChildContentAt(noLogicField.rootNodeId)
@@ -96,12 +100,32 @@ describe("FsTreeFieldCollection", () => {
       const tree5469299 = FsTreeFieldCollection.fromApiFormJson(
         transformers.formJson(formJson5469299 as unknown as TApiFormJson)
       );
-
       const tree5375703 = FsTreeFieldCollection.fromApiFormJson(
         transformers.formJson(formJson5375703 as unknown as TApiFormJson)
       );
+
+      // need to verify the circular dep nodes are correct
+      // Branching is correct but it's not adding leaves?
+      // I think the 'append' is sending the wrong node stuff so its not look at 'next'
+      // This doesn't seem to be adding leaves
+
+      // It's adding more circular dependency nodes that I would expect
+      // I think this descends to far with the ring (148456742) circular reference.
+      // I wouldn't expect 5 circular reference nodes, this maybe because the way the fieldLogic and the panelLogic
+      // are combined
+
+      const agTree152297010 = tree5469299.aggregateLogicTree("152297010"); // Mutually Inclusive
+      const agTree152293116 = tree5469299.aggregateLogicTree("152293116"); // Mutually Exclusive
+      const agTree152290546 = tree5469299.aggregateLogicTree("152290546");
+
+      const agTree152586428 = tree5469299.aggregateLogicTree("152586428");
+      const agTree148456742 = tree5375703.aggregateLogicTree("148456742");
       const agTree148509477 = tree5375703.aggregateLogicTree("148509477");
-      const x = agTree148509477.getStatusMessage();
+      const agTree152290553 = tree5469299.aggregateLogicTree("152290553");
+      const agTree152290554 = tree5469299.aggregateLogicTree("152290554");
+
+      const agTree152139062 = tree5375703.aggregateLogicTree("152139062");
+      //152290554
 
       const agTree152290560 = tree5469299.aggregateLogicTree("152290560");
 
@@ -124,10 +148,7 @@ describe("FsTreeFieldCollection", () => {
           }, {} as TSimpleDictionary<TStatusRecord[]>);
       };
 
-      const agTree152139062 = tree5375703.aggregateLogicTree("152139062");
-
-      const agTree152290546 = tree5469299.aggregateLogicTree("152290546");
-      const sm = agTree152290546.getStatusMessage();
+      // const agTree152139062 = tree5375703.aggregateLogicTree("152139062");
 
       // const statusMessages148456742 = filterMessagesBy(
       //   ["logic", "error"],
