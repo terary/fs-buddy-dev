@@ -29,8 +29,14 @@ import { FsCircularMutualInclusiveNode } from "./LogicNodes/FsCircularMutualIncl
 class FsTreeLogicDeep {
   static readonly MAX_TOTAL_NODES = 50;
   private _fsDeepLogicTree: FsTreeLogicDeepInternal;
-
+  private _rootFieldId: string;
   constructor(rootNodeId?: string, nodeContent?: AbstractLogicNode) {
+    // @ts-ignore
+    this._rootFieldId = nodeContent?.ownerFieldId
+      ? // @ts-ignore
+        nodeContent?.ownerFieldId
+      : // @ts-ignore
+        nodeContent?.fieldId;
     this._fsDeepLogicTree = new FsTreeLogicDeepInternal(
       rootNodeId,
       nodeContent
@@ -45,6 +51,10 @@ class FsTreeLogicDeep {
       parentNodeId,
       nodeContent
     );
+  }
+
+  get rootFieldId() {
+    return this._rootFieldId;
   }
 
   countTotalNodes() {
@@ -98,7 +108,8 @@ class FsTreeLogicDeep {
       if (logicNode instanceof AbstractLogicNode) {
         statusMessages.push(
           ...logicNode.getStatusMessage(
-            this.ownerFieldId,
+            this.rootFieldId,
+            // this.ownerFieldId,
             this.getDependentFieldIds()
           )
         );
@@ -113,6 +124,7 @@ class FsTreeLogicDeep {
 
   static fromFieldJson(fieldJson: TFsFieldAny): FsTreeLogicDeep {
     const internalTree = FsTreeLogicDeepInternal.fromFieldJson(fieldJson);
+
     const tree = new FsTreeLogicDeep();
     tree._fsDeepLogicTree = internalTree;
 
@@ -168,6 +180,23 @@ class FsTreeLogicDeep {
     }
   }
 
+  getAllLogicStatusMessages(): TStatusRecord[] {
+    const statusMessages: TStatusRecord[] = [];
+
+    const logicNodes = this._fsDeepLogicTree
+      .getTreeContentAt(this._fsDeepLogicTree.rootNodeId)
+      .filter((nodeContent) => {
+        nodeContent instanceof AbstractLogicNode;
+      }) as AbstractLogicNode[];
+
+    logicNodes.forEach((logicNode) => {
+      const s = logicNodes;
+      statusMessages.push(...logicNode.getStatusMessage(this.ownerFieldId, []));
+    });
+
+    return statusMessages;
+  }
+
   private static getCircularReferenceNode(
     sourceFieldId: string,
     targetFieldId: string,
@@ -177,14 +206,10 @@ class FsTreeLogicDeep {
     targetFieldContent: TFsLogicNode
   ): FsCircularDependencyNode {
     const existingChildContent = deepTree.getChildContentByFieldId(
-      sourceFieldId
+      targetFieldId
     ) as unknown as
       | TFsFieldLogicJunction<TFsJunctionOperators>
       | TFsFieldLogicCheckLeaf;
-
-    // mutual inclusive seems to be correct
-    // mutually exclusive is being called at the branch level?
-    // Its weird these two trees should be identical
 
     if (existingChildContent instanceof FsLogicLeafNode) {
       if (
@@ -281,17 +306,23 @@ class FsTreeLogicDeep {
       return deepTree;
     }
 
-    const { conditional, action, fieldJson, checks } =
-      nodeContent as TFsFieldLogicJunction<TFsJunctionOperators>;
+    const {
+      conditional,
+      action,
+      // @ts-ignore
+      logicJson: fieldJson,
+      checks,
+    } = nodeContent as TFsFieldLogicJunction<TFsJunctionOperators>;
 
     const newBranchNode = new FsLogicBranchNode(
       // @ts-ignore
-      nodeContent?.fieldId, //ownerFieldId,
+      nodeContent.fieldId, //ownerFieldId,
       conditional,
       action || null,
       checks as TFsFieldLogicCheckLeaf[],
-      fieldJson // this was once named 'logicJson' so want to double check this populates
+      fieldJson
     );
+
     const newBranchNodeId = deepTree.appendChildNodeWithContent(
       deepTreeNodeId,
       newBranchNode
@@ -317,20 +348,13 @@ class FsTreeLogicDeep {
           childNodeContent
         );
         deepTree.appendChildNodeWithContent(
-          deepTreeNodeId,
+          newBranchNodeId,
           circularReferenceNode
-          // new FsCircularDependencyNode(
-          //   srcFieldId || "_NO_PREVIOUS_FIELD_ID_",
-          //   // fieldId,  // we trying to add previous fieldId - which I don't have here - may not be important
-          //   // because the last element of dependentsFieldIds will be previous?
-          //   fieldId,
-          //   deepTree.getDependentChainFieldIds()
-          // )
         );
       } else if (childTreeField?.getLogicTree() === null) {
         // append leaf
         deepTree.appendChildNodeWithContent(
-          deepTreeNodeId,
+          newBranchNodeId,
           new FsLogicLeafNode(fieldId, condition, option)
         );
       } else {

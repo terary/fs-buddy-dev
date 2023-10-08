@@ -59,8 +59,14 @@ class FsLogicBranchNode
   }
 
   private getLogicElements() {
-    const { action, conditional, checks } = this.fieldJson;
-    return { action, conditional, checks };
+    const defaults = {
+      action: "_ACTION_",
+      conditional: "_CONDITIONAL_",
+      checks: [],
+    };
+    // const { action, conditional, checks } = this.fieldJson;
+    // this is bad.. The issue is that it's never clear what to expect in the field 'fieldJson'
+    return { ...defaults, ...this.fieldJson };
   }
 
   getStatusMessage(

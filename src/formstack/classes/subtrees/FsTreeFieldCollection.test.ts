@@ -114,8 +114,8 @@ describe("FsTreeFieldCollection", () => {
       // I wouldn't expect 5 circular reference nodes, this maybe because the way the fieldLogic and the panelLogic
       // are combined
 
-      const agTree152297010 = tree5469299.aggregateLogicTree("152297010"); // Mutually Inclusive
       const agTree152293116 = tree5469299.aggregateLogicTree("152293116"); // Mutually Exclusive
+      const agTree152297010 = tree5469299.aggregateLogicTree("152297010"); // Mutually Inclusive
       const agTree152290546 = tree5469299.aggregateLogicTree("152290546");
 
       const agTree152586428 = tree5469299.aggregateLogicTree("152586428");
@@ -130,7 +130,7 @@ describe("FsTreeFieldCollection", () => {
       const agTree152290560 = tree5469299.aggregateLogicTree("152290560");
 
       const agTree148509465 = tree5375703.aggregateLogicTree("148509465");
-
+      const sm = tree5375703.getAllLogicStatusMessages();
       const filterMessagesBy = (
         severity: TStatusMessageSeverity[] = ["debug", "logic"],
         s: TStatusRecord[]

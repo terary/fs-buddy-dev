@@ -270,8 +270,9 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
 
     allFieldIds.forEach((fieldId) => {
       const agTree = this.aggregateLogicTree(fieldId);
-      if (agTree instanceof AbstractLogicNode)
+      if (agTree instanceof FsTreeLogicDeep) {
         statusMessages.push(...agTree.getStatusMessage());
+      }
     });
     return statusMessages.filter(
       (statusMessage) => statusMessage.severity !== "debug" // filter probably shouldn't be here
