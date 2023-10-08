@@ -131,55 +131,6 @@ class FsTreeLogicDeep {
     return tree;
   }
 
-  private x_getCorrectCircularNode(
-    exTree: FsTreeLogicDeep,
-    // childField: ILogicCheck,
-    // childContent: ILogicCheck
-    childField: FsTreeField,
-    childContent: TFsFieldLogicCheckLeaf
-  ): TFsLogicNode {
-    const existingChildContent =
-      exTree.getChildContentByFieldId<TFsFieldLogicCheckLeaf>(
-        childContent.fieldId
-      ) as FsLogicLeafNode;
-    // @ts-ignore
-    const logicSubjectTreeField = this.getFieldById(childField.fieldId);
-
-    if (!childContent || !existingChildContent) {
-      return new FsCircularDependencyNode(
-        exTree.ownerFieldId,
-        childField.fieldId,
-        exTree.getDependentFieldIds()
-      );
-    }
-    // I think if you're going to use the virtual root option - something has to be done with fieldId?
-    // I think Deep tree should have function fromFieldCollection, and all of this gets handled there
-    // if virtualRoot - look into append tree again - see why/how to use it - it should  work, I think
-    // I think LogicTree and LogicTreeDeep - should be using the same nodes - I think?
-    // @ts-ignore
-    const isMutualExclusiveConflict = this.isTwoConditionsMutuallyExclusive(
-      logicSubjectTreeField.fieldJson,
-      childContent,
-      existingChildContent
-    );
-
-    if (isMutualExclusiveConflict) {
-      return new FsCircularMutualExclusiveNode(
-        exTree.ownerFieldId,
-        childField.fieldId,
-        exTree.getDependentFieldIds(),
-        { conditionalA: childContent, conditionalB: existingChildContent }
-      );
-    } else {
-      return new FsCircularMutualInclusiveNode(
-        exTree.ownerFieldId,
-        childField.fieldId,
-        exTree.getDependentFieldIds(),
-        { conditionalA: childContent, conditionalB: existingChildContent }
-      );
-    }
-  }
-
   getAllLogicStatusMessages(): TStatusRecord[] {
     const statusMessages: TStatusRecord[] = [];
 
@@ -200,8 +151,6 @@ class FsTreeLogicDeep {
   private static getCircularReferenceNode(
     sourceFieldId: string,
     targetFieldId: string,
-    // dependentChainFieldIds: string[],
-    // fieldCollection: FsTreeFieldCollection,
     deepTree: FsTreeLogicDeep,
     targetFieldContent: TFsLogicNode
   ): FsCircularDependencyNode {
@@ -337,7 +286,7 @@ class FsTreeLogicDeep {
       // maybe just field any leaf nodes with fieldId [Symbol]..
       if (deepTree.isExistInDependencyChain(childTreeField)) {
         // circular reference
-        const srcFieldId = deepTree.getDependentChainFieldIds()[0]; // maybe this?
+        const srcFieldId = deepTree.rootFieldId; // deepTree.getDependentChainFieldIds()[0]; // maybe this?
         const circularReferenceNode = FsTreeLogicDeep.getCircularReferenceNode(
           srcFieldId,
           fieldId,
@@ -430,107 +379,6 @@ class FsTreeLogicDeep {
       tree.rootNodeId,
       fieldCollection
     );
-  }
-
-  // getFieldTreeByFieldId(fieldId: string): FsTreeField | undefined {
-  //   // I wounder if a look-up table wouldn't be better
-  //   //  also you're filtering after map, if possible the other order would be preferred
-  //   return this._fieldIdNodeMap[fieldId];
-  // }
-
-  private x_getExtendedTree<T extends FsTreeLogicDeep = FsTreeLogicDeep>(
-    field: FsTreeField,
-    atNodeId?: string,
-    extendedTree?: FsTreeLogicDeep
-  ): T {
-    const logicTree = field.getLogicTree() as FsTreeLogic;
-
-    if (logicTree === null) {
-      // *tmc* probably what to type check null or undefined
-      const t = new FsTreeLogicDeep(field.fieldId);
-      t.ownerFieldId = field.fieldId;
-      return t as T;
-    }
-
-    const rootNodeContent = logicTree.getChildContentAt(
-      logicTree.rootNodeId //
-    ) as unknown as TFsFieldLogicJunction<TFsJunctionOperators>;
-
-    let exTree: FsTreeLogicDeep;
-    let currentBranchNodeId: string;
-
-    const { conditional, action, fieldJson, checks } = rootNodeContent;
-    const newBranchNode = new FsLogicBranchNode(
-      field.fieldId,
-      (conditional || "all") as TFsJunctionOperators,
-      action || null,
-      checks as TFsFieldLogicCheckLeaf[],
-      // @ts-ignore - logicJson isn't a member (logicJson should be fieldJson)
-      fieldJson || rootNodeContent.logicJson
-    );
-
-    if (extendedTree === undefined) {
-      exTree = new FsTreeLogicDeep(field.fieldId, newBranchNode);
-      exTree.ownerFieldId = field.fieldId;
-      atNodeId = exTree.rootNodeId;
-      currentBranchNodeId = exTree.rootNodeId;
-    } else {
-      exTree = extendedTree;
-      currentBranchNodeId = exTree.appendChildNodeWithContent(
-        atNodeId || "",
-        newBranchNode
-      );
-    }
-
-    if (
-      // this should be more intelligent
-      // exTree.getTreeNodeIdsAt(exTree.rootNodeId).length >
-      exTree.countTotalNodes() > FsTreeLogicDeep.MAX_TOTAL_NODES
-    ) {
-      exTree.appendChildNodeWithContent(
-        currentBranchNodeId,
-        new FsMaxDepthExceededNode()
-      );
-      return exTree as T;
-      // this needs to throw
-    }
-
-    // technically logicTree should always have children but in reality it's sometimes missing.
-    logicTree
-      .getChildrenNodeIdsOf(logicTree.rootNodeId)
-      .forEach((logicChildNodeId: string) => {
-        const childContent = logicTree.getChildContentAt(
-          logicChildNodeId
-        ) as TFsFieldLogicCheckLeaf;
-
-        // @ts-ignore
-        const childField = _fieldCollection.getFieldTreeByFieldId(
-          childContent.fieldId
-        ) as FsTreeField;
-
-        if (exTree.isExistInDependencyChain(childField)) {
-          exTree.appendChildNodeWithContent(
-            currentBranchNodeId,
-            // @ts-ignore
-            this.getCorrectCircularNode(
-              exTree,
-              // @ts-ignore
-              childField,
-              childContent as unknown as TFsFieldLogicCheckLeaf // TFsFieldLogicCheckLeaf
-            )
-          );
-        } else if (childField.getLogicTree() === null) {
-          const { fieldId, condition, option } = childContent;
-          exTree.appendChildNodeWithContent(
-            currentBranchNodeId,
-            new FsLogicLeafNode(fieldId, condition, option)
-          );
-        } else {
-          this.x_getExtendedTree(childField, atNodeId, exTree); //(childFieldId)
-        }
-      });
-
-    return exTree as T;
   }
 }
 export { FsTreeLogicDeep };
