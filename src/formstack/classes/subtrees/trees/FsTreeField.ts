@@ -1,6 +1,7 @@
 import {
   AbstractExpressionTree,
   IExpressionTree,
+  ITree,
 } from "predicate-tree-advanced-poc/dist/src";
 import { TFsFieldAnyJson, TFsNode } from "../../types";
 import { FsTreeCalcString } from "./FsTreeCalcString";

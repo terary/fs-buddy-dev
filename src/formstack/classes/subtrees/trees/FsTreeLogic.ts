@@ -1,6 +1,7 @@
 import {
   AbstractExpressionTree,
   IExpressionTree,
+  ITree,
 } from "predicate-tree-advanced-poc/dist/src";
 import { TFsFieldAnyJson } from "../../types";
 import type {
@@ -39,6 +40,16 @@ class FsTreeLogic extends AbstractFsTreeLogic<TFsLogicNode> {
 
   getDependantFieldIds() {
     return this.getShallowDependantFieldIds();
+  }
+
+  getChildContentAtOrThrow<
+    T extends
+      | TFsFieldLogicJunction<TFsJunctionOperators>
+      | TFsFieldLogicCheckLeaf
+  >(nodeId: string): T {
+    const childContent = this.getChildContentAt(nodeId);
+
+    return childContent as T;
   }
 
   getShallowDependantFieldIds(): string[] {

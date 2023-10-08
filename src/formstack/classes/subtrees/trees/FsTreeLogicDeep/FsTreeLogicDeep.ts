@@ -149,7 +149,6 @@ class FsTreeLogicDeep {
   }
 
   private static getCircularReferenceNode(
-    sourceFieldId: string,
     targetFieldId: string,
     deepTree: FsTreeLogicDeep,
     targetFieldContent: TFsLogicNode
@@ -206,14 +205,13 @@ class FsTreeLogicDeep {
     deepTree: FsTreeLogicDeep,
     deepTreeNodeId: string,
     fieldCollection: FsTreeFieldCollection
-  ): FsTreeLogicDeep {
-    const nodeContent = fieldLogicTree.getChildContentAt(fieldLogicNodeId) as
-      | TFsFieldLogicJunction<TFsJunctionOperators>
-      | TFsFieldLogicCheckLeaf;
+  ): FsTreeLogicDeep | null {
+    const nodeContent =
+      fieldLogicTree.getChildContentAtOrThrow(fieldLogicNodeId);
     const childrenNodeIds =
       fieldLogicTree.getChildrenNodeIdsOf(fieldLogicNodeId);
 
-    // @ts-ignore
+    // @ts-ignore -- need to work-out the "fieldId" and "ownerFieldId"
     const fieldId = nodeContent?.fieldId || nodeContent?.ownerFieldId;
     if (!fieldId) {
       throw Error("Found no field id" + JSON.stringify(nodeContent));
@@ -226,22 +224,18 @@ class FsTreeLogicDeep {
       throw new Error("What - too many nodes");
     }
 
-    // @ts-ignore
+    // @ts-ignore  -- maybe isExist should be defined with an interface
     if (deepTree._fsDeepLogicTree.isExistInDependencyChain(nodeContent)) {
       deepTree.appendChildNodeWithContent(
         deepTreeNodeId,
         new FsCircularDependencyNode(
           deepTree.getDependentChainFieldIds().pop() ||
             "_NO_PREVIOUS_FIELD_ID_",
-          // fieldId,  // we trying to add previous fieldId - which I don't have here - may not be important
-          // because the last element of dependantsFieldIds will be privious?
           fieldId,
           deepTree.getDependentChainFieldIds()
         )
       );
-      // @ts-ignore;
       return null;
-      // return deepTree;
     }
 
     if (childrenNodeIds.length === 0) {
@@ -276,24 +270,19 @@ class FsTreeLogicDeep {
       deepTreeNodeId,
       newBranchNode
     );
-
     childrenNodeIds.forEach((childNodeId) => {
-      const childNodeContent = fieldLogicTree.getChildContentAt(childNodeId);
-      const { fieldId, condition, option } =
-        childNodeContent as TFsFieldLogicCheckLeaf;
+      const childNodeContent =
+        fieldLogicTree.getChildContentAtOrThrow<TFsFieldLogicCheckLeaf>(
+          childNodeId
+        );
+
+      const { fieldId, condition, option } = childNodeContent;
       const childTreeField = fieldCollection.getFieldTreeByFieldId(fieldId);
 
-      // maybe just field any leaf nodes with fieldId [Symbol]..
       if (deepTree.isExistInDependencyChain(childTreeField)) {
-        // circular reference
-        const srcFieldId = deepTree.rootFieldId; // deepTree.getDependentChainFieldIds()[0]; // maybe this?
         const circularReferenceNode = FsTreeLogicDeep.getCircularReferenceNode(
-          srcFieldId,
           fieldId,
-          // deepTree.getDependentChainFieldIds(),
-          // fieldCollection,
           deepTree,
-          // @ts-ignore - maybe null
           childNodeContent
         );
         deepTree.appendChildNodeWithContent(
