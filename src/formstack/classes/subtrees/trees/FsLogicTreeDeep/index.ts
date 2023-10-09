@@ -4,4 +4,4 @@ export { FsMaxDepthExceededNode } from "./LogicNodes/FsMaxDepthExceededNode";
 export { FsLogicBranchNode } from "./LogicNodes/FsLogicBranchNode";
 export { FsCircularMutualInclusiveNode } from "./LogicNodes/FsCircularMutualInclusiveNode";
 export { FsCircularMutualExclusiveNode } from "./LogicNodes/FsCircularMutualExclusiveNode";
-export { FsTreeLogicDeep } from "./FsTreeLogicDeep";
+export { FsLogicTreeDeep } from "./FsLogicTreeDeep";

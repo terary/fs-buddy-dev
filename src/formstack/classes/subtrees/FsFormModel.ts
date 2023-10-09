@@ -5,7 +5,7 @@ import { FsFieldModel } from "./trees/FsFieldModel";
 import { FsFieldVisibilityLinkNode, FsFormRootNode } from "./trees/nodes";
 import type { TFsLeafOperators, TTreeFieldNode } from "./types";
 
-import { FsTreeLogicDeep } from "./trees/FsTreeLogicDeep";
+import { FsLogicTreeDeep } from "./trees/FsLogicTreeDeep";
 
 import { TStatusRecord, TUiEvaluationObject } from "../Evaluator/type";
 import { TApiForm, TSubmissionJson } from "../../type.form";
@@ -55,12 +55,12 @@ class FsFormModel extends AbstractExpressionTree<
     return this._fieldIdNodeMap[fieldId];
   }
 
-  private getExtendedTree<T extends FsTreeLogicDeep = FsTreeLogicDeep>(
+  private getExtendedTree<T extends FsLogicTreeDeep = FsLogicTreeDeep>(
     field: FsFieldModel,
     atNodeId?: string,
-    extendedTree?: FsTreeLogicDeep
-  ): FsTreeLogicDeep | null {
-    return FsTreeLogicDeep.fromFieldCollection(field.fieldId, this);
+    extendedTree?: FsLogicTreeDeep
+  ): FsLogicTreeDeep | null {
+    return FsLogicTreeDeep.fromFieldCollection(field.fieldId, this);
   }
 
   // private isTwoConditionsMutuallyExclusive(
@@ -79,7 +79,7 @@ class FsFormModel extends AbstractExpressionTree<
   //   return true;
   // }
 
-  aggregateLogicTree(fieldId: string): FsTreeLogicDeep {
+  aggregateLogicTree(fieldId: string): FsLogicTreeDeep {
     const field = this.getFieldTreeByFieldId(fieldId) as FsFieldModel;
 
     // @ts-ignore - possible null
@@ -95,7 +95,7 @@ class FsFormModel extends AbstractExpressionTree<
 
     allFieldIds.forEach((fieldId) => {
       const agTree = this.aggregateLogicTree(fieldId);
-      if (agTree instanceof FsTreeLogicDeep) {
+      if (agTree instanceof FsLogicTreeDeep) {
         statusMessages.push(...agTree.getStatusMessage());
       }
     });

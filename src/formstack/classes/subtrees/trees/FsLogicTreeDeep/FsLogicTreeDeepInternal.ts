@@ -18,7 +18,7 @@ import { FsFieldModel } from "../FsFieldModel";
 import { TFsFieldAny } from "../../../../type.field";
 import { AbstractLogicNode } from "./LogicNodes/AbstractLogicNode";
 
-class FsTreeLogicDeepInternal extends AbstractFsTreeLogic<AbstractLogicNode> {
+class FsLogicTreeDeepInternal extends AbstractFsTreeLogic<AbstractLogicNode> {
   //  private _dependantFieldIds: string[] = [];
   #dependantFieldIds: TSimpleDictionary<AbstractLogicNode> = {};
   dependantFieldIds_dev_debug_hard_private: TSimpleDictionary<AbstractLogicNode> =
@@ -44,7 +44,7 @@ class FsTreeLogicDeepInternal extends AbstractFsTreeLogic<AbstractLogicNode> {
 
   createSubtreeAt(nodeId: string): IExpressionTree<AbstractLogicNode> {
     // *tmc* needs to make this a real thing, I guess: or add it to the abstract?
-    return new FsTreeLogicDeepInternal();
+    return new FsLogicTreeDeepInternal();
   }
 
   private get dependantFieldIds() {
@@ -102,7 +102,7 @@ class FsTreeLogicDeepInternal extends AbstractFsTreeLogic<AbstractLogicNode> {
     return super.toPojoAt(nodeId, transformer);
   }
 
-  static fromFieldJson(fieldJson: TFsFieldAny): FsTreeLogicDeepInternal {
+  static fromFieldJson(fieldJson: TFsFieldAny): FsLogicTreeDeepInternal {
     // we should be receiving fieldJson.logic, but the Abstract._fieldJson is not typed properly
     // const logicJson: TFsLogicNodeJson = fieldJson.logic;
     // or maybe always get the whole json?
@@ -121,7 +121,7 @@ class FsTreeLogicDeepInternal extends AbstractFsTreeLogic<AbstractLogicNode> {
       logicJson
     );
 
-    const tree = new FsTreeLogicDeepInternal(
+    const tree = new FsLogicTreeDeepInternal(
       fieldJson.id || "_calc_tree_",
       rootNode
     );
@@ -146,7 +146,7 @@ class FsTreeLogicDeepInternal extends AbstractFsTreeLogic<AbstractLogicNode> {
   }
 }
 
-export { FsTreeLogicDeepInternal };
+export { FsLogicTreeDeepInternal };
 
 const transformLogicLeafJsonToLogicLeafs = (
   logicJson: TFsFieldLogicJunctionJson

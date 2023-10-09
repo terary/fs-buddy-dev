@@ -2,7 +2,7 @@ import { FsFieldModel } from "./trees";
 import {
   FsCircularDependencyNode,
   FsMaxDepthExceededNode,
-} from "./trees/FsTreeLogicDeep";
+} from "./trees/FsLogicTreeDeep";
 
 type TFsArithmeticOperator = { operator: "+" | "*" | "-" | "/" };
 type TFsArithmeticLeaf = {

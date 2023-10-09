@@ -3,7 +3,7 @@ import { FsCircularDependencyNode } from "./LogicNodes/FsCircularDependencyNode"
 import { FsFieldModel } from "../FsFieldModel";
 import { TFsFieldAny } from "../../../../type.field";
 import { AbstractLogicNode } from "./LogicNodes/AbstractLogicNode";
-import { FsTreeLogicDeepInternal } from "./FsTreeLogicDeepInternal";
+import { FsLogicTreeDeepInternal } from "./FsLogicTreeDeepInternal";
 import { TStatusRecord } from "../../../Evaluator/type";
 import { FsFormModel } from "../../FsFormModel";
 import { FsTreeLogic } from "../FsTreeLogic";
@@ -15,20 +15,16 @@ import {
   TFsLogicNode,
 } from "../../types";
 
-// | TFsFieldLogicJunction<TFsJunctionOperators>
-// | TFsFieldLogicCheckLeaf;
-
 import { FsLogicBranchNode } from "./LogicNodes/FsLogicBranchNode";
-import { TFsFieldLogicCheckLeafFromJson } from "../../../../transformers/TFsFieldLogicCheckLeafFromJson";
-import { FsMaxDepthExceededNode } from "./LogicNodes/FsMaxDepthExceededNode";
+
 import { FsLogicLeafNode } from "./LogicNodes/FsLogicLeafNode";
 import { FsVirtualRootNode } from "./LogicNodes/FsVirtualRootNode";
 import { FsCircularMutualExclusiveNode } from "./LogicNodes/FsCircularMutualExclusiveNode";
 import { FsCircularMutualInclusiveNode } from "./LogicNodes/FsCircularMutualInclusiveNode";
 
-class FsTreeLogicDeep {
+class FsLogicTreeDeep {
   static readonly MAX_TOTAL_NODES = 50;
-  private _fsDeepLogicTree: FsTreeLogicDeepInternal;
+  private _fsDeepLogicTree: FsLogicTreeDeepInternal;
   private _rootFieldId: string;
   constructor(rootNodeId?: string, nodeContent?: AbstractLogicNode) {
     // @ts-ignore
@@ -37,7 +33,7 @@ class FsTreeLogicDeep {
         nodeContent?.ownerFieldId
       : // @ts-ignore
         nodeContent?.fieldId;
-    this._fsDeepLogicTree = new FsTreeLogicDeepInternal(
+    this._fsDeepLogicTree = new FsLogicTreeDeepInternal(
       rootNodeId,
       nodeContent
     );
@@ -122,10 +118,10 @@ class FsTreeLogicDeep {
     return this._fsDeepLogicTree.toPojoAt(this._fsDeepLogicTree.rootNodeId);
   }
 
-  static fromFieldJson(fieldJson: TFsFieldAny): FsTreeLogicDeep {
-    const internalTree = FsTreeLogicDeepInternal.fromFieldJson(fieldJson);
+  static fromFieldJson(fieldJson: TFsFieldAny): FsLogicTreeDeep {
+    const internalTree = FsLogicTreeDeepInternal.fromFieldJson(fieldJson);
 
-    const tree = new FsTreeLogicDeep();
+    const tree = new FsLogicTreeDeep();
     tree._fsDeepLogicTree = internalTree;
 
     return tree;
@@ -150,7 +146,7 @@ class FsTreeLogicDeep {
 
   private static getCircularReferenceNode(
     targetFieldId: string,
-    deepTree: FsTreeLogicDeep,
+    deepTree: FsLogicTreeDeep,
     targetFieldContent: TFsLogicNode
   ): FsCircularDependencyNode {
     const existingChildContent = deepTree.getChildContentByFieldId(
@@ -202,10 +198,10 @@ class FsTreeLogicDeep {
   private static appendFieldTreeNodeToLogicDeep(
     fieldLogicTree: FsTreeLogic,
     fieldLogicNodeId: string,
-    deepTree: FsTreeLogicDeep,
+    deepTree: FsLogicTreeDeep,
     deepTreeNodeId: string,
     fieldCollection: FsFormModel
-  ): FsTreeLogicDeep | null {
+  ): FsLogicTreeDeep | null {
     const nodeContent =
       fieldLogicTree.getChildContentAtOrThrow(fieldLogicNodeId);
     const childrenNodeIds =
@@ -219,7 +215,7 @@ class FsTreeLogicDeep {
 
     if (
       deepTree._fsDeepLogicTree.countTotalNodes() >
-      FsTreeLogicDeep.MAX_TOTAL_NODES
+      FsLogicTreeDeep.MAX_TOTAL_NODES
     ) {
       throw new Error("What - too many nodes");
     }
@@ -279,7 +275,7 @@ class FsTreeLogicDeep {
       const childTreeField = fieldCollection.getFieldTreeByFieldId(fieldId);
 
       if (deepTree.isExistInDependencyChain(childTreeField)) {
-        const circularReferenceNode = FsTreeLogicDeep.getCircularReferenceNode(
+        const circularReferenceNode = FsLogicTreeDeep.getCircularReferenceNode(
           parentFieldId,
           // fieldId,
           deepTree,
@@ -297,7 +293,7 @@ class FsTreeLogicDeep {
         );
       } else {
         // recursive call
-        return FsTreeLogicDeep.fromFieldCollection(
+        return FsLogicTreeDeep.fromFieldCollection(
           fieldId,
           fieldCollection,
           deepTree
@@ -311,8 +307,8 @@ class FsTreeLogicDeep {
   static fromFieldCollection(
     fieldId: string,
     fieldCollection: FsFormModel,
-    deepTree?: FsTreeLogicDeep
-  ): FsTreeLogicDeep | null {
+    deepTree?: FsLogicTreeDeep
+  ): FsLogicTreeDeep | null {
     const field = fieldCollection.getFieldTreeByFieldId(fieldId);
 
     if (field === undefined) {
@@ -328,14 +324,14 @@ class FsTreeLogicDeep {
 
     const tree =
       deepTree ||
-      new FsTreeLogicDeep(
+      new FsLogicTreeDeep(
         "_ROOT_", // this should be fieldId - but for the time being want to rule out name conflicts
         // field.fieldId,
         new FsVirtualRootNode(fieldId)
       );
 
     if (!logicTree) {
-      return FsTreeLogicDeep.appendFieldTreeNodeToLogicDeep(
+      return FsLogicTreeDeep.appendFieldTreeNodeToLogicDeep(
         visualTree as FsTreeLogic,
         (visualTree as FsTreeLogic).rootNodeId,
         tree,
@@ -345,7 +341,7 @@ class FsTreeLogicDeep {
     }
 
     if (!visualTree) {
-      return FsTreeLogicDeep.appendFieldTreeNodeToLogicDeep(
+      return FsLogicTreeDeep.appendFieldTreeNodeToLogicDeep(
         logicTree as FsTreeLogic,
         (logicTree as FsTreeLogic).rootNodeId,
         tree,
@@ -354,14 +350,14 @@ class FsTreeLogicDeep {
       );
     }
 
-    FsTreeLogicDeep.appendFieldTreeNodeToLogicDeep(
+    FsLogicTreeDeep.appendFieldTreeNodeToLogicDeep(
       logicTree as FsTreeLogic,
       (logicTree as FsTreeLogic).rootNodeId,
       tree,
       tree.rootNodeId,
       fieldCollection
     );
-    return FsTreeLogicDeep.appendFieldTreeNodeToLogicDeep(
+    return FsLogicTreeDeep.appendFieldTreeNodeToLogicDeep(
       visualTree as FsTreeLogic,
       (visualTree as FsTreeLogic).rootNodeId,
       tree,
@@ -370,4 +366,4 @@ class FsTreeLogicDeep {
     );
   }
 }
-export { FsTreeLogicDeep };
+export { FsLogicTreeDeep };

@@ -10,7 +10,7 @@ import { FsFieldVisibilityLinkNode } from "./nodes/FsFieldVisibilityLinkNode";
 import { AbstractFsTreeGeneric } from "./AbstractFsTreeGeneric";
 import { TFsVisibilityModes } from "../types";
 import { MultipleLogicTreeError } from "../../../errors/MultipleLogicTreeError";
-import { FsCircularDependencyNode } from "./FsTreeLogicDeep";
+import { FsCircularDependencyNode } from "./FsLogicTreeDeep";
 import { AbstractNode } from "./nodes/AbstractNode";
 import {
   TFsFieldAny,

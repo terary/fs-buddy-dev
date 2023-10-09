@@ -1,3 +1,3 @@
-export { FsTreeLogicDeep } from "./trees/FsTreeLogicDeep/FsTreeLogicDeep";
+export { FsLogicTreeDeep } from "./trees/FsLogicTreeDeep/FsLogicTreeDeep";
 
 export { FsFormModel } from "./FsFormModel";

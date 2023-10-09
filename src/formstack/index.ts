@@ -1,4 +1,4 @@
-export { FsTreeLogicDeep } from "./classes/subtrees";
+export { FsLogicTreeDeep } from "./classes/subtrees";
 export { FsFormModel } from "./classes/subtrees";
 
 export type { TFsFieldAnyJson } from "./classes/types";

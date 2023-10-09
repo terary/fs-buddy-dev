@@ -1,7 +1,7 @@
 import { FsFormModel, TTreeFieldNode } from "../formstack";
 import type { TFsFieldAnyJson } from "../formstack";
 import { FsFieldModel } from "../formstack/classes/subtrees/trees";
-import { FsTreeLogicDeep } from "../formstack";
+import { FsLogicTreeDeep } from "../formstack";
 import { FsFormRootNode } from "../formstack/classes/subtrees/trees/nodes";
 import { TApiForm } from "../formstack/type.form";
 

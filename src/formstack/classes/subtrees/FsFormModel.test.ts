@@ -8,8 +8,8 @@ import formJson5469299 from "../../../test-dev-resources/form-json/5469299.json"
 import {
   FsCircularDependencyNode,
   FsLogicLeafNode,
-  FsTreeLogicDeep,
-} from "./trees/FsTreeLogicDeep";
+  FsLogicTreeDeep,
+} from "./trees/FsLogicTreeDeep";
 import formWithAllFieldsJson from "../../../test-dev-resources/form-json/5358471.json";
 import submissionWithAllFieldsJson from "../../../test-dev-resources/submission-json/1129952515-form5358471.json";
 import { TApiForm, TApiFormJson, TSubmissionJson } from "../../type.form";
@@ -90,7 +90,7 @@ describe("FsFormModel", () => {
       );
       const noLogicField = tree.aggregateLogicTree(
         "148456700"
-      ) as FsTreeLogicDeep;
+      ) as FsLogicTreeDeep;
       expect(noLogicField.countTotalNodes()).toBe(1);
       expect(
         noLogicField.getChildContentAt(noLogicField.rootNodeId)
@@ -117,6 +117,7 @@ describe("FsFormModel", () => {
 
 
 `;
+
       const x = agTree148456742.getStatusMessage();
       const pojo = {
         pojo152293116: tree5469299.aggregateLogicTree("152293116").toPojoAt(), // Mutually Exclusive
