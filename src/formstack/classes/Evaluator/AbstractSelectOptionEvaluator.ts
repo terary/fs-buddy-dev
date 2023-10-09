@@ -2,6 +2,9 @@ import { TFsFieldAny, TFsSelectOption } from "../../type.field";
 import { TSimpleDictionary, TUiEvaluationObject } from "./type";
 import { AbstractComplexSubmissionDatumEvaluator } from "./AbstractComplexSubmissionDatumEvaluator";
 
+// when there are duplicate options should be a warn/error
+// when there are empty options should be a warn/error
+
 abstract class AbstractSelectOptionEvaluator extends AbstractComplexSubmissionDatumEvaluator {
   #fieldSelectOptions: TFsSelectOption[];
 

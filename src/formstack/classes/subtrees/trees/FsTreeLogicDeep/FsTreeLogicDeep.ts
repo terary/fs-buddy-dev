@@ -167,7 +167,7 @@ class FsTreeLogicDeep {
         targetFieldContent.option === existingChildContent.option
       ) {
         return new FsCircularMutualInclusiveNode(
-          deepTree.ownerFieldId,
+          deepTree.rootFieldId,
           targetFieldId,
           deepTree.getDependentFieldIds(),
           {
@@ -179,7 +179,7 @@ class FsTreeLogicDeep {
         );
       } else {
         return new FsCircularMutualExclusiveNode(
-          deepTree.ownerFieldId,
+          deepTree.rootFieldId,
           targetFieldId,
           deepTree.getDependentFieldIds(),
           {
@@ -193,7 +193,7 @@ class FsTreeLogicDeep {
     }
 
     return new FsCircularDependencyNode(
-      deepTree.ownerFieldId,
+      deepTree.rootFieldId,
       targetFieldId,
       deepTree.getDependentFieldIds()
     );
@@ -212,8 +212,8 @@ class FsTreeLogicDeep {
       fieldLogicTree.getChildrenNodeIdsOf(fieldLogicNodeId);
 
     // @ts-ignore -- need to work-out the "fieldId" and "ownerFieldId"
-    const fieldId = nodeContent?.fieldId || nodeContent?.ownerFieldId;
-    if (!fieldId) {
+    const parentFieldId = nodeContent?.fieldId || nodeContent?.ownerFieldId;
+    if (!parentFieldId) {
       throw Error("Found no field id" + JSON.stringify(nodeContent));
     }
 
@@ -229,9 +229,8 @@ class FsTreeLogicDeep {
       deepTree.appendChildNodeWithContent(
         deepTreeNodeId,
         new FsCircularDependencyNode(
-          deepTree.getDependentChainFieldIds().pop() ||
-            "_NO_PREVIOUS_FIELD_ID_",
-          fieldId,
+          deepTree.rootFieldId,
+          parentFieldId,
           deepTree.getDependentChainFieldIds()
         )
       );
@@ -281,7 +280,8 @@ class FsTreeLogicDeep {
 
       if (deepTree.isExistInDependencyChain(childTreeField)) {
         const circularReferenceNode = FsTreeLogicDeep.getCircularReferenceNode(
-          fieldId,
+          parentFieldId,
+          // fieldId,
           deepTree,
           childNodeContent
         );

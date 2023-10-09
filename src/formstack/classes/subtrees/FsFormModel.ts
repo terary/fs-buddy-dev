@@ -12,11 +12,11 @@ import { TApiForm, TSubmissionJson } from "../../type.form";
 import { IEValuator } from "../Evaluator/IEvaluator";
 import { TFsFieldAny } from "../../type.field";
 
-interface ILogicCheck {
-  fieldId: string;
-  condition: TFsLeafOperators;
-  option: string;
-}
+// interface ILogicCheck {
+//   fieldId: string;
+//   condition: TFsLeafOperators;
+//   option: string;
+// }
 
 class FsFormModel extends AbstractExpressionTree<
   TTreeFieldNode | FsFormRootNode
@@ -63,21 +63,21 @@ class FsFormModel extends AbstractExpressionTree<
     return FsTreeLogicDeep.fromFieldCollection(field.fieldId, this);
   }
 
-  private isTwoConditionsMutuallyExclusive(
-    fieldJson: TFsFieldAny,
-    conditionA: ILogicCheck, // TFsFieldLogicCheckLeaf,
-    conditionB: ILogicCheck //TFsFieldLogicCheckLeaf
-  ) {
-    if (
-      ["select", "radio"].includes(fieldJson.type) &&
-      conditionA.condition === conditionB.condition &&
-      conditionA.option === conditionB.option
-    ) {
-      return false;
-    }
+  // private isTwoConditionsMutuallyExclusive(
+  //   fieldJson: TFsFieldAny,
+  //   conditionA: ILogicCheck, // TFsFieldLogicCheckLeaf,
+  //   conditionB: ILogicCheck //TFsFieldLogicCheckLeaf
+  // ) {
+  //   if (
+  //     ["select", "radio"].includes(fieldJson.type) &&
+  //     conditionA.condition === conditionB.condition &&
+  //     conditionA.option === conditionB.option
+  //   ) {
+  //     return false;
+  //   }
 
-    return true;
-  }
+  //   return true;
+  // }
 
   aggregateLogicTree(fieldId: string): FsTreeLogicDeep {
     const field = this.getFieldTreeByFieldId(fieldId) as FsFieldModel;

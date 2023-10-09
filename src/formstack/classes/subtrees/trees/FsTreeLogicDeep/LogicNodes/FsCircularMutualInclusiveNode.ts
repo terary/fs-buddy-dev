@@ -1,3 +1,4 @@
+import { TStatusRecord } from "../../../../Evaluator/type";
 import { TFsFieldLogicCheckLeaf } from "../../../types";
 import { FsCircularDependencyNode } from "./FsCircularDependencyNode";
 
@@ -40,6 +41,30 @@ class FsCircularMutualInclusiveNode extends FsCircularDependencyNode {
       },
       ...super.toPojo(),
     };
+  }
+
+  getStatusMessage(
+    rootFieldId: string,
+    dependentChainFieldIds?: string[]
+  ): TStatusRecord[] {
+    const dependentsAsString = "'" + dependentChainFieldIds?.join("', '") + "'";
+    const message =
+      `Logic: circular reference. root field: ${rootFieldId}, attempted fieldId: '${this.targetFieldId}', dependency chain: "${dependentsAsString}".` +
+      "  Potentially resolvable.";
+    return [
+      {
+        severity: "logic",
+        fieldId: this.targetFieldId,
+        message,
+        relatedFieldIds: dependentChainFieldIds,
+      },
+      {
+        severity: "warn", // duplicate message is intentional
+        fieldId: this.targetFieldId,
+        message,
+        relatedFieldIds: dependentChainFieldIds,
+      },
+    ];
   }
 }
 export { FsCircularMutualInclusiveNode };

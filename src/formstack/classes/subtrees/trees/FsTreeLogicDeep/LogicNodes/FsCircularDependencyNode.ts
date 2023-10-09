@@ -19,7 +19,9 @@ class FsCircularDependencyNode extends AbstractLogicNode {
   }
 
   getLastVisitedFieldId() {
-    return this._targetFieldId;
+    return this.dependentChainFieldIds.length >= 1
+      ? this.dependentChainFieldIds[this.dependentChainFieldIds.length - 1]
+      : -1; // a bit over kill, *should* always be 0 or more elements
   }
 
   get dependentChainFieldIds() {
@@ -50,11 +52,8 @@ class FsCircularDependencyNode extends AbstractLogicNode {
     rootFieldId: string,
     dependentChainFieldIds?: string[]
   ): TStatusRecord[] {
-    const message = `Logic: circular reference. source fieldId: '${
-      this.targetFieldId
-    }', last visited fieldId: '${this.getLastVisitedFieldId()}', dependency chain: "${this.dependentChainFieldIds.join(
-      '", "'
-    )}".`;
+    const dependentsAsString = "'" + dependentChainFieldIds?.join("', '") + "'";
+    const message = `Logic: circular reference. root field: ${rootFieldId}, attempted fieldId: '${this.targetFieldId}', dependency chain: "${dependentsAsString}".`;
     return [
       {
         severity: "logic",
