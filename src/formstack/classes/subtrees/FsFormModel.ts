@@ -1,6 +1,6 @@
 import { AbstractExpressionTree } from "predicate-tree-advanced-poc/dist/src";
 
-import { FsTreeField } from "./trees/FsTreeField";
+import { FsFieldModel } from "./trees/FsFieldModel";
 
 import { FsFieldVisibilityLinkNode, FsFormRootNode } from "./trees/nodes";
 import type { TFsLeafOperators, TTreeFieldNode } from "./types";
@@ -18,14 +18,14 @@ interface ILogicCheck {
   option: string;
 }
 
-class FsTreeFieldCollection extends AbstractExpressionTree<
+class FsFormModel extends AbstractExpressionTree<
   TTreeFieldNode | FsFormRootNode
 > {
   private _dependantFieldIds: string[] = [];
-  private _fieldIdNodeMap: { [fieldId: string]: FsTreeField } = {};
+  private _fieldIdNodeMap: { [fieldId: string]: FsFieldModel } = {};
 
-  createSubtreeAt(targetNodeId: string): FsTreeFieldCollection {
-    const subtree = new FsTreeFieldCollection("_subtree_");
+  createSubtreeAt(targetNodeId: string): FsFormModel {
+    const subtree = new FsFormModel("_subtree_");
 
     const subtreeParentNodeId = this.appendChildNodeWithContent(
       targetNodeId,
@@ -51,12 +51,12 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
     return Object.keys(this._fieldIdNodeMap);
   }
 
-  private getFieldById(fieldId: string): FsTreeField {
+  private getFieldById(fieldId: string): FsFieldModel {
     return this._fieldIdNodeMap[fieldId];
   }
 
   private getExtendedTree<T extends FsTreeLogicDeep = FsTreeLogicDeep>(
-    field: FsTreeField,
+    field: FsFieldModel,
     atNodeId?: string,
     extendedTree?: FsTreeLogicDeep
   ): FsTreeLogicDeep | null {
@@ -80,7 +80,7 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
   }
 
   aggregateLogicTree(fieldId: string): FsTreeLogicDeep {
-    const field = this.getFieldTreeByFieldId(fieldId) as FsTreeField;
+    const field = this.getFieldTreeByFieldId(fieldId) as FsFieldModel;
 
     // @ts-ignore - possible null
     return this.getExtendedTree(field);
@@ -104,7 +104,7 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
     );
   }
 
-  getFieldTreeByFieldId(fieldId: string): FsTreeField | undefined {
+  getFieldTreeByFieldId(fieldId: string): FsFieldModel | undefined {
     // I wounder if a look-up table wouldn't be better
     //  also you're filtering after map, if possible the other order would be preferred
     return this._fieldIdNodeMap[fieldId];
@@ -131,7 +131,7 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
     return this._dependantFieldIds.slice();
   }
 
-  getFieldsBySection(section: FsTreeField) {
+  getFieldsBySection(section: FsFieldModel) {
     const childrenFieldNodes = this.getChildrenContentOf(
       this.rootNodeId
     ) as TTreeFieldNode[];
@@ -189,13 +189,13 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
   static fromApiFormJson(
     formJson: TApiForm,
     formId = "_FORM_ID_"
-  ): FsTreeFieldCollection {
+  ): FsFormModel {
     const fieldsJson = formJson.fields;
 
-    const tree = new FsTreeFieldCollection(formId, new FsFormRootNode(formId));
+    const tree = new FsFormModel(formId, new FsFormRootNode(formId));
 
     (fieldsJson || []).forEach((fieldJson) => {
-      const field = FsTreeField.fromFieldJson(fieldJson);
+      const field = FsFieldModel.fromFieldJson(fieldJson);
 
       tree.appendChildNodeWithContent(tree.rootNodeId, {
         fieldId: field.fieldId,
@@ -214,7 +214,7 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
 
     const sortedNodes = childrenNodeContent.sort(sortBySortProperty);
 
-    let currentSection: FsTreeField | null = null;
+    let currentSection: FsFieldModel | null = null;
     for (let childNode of sortedNodes) {
       // order is necessary
       const { fieldId, field } = childNode;
@@ -222,7 +222,7 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
 
       if (fieldType && fieldType === "section") {
         currentSection = field;
-      } else if (currentSection instanceof FsTreeField) {
+      } else if (currentSection instanceof FsFieldModel) {
         const isUltimatelyVisible = (values: {
           [fieldId: string]: any;
         }): boolean => {
@@ -241,7 +241,7 @@ class FsTreeFieldCollection extends AbstractExpressionTree<
     return tree;
   }
 }
-export { FsTreeFieldCollection };
+export { FsFormModel };
 
 const sortBySortProperty = (
   fieldNodeA: TTreeFieldNode,

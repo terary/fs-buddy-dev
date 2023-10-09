@@ -14,7 +14,7 @@ import { AbstractFsTreeLogic } from "../AbstractFsTreeLogic";
 import { FsCircularDependencyNode } from "./LogicNodes/FsCircularDependencyNode";
 import { FsLogicBranchNode } from "./LogicNodes/FsLogicBranchNode";
 import { FsLogicLeafNode } from "./LogicNodes/FsLogicLeafNode";
-import { FsTreeField } from "../FsTreeField";
+import { FsFieldModel } from "../FsFieldModel";
 import { TFsFieldAny } from "../../../../type.field";
 import { AbstractLogicNode } from "./LogicNodes/AbstractLogicNode";
 
@@ -81,7 +81,7 @@ class FsTreeLogicDeepInternal extends AbstractFsTreeLogic<AbstractLogicNode> {
     return this.dependantFieldIds;
   }
 
-  public isExistInDependencyChain(field: FsTreeField): boolean {
+  public isExistInDependencyChain(field: FsFieldModel): boolean {
     return (
       // this.ownerFieldId === field.fieldId ||
       this.isInDependentsFields(field.fieldId)

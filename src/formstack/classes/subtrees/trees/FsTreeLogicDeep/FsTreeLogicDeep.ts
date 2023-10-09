@@ -1,11 +1,11 @@
 import { ITree, TTreePojo } from "predicate-tree-advanced-poc/dist/src";
 import { FsCircularDependencyNode } from "./LogicNodes/FsCircularDependencyNode";
-import { FsTreeField } from "../FsTreeField";
+import { FsFieldModel } from "../FsFieldModel";
 import { TFsFieldAny } from "../../../../type.field";
 import { AbstractLogicNode } from "./LogicNodes/AbstractLogicNode";
 import { FsTreeLogicDeepInternal } from "./FsTreeLogicDeepInternal";
 import { TStatusRecord } from "../../../Evaluator/type";
-import { FsTreeFieldCollection } from "../../FsTreeFieldCollection";
+import { FsFormModel } from "../../FsFormModel";
 import { FsTreeLogic } from "../FsTreeLogic";
 import {
   TFsFieldLogicJunction,
@@ -83,7 +83,7 @@ class FsTreeLogicDeep {
     return this._fsDeepLogicTree.getDependantFieldIds();
   }
 
-  isExistInDependencyChain(field?: FsTreeField) {
+  isExistInDependencyChain(field?: FsFieldModel) {
     if (!field) {
       return false;
     }
@@ -204,7 +204,7 @@ class FsTreeLogicDeep {
     fieldLogicNodeId: string,
     deepTree: FsTreeLogicDeep,
     deepTreeNodeId: string,
-    fieldCollection: FsTreeFieldCollection
+    fieldCollection: FsFormModel
   ): FsTreeLogicDeep | null {
     const nodeContent =
       fieldLogicTree.getChildContentAtOrThrow(fieldLogicNodeId);
@@ -310,7 +310,7 @@ class FsTreeLogicDeep {
   // this may cause circular imports (FieldCollection imports LogicDeep, LogicDeep imports FieldCOllection) ??
   static fromFieldCollection(
     fieldId: string,
-    fieldCollection: FsTreeFieldCollection,
+    fieldCollection: FsFormModel,
     deepTree?: FsTreeLogicDeep
   ): FsTreeLogicDeep | null {
     const field = fieldCollection.getFieldTreeByFieldId(fieldId);

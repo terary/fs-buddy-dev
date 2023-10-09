@@ -1,4 +1,4 @@
-import { FsTreeField } from "./trees";
+import { FsFieldModel } from "./trees";
 import {
   FsCircularDependencyNode,
   FsMaxDepthExceededNode,
@@ -60,7 +60,7 @@ type TFsFieldLogicJunction<C> = {
 
 type TTreeFieldNode = {
   fieldId: string;
-  field: FsTreeField;
+  field: FsFieldModel;
 };
 
 // *tmc* does this actually override?

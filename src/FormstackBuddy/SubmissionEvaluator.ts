@@ -1,4 +1,4 @@
-// private _fieldCollection: FsTreeFieldCollection;
+// private _fieldCollection: FsFormModel;
 import type { TSubmissionJson } from "../formstack/type.form";
 
 type TUiSubmissionDataItem = {
@@ -15,13 +15,13 @@ type TUiSubmissionDataItem = {
 //     value: submissionData.value,
 //   };
 
-import { FsTreeFieldCollection } from "../formstack";
+import { FsFormModel } from "../formstack";
 import { Evaluator } from "../formstack/classes/Evaluator";
 import { TFsFieldAny } from "../formstack/type.field";
 
 class SubmissionEvaluator {
-  private _fieldCollection: FsTreeFieldCollection;
-  constructor(fieldCollection: FsTreeFieldCollection) {
+  private _fieldCollection: FsFormModel;
+  constructor(fieldCollection: FsFormModel) {
     this._fieldCollection = fieldCollection;
   }
 

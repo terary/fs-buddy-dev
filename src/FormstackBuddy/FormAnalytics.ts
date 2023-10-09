@@ -1,5 +1,5 @@
-import { FsTreeFieldCollection, TTreeFieldNode } from "../formstack";
-import { FsTreeField } from "../formstack/classes/subtrees/trees";
+import { FsFormModel, TTreeFieldNode } from "../formstack";
+import { FsFieldModel } from "../formstack/classes/subtrees/trees";
 import { FsFormRootNode } from "../formstack/classes/subtrees/trees/nodes";
 import {
   TSimpleDictionary,
@@ -12,11 +12,11 @@ import { TFsFieldAny } from "../formstack/type.field";
 
 class FormAnalytics {
   private _fieldJson: TApiForm;
-  private _fieldCollection: FsTreeFieldCollection;
+  private _fieldCollection: FsFormModel;
 
   //TApiForm
   constructor(formJson: TApiForm) {
-    this._fieldCollection = FsTreeFieldCollection.fromApiFormJson(formJson);
+    this._fieldCollection = FsFormModel.fromApiFormJson(formJson);
     this._fieldJson = formJson;
   }
 
@@ -121,7 +121,7 @@ class FormAnalytics {
     });
 
     // messages.push(...this._fieldCollection.getAllLogicStatusMessages());
-    // FsTreeFieldCollection
+    // FsFormModel
     return messages;
   }
 
@@ -129,7 +129,7 @@ class FormAnalytics {
     return this.getAllFieldNodes()
       .filter((fieldNode) => {
         const { field } = fieldNode as TTreeFieldNode;
-        return (field as FsTreeField).getLogicTree() !== null;
+        return (field as FsFieldModel).getLogicTree() !== null;
       })
       .map((fieldNode) => (fieldNode as TTreeFieldNode)?.fieldId);
   }
@@ -138,7 +138,7 @@ class FormAnalytics {
     return this.getAllFieldNodes()
       .filter((fieldNode) => {
         const { field } = fieldNode as TTreeFieldNode;
-        return (field as FsTreeField).getLogicTree() === null;
+        return (field as FsFieldModel).getLogicTree() === null;
       })
       .map((fieldNode) => (fieldNode as TTreeFieldNode)?.fieldId);
   }

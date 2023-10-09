@@ -1,6 +1,6 @@
-import { FsTreeFieldCollection } from "./FsTreeFieldCollection";
+import { FsFormModel } from "./FsFormModel";
 import { TFsFieldAnyJson } from "../types";
-import { FsTreeField } from "./trees/FsTreeField";
+import { FsFieldModel } from "./trees/FsFieldModel";
 import circularAndInterdependentJson from "../../../test-dev-resources/form-json/5375703.json";
 import formJson5375703 from "../../../test-dev-resources/form-json/5375703.json";
 import formJson5469299 from "../../../test-dev-resources/form-json/5469299.json";
@@ -16,11 +16,11 @@ import { TApiForm, TApiFormJson, TSubmissionJson } from "../../type.form";
 import { transformers } from "../../transformers";
 import { TSimpleDictionary } from "./types";
 import { TStatusMessageSeverity, TStatusRecord } from "../Evaluator/type";
-describe("FsTreeFieldCollection", () => {
+describe("FsFormModel", () => {
   /// --------------------------------
   describe(".getFieldTreeByFieldId(...)", () => {
     it("Should be awesome", () => {
-      const tree = FsTreeFieldCollection.fromApiFormJson({
+      const tree = FsFormModel.fromApiFormJson({
         // @ts-ignore
         fields: TEST_JSON_FIELDS,
       });
@@ -29,21 +29,21 @@ describe("FsTreeFieldCollection", () => {
       expect(field_0?.fieldId).toStrictEqual(TEST_JSON_FIELDS[0].id);
       expect(field_1?.fieldId).toStrictEqual(TEST_JSON_FIELDS[1].id);
       // expect(field.fieldJson["name"]).toStrictEqual(TEST_JSON_FIELDS[0].name);
-      expect(field_0).toBeInstanceOf(FsTreeField);
-      expect(field_1).toBeInstanceOf(FsTreeField);
+      expect(field_0).toBeInstanceOf(FsFieldModel);
+      expect(field_1).toBeInstanceOf(FsFieldModel);
     });
   });
 
   describe(".getFieldsBySection()", () => {
     it("Should be awesome", () => {
-      const tree = FsTreeFieldCollection.fromApiFormJson(
+      const tree = FsFormModel.fromApiFormJson(
         transformers.formJson(
           circularAndInterdependentJson as unknown as TApiFormJson
         )
       );
       const sectionField = tree.getFieldTreeByFieldId(
         "148509465"
-      ) as FsTreeField;
+      ) as FsFieldModel;
       const fieldsInSection = tree.getFieldsBySection(sectionField);
       const fieldIdsInSection = fieldsInSection.map((field) => field.fieldId);
       expect(fieldIdsInSection.sort()).toStrictEqual(
@@ -62,7 +62,7 @@ describe("FsTreeFieldCollection", () => {
 
   describe(".getFieldIdsWithCircularLogic()", () => {
     it("Should return fieldIds that have circular logic", () => {
-      const tree = FsTreeFieldCollection.fromApiFormJson(
+      const tree = FsFormModel.fromApiFormJson(
         transformers.formJson(
           circularAndInterdependentJson as unknown as TApiFormJson
         )
@@ -83,7 +83,7 @@ describe("FsTreeFieldCollection", () => {
   });
   describe("aggregateLogicTree", () => {
     it("Should return tree with no nodes if there is no logic.", () => {
-      const tree = FsTreeFieldCollection.fromApiFormJson(
+      const tree = FsFormModel.fromApiFormJson(
         transformers.formJson(
           circularAndInterdependentJson as unknown as TApiFormJson
         )
@@ -97,10 +97,10 @@ describe("FsTreeFieldCollection", () => {
       ).toBeNull();
     });
     it.only("dev debug....", () => {
-      const tree5469299 = FsTreeFieldCollection.fromApiFormJson(
+      const tree5469299 = FsFormModel.fromApiFormJson(
         transformers.formJson(formJson5469299 as unknown as TApiFormJson)
       );
-      const tree5375703 = FsTreeFieldCollection.fromApiFormJson(
+      const tree5375703 = FsFormModel.fromApiFormJson(
         transformers.formJson(formJson5375703 as unknown as TApiFormJson)
       );
 
@@ -109,6 +109,13 @@ describe("FsTreeFieldCollection", () => {
       const agTree152290546 = tree5469299.aggregateLogicTree("152290546"); // (B) A->B->C-D->E->A (logic)
       const agTree148456742 = tree5375703.aggregateLogicTree("148456742"); // (B) A->B->C-D->E->A (logic)
       const agTree148509470 = tree5375703.aggregateLogicTree("148509470"); // A (within panel)
+      `
+        pretty good working state. Need to clean-up LogicCollection and TreeLogic
+
+        If possible name FieldTree to FieldModel and FieldCollection to FormModel
+
+
+`;
 
       const pojo = {
         pojo152293116: tree5469299.aggregateLogicTree("152293116").toPojoAt(), // Mutually Exclusive
@@ -120,11 +127,11 @@ describe("FsTreeFieldCollection", () => {
       expect(pojo).toStrictEqual(dev_debug_logicTreePojo);
     });
     it("dev debug.", () => {
-      const tree5375703 = FsTreeFieldCollection.fromApiFormJson(
+      const tree5375703 = FsFormModel.fromApiFormJson(
         transformers.formJson(formJson5375703 as unknown as TApiFormJson)
       );
 
-      const tree5469299 = FsTreeFieldCollection.fromApiFormJson(
+      const tree5469299 = FsFormModel.fromApiFormJson(
         transformers.formJson(formJson5469299 as unknown as TApiFormJson)
       );
 
@@ -146,7 +153,7 @@ describe("FsTreeFieldCollection", () => {
     });
     it("Should return the full tree.", () => {
       // two leafs
-      const tree = FsTreeFieldCollection.fromApiFormJson(
+      const tree = FsFormModel.fromApiFormJson(
         transformers.formJson(
           circularAndInterdependentJson as unknown as TApiFormJson
         )
@@ -243,13 +250,13 @@ describe("FsTreeFieldCollection", () => {
     const expected147738154 = getExpected("147738154");
     const expected148008076 = getExpected("148008076"); // this is wrong __BAD_DATA__ ...
 
-    const tree147738154 = FsTreeFieldCollection.fromApiFormJson(
+    const tree147738154 = FsFormModel.fromApiFormJson(
       // @ts-ignore
       { fields: fieldJsonNotRequired147738154 }
       // fieldJsonNotRequired147738154 as unknown as TFsFieldAnyJson[]
     );
 
-    const tree148008076 = FsTreeFieldCollection.fromApiFormJson(
+    const tree148008076 = FsFormModel.fromApiFormJson(
       //@ts-ignore
       { fields: fieldJsonRequired148008076 }
       // fieldJsonRequired148008076 as unknown as TFsFieldAnyJson[]

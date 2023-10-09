@@ -1,6 +1,6 @@
 import { FormstackBuddy } from "../FormstackBuddy/FormstackBuddy";
 import { FieldLogicService } from "../FormstackBuddy/FieldLogicService";
-import { FsTreeFieldCollection, TFsFieldAnyJson } from "../formstack";
+import { FsFormModel, TFsFieldAnyJson } from "../formstack";
 // import type { TStatusRecord } from "./type";
 import { FormAnalytics } from "../FormstackBuddy/FormAnalytics";
 import {
@@ -52,7 +52,7 @@ function buildIframe(iframeId: string): HTMLIFrameElement {
   iframe.style.backgroundColor = "green";
   return iframe;
 }
-let currentFieldCollection: FsTreeFieldCollection;
+let currentFieldCollection: FsFormModel;
 
 function getFormAsJson() {
   const fetchTreeFormId = getFormIdFromLocation();
@@ -74,7 +74,7 @@ function getFormAsJson() {
         (apiFormJson?.fields || []).map((field: any) => {
           devDebugFieldIds.push(field.id);
         });
-        currentFieldCollection = FsTreeFieldCollection.fromApiFormJson(
+        currentFieldCollection = FsFormModel.fromApiFormJson(
           transformers.formJson(apiFormJson)
         );
         formAnalytic =

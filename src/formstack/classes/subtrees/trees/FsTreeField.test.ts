@@ -1,4 +1,4 @@
-import { FsTreeField } from "./FsTreeField";
+import { FsFieldModel } from "./FsFieldModel";
 import { TFsFieldAnyJson } from "../../types";
 import { FsTreeLogic } from "./FsTreeLogic";
 import type { TFsFieldAny, TFsFieldType } from "../../../type.field";
@@ -52,7 +52,7 @@ const fieldIdByType: { [dataType in TFsFieldType]: string } = {
   // "148113605": "embed",
 };
 
-const getDependencyAudit = (fields: FsTreeField[]): RelationAuditReport => {
+const getDependencyAudit = (fields: FsFieldModel[]): RelationAuditReport => {
   const relations: RelationAuditReport = {};
   fields.forEach((fieldA) => {
     relations[fieldA.fieldId] = {
@@ -80,16 +80,16 @@ const getDependencyAudit = (fields: FsTreeField[]): RelationAuditReport => {
   return relations;
 };
 
-describe("FsTreeField", () => {
-  let field: FsTreeField;
+describe("FsFieldModel", () => {
+  let field: FsFieldModel;
   beforeEach(() => {
-    field = FsTreeField.fromFieldJson(
+    field = FsFieldModel.fromFieldJson(
       transformers.fieldJson(TEST_JSON_FIELD as TFsFieldAnyJson)
     );
   });
   describe("Smoke Test", () => {
     it("Should be awesome", () => {
-      expect(field).toBeInstanceOf(FsTreeField);
+      expect(field).toBeInstanceOf(FsFieldModel);
 
       // fieldLogic can/should have fieldId, maybe modified? "fieldId-logic"?
       // expect(tree.fieldId).toEqual("147462596");
@@ -97,9 +97,9 @@ describe("FsTreeField", () => {
     });
   });
   describe(".fieldJson", () => {
-    let tree: FsTreeField;
+    let tree: FsFieldModel;
     beforeEach(() => {
-      tree = FsTreeField.fromFieldJson(
+      tree = FsFieldModel.fromFieldJson(
         transformers.fieldJson(TEST_JSON_FIELD as TFsFieldAnyJson)
         // TEST_JSON_FIELD as TFsFieldAnyJson
       );
@@ -109,7 +109,7 @@ describe("FsTreeField", () => {
       expect(tree.fieldJson).toStrictEqual(TEST_JSON_FIELD);
     });
     it.skip("Should transform proper operators", () => {
-      const complexTree = FsTreeField.fromFieldJson(
+      const complexTree = FsFieldModel.fromFieldJson(
         transformers.fieldJson(
           manyCalcLogicOperators.fields[0] as unknown as TFsFieldAnyJson // this needs "transform", stringBoolean numericBoolean ,  etc
         )
@@ -119,7 +119,7 @@ describe("FsTreeField", () => {
 
   describe("evaluateWithValues({...values})", () => {
     it("Should return the value of the property matching fieldId (values.fieldId)", () => {
-      const checkboxField = FsTreeField.fromFieldJson(
+      const checkboxField = FsFieldModel.fromFieldJson(
         transformers.fieldJson(getFieldJsonByIdFromAllFields("148111228"))
       );
 
@@ -137,7 +137,7 @@ describe("FsTreeField", () => {
       const selectFieldId = "147738161";
       [checkboxFieldId, radioFieldId, selectFieldId].forEach((fieldId) => {
         it("Should return the selected option", () => {
-          const checkboxField = FsTreeField.fromFieldJson(
+          const checkboxField = FsFieldModel.fromFieldJson(
             transformers.fieldJson(getFieldJsonByIdFromAllFields(fieldId))
           );
           expect(
@@ -146,7 +146,7 @@ describe("FsTreeField", () => {
         });
 
         // it("Should return instance of InvalidEvaluation for invalid option.", () => {
-        //   const multiselectField = FsTreeField.fromFieldJson(
+        //   const multiselectField = FsFieldModel.fromFieldJson(
         //     transformers.fieldJson(getFieldJsonByIdFromAllFields(fieldId))
         //   );
         //   const valuation = multiselectField.evaluateWithValues<
@@ -163,7 +163,7 @@ describe("FsTreeField", () => {
       });
 
       it("Should return the selected value when using value/label options", () => {
-        const multiselectField = FsTreeField.fromFieldJson(
+        const multiselectField = FsFieldModel.fromFieldJson(
           transformers.fieldJson(getFieldJsonByIdFromAllFields("147738162"))
         );
         expect(
@@ -178,7 +178,7 @@ describe("FsTreeField", () => {
       ].forEach((fieldId) => {
         it("Should return a number given a number.", () => {
           // setup
-          const textField = FsTreeField.fromFieldJson(
+          const textField = FsFieldModel.fromFieldJson(
             transformers.fieldJson(getFieldJsonByIdFromAllFields(fieldId))
           );
 
@@ -194,7 +194,7 @@ describe("FsTreeField", () => {
         });
         it("Should be tolerant of string/number.", () => {
           // setup
-          const textField = FsTreeField.fromFieldJson(
+          const textField = FsFieldModel.fromFieldJson(
             transformers.fieldJson(getFieldJsonByIdFromAllFields(fieldId))
           );
 
@@ -232,7 +232,7 @@ describe("FsTreeField", () => {
       ].forEach((fieldId) => {
         it("Should return the given value", () => {
           // setup
-          const textField = FsTreeField.fromFieldJson(
+          const textField = FsFieldModel.fromFieldJson(
             transformers.fieldJson(getFieldJsonByIdFromAllFields(fieldId))
           );
 
@@ -249,7 +249,7 @@ describe("FsTreeField", () => {
       });
 
       it("Should return the selected value when using value/label options", () => {
-        const checkboxField = FsTreeField.fromFieldJson(
+        const checkboxField = FsFieldModel.fromFieldJson(
           transformers.fieldJson(getFieldJsonByIdFromAllFields("147738162"))
         );
         expect(
@@ -263,7 +263,7 @@ describe("FsTreeField", () => {
       it("Should return parsed Address field Record", () => {
         const fieldJson = getFieldJsonByIdFromAllFields(fieldId);
         // setup
-        const textField = FsTreeField.fromFieldJson(
+        const textField = FsFieldModel.fromFieldJson(
           transformers.fieldJson(getFieldJsonByIdFromAllFields(fieldId))
         );
 
@@ -287,7 +287,7 @@ describe("FsTreeField", () => {
       it("Should return empty object if there are no subfields", () => {
         const fieldJson = getFieldJsonByIdFromAllFields(fieldId);
         // setup
-        const textField = FsTreeField.fromFieldJson(
+        const textField = FsFieldModel.fromFieldJson(
           transformers.fieldJson(getFieldJsonByIdFromAllFields(fieldId))
         );
 
@@ -310,7 +310,7 @@ describe("FsTreeField", () => {
       it("Should return parsed Name field Record", () => {
         const fieldJson = getFieldJsonByIdFromAllFields(fieldId);
         // setup
-        const textField = FsTreeField.fromFieldJson(
+        const textField = FsFieldModel.fromFieldJson(
           transformers.fieldJson(getFieldJsonByIdFromAllFields(fieldId))
         );
 
@@ -330,7 +330,7 @@ describe("FsTreeField", () => {
       it("Should return empty object if there are no subfields", () => {
         const fieldJson = getFieldJsonByIdFromAllFields(fieldId);
         // setup
-        const textField = FsTreeField.fromFieldJson(
+        const textField = FsFieldModel.fromFieldJson(
           transformers.fieldJson(getFieldJsonByIdFromAllFields(fieldId))
         );
 
@@ -364,7 +364,7 @@ describe("FsTreeField", () => {
     it("Should Determine Fifth Degree Interdependency.", () => {
       const fields = fifthDegreeBadCircuitFormJson.fields
         .map((fieldJson) => {
-          const f = FsTreeField.fromFieldJson(
+          const f = FsFieldModel.fromFieldJson(
             transformers.fieldJson(fieldJson as unknown as TFsFieldAnyJson)
           );
           return f;
@@ -372,7 +372,7 @@ describe("FsTreeField", () => {
         .reduce((prev, cur) => {
           prev[cur.fieldId] = cur;
           return prev;
-        }, {} as { [fieldId: string]: FsTreeField });
+        }, {} as { [fieldId: string]: FsFieldModel });
 
       const A = fields["148456734"].getDependantFieldIds();
       const B = fields["148456742"].getDependantFieldIds();
@@ -395,38 +395,38 @@ describe("FsTreeField", () => {
     });
   });
   describe(".getLogicTree()", () => {
-    class TestFsTreeField extends FsTreeField {
+    class TestFsFieldModel extends FsFieldModel {
       getLogicTree(): FsTreeLogic | null {
         return super.getLogicTree();
       }
     }
 
     it("return null if there are no logic trees.", () => {
-      const tree = new TestFsTreeField();
+      const tree = new TestFsFieldModel();
       expect(tree.getLogicTree()).toBeNull();
     });
     it("return null if there are no logic trees.", () => {
-      const tree = TestFsTreeField.fromFieldJson(
+      const tree = TestFsFieldModel.fromFieldJson(
         transformers.fieldJson(TEST_JSON_FIELD as TFsFieldAnyJson)
-      ) as TestFsTreeField;
+      ) as TestFsFieldModel;
 
       expect(tree.getLogicTree()).toBeInstanceOf(FsTreeLogic);
     });
     it("Throw error if there is more than one logic tree.", () => {
-      const extraLogicTree = TestFsTreeField.fromFieldJson(
+      const extraLogicTree = TestFsFieldModel.fromFieldJson(
         transformers.fieldJson(TEST_JSON_FIELD as TFsFieldAnyJson)
       );
 
       const subtreeConstructor = (fieldJson: TFsFieldAny) =>
         FsTreeLogic.fromFieldJson(TEST_JSON_FIELD as TFsFieldAnyJson);
 
-      FsTreeField.createSubtreeFromFieldJson(
+      FsFieldModel.createSubtreeFromFieldJson(
         extraLogicTree,
         extraLogicTree.rootNodeId,
         transformers.fieldJson(TEST_JSON_FIELD as TFsFieldAnyJson),
         subtreeConstructor
       );
-      FsTreeField.createSubtreeFromFieldJson(
+      FsFieldModel.createSubtreeFromFieldJson(
         extraLogicTree,
         extraLogicTree.rootNodeId,
         transformers.fieldJson(TEST_JSON_FIELD as TFsFieldAnyJson),
@@ -434,7 +434,7 @@ describe("FsTreeField", () => {
       );
 
       const willThrow = () => {
-        (extraLogicTree as TestFsTreeField).getLogicTree();
+        (extraLogicTree as TestFsFieldModel).getLogicTree();
       };
 
       expect(willThrow).toThrow(MultipleLogicTreeError);
@@ -444,38 +444,38 @@ describe("FsTreeField", () => {
     });
   });
   describe(".getCalcStringTree()", () => {
-    class TestFsTreeField extends FsTreeField {
+    class TestFsFieldModel extends FsFieldModel {
       getCalcStringTree(): FsTreeCalcString | null {
         return super.getCalcStringTree();
       }
     }
 
     it("return null if there are no logic trees.", () => {
-      const tree = new TestFsTreeField();
+      const tree = new TestFsFieldModel();
       expect(tree.getCalcStringTree()).toBeNull();
     });
     it("return null if there are no logic trees.", () => {
-      const tree = TestFsTreeField.fromFieldJson(
+      const tree = TestFsFieldModel.fromFieldJson(
         transformers.fieldJson(TEST_JSON_FIELD as TFsFieldAnyJson)
-      ) as TestFsTreeField;
+      ) as TestFsFieldModel;
 
       expect(tree.getCalcStringTree()).toBeInstanceOf(FsTreeCalcString);
     });
     it("Throw error if there is more than one logic tree.", () => {
-      const extraLogicTree = TestFsTreeField.fromFieldJson(
+      const extraLogicTree = TestFsFieldModel.fromFieldJson(
         transformers.fieldJson(TEST_JSON_FIELD as TFsFieldAnyJson)
       );
 
       const subtreeConstructor = (fieldJson: TFsFieldAny) =>
         FsTreeCalcString.fromFieldJson(TEST_JSON_FIELD as TFsFieldAnyJson);
 
-      FsTreeField.createSubtreeFromFieldJson(
+      FsFieldModel.createSubtreeFromFieldJson(
         extraLogicTree,
         extraLogicTree.rootNodeId,
         transformers.fieldJson(TEST_JSON_FIELD as TFsFieldAnyJson),
         subtreeConstructor
       );
-      FsTreeField.createSubtreeFromFieldJson(
+      FsFieldModel.createSubtreeFromFieldJson(
         extraLogicTree,
         extraLogicTree.rootNodeId,
         transformers.fieldJson(TEST_JSON_FIELD as TFsFieldAnyJson),
@@ -483,7 +483,7 @@ describe("FsTreeField", () => {
       );
 
       const willThrow = () => {
-        (extraLogicTree as TestFsTreeField).getCalcStringTree();
+        (extraLogicTree as TestFsFieldModel).getCalcStringTree();
       };
 
       expect(willThrow).toThrow(MultipleLogicTreeError);
