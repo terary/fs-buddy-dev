@@ -4,16 +4,6 @@ import formJson5469299 from "../../../../../test-dev-resources/form-json/5469299
 import { FsLogicBranchNode } from "./LogicNodes/FsLogicBranchNode";
 import { FsLogicLeafNode } from "./LogicNodes/FsLogicLeafNode";
 
-// const newBranchNode = new FsLogicBranchNode(
-//   // @ts-ignore
-//   nodeContent.fieldId, //ownerFieldId,
-//   conditional,
-//   action || null,
-//   checks as TFsFieldLogicCheckLeaf[],
-//   fieldJson
-// );
-//     new FsLogicLeafNode(fieldId, condition, option)
-
 describe("FsLogicTreeDeepInternal", () => {
   describe(".getDependantFieldIds()", () => {
     it("Should be empty array for dependancy list of single node tree (new without root node).", () => {
@@ -62,7 +52,6 @@ describe("FsLogicTreeDeepInternal", () => {
       tree.appendChildNodeWithContent(nodeId_b1, l3);
       tree.appendChildNodeWithContent(nodeId_b1, l4);
       tree.appendChildNodeWithContent(nodeId_b1, l5);
-      const x = tree.getDependantFieldIds();
       expect(tree.getDependantFieldIds()).toStrictEqual([
         "fieldId_b0",
         "fieldId_b1",

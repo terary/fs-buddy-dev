@@ -230,20 +230,13 @@ class FsLogicTreeDeep {
 
     // @ts-ignore  -- maybe isExist should be defined with an interface
     if (deepTree._fsDeepLogicTree.isExistInDependencyChain(nodeContent)) {
-      const circularReferenceNode = FsLogicTreeDeep.getCircularReferenceNode(
-        parentFieldId,
-        deepTree,
-        nodeContent
-      );
-
       deepTree.appendChildNodeWithContent(
         deepTreeNodeId,
-        circularReferenceNode
-        // new FsCircularDependencyNode(
-        //   deepTree.rootFieldId,
-        //   parentFieldId,
-        //   deepTree.getDependentChainFieldIds()
-        // )
+        FsLogicTreeDeep.getCircularReferenceNode(
+          parentFieldId,
+          deepTree,
+          nodeContent
+        )
       );
       return deepTree;
       // return null;
@@ -292,7 +285,6 @@ class FsLogicTreeDeep {
 
       if (deepTree.isExistInDependencyChain(childTreeField)) {
         const circularReferenceNode = FsLogicTreeDeep.getCircularReferenceNode(
-          // parentFieldId,
           fieldId,
           deepTree,
           childNodeContent
