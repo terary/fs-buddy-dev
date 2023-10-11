@@ -114,8 +114,16 @@ class FsLogicTreeDeep {
     return statusMessages;
   }
 
-  toPojoAt(): TTreePojo<AbstractLogicNode> {
-    return this._fsDeepLogicTree.toPojoAt(this._fsDeepLogicTree.rootNodeId);
+  // toPojoAt(nodeId?: string | undefined): TTreePojo<AbstractLogicNode>;
+  // toPojoAt(nodeId?: string | undefined, shouldObfuscate = true);
+  toPojoAt(
+    nodeId?: string,
+    shouldObfuscate = true
+  ): TTreePojo<AbstractLogicNode> {
+    return this._fsDeepLogicTree.toPojoAt(
+      nodeId || this._fsDeepLogicTree.rootNodeId,
+      shouldObfuscate
+    );
   }
 
   static fromFieldJson(fieldJson: TFsFieldAny): FsLogicTreeDeep {
@@ -222,15 +230,23 @@ class FsLogicTreeDeep {
 
     // @ts-ignore  -- maybe isExist should be defined with an interface
     if (deepTree._fsDeepLogicTree.isExistInDependencyChain(nodeContent)) {
+      const circularReferenceNode = FsLogicTreeDeep.getCircularReferenceNode(
+        parentFieldId,
+        deepTree,
+        nodeContent
+      );
+
       deepTree.appendChildNodeWithContent(
         deepTreeNodeId,
-        new FsCircularDependencyNode(
-          deepTree.rootFieldId,
-          parentFieldId,
-          deepTree.getDependentChainFieldIds()
-        )
+        circularReferenceNode
+        // new FsCircularDependencyNode(
+        //   deepTree.rootFieldId,
+        //   parentFieldId,
+        //   deepTree.getDependentChainFieldIds()
+        // )
       );
-      return null;
+      return deepTree;
+      // return null;
     }
 
     if (childrenNodeIds.length === 0) {
@@ -276,8 +292,8 @@ class FsLogicTreeDeep {
 
       if (deepTree.isExistInDependencyChain(childTreeField)) {
         const circularReferenceNode = FsLogicTreeDeep.getCircularReferenceNode(
-          parentFieldId,
-          // fieldId,
+          // parentFieldId,
+          fieldId,
           deepTree,
           childNodeContent
         );
@@ -293,7 +309,7 @@ class FsLogicTreeDeep {
         );
       } else {
         // recursive call
-        return FsLogicTreeDeep.fromFieldCollection(
+        return FsLogicTreeDeep.fromFormModel(
           fieldId,
           fieldCollection,
           deepTree
@@ -304,7 +320,7 @@ class FsLogicTreeDeep {
     return deepTree;
   }
   // this may cause circular imports (FieldCollection imports LogicDeep, LogicDeep imports FieldCOllection) ??
-  static fromFieldCollection(
+  static fromFormModel(
     fieldId: string,
     fieldCollection: FsFormModel,
     deepTree?: FsLogicTreeDeep
@@ -319,13 +335,18 @@ class FsLogicTreeDeep {
       field.getVisibilityNode()?.parentNode?.getLogicTree() || null; //as FsTreeLogic;
 
     if (!logicTree && !visualTree) {
-      return null;
+      // this is a field with no logic - therefore null as a logic tree
+      // when evaluating it should simple return the value provided.  Evaluation is a
+      // different animal but is related.
+
+      return null; // non-leaf, non-logic
     }
 
     const tree =
       deepTree ||
       new FsLogicTreeDeep(
-        "_ROOT_", // this should be fieldId - but for the time being want to rule out name conflicts
+        field.fieldId,
+        // "_ROOT_", // this should be fieldId - but for the time being want to rule out name conflicts
         // field.fieldId,
         new FsVirtualRootNode(fieldId)
       );

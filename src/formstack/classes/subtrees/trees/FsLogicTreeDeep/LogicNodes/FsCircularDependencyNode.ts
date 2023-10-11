@@ -25,11 +25,12 @@ class FsCircularDependencyNode extends AbstractLogicNode {
   }
 
   get dependentChainFieldIds() {
-    return [
-      this._sourceFieldId,
-      ...this._dependentChainFieldIds.slice(),
-      this._targetFieldId,
-    ];
+    return this._dependentChainFieldIds;
+    // return [
+    //   this._sourceFieldId,
+    //   ...this._dependentChainFieldIds.slice(),
+    //   this._targetFieldId,
+    // ];
   }
 
   get sourceFieldId() {

@@ -60,7 +60,7 @@ class FsFormModel extends AbstractExpressionTree<
     atNodeId?: string,
     extendedTree?: FsLogicTreeDeep
   ): FsLogicTreeDeep | null {
-    return FsLogicTreeDeep.fromFieldCollection(field.fieldId, this);
+    return FsLogicTreeDeep.fromFormModel(field.fieldId, this);
   }
 
   // private isTwoConditionsMutuallyExclusive(

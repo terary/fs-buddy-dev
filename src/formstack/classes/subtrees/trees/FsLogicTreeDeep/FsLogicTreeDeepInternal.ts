@@ -1,4 +1,5 @@
 import {
+  AbstractTree,
   IExpressionTree,
   TTreePojo,
 } from "predicate-tree-advanced-poc/dist/src";
@@ -17,29 +18,42 @@ import { FsLogicLeafNode } from "./LogicNodes/FsLogicLeafNode";
 import { FsFieldModel } from "../FsFieldModel";
 import { TFsFieldAny } from "../../../../type.field";
 import { AbstractLogicNode } from "./LogicNodes/AbstractLogicNode";
+import { FsVirtualRootNode } from "./LogicNodes/FsVirtualRootNode";
 
 class FsLogicTreeDeepInternal extends AbstractFsTreeLogic<AbstractLogicNode> {
-  //  private _dependantFieldIds: string[] = [];
-  #dependantFieldIds: TSimpleDictionary<AbstractLogicNode> = {};
-  dependantFieldIds_dev_debug_hard_private: TSimpleDictionary<AbstractLogicNode> =
-    {};
+  private _dependantFieldIdsInOrder: string[] = [];
+  #dependantFieldIdMap: TSimpleDictionary<AbstractLogicNode> = {};
+  constructor(rootNodeId?: string, nodeContent?: AbstractLogicNode) {
+    super(rootNodeId, nodeContent);
 
+    // if (nodeContent !== undefined) {
+    //   const fieldId = this.extractFieldIdFromNodeContentOrThrow(nodeContent);
+    //   this.appendFieldIdNode(fieldId, nodeContent);
+    // }
+  }
   public appendChildNodeWithContent(
     parentNodeId: string,
     nodeContent: AbstractLogicNode
   ): string {
-    const fieldId = this.extractFieldIdFromNodeContent(nodeContent);
+    const fieldId = this.extractFieldIdFromNodeContentOrThrow(nodeContent);
 
-    fieldId !== null && this.appendFieldIdNode(fieldId, nodeContent);
+    this.appendFieldIdNode(fieldId, nodeContent);
 
+    if (!this.isNodeIdExist(parentNodeId)) {
+      throw new Error(
+        `parentNodeId does not exists. parentNodeId: '${parentNodeId}'.`
+      );
+    }
     return super.appendChildNodeWithContent(parentNodeId, nodeContent);
+  }
 
-    this.dependantFieldIds_dev_debug_hard_private = this.#dependantFieldIds;
+  private isNodeIdExist(nodeId: string) {
+    return this._nodeDictionary[nodeId] !== undefined;
   }
 
   private appendFieldIdNode(fieldId: string, node: AbstractLogicNode) {
-    this.#dependantFieldIds[fieldId] = node;
-    this.dependantFieldIds_dev_debug_hard_private[fieldId] = node;
+    this.#dependantFieldIdMap[fieldId] = node;
+    this._dependantFieldIdsInOrder.push(fieldId);
   }
 
   createSubtreeAt(nodeId: string): IExpressionTree<AbstractLogicNode> {
@@ -48,7 +62,17 @@ class FsLogicTreeDeepInternal extends AbstractFsTreeLogic<AbstractLogicNode> {
   }
 
   private get dependantFieldIds() {
-    return Object.keys(this.#dependantFieldIds);
+    return this._dependantFieldIdsInOrder.slice();
+  }
+
+  private extractFieldIdFromNodeContentOrThrow(
+    nodeContent: AbstractLogicNode
+  ): string {
+    const fieldId = this.extractFieldIdFromNodeContent(nodeContent);
+    if (fieldId === null) {
+      throw new Error("Failed to extract fieldId from nodeContent.");
+    }
+    return fieldId;
   }
 
   private extractFieldIdFromNodeContent(
@@ -56,16 +80,20 @@ class FsLogicTreeDeepInternal extends AbstractFsTreeLogic<AbstractLogicNode> {
   ): string | null {
     if (nodeContent instanceof FsLogicBranchNode) {
       return nodeContent.ownerFieldId;
-    } else if (nodeContent instanceof FsLogicLeafNode) {
+    } else if (
+      nodeContent instanceof FsLogicLeafNode ||
+      nodeContent instanceof FsVirtualRootNode
+    ) {
       return nodeContent.fieldId;
     } else if (nodeContent instanceof FsCircularDependencyNode) {
       return nodeContent._targetFieldId; // + "-circular";
     }
+
     return null;
   }
 
   getChildContentByFieldId<T = AbstractLogicNode>(fieldId: string) {
-    return this.#dependantFieldIds[fieldId] as T;
+    return this.#dependantFieldIdMap[fieldId] as T;
   }
 
   getCircularLogicNodes(): FsCircularDependencyNode[] {
@@ -92,14 +120,24 @@ class FsLogicTreeDeepInternal extends AbstractFsTreeLogic<AbstractLogicNode> {
     return this.dependantFieldIds.includes(fieldId);
   }
 
+  toPojoAt(nodeId?: string | undefined): TTreePojo<AbstractLogicNode>;
   toPojoAt(
-    nodeId?: string | undefined
-    // transformer?: (<T>(nodeContent: T) => TNodePojo<T>) | undefined
+    nodeId?: string | undefined,
+    shouldObfuscate?: boolean
+  ): TTreePojo<AbstractLogicNode>;
+  toPojoAt(
+    nodeId?: string | undefined,
+    shouldObfuscate = true
   ): TTreePojo<AbstractLogicNode> {
     const transformer = (nodeContent: AbstractLogicNode) =>
       nodeContent.toPojo();
     // @ts-ignore - doesn't like generic and the signature, I think the generic is goofed
-    return super.toPojoAt(nodeId, transformer);
+    // return super.toPojoAt(nodeId, transformer);
+    const clearPojo = super.toPojoAt(nodeId, transformer);
+    if (shouldObfuscate) {
+      return AbstractTree.obfuscatePojo(clearPojo);
+    }
+    return clearPojo;
   }
 
   static fromFieldJson(fieldJson: TFsFieldAny): FsLogicTreeDeepInternal {
