@@ -67,7 +67,9 @@ class FormAnalytics {
       const { fieldId, field } = node;
       const { fieldJson } = field;
       let label =
-        field.fieldType === "section" ? field.section_heading : field.label;
+        field.fieldType === "section"
+          ? field.section_heading
+          : field.label.trim();
 
       !label && (label = "_NO_LABEL_FOUND_" + (fieldJson as TFsFieldAny).type);
 

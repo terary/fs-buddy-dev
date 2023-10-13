@@ -2,15 +2,22 @@
 	<head>
     <style>
       .fsBuddy_obscure_field {
-          opacity: 0.2;
-          /* border: lightgray 3px dashed; */
+          opacity: 0.7;
+          border: lightgray 1px solid;
       }
  
       .fsBuddy_obscure_section {
-          /* opacity: 0.2; */
           border: lightgray 3px dashed;
           margin-bottom: 5px;
           margin-bottom: 5px;
+      }
+
+      .fsBuddy_obscure_section .fsSectionHeader .fsSectionHeading {
+        color: lightgray !important;
+      }
+
+      .fsBuddy_obscure_section .fsSectionHeader .fsSectionText {
+        color: lightgray !important;
       }
 
       .fsBuddy_logic_focus {
@@ -28,10 +35,24 @@
           background-color: lightgreen;
       }
       /* ----------------------------------------------------- */
+      #fsBuddy_filterStatusMessageContainer label {
+        display: inline;
+        padding-left: 15px;
+      }
+
+      #fsBuddy_filterStatusMessageContainer ul {
+        list-style-type: none;
+        display:inline;
+      }
+
+      #fsBuddy_filterStatusMessageContainer li {
+        float: left;
+      }
 
       .fsBuddy_statusContainer {
           opacity: 0.5;
       }
+
       .fsBuddy_statusRowHeader
       {
           /*padding-left: 2em;*/
@@ -87,6 +108,7 @@
   
       .fsBuddy_statusMessages > .fsBuddyError {
           background-color: red;
+          color: black !important;
       }
 
       .fsBuddy_statusMessages > .fsBuddyLogicInfo {
@@ -149,7 +171,8 @@
           handleGetFieldsWithCircularLogicResponse(e.data.payload)
           break;
         case 'getFieldsWithLogicResponse':
-          handleGetFieldsWithLogicResponse(e.data.payload)
+          console.log({disabled: 'getFieldsWithLogicResponse'})
+          // handleGetFieldsWithLogicResponse(e.data.payload)
           break;
         case 'getFieldLogicDependentsResponse':
           handleGetFieldLogicDependentsResponse(e.data.payload)
@@ -168,17 +191,17 @@
     function sendMessageToParent(messageType, payload){
       let message;
       switch(messageType){
-          case 'getFieldsWithLogicRequest':
-            message = {
-              messageType: "getFieldsWithLogicRequest",
-              payload: 'ping'
-            }
-            break;
+          // case 'getFieldsWithLogicRequest':
+          //   message = {
+          //     messageType: "getFieldsWithLogicRequest",
+          //     payload:  null
+          //   }
+          //   break;
             
-            case 'getAllFieldInfoRequest':
+          case 'getAllFieldInfoRequest':
             message = {
               messageType: "getAllFieldInfoRequest",
-              payload: 'ping'
+              payload:  null
             };
           break;          
           case 'removeFsBuddyRequest':
@@ -215,10 +238,6 @@
       window.top.postMessage(message, '*')
 		}
 
-      // const handleGetFieldStatusClick = ()=>{
-      //   sendMessageToParent('getFieldStatusesRequest', {})
-      // }
-
       const handleFetchSubmissionClick = ()=>{
         const submissionIdContainer = document.getElementById("fsBuddyFetchSubmissionIdInput");
         sendMessageToParent('fetchSubmissionRequest', {submissionId: submissionIdContainer.value})
@@ -226,29 +245,71 @@
       }
 
       const handleLogicFieldIdSelected = (selectElementId, selectedValue)=>{
-        sendMessageToParent('getFieldLogicDependentsRequest', {fieldId: selectedValue})
+        clearAllStatusMessages();
+        clearAllFieldStatusMessages();
+        if(selectedValue === "_EMPTY_DEFAULT_OPTION_") {
+          // should be clear statuses
+        } else {
+          sendMessageToParent('getFieldLogicDependentsRequest', {fieldId: selectedValue})
+        }
+      }
+
+      const isChecked = (elementId) => {
+        const e = document.getElementById(elementId);
+        return e && e.checked
+      }
+
+      const buildFilterList = ()=>{
+        const filters = [];
+        if(isChecked('statusMessageInclude_debug')){
+          filters.push('debug')
+        }
+        if(isChecked('statusMessageInclude_info')){
+          filters.push('info')
+        }
+        if(isChecked('statusMessageInclude_warn')){
+          filters.push('warn')
+        }
+        if(isChecked('statusMessageInclude_error')){
+          filters.push('error')
+        }
+        if(isChecked('statusMessageInclude_logic')){
+          filters.push('logic')
+        }
+        return filters
       }
 
       const handleGetAllFieldInfoResponse = (fieldInfoResponse)=>{
         fsBuddyHelper['fieldSummary'] = {...fieldInfoResponse.fieldSummary}
+
+        const {fieldIdsWithLogic} = fieldInfoResponse;
+
         fsBuddyHelper.getAllFieldIds = ()=>{
           return Object.keys(fsBuddyHelper['fieldSummary'])
         }
         const {formStatusMessages} = fieldInfoResponse;
-        formStatusMessages && prependUserMessages(...formStatusMessages);
-        (formStatusMessages ||[]).forEach(statusMessage=>{
-          const {relatedFieldIds} = statusMessage;
-          relatedFieldIds.forEach(fieldId=>{
-            appendFieldStatusMessages(fieldId, [statusMessage])
-          })
-        })
 
+        clearAllStatusMessages();
+        clearAllFieldStatusMessages();
+
+        if(formStatusMessages) {
+          const statusMessageFilter = buildFilterList();
+          const filteredStatusMessages = formStatusMessages.filter(statusMessage=>statusMessageFilter.includes(statusMessage.severity)) 
+          prependUserMessages(...filteredStatusMessages);
+          (filteredStatusMessages ||[]).forEach(statusMessage=>{
+            const {relatedFieldIds} = statusMessage;
+            relatedFieldIds.forEach(fieldId=>{
+              appendFieldStatusMessages(fieldId, [statusMessage])
+            })
+          })
+        }
+
+        handleGetFieldsWithLogicResponse(fieldIdsWithLogic);
       }
  
       const handleGetFieldsWithLogicResponse = (fieldIds) => {
-
         if (document.getElementById('selectFieldIdWithLogic') === null) {
-          const divWithSelect = optionListToSelectElement('selectFieldIdWithLogic', handleLogicFieldIdSelected, fieldIds.fieldIds)
+          const divWithSelect = optionListToSelectElement('selectFieldIdWithLogic', handleLogicFieldIdSelected, fieldIds)
           const logicBuddyContainer = document.getElementById('fsBuddyControlPanelLogic');
           logicBuddyContainer.appendChild(divWithSelect);
         }
@@ -256,21 +317,19 @@
       }
 
       const handleGetFieldLogicDependentsResponse = (payload)=>{
-        // This is causing some odd behaviour. Maybe 
-        // obscure field(s) but add border to panel?
-        // the obscure panel is nice that it indicates that it covers all the fields
-        // but it's not obvious that is what it's doing
-        //
-
-
         const dependentsByFieldId = payload;
         removeAllFsBuddyCss()
         removeAllCssName('fsBuddy_statusMessages')
         console.log({dependentsByFieldId})
+        const statusMessageFilter = buildFilterList();
         
         Object.entries(dependentsByFieldId).forEach(([fieldId, {dependentFieldIds, interdependentFieldIds, statusMessages}])=>{
           console.log({statusMessages});
-          statusMessages.forEach(statusMessage => {
+
+          const filteredStatusMessages = statusMessages.filter(sm=>statusMessageFilter.includes(sm.severity)) 
+
+          filteredStatusMessages.forEach(statusMessage => {
+
             appendFieldStatusMessages(statusMessage.fieldId, [statusMessage])
           });
 
@@ -285,6 +344,7 @@
 
             addCssClassToFields('fsBuddy_obscure_field', nonDependentFieldIdsNonPanel)
             addCssClassToFields('fsBuddy_obscure_section', nonDependentFieldIdsPanel)
+            console.log({ nonDependentFieldIdsPanel});
             // addCssClassToFields('fsBuddy_obscure', nonDependentFieldIds)
             // addCssClassToFields('fsBuddy_statusMessages', interdependentFieldIds)
             // addCssClassToFields('fsBuddyError', interdependentFieldIds)
@@ -355,28 +415,43 @@
       const SEVERITIES = {
         error: 0,
         warn: 50,
+        logic: 99,
         info: 100,
-        logic: 101,
         debug: 500,
         0: 'error',
         50: 'warn',
+        99: 'logic',
         100: 'info',
-        101: 'logic',
         500: 'debug',
       }
 
-      // dev/debug
-    // const userMessages = Array.from(Array(250).keys());  
-    // userMessages.forEach((e,i)=>{
-    //   userMessages[i] = `This is a user message (${i})`;
-    // })  
-
-
       // ------------------  css/layout related
-      const prependUserMessages= (...messages)=>{
+      const clearAllStatusMessages = ()=>{
+        const statusMessageContainer = document.getElementById('fsBuddyUserMessagesDiv');
+        if(statusMessageContainer) {
+          statusMessageContainer.innerText = '';
+        }
+      }
 
+      const clearAllFieldStatusMessages = ()=>{
+        // document.querySelectorAll('.fsBuddy_statusRow').forEach(element=>{
+        //   element.remove();
+        // }) 
+        // document.querySelectorAll('.fsBuddy_statusRowHeader').forEach(element=>{
+        //   element.remove();
+        // }) 
+        document.querySelectorAll('.fsBuddy_statusContainer').forEach(element=>{
+          element.remove();
+        }) 
+      }
+
+      const prependUserMessages = (...messages)=>{
         const userMessageDiv = document.getElementById('fsBuddyUserMessagesDiv');
-        messages.forEach(message=>{
+        
+        const statusMessageFilter = buildFilterList();
+        const filteredMessages = messages.filter(statusMessage=>statusMessageFilter.includes(statusMessage.severity)) 
+
+        filteredMessages.forEach(message=>{
           if(message.severity) {
             const messageParts = [];
               messageParts.push(`(${message.severity})`)
@@ -462,11 +537,6 @@
         return SEVERITIES[collectionSeverity];
       }
   
-      // const removeFsBuddyStatusContainers = ()=>{
-      //   const statusContainers = document.querySelectorAll('.fsBuddy_statusContainer')
-      //   statusContainers.forEach(container=>container.remove())
-      // }
-
       const getFieldContainer = (fieldId)=>{
         // I think all fields are in a section, 
         // but a section does not always contain fields - maybe
@@ -516,7 +586,6 @@
             const divStatusRow = document.createElement('div');
             divStatusRow.classList.add(`fsBuddy_statusRow`);
             const severityCssClass = cssClassBySeverity[message['severity']]  || cssClassBySeverity['error']; 
-
             divStatusRow.classList.add(severityCssClass);
             ['severity', 'message', 'fieldId', 'relatedFieldIds'].forEach(messagePart=>{
                 const divMessagePart = document.createElement('div');
@@ -565,6 +634,11 @@
         }
             
         const theSelect = document.createElement('select');
+        const emptyOption = document.createElement('option');
+        emptyOption.value = "_EMPTY_DEFAULT_OPTION_";
+        emptyOption.innerText = "Select Logic Root (field)";
+        theSelect.appendChild(emptyOption);
+
         (options || []).forEach(option=>{
             const theOption = document.createElement('option');
             theOption.value = option.value;
@@ -604,10 +678,34 @@
     }    
 
     function showOnly(showPanelId){
-            hideAllPanels();
-            document.getElementById(showPanelId).style.display = "block";
+      hideAllPanels();
+      document.getElementById(showPanelId).style.display = "block";
     }
 
+    function setPresetCheckboxesLogic(){
+      setCheckboxChecked('statusMessageInclude_error', true);
+      setCheckboxChecked('statusMessageInclude_logic', true);
+      setCheckboxChecked('statusMessageInclude_info', false); 
+      setCheckboxChecked('statusMessageInclude_warn', false); 
+      setCheckboxChecked('statusMessageInclude_debug', false);
+
+    }
+
+    function setPresetCheckboxesFieldAnalysis() {
+      setCheckboxChecked('statusMessageInclude_error', true);
+      setCheckboxChecked('statusMessageInclude_logic', false);
+      setCheckboxChecked('statusMessageInclude_info', true); 
+      setCheckboxChecked('statusMessageInclude_warn', true); 
+      setCheckboxChecked('statusMessageInclude_debug', false);
+    }
+
+    function setCheckboxChecked(checkboxId, value){
+      const checkbox = document.getElementById(checkboxId);
+      if(checkbox){
+        checkbox.checked = !!value;
+      }
+    }
+ 
     function removeAllFsBuddyCss(){
       removeAllCssName('fsBuddy_obscure_field'); 
       removeAllCssName('fsBuddy_obscure_section'); 
@@ -620,9 +718,11 @@
 
     document.addEventListener("DOMContentLoaded",()=>{
         buildFsBuddyControlPanel();
+ 
         showOnly('fsBuddyControlPanelFieldStatus');
-        sendMessageToParent('getAllFieldInfoRequest')
-     })
+        setPresetCheckboxesFieldAnalysis();
+        sendMessageToParent('getAllFieldInfoRequest');
+      })
      const fsBuddyHelper = {}
 	</script>
 	</head>
@@ -637,14 +737,62 @@
                   <button onclick="showOnly('fsBuddyControlPanelSubmission')">Submission Tool</button>
                 </td>
                 <td>
-                      <button onclick="showOnly('fsBuddyControlPanelLogic');sendMessageToParent('getFieldsWithLogicRequest');">Logic Tool</button>
+                    <button onclick="showOnly('fsBuddyControlPanelLogic'); setPresetCheckboxesLogic(); sendMessageToParent('getAllFieldInfoRequest');">Logic Tool</button>
                 </td>
                 <td>
-                      <button onclick="showOnly('fsBuddyControlPanelFieldStatus')">Field Analysis</button>
+                      <button onclick="showOnly('fsBuddyControlPanelFieldStatus');setPresetCheckboxesFieldAnalysis; sendMessageToParent('getAllFieldInfoRequest')">Field Analysis</button>
                 </td>
-                <!-- <td>
-                      <button onclick="showOnly('fsBuddyControlPanelUserMessages')">Form Analysis</button>
-                </td> -->
+            </tr>
+            <tr>
+              <td colspan="3">
+                <div id="fsBuddy_filterStatusMessageContainer">
+                  <ul>
+                    <li><span>Include status messages: </span></li>
+                    <li>
+                      <label for="statusMessageInclude_debug">Debug</label>
+                      <input id="statusMessageInclude_debug" type="checkbox" checked="checked" onchange="sendMessageToParent('getAllFieldInfoRequest')" />
+                    </li>
+                    <li>
+                      <label for="statusMessageInclude_warn">Warn</label>
+                      <input id="statusMessageInclude_warn" type="checkbox" checked="checked" onchange="sendMessageToParent('getAllFieldInfoRequest')" />
+                    </li>
+                    <li>
+                      <label for="statusMessageInclude_info">Info</label>
+                      <input id="statusMessageInclude_info" type="checkbox" checked="checked" onchange="sendMessageToParent('getAllFieldInfoRequest')" />
+                    </li>
+                    <li>
+                      <label for="statusMessageInclude_logic">Logic</label>
+                      <input id="statusMessageInclude_logic" type="checkbox" checked="checked" onchange="sendMessageToParent('getAllFieldInfoRequest')" />
+                    </li>
+                    <li>
+                      <label for="statusMessageInclude_error">Error</label>
+                      <input id="statusMessageInclude_error" type="checkbox" checked="checked"  onchange="sendMessageToParent('getAllFieldInfoRequest')" />
+                    </li>
+                  </ul>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="3">
+                <!-- here goes css controls-->
+                <table>
+                  <tr>
+                    <td style="padding: 5px;">
+                          <button onclick="collapseAllFsBuddyStatusItems()">Collapse Statuses</button>    
+                    </td>
+                    <td style="padding: 5px;">
+                          <button onclick="expandAllFsBuddyStatusItems()">Expand Statuses</button>                  
+                    </td>
+                    <td style="padding: 5px;">
+                        <button onclick="removeAllCssName('fsHidden');removeAllCssName('fsWorkflowHidden')">Remove All fsHidden</button>
+                    </td>
+                    <td style="padding: 5px;">
+                      <button onclick="removeAllFsBuddyCss()">Remove Logic CSS</button>
+                    </td>
+                  </tr>
+                </table>
+
+              </td>
             </tr>
       </table>
       <div id='fsBuddyControlPanelSubmission' class="fsControlPanelSubsection">
@@ -663,38 +811,11 @@
       
       <div id='fsBuddyControlPanelLogic' class="fsControlPanelSubsection">
             <h3>Logic Tool</h3>
-            <h4>(formId: 5375703, for best example.)</h4>
-            <!-- button onclick="sendMessageToParent('getFieldsWithLogicRequest')">Get Fields With Logic</button -->
-            <button onclick="removeAllFsBuddyCss()">Clear Logic CSS</button>
-
       </div>
       <div id='fsBuddyControlPanelFieldStatus' class="fsControlPanelSubsection">
             <h4>Field Analysis</h4>
             <div class="fsBuddy_statusMessages" style="background-color: white;height: 300px; overflow-y: auto;" id="fsBuddyUserMessagesDiv"></div>
-            <table>
-                  <tr>
-                        <!-- <td>
-                              <button onclick="handleGetFieldStatusClick()">Get Field Statuses</button>
-                        </td> -->
-                        <td>
-                              <button onclick="collapseAllFsBuddyStatusItems()">Collapse Statuses</button>    
-                        </td>
-                        <td>
-                              <button onclick="expandAllFsBuddyStatusItems()">Expand Statuses</button>                  
-                        </td>
-                  </tr>
-                  <tr>
-                        <!-- <td>
-                              <button onclick="removeFsBuddyStatusContainers()">Remove Status Containers</button>
-                        </td> -->
-                        <td>
-                              <button onclick="removeAllCssName('fsHidden');removeAllCssName('fsWorkflowHidden')">Remove All fsHidden</button>
-                        </td>
-                        <!-- <td>
-                              <button onclick="removeAllFsBuddyCss()">Remove All fsBuddy</button>
-                        </td> -->
-                  </tr>
-            </table>
+            </div>
       </div>
       <!-- <div id='fsBuddyControlPanelUserMessages' class="fsControlPanelSubsection">
             <h4>Form Analysis</h4>

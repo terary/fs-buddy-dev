@@ -44,7 +44,7 @@ function buildIframe(iframeId: string): HTMLIFrameElement {
   const iframe = document.createElement("iframe");
   iframe.id = iframeId;
   iframe.style.width = "50%";
-  iframe.style.height = "1500px";
+  iframe.style.height = "100%";
   iframe.style.zIndex = "1001";
   iframe.style.top = "50px";
   iframe.style.right = "0px";
@@ -209,29 +209,17 @@ function handleGetAllFieldInfoRequest(
   /// getFieldIdsExtendedLogicOf
   const fieldSummary = fieldLogicService?.getAllFieldSummary();
   const formStatusMessages = formAnalytic?.findKnownSetupIssues();
-  // const formStatusMessages = [
-  //   {
-  //     severity: "info",
-  //     fieldId: "147738157",
-  //     message: "Message Two",
-  //     relatedFieldIds: ["xxxx"],
-  //   },
-  //   {
-  //     severity: "info",
-  //     fieldId: "147738157",
-  //     message: "Message One",
-  //     relatedFieldIds: ["yyyy"],
-  //   },
-  // ];
-  /// .getFieldIdsExtendedLogicOf(fieldId);
+  const fieldIdsWithLogic = fieldLogicService?.wrapFieldIdsIntoLabelOptionList(
+    fieldLogicService?.getFieldIdsWithLogic()
+  );
+
   caller.postMessage({
     messageType: "getAllFieldInfoResponse",
-    payload: { fieldSummary, formStatusMessages },
+    payload: { fieldSummary, formStatusMessages, fieldIdsWithLogic },
   });
 }
 
 function getFieldsWithLogicResponse(caller: MessageEventSource) {
-  fieldLogicService?.getFieldIdsWithLogic;
   const fieldIds = fieldLogicService?.wrapFieldIdsIntoLabelOptionList(
     fieldLogicService?.getFieldIdsWithLogic()
   );
@@ -240,6 +228,7 @@ function getFieldsWithLogicResponse(caller: MessageEventSource) {
     payload: { fieldIds },
   });
 }
+
 function removeFormHtml() {
   const theIFrame = document.getElementById("theFrame");
   if (theIFrame) {

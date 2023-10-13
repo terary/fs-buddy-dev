@@ -93,12 +93,27 @@ class FieldLogicService {
   }
 
   wrapFieldIdsIntoLabelOptionList(fieldIds: string[]) {
+    const circularReferenceFieldIds = this.getFieldIdsWithCircularReferences();
     return fieldIds.map((fieldId) => {
       const field = this._fieldCollection.getFieldTreeByFieldId(fieldId);
-      const label =
-        field?.fieldType === "section"
-          ? "(section) " + field?.section_heading
-          : field?.label || "";
+      let label = circularReferenceFieldIds.includes(fieldId) ? "(cr) " : "";
+
+      switch (field?.fieldType) {
+        case "section":
+          label += "(section) " + field?.section_heading;
+          break;
+        case "richtext":
+          label += "(richtext)";
+          break;
+        default:
+          label += field?.label || "";
+          break; // <-- never stops being funny
+      }
+      // label +=
+      //   field?.fieldType === "section"
+      //     ? "(section) " + field?.section_heading
+      //     : field?.label || "";
+
       return {
         value: fieldId,
         label: label,

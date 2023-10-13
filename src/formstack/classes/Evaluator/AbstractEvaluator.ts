@@ -41,11 +41,37 @@ abstract class AbstractEvaluator {
     const nonVisibleTypes = ["section", "richtext", "embed"];
     const messages: TStatusRecord[] = [];
 
-    if (!nonVisibleTypes.includes(this.fieldType) && !this._fieldJson.label) {
+    messages.push(
+      this.wrapAsStatusMessage(
+        "debug",
+        `fieldId: ${this._fieldJson.id}, type: ${
+          this.fieldType
+        }, json: ${JSON.stringify(this.fieldJson)}`,
+        [],
+        this.fieldId
+      )
+    );
+
+    if (nonVisibleTypes.includes(this.fieldType)) {
+      return [];
+    }
+
+    if (!this._fieldJson.label) {
       messages.push(
         this.wrapAsStatusMessage(
-          "info",
+          "warn",
           `No label for type: '${this.fieldType}', fieldId: '${this.fieldId}'.`,
+          [],
+          this.fieldId
+        )
+      );
+    }
+
+    if (this._fieldJson.label !== this._fieldJson.label.trim()) {
+      messages.push(
+        this.wrapAsStatusMessage(
+          "warn",
+          `White spaced detected at start or end. Label: "${this._fieldJson.label}".`,
           [],
           this.fieldId
         )
