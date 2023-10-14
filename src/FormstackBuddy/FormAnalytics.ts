@@ -97,6 +97,7 @@ class FormAnalytics {
         ? this.wrapAsStatusMessage("info", 'Form/Workflow type: "workflow".')
         : this.wrapAsStatusMessage("info", 'Form/Workflow type: "form".')
     );
+
     messages.push(
       this.wrapAsStatusMessage(
         "info",

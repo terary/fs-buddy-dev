@@ -30,6 +30,11 @@
           /* opacity: 0.5; */
           background-color: lightblue;
       }
+
+      .fsBuddy_dependant_logic_field {
+        background-color: lightgray;
+      }
+
       .fsBuddy_lightgreen {
           /* opacity: 0.5; */
           background-color: lightgreen;
@@ -170,10 +175,10 @@
         case 'getFieldsWithCircularLogicResponse':
           handleGetFieldsWithCircularLogicResponse(e.data.payload)
           break;
-        case 'getFieldsWithLogicResponse':
-          console.log({disabled: 'getFieldsWithLogicResponse'})
-          // handleGetFieldsWithLogicResponse(e.data.payload)
-          break;
+        // case 'getFieldsWithLogicResponse':
+        //   console.log({disabled: 'getFieldsWithLogicResponse'})
+        //   // handleGetFieldsWithLogicResponse(e.data.payload)
+        //   break;
         case 'getFieldLogicDependentsResponse':
           handleGetFieldLogicDependentsResponse(e.data.payload)
           break;
@@ -304,10 +309,10 @@
           })
         }
 
-        handleGetFieldsWithLogicResponse(fieldIdsWithLogic);
+        populateLogicSelectBox(fieldIdsWithLogic);
       }
  
-      const handleGetFieldsWithLogicResponse = (fieldIds) => {
+      const populateLogicSelectBox = (fieldIds) => {
         if (document.getElementById('selectFieldIdWithLogic') === null) {
           const divWithSelect = optionListToSelectElement('selectFieldIdWithLogic', handleLogicFieldIdSelected, fieldIds)
           const logicBuddyContainer = document.getElementById('fsBuddyControlPanelLogic');
@@ -324,30 +329,22 @@
         const statusMessageFilter = buildFilterList();
         
         Object.entries(dependentsByFieldId).forEach(([fieldId, {dependentFieldIds, interdependentFieldIds, statusMessages}])=>{
-          console.log({statusMessages});
-
           const filteredStatusMessages = statusMessages.filter(sm=>statusMessageFilter.includes(sm.severity)) 
-
           filteredStatusMessages.forEach(statusMessage => {
-
             appendFieldStatusMessages(statusMessage.fieldId, [statusMessage])
           });
-
 
           const nonDependentFieldIds = fsBuddyHelper.getAllFieldIds()
               .filter( (childFieldId)=>{
                 return !dependentFieldIds.includes(childFieldId) && fieldId !== childFieldId && !interdependentFieldIds.includes(childFieldId)
               }); 
-            addCssClassToFields('fsBuddy_lightblue', dependentFieldIds)
+            // addCssClassToFields('fsBuddy_lightblue', dependentFieldIds)
+            addCssClassToFields('fsBuddy_dependant_logic_field', dependentFieldIds)
             nonDependentFieldIdsNonPanel = nonDependentFieldIds.filter(fieldId=>fsBuddyHelper.fieldSummary[fieldId].type !== 'section')
             nonDependentFieldIdsPanel = nonDependentFieldIds.filter(fieldId=>fsBuddyHelper.fieldSummary[fieldId].type === 'section')
 
             addCssClassToFields('fsBuddy_obscure_field', nonDependentFieldIdsNonPanel)
             addCssClassToFields('fsBuddy_obscure_section', nonDependentFieldIdsPanel)
-            console.log({ nonDependentFieldIdsPanel});
-            // addCssClassToFields('fsBuddy_obscure', nonDependentFieldIds)
-            // addCssClassToFields('fsBuddy_statusMessages', interdependentFieldIds)
-            // addCssClassToFields('fsBuddyError', interdependentFieldIds)
             addCssClassToFields('fsBuddyLogicError', interdependentFieldIds)
         })
 
@@ -710,6 +707,7 @@
       removeAllCssName('fsBuddy_obscure_field'); 
       removeAllCssName('fsBuddy_obscure_section'); 
       removeAllCssName('fsBuddy_lightblue');
+      removeAllCssName('fsBuddy_dependant_logic_field');
       removeAllCssName('fsBuddy_lightgreen');
       removeAllCssName('fsBuddy_logic_focus');
       removeAllCssName('fsBuddyError');
@@ -740,7 +738,7 @@
                     <button onclick="showOnly('fsBuddyControlPanelLogic'); setPresetCheckboxesLogic(); sendMessageToParent('getAllFieldInfoRequest');">Logic Tool</button>
                 </td>
                 <td>
-                      <button onclick="showOnly('fsBuddyControlPanelFieldStatus');setPresetCheckboxesFieldAnalysis; sendMessageToParent('getAllFieldInfoRequest')">Field Analysis</button>
+                      <button onclick="showOnly('fsBuddyControlPanelFieldStatus');setPresetCheckboxesFieldAnalysis(); sendMessageToParent('getAllFieldInfoRequest')">Field Analysis</button>
                 </td>
             </tr>
             <tr>

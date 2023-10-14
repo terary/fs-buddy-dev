@@ -207,27 +207,46 @@ function handleGetAllFieldInfoRequest(
   payload: any
 ) {
   /// getFieldIdsExtendedLogicOf
+  if (fieldLogicService === null) {
+    console.log(
+      'handleGetAllFieldInfoRequest failed.  "fieldLogicService" not defined.'
+    );
+    return;
+  }
+  if (formAnalytic === null) {
+    console.log(
+      'handleGetAllFieldInfoRequest failed.  "formAnalytic" not defined.'
+    );
+    return;
+  }
+
   const fieldSummary = fieldLogicService?.getAllFieldSummary();
-  const formStatusMessages = formAnalytic?.findKnownSetupIssues();
+  const formLogicStatusMessages =
+    fieldLogicService.getFormLogicStatusMessages();
+  const formStatusMessages = formAnalytic.findKnownSetupIssues();
   const fieldIdsWithLogic = fieldLogicService?.wrapFieldIdsIntoLabelOptionList(
     fieldLogicService?.getFieldIdsWithLogic()
   );
 
   caller.postMessage({
     messageType: "getAllFieldInfoResponse",
-    payload: { fieldSummary, formStatusMessages, fieldIdsWithLogic },
+    payload: {
+      fieldSummary,
+      formStatusMessages: [...formStatusMessages, ...formLogicStatusMessages],
+      fieldIdsWithLogic,
+    },
   });
 }
 
-function getFieldsWithLogicResponse(caller: MessageEventSource) {
-  const fieldIds = fieldLogicService?.wrapFieldIdsIntoLabelOptionList(
-    fieldLogicService?.getFieldIdsWithLogic()
-  );
-  caller.postMessage({
-    messageType: "getFieldsWithLogicResponse",
-    payload: { fieldIds },
-  });
-}
+// function getFieldsWithLogicResponse(caller: MessageEventSource) {
+//   const fieldIds = fieldLogicService?.wrapFieldIdsIntoLabelOptionList(
+//     fieldLogicService?.getFieldIdsWithLogic()
+//   );
+//   caller.postMessage({
+//     messageType: "getFieldsWithLogicResponse",
+//     payload: { fieldIds },
+//   });
+// }
 
 function removeFormHtml() {
   const theIFrame = document.getElementById("theFrame");
@@ -244,10 +263,10 @@ window.onmessage = function (e) {
         payload: "pong",
       });
       break;
-    case "getFieldsWithLogicRequest":
-      e.source && getFieldsWithLogicResponse(e.source);
-      !e.source && console.log("No Source of message received.");
-      break;
+    // case "getFieldsWithLogicRequest":
+    //   e.source && getFieldsWithLogicResponse(e.source);
+    //   !e.source && console.log("No Source of message received.");
+    //   break;
     case "getFieldLogicDependentsRequest":
       e.source &&
         handleGetFieldLogicDependentsRequest(e.source, e.data.payload);

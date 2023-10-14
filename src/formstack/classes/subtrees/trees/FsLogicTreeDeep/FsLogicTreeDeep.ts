@@ -21,6 +21,7 @@ import { FsLogicLeafNode } from "./LogicNodes/FsLogicLeafNode";
 import { FsVirtualRootNode } from "./LogicNodes/FsVirtualRootNode";
 import { FsCircularMutualExclusiveNode } from "./LogicNodes/FsCircularMutualExclusiveNode";
 import { FsCircularMutualInclusiveNode } from "./LogicNodes/FsCircularMutualInclusiveNode";
+import type { TLogicTreeDeepStatisticCountRecord } from "./type";
 
 class FsLogicTreeDeep {
   static readonly MAX_TOTAL_NODES = 50;
@@ -135,7 +136,7 @@ class FsLogicTreeDeep {
     return tree;
   }
 
-  getAllLogicStatusMessages(): TStatusRecord[] {
+  public getAllLogicStatusMessages(): TStatusRecord[] {
     const statusMessages: TStatusRecord[] = [];
 
     const logicNodes = this._fsDeepLogicTree
@@ -201,6 +202,54 @@ class FsLogicTreeDeep {
       targetFieldId,
       deepTree.getDependentFieldIds()
     );
+  }
+
+  public getStatisticCounts(): TLogicTreeDeepStatisticCountRecord {
+    const countRecords: TLogicTreeDeepStatisticCountRecord = {
+      totalNodes: 0,
+      totalCircularLogicNodes: 0,
+      totalCircularExclusiveLogicNodes: 0,
+      totalCircularInclusiveLogicNodes: 0,
+      totalUnclassifiedNodes: 0,
+      totalLeafNodes: 0,
+      totalBranchNodes: 0,
+      totalRootNodes: 0,
+    };
+    this._fsDeepLogicTree.getTreeContentAt().forEach((nodeContent) => {
+      countRecords.totalNodes++;
+      switch (true) {
+        case nodeContent instanceof FsCircularMutualExclusiveNode:
+          countRecords.totalCircularLogicNodes++;
+          countRecords.totalCircularExclusiveLogicNodes++;
+          break;
+
+        case nodeContent instanceof FsCircularMutualInclusiveNode:
+          countRecords.totalCircularLogicNodes++;
+          countRecords.totalCircularInclusiveLogicNodes++;
+          break;
+        case nodeContent instanceof FsCircularDependencyNode:
+          countRecords.totalCircularLogicNodes++;
+          break;
+
+        case nodeContent instanceof FsLogicBranchNode:
+          countRecords.totalBranchNodes++;
+          break;
+
+        case nodeContent instanceof FsLogicLeafNode:
+          countRecords.totalLeafNodes++;
+          break;
+        case nodeContent instanceof FsVirtualRootNode:
+          // need to verify each Deep tree has virtual root.  It may be the case
+          // that only deepTrees with both visualTree and logicTree will have virtual tree
+          countRecords.totalRootNodes++;
+          break;
+
+        default:
+          countRecords.totalUnclassifiedNodes++;
+          break; // <-- never stops being funny.
+      }
+    });
+    return countRecords;
   }
 
   private static appendFieldTreeNodeToLogicDeep(

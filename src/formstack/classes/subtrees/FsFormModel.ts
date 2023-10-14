@@ -3,7 +3,11 @@ import { AbstractExpressionTree } from "predicate-tree-advanced-poc/dist/src";
 import { FsFieldModel } from "./trees/FsFieldModel";
 
 import { FsFieldVisibilityLinkNode, FsFormRootNode } from "./trees/nodes";
-import type { TFsLeafOperators, TTreeFieldNode } from "./types";
+import type {
+  TFsLeafOperators,
+  TSimpleDictionary,
+  TTreeFieldNode,
+} from "./types";
 
 import { FsLogicTreeDeep } from "./trees/FsLogicTreeDeep";
 
@@ -21,8 +25,9 @@ import { TFsFieldAny } from "../../type.field";
 class FsFormModel extends AbstractExpressionTree<
   TTreeFieldNode | FsFormRootNode
 > {
-  private _dependantFieldIds: string[] = [];
+  private _dependantFieldIds: string[] = []; // is this really used?
   private _fieldIdNodeMap: { [fieldId: string]: FsFieldModel } = {};
+  #deepLogicTreesFieldIdMap!: TSimpleDictionary<FsLogicTreeDeep | null>;
 
   createSubtreeAt(targetNodeId: string): FsFormModel {
     const subtree = new FsFormModel("_subtree_");
@@ -43,6 +48,24 @@ class FsFormModel extends AbstractExpressionTree<
     return subtree;
   }
 
+  getDeepLogicTreeByFieldId(fieldId: string): FsLogicTreeDeep | null {
+    // this only works for static trees (fromJson, fromPojo, fromXXX)
+    // dynamic trees MUST NOT cache
+
+    if (this.#deepLogicTreesFieldIdMap === undefined) {
+      this.#deepLogicTreesFieldIdMap = (this.getAllFieldIds() || []).reduce(
+        (p, c, i, a) => {
+          const fieldModel = this.getFieldById(c);
+          p[c] = this.getExtendedTree(fieldModel);
+          return p;
+        },
+        {} as TSimpleDictionary<FsLogicTreeDeep | null>
+      );
+    }
+
+    return this.#deepLogicTreesFieldIdMap[fieldId];
+  }
+
   getFormFieldsCount() {
     return this.getAllFieldIds().length;
   }
@@ -55,10 +78,11 @@ class FsFormModel extends AbstractExpressionTree<
     return this._fieldIdNodeMap[fieldId];
   }
 
+  // Looks like this generic is not being used - git rid of it
   private getExtendedTree<T extends FsLogicTreeDeep = FsLogicTreeDeep>(
-    field: FsFieldModel,
-    atNodeId?: string,
-    extendedTree?: FsLogicTreeDeep
+    field: FsFieldModel
+    // atNodeId?: string,
+    // extendedTree?: FsLogicTreeDeep
   ): FsLogicTreeDeep | null {
     return FsLogicTreeDeep.fromFormModel(field.fieldId, this);
   }
