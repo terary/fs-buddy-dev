@@ -10,7 +10,7 @@ import { TApiFormJson } from "../formstack/type.form";
 
 describe("FieldLogicService", () => {
   describe(".getFormLogicStatusMessages()", () => {
-    it.only("Should", () => {
+    it("Should", () => {
       const fieldLogicService = new FieldLogicService(
         transformers.formJson(
           circularAndInterdependentJson as unknown as TApiFormJson
@@ -18,7 +18,33 @@ describe("FieldLogicService", () => {
       );
 
       const statusMessages = fieldLogicService.getFormLogicStatusMessages();
-      expect(statusMessages).toStrictEqual([]);
+      expect(statusMessages).toStrictEqual([
+        {
+          severity: "info",
+          fieldId: null,
+          message:
+            'Logic composition: <pre><code>{\n  "totalNodes": 153,\n  "totalCircularLogicNodes": 24,\n  "totalCircularExclusiveLogicNodes": 0,\n  "totalCircularInclusiveLogicNodes": 0,\n  "totalUnclassifiedNodes": 0,\n  "totalLeafNodes": 43,\n  "totalBranchNodes": 67,\n  "totalRootNodes": 19,\n  "leafToNodeRatio": "0.2810",\n  "branchToNodeRatio": "0.4379",\n  "leafToBranchRatio": "0.6418"\n}</code></pre>\n      <ul>\n        <li>totalNodes - Each time a field involved in a logic expression. If a field is used twice this will be reflected in this number</li>\n        <li>totalCircularLogicNodes - Logic conflict at the branch level.</li>\n        <li>totalCircularExclusiveLogicNodes - Logic conflict at the leaf level, non-resolvable.</li>\n        <li>totalCircularInclusiveLogicNodes - Logic conflict at the leaf level, resolvable.</li>\n        <li>totalLeafNodes - Logic terms (the actual "x equal _SOMETHING_").</li>\n        <li>totalBranchNodes - Logic branch (something like: "Show" if _ANY_...).</li>\n        <li>totalRootNodes - The field that owns the logic expression.</li>\n        <li>Note: Circular nodes indicates invalid logic expression. If an expression is invalid these counts may not be accurate.</li>\n        <li>branchToNodeRatio - higher number indicates need to break into multiple forms.</li>\n        <li>leafToBranchRatio - higher number indicates good usage of logic .</li>\n      </ul>\n    ',
+          relatedFieldIds: [],
+        },
+        {
+          severity: "info",
+          fieldId: null,
+          message: "Number of fields with root logic:  15",
+          relatedFieldIds: [],
+        },
+        {
+          severity: "info",
+          fieldId: null,
+          message: "Number of fields without root logic:  14",
+          relatedFieldIds: [],
+        },
+        {
+          severity: "warn",
+          fieldId: null,
+          message: "Number of fields with circular references:  17",
+          relatedFieldIds: [],
+        },
+      ]);
     });
   });
 
