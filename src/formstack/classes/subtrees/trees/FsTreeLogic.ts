@@ -1,5 +1,6 @@
 import {
   AbstractExpressionTree,
+  AbstractTree,
   IExpressionTree,
   ITree,
   TGenericNodeContent,
@@ -143,64 +144,81 @@ class FsTreeLogic extends AbstractFsTreeLogic<TFsFieldLogicNode> {
 
     return this;
   }
-
-  static _fromPojo<P extends object, Q>(
+  static x_fromPojo<P extends object, Q>(
     srcPojoTree: TTreePojo<TFsFieldLogicNode>,
     transform?:
       | ((nodeContent: TNodePojo<P>) => TGenericNodeContent<P>)
       | undefined
   ): IExpressionTree<TFsFieldLogicNode> {
+    return super.fromPojo(srcPojoTree);
+  }
+
+  static fromPojo<FsTreeLogic, TFsFieldLogicNode>(
+    srcPojoTree: TTreePojo<TFsFieldLogicNode>,
+    transform?:
+      | ((
+          nodeContent: TNodePojo<TFsFieldLogicNode>
+        ) => TGenericNodeContent<object>)
+      | undefined
+  ): FsTreeLogic;
+  static fromPojo<P extends object, Q>(
+    srcPojoTree: TTreePojo<P>,
+    transform?:
+      | ((nodeContent: TNodePojo<P>) => TGenericNodeContent<P>)
+      | undefined
+  ): IExpressionTree<P>;
+  static fromPojo<P extends object, Q>(
+    srcPojoTree: TTreePojo<P>,
+    transform?:
+      | ((nodeContent: TNodePojo<P>) => TGenericNodeContent<P>)
+      | undefined
+  ): IExpressionTree<TFsLogicNodeJson> {
+    const rootFieldId = parseUniquePojoRootKeyOrThrow(srcPojoTree);
+
     const genericTree = AbstractExpressionTree.fromPojo(
-      srcPojoTree,
+      srcPojoTree as TTreePojo<TFsFieldLogicNode>,
       transformers.TFsFieldLogicNode.fromPojo
     );
-    const x = genericTree.getChildContentAt(
-      genericTree.rootNodeId
-    ) as TFsFieldLogicNode;
 
     const fsTree = new FsTreeLogic(
-      genericTree.rootNodeId,
+      rootFieldId,
+      // genericTree.rootNodeId,
       genericTree.getChildContentAt(genericTree.rootNodeId) as TFsFieldLogicNode
     );
 
     genericTree
       .getChildrenContentOf(genericTree.rootNodeId)
       .forEach((childContent) => {
-        fsTree.appendChildNodeWithContent(genericTree.rootNodeId, childContent);
+        fsTree.appendChildNodeWithContent(fsTree.rootNodeId, childContent);
       });
 
-    return fsTree;
+    return fsTree as IExpressionTree<TFsLogicNodeJson>;
   }
 
-  // overload goes here
+  toPojoAt(nodeId?: string | undefined): TTreePojo<TFsFieldLogicNode>;
+  toPojoAt(
+    nodeId?: string | undefined,
+    shouldObfuscate?: boolean
+  ): TTreePojo<TFsFieldLogicNode>;
   override toPojoAt(
     nodeId?: string | undefined,
-    transformer?: (<T>(nodeContent: T) => TNodePojo<T>) | undefined
+    shouldObfuscate = true
   ): TTreePojo<TFsFieldLogicNode> {
-    const p = super.toPojoAt(
+    // overload goes here
+    const clearPojo = super.toPojoAt(
       this.rootNodeId,
       // @ts-ignore -- T is not compatible with TFsFieldLogicNode
       transformers.TFsFieldLogicNode.toPojo
     );
-
-    return p;
+    if (shouldObfuscate) {
+      return AbstractTree.obfuscatePojo(clearPojo);
+    }
+    return clearPojo;
   }
-
-  // override cloneAt(
-  //   nodeId?: string | undefined
-  // ): IExpressionTree<TFsFieldLogicNode> {
-  //   const pojo = this.toPojoAt();
-  //   return FsTreeLogic._fromPojo(pojo);
-  // }
 
   override cloneAt(nodeId?: string | undefined): FsTreeLogic {
-    const pojo = this.toPojoAt();
-    return FsTreeLogic._fromPojo(pojo) as FsTreeLogic;
-  }
-
-  private negateTree(): FsTreeLogic {
-    this.toPojoAt();
-    return this;
+    const pojo = this.toPojoAt(undefined, false);
+    return FsTreeLogic.fromPojo(pojo) as FsTreeLogic;
   }
 
   static fromFieldJson(fieldJson: TFsFieldAnyJson): FsTreeLogic {
@@ -335,4 +353,26 @@ const convertFsOperatorToOp = (check: TFsFieldLogicCheckLeafJson) => {
   // }
 
   return check.condition;
+};
+
+const parseUniquePojoRootKeyOrThrow = <T>(pojoDocument: TTreePojo<T>) => {
+  const candidateRootIds = parseCandidateRootNodeId(pojoDocument);
+
+  if (candidateRootIds.length !== 1) {
+    throw new Error(
+      `No distinct root found. There must exist on and only one nodeId === {parentId}. Found ${candidateRootIds.length}.`
+    );
+  }
+
+  return candidateRootIds[0];
+};
+
+const parseCandidateRootNodeId = <T>(treeObject: TTreePojo<T>): string[] => {
+  const candidateRootIds: string[] = [];
+  Object.entries(treeObject).forEach(([key, node]) => {
+    if (key === node.parentId) {
+      candidateRootIds.push(key);
+    }
+  });
+  return candidateRootIds;
 };
