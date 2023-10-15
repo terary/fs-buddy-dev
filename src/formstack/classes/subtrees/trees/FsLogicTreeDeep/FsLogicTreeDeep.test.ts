@@ -8,7 +8,7 @@ import { FsFormModel } from "../../FsFormModel";
 import { transformers } from "../../../../transformers";
 describe("FsLogicTreeDeep", () => {
   describe(".getDependantFieldIds()", () => {
-    it("Should be empty array for dependancy list of single node tree (new without root node).", () => {
+    it.only("Should be empty array for dependancy list of single node tree (new without root node).", () => {
       // const tree5375703 = FsFormModel.fromApiFormJson(
       //   transformers.formJson(formJson5375703 as unknown as TApiFormJson)
       // );

@@ -2,6 +2,9 @@ import {
   AbstractExpressionTree,
   IExpressionTree,
   ITree,
+  TGenericNodeContent,
+  TNodePojo,
+  TTreePojo,
 } from "predicate-tree-advanced-poc/dist/src";
 import { TFsFieldAnyJson } from "../../types";
 import type {
@@ -9,13 +12,14 @@ import type {
   TFsFieldLogicCheckLeafJson,
   TFsFieldLogicJunction,
   TFsFieldLogicJunctionJson,
-  TFsLogicNode,
+  TFsFieldLogicNode,
   TFsLogicNodeJson,
   TFsVisibilityModes,
   TFsJunctionOperators,
 } from "../types";
 import { AbstractFsTreeLogic } from "./AbstractFsTreeLogic";
-
+import { transformers } from "../../../transformers";
+import { NegateVisitor } from "./NegateVisitor";
 const andReducer = (prev: boolean | null, cur: boolean | null) => {
   return prev && cur;
 };
@@ -24,15 +28,15 @@ const orReducer = (prev: boolean | null, cur: boolean | null) => {
   return prev || cur;
 };
 
-class FsTreeLogic extends AbstractFsTreeLogic<TFsLogicNode> {
+class FsTreeLogic extends AbstractFsTreeLogic<TFsFieldLogicNode> {
   public _debug_visitedFieldIds: string[] = []; // this maybe better as getChildren(filter)
 
-  createSubtreeAt(nodeId: string): IExpressionTree<TFsLogicNode> {
+  createSubtreeAt(nodeId: string): IExpressionTree<TFsFieldLogicNode> {
     // *tmc* needs to make this a real thing, I guess: or add it to the abstract?
     return new FsTreeLogic();
   }
 
-  protected defaultJunction(nodeId: string): TFsLogicNode {
+  protected defaultJunction(nodeId: string): TFsFieldLogicNode {
     // @ts-ignore - doesn't match shape of proper junction (no fieldJson or fieldId).  But this is
     // only used for creating 'virtual' trees with field and panel logic, hence no nodeContent or then 'all'
     return { conditional: "all", fieldJson: {} };
@@ -52,10 +56,17 @@ class FsTreeLogic extends AbstractFsTreeLogic<TFsLogicNode> {
     return childContent as T;
   }
 
+  getNegatedClone(): FsTreeLogic {
+    const visitor = new NegateVisitor();
+    const clone = this.cloneAt();
+    clone.visitAllAt(visitor);
+    return clone;
+  }
+
   getShallowDependantFieldIds(): string[] {
     const children = this.getChildrenContentOf(
       this.rootNodeId
-    ) as TFsLogicNode[]; // shallow = only the children
+    ) as TFsFieldLogicNode[]; // shallow = only the children
     return children.map((child) =>
       // @ts-ignore - fieldId, ownerId not on type TFsLogic...
       child.fieldId ? child.fieldId : child.ownerFieldId
@@ -98,9 +109,103 @@ class FsTreeLogic extends AbstractFsTreeLogic<TFsLogicNode> {
     return this.evaluateWithValues<boolean>(values) ? this.action : null;
   }
 
+  private x_demote_and_negate() {
+    const { action } = this;
+    // @ts-ignore - TFsVisibilityMode should be upcase, does transformer need fixed? or datatype?
+    if (action === "hide") {
+      // This works - but it should be in visibilityNode
+      // or ... make 'negateTree' a method of LogicTree ?
+
+      // subtree incrementor is not working correctly.
+      // I think it fails to update new nodes count so the count is off and
+      // nodes get overwritten (or just needs to iternate same number of subtree iterator)
+      // this should be "Hide", dev/debug
+      const previousRootNodeContent = this.getChildContentAt(this.rootNodeId);
+      const previousChildrenNodeIds = this.getChildrenNodeIdsOf(
+        this.rootNodeId
+      );
+
+      this.replaceNodeContent(this.rootNodeId, {
+        // @ts-ignore
+        virtualBranch: "something",
+        junctionOperator: "$not",
+      });
+
+      const newBranchNodeId = this.appendChildNodeWithContent(
+        this.rootNodeId,
+        previousRootNodeContent
+      );
+      previousChildrenNodeIds.forEach((childId) => {
+        this.move(childId, newBranchNodeId);
+      });
+    }
+    console.log({ logicTree: this });
+
+    return this;
+  }
+
+  static _fromPojo<P extends object, Q>(
+    srcPojoTree: TTreePojo<TFsFieldLogicNode>,
+    transform?:
+      | ((nodeContent: TNodePojo<P>) => TGenericNodeContent<P>)
+      | undefined
+  ): IExpressionTree<TFsFieldLogicNode> {
+    const genericTree = AbstractExpressionTree.fromPojo(
+      srcPojoTree,
+      transformers.TFsFieldLogicNode.fromPojo
+    );
+    const x = genericTree.getChildContentAt(
+      genericTree.rootNodeId
+    ) as TFsFieldLogicNode;
+
+    const fsTree = new FsTreeLogic(
+      genericTree.rootNodeId,
+      genericTree.getChildContentAt(genericTree.rootNodeId) as TFsFieldLogicNode
+    );
+
+    genericTree
+      .getChildrenContentOf(genericTree.rootNodeId)
+      .forEach((childContent) => {
+        fsTree.appendChildNodeWithContent(genericTree.rootNodeId, childContent);
+      });
+
+    return fsTree;
+  }
+
+  // overload goes here
+  override toPojoAt(
+    nodeId?: string | undefined,
+    transformer?: (<T>(nodeContent: T) => TNodePojo<T>) | undefined
+  ): TTreePojo<TFsFieldLogicNode> {
+    const p = super.toPojoAt(
+      this.rootNodeId,
+      // @ts-ignore -- T is not compatible with TFsFieldLogicNode
+      transformers.TFsFieldLogicNode.toPojo
+    );
+
+    return p;
+  }
+
+  // override cloneAt(
+  //   nodeId?: string | undefined
+  // ): IExpressionTree<TFsFieldLogicNode> {
+  //   const pojo = this.toPojoAt();
+  //   return FsTreeLogic._fromPojo(pojo);
+  // }
+
+  override cloneAt(nodeId?: string | undefined): FsTreeLogic {
+    const pojo = this.toPojoAt();
+    return FsTreeLogic._fromPojo(pojo) as FsTreeLogic;
+  }
+
+  private negateTree(): FsTreeLogic {
+    this.toPojoAt();
+    return this;
+  }
+
   static fromFieldJson(fieldJson: TFsFieldAnyJson): FsTreeLogic {
     // we should be receiving fieldJson.logic, but the Abstract._fieldJson is not typed properly
-    // const logicJson: TFsLogicNodeJson = fieldJson.logic;
+    // const logicJson: TFsFieldLogicNodeJson = fieldJson.logic;
     // or maybe always get the whole json?
 
     const logicJson: TFsLogicNodeJson =
@@ -117,7 +222,7 @@ class FsTreeLogic extends AbstractFsTreeLogic<TFsLogicNode> {
     const tree = new FsTreeLogic(
       fieldJson.id || "_calc_tree_",
       // @ts-ignore - there is a little confuse about a tree node and a logic node
-      rootNode as TFsLogicNode
+      rootNode as TFsFieldLogicNode
     );
     tree._action = action || null;
     tree._fieldJson = logicJson;
@@ -128,7 +233,7 @@ class FsTreeLogic extends AbstractFsTreeLogic<TFsLogicNode> {
     );
 
     // @ts-ignore - there is a little confuse about a tree node and a logic node
-    leafExpressions.forEach((childNode: TFsLogicNode) => {
+    leafExpressions.forEach((childNode: TFsFieldLogicNode) => {
       // const { condition, fieldId, option } =
       //   childNode as TFsFieldLogicCheckLeaf;
       // const leafNode = { fieldId, condition, option };

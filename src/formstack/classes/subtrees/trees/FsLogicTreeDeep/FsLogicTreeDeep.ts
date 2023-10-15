@@ -372,9 +372,10 @@ class FsLogicTreeDeep {
       return null;
     }
     const logicTree = field.getLogicTree() || null;
-    const visualTree =
-      field.getVisibilityNode()?.parentNode?.getLogicTree() || null; //as FsTreeLogic;
+    // const visualTree =
+    //   field.getVisibilityNode()?.parentNode?.getLogicTree() || null; //as FsTreeLogic;
 
+    const visualTree = field.getVisibilityLogicTree();
     if (!logicTree && !visualTree) {
       // this is a field with no logic - therefore null as a logic tree
       // when evaluating it should simple return the value provided.  Evaluation is a
