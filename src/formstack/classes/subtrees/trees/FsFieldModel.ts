@@ -210,42 +210,6 @@ class FsFieldModel extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
     return Evaluator.getEvaluatorWithFieldJson(this.fieldJson as TFsFieldAny);
   }
 
-  private x_evaluateMultiSelect<T>(values: { [fieldId: string]: any }): {
-    [fieldId: string]: T; // | InvalidEvaluation;
-  } {
-    const options = (this.fieldJson as TSelectFields).options || [];
-    const selectedOption = options.find(
-      (option) => option.value === values[this.fieldId]
-    );
-
-    // if (selectedOption === undefined) {
-    //   return {
-    //     [this.fieldId]: new InvalidEvaluation("Selected option not found.", {
-    //       options,
-    //       searchValue: values[this.fieldId],
-    //     }),
-    //   };
-    // } else {
-    //   return { [this.fieldId]: selectedOption.value as T };
-    // }
-    return { [this.fieldId]: (selectedOption || {}).value as T };
-  }
-
-  private x_evaluateByFieldType<T>(values: { [fieldId: string]: any }): {
-    [fieldId: string]: T; //| InvalidEvaluation;
-  } {
-    const evaluator = Evaluator.getEvaluatorWithFieldJson(
-      this.fieldJson as TFsFieldAny
-    );
-    return {
-      [this.fieldId]: evaluator.evaluateWithValues<T>(
-        values[this.fieldId]
-      ) as T,
-    };
-  }
-
-  // private getVisibilityLogicChain() {}
-
   getInterdependentFieldIdsOf(subjectField: FsFieldModel): string[] {
     const thisLogic = this.getLogicTree();
     return [];
@@ -275,8 +239,8 @@ class FsFieldModel extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
       fieldJson: fieldJson as TFsFieldAny,
     });
 
-    field._fieldId = fieldJson.id || "_MISSING_ID_";
-    field._fieldJson = fieldJson as TFsFieldAny;
+    field._fieldId = fieldJson.id;
+    field._fieldJson = fieldJson;
 
     if (fieldJson.calculation) {
       const subtreeConstructor = (fieldJson: TFsFieldAny) =>
@@ -321,6 +285,9 @@ class FsFieldModel extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
       ? subtreeConstructor(fieldJson)
       : new FsFieldModel(targetRootId);
 
+    const parentTreeIncrementorAdjustment = (
+      subtree as FsFieldModel
+    ).countTotalNodes();
     /// --------------------
     // const subtree = new FsFormModel("_subtree_");
 
@@ -338,10 +305,10 @@ class FsFieldModel extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
     (subtree as FsFieldModel)._incrementor = (
       rootTree as unknown as FsFieldModel
     )._incrementor;
-    // @ts-ignore - dev/debug
-    (subtree as FsFieldModel)._incrementor.next;
-    (subtree as FsFieldModel)._incrementor.next;
-    (subtree as FsFieldModel)._incrementor.next;
+
+    for (let i = 0; i < parentTreeIncrementorAdjustment; i++) {
+      (subtree as FsFieldModel)._incrementor.next;
+    }
 
     return subtree as T;
   }

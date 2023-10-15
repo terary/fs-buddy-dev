@@ -90,9 +90,6 @@ describe("FsFieldModel", () => {
   describe("Smoke Test", () => {
     it("Should be awesome", () => {
       expect(field).toBeInstanceOf(FsFieldModel);
-
-      // fieldLogic can/should have fieldId, maybe modified? "fieldId-logic"?
-      // expect(tree.fieldId).toEqual("147462596");
       expect(field.fieldJson).toStrictEqual(TEST_JSON_FIELD);
     });
   });
