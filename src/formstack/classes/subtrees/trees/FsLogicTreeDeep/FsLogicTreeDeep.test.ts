@@ -1,14 +1,89 @@
 import { FsLogicTreeDeep } from "./FsLogicTreeDeep";
 import formJson5375703 from "../../../../../test-dev-resources/form-json/5375703.json";
 import formJson5469299 from "../../../../../test-dev-resources/form-json/5469299.json";
+import formJson5487084 from "../../../../../test-dev-resources/form-json/5487084.json";
 import { FsLogicBranchNode } from "./LogicNodes/FsLogicBranchNode";
 import { FsLogicLeafNode } from "./LogicNodes/FsLogicLeafNode";
 import { TApiFormJson } from "../../../../type.form";
 import { FsFormModel } from "../../FsFormModel";
 import { transformers } from "../../../../transformers";
 describe("FsLogicTreeDeep", () => {
+  describe("dev / debug", () => {
+    it("Should convert logic with single child and 'Hide' action.", () => {
+      const fieldIds = {
+        show_if_switzerland_is_neutral: "153055020",
+        show_if_switzerland_is_not_neutral: "153055033",
+        hide_if_switzerland_is_neutral: "153055011",
+        hide_if_switzerland_is_not_neutral: "153055021",
+      };
+      const tree5487084 = FsFormModel.fromApiFormJson(
+        transformers.formJson(formJson5487084 as unknown as TApiFormJson)
+      );
+
+      const hideIfNeutral = tree5487084.aggregateLogicTree(
+        fieldIds.hide_if_switzerland_is_neutral
+      );
+      const showIfNeutral = tree5487084.aggregateLogicTree(
+        fieldIds.show_if_switzerland_is_neutral
+      );
+
+      const pojo = hideIfNeutral.toPojoAt(undefined, false);
+      expect(hideIfNeutral.toPojoAt(undefined, false)).toStrictEqual(
+        formJson5487084Pojo["153055011"]
+      );
+      // 5487084
+    });
+    it("Should convert logic with single child and 'Hide' action.", () => {
+      const fieldIds = {
+        show_if_switzerland_is_neutral: "153055020",
+        show_if_switzerland_is_not_neutral: "153055033",
+        hide_if_switzerland_is_neutral: "153055011",
+        hide_if_switzerland_is_not_neutral: "153055021",
+        show_if_switzerland_is_not_neutral_and_is_not_neutral_conflict:
+          "153058950",
+        hide_if_switzerland_is_neutral_conflict_with_panel: "153055042",
+        show_if_switzerland_is_neutral_duplicate_panel_logic: "153055077",
+      };
+
+      const tree5487084 = FsFormModel.fromApiFormJson(
+        transformers.formJson(formJson5487084 as unknown as TApiFormJson)
+      );
+
+      const conflictingLeaves = tree5487084.aggregateLogicTree(
+        fieldIds.show_if_switzerland_is_not_neutral_and_is_not_neutral_conflict
+      );
+      const conflictingPanel = tree5487084.aggregateLogicTree(
+        fieldIds.hide_if_switzerland_is_neutral_conflict_with_panel
+      );
+      const redundantWithPanel = tree5487084.aggregateLogicTree(
+        fieldIds.show_if_switzerland_is_neutral_duplicate_panel_logic
+      );
+
+      const conflictingLeavesPojo = conflictingLeaves.toPojoAt(
+        undefined,
+        false
+      );
+      const conflictingPanelPojo = conflictingPanel.toPojoAt(undefined, false);
+      const redundantWithPanelPojo = redundantWithPanel.toPojoAt(
+        undefined,
+        false
+      );
+
+      expect(conflictingLeavesPojo).toStrictEqual(
+        formJson5487084Pojo["153058950"]
+      );
+
+      expect(conflictingPanelPojo).toStrictEqual(
+        formJson5487084Pojo["153055042"]
+      );
+
+      expect(redundantWithPanelPojo).toStrictEqual(
+        formJson5487084Pojo["153055077"]
+      );
+    });
+  });
   describe(".getDependantFieldIds()", () => {
-    it.only("Should be empty array for dependancy list of single node tree (new without root node).", () => {
+    it("Should be empty array for dependancy list of single node tree (new without root node).", () => {
       // const tree5375703 = FsFormModel.fromApiFormJson(
       //   transformers.formJson(formJson5375703 as unknown as TApiFormJson)
       // );
@@ -388,6 +463,217 @@ const dev_debug_pojo_smoke_test = {
           "148509477",
           "148509474",
         ],
+      },
+    },
+  },
+};
+
+const formJson5487084Pojo = {
+  "153055011": {
+    "153055011": {
+      parentId: "153055011",
+      nodeContent: {
+        nodeType: "FsVirtualRootNode",
+        fieldId: "153055011",
+        conditional: "all",
+      },
+    },
+    "153055011:0": {
+      parentId: "153055011",
+      nodeContent: {
+        nodeType: "FsLogicBranchNode",
+        ownerFieldId: "153055011",
+        action: "hide",
+        conditional: "any",
+      },
+    },
+    "153055011:0:1": {
+      parentId: "153055011:0",
+      nodeContent: {
+        nodeType: "FsLogicLeafNode",
+        fieldId: "153055010",
+        condition: "notequals",
+        option: "Neutral",
+      },
+    },
+  },
+  "153058950": {
+    "153058950": {
+      parentId: "153058950",
+      nodeContent: {
+        nodeType: "FsVirtualRootNode",
+        fieldId: "153058950",
+        conditional: "all",
+      },
+    },
+    "153058950:0": {
+      parentId: "153058950",
+      nodeContent: {
+        nodeType: "FsLogicBranchNode",
+        ownerFieldId: "153058950",
+        action: "show",
+        conditional: "all",
+      },
+    },
+    "153058950:0:1": {
+      parentId: "153058950:0",
+      nodeContent: {
+        nodeType: "FsLogicLeafNode",
+        fieldId: "153055010",
+        condition: "notequals",
+        option: "Neutral",
+      },
+    },
+    "153058950:0:2": {
+      parentId: "153058950:0",
+      nodeContent: {
+        nodeType: "FsCircularMutualExclusiveNode",
+        ruleConflict: {
+          conditionalB: {
+            condition: "notequals",
+            option: "Neutral",
+            fieldId: "153055010",
+          },
+          conditionalA: {
+            fieldId: "153055010",
+            fieldJson: {
+              field: "153055010",
+              condition: "equals",
+              option: "Neutral",
+            },
+            condition: "equals",
+            option: "Neutral",
+          },
+        },
+        sourceFieldId: "153058950",
+        targetSourceId: "153055010",
+        dependentChainFieldIds: ["153058950", "153055010"],
+      },
+    },
+  },
+  "153055042": {
+    "153055042": {
+      parentId: "153055042",
+      nodeContent: {
+        nodeType: "FsVirtualRootNode",
+        fieldId: "153055042",
+        conditional: "all",
+      },
+    },
+    "153055042:0": {
+      parentId: "153055042",
+      nodeContent: {
+        nodeType: "FsLogicBranchNode",
+        ownerFieldId: "153055042",
+        action: "hide",
+        conditional: "any",
+      },
+    },
+    "153055042:0:1": {
+      parentId: "153055042:0",
+      nodeContent: {
+        nodeType: "FsLogicLeafNode",
+        fieldId: "153055010",
+        condition: "notequals",
+        option: "Neutral",
+      },
+    },
+    "153055042:2": {
+      parentId: "153055042",
+      nodeContent: {
+        nodeType: "FsLogicBranchNode",
+        ownerFieldId: "153055041",
+        action: "show",
+        conditional: "all",
+      },
+    },
+    "153055042:2:3": {
+      parentId: "153055042:2",
+      nodeContent: {
+        nodeType: "FsCircularMutualExclusiveNode",
+        ruleConflict: {
+          conditionalB: {
+            condition: "notequals",
+            option: "Neutral",
+            fieldId: "153055010",
+          },
+          conditionalA: {
+            fieldId: "153055010",
+            fieldJson: {
+              field: "153055010",
+              condition: "equals",
+              option: "Neutral",
+            },
+            condition: "equals",
+            option: "Neutral",
+          },
+        },
+        sourceFieldId: "153055042",
+        targetSourceId: "153055010",
+        dependentChainFieldIds: ["153055042", "153055010", "153055041"],
+      },
+    },
+  },
+  "153055077": {
+    "153055077": {
+      parentId: "153055077",
+      nodeContent: {
+        nodeType: "FsVirtualRootNode",
+        fieldId: "153055077",
+        conditional: "all",
+      },
+    },
+    "153055077:0": {
+      parentId: "153055077",
+      nodeContent: {
+        nodeType: "FsLogicBranchNode",
+        ownerFieldId: "153055077",
+        action: "show",
+        conditional: "all",
+      },
+    },
+    "153055077:0:1": {
+      parentId: "153055077:0",
+      nodeContent: {
+        nodeType: "FsLogicLeafNode",
+        fieldId: "153055010",
+        condition: "equals",
+        option: "Neutral",
+      },
+    },
+    "153055077:2": {
+      parentId: "153055077",
+      nodeContent: {
+        nodeType: "FsLogicBranchNode",
+        ownerFieldId: "153055041",
+        action: "show",
+        conditional: "all",
+      },
+    },
+    "153055077:2:3": {
+      parentId: "153055077:2",
+      nodeContent: {
+        nodeType: "FsCircularMutualInclusiveNode",
+        ruleConflict: {
+          conditionalB: {
+            condition: "equals",
+            option: "Neutral",
+            fieldId: "153055010",
+          },
+          conditionalA: {
+            fieldId: "153055010",
+            fieldJson: {
+              field: "153055010",
+              condition: "equals",
+              option: "Neutral",
+            },
+            condition: "equals",
+            option: "Neutral",
+          },
+        },
+        sourceFieldId: "153055077",
+        targetSourceId: "153055010",
+        dependentChainFieldIds: ["153055077", "153055010", "153055041"],
       },
     },
   },

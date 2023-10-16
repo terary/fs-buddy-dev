@@ -1,4 +1,5 @@
 import {
+  AbstractDirectedGraph,
   AbstractExpressionTree,
   AbstractTree,
   IExpressionTree,
@@ -175,11 +176,18 @@ class FsTreeLogic extends AbstractFsTreeLogic<TFsFieldLogicNode> {
   ): IExpressionTree<TFsLogicNodeJson> {
     const rootFieldId = parseUniquePojoRootKeyOrThrow(srcPojoTree);
 
-    const genericTree = AbstractExpressionTree.fromPojo(
+    const genericTree = AbstractDirectedGraph.fromPojo(
       srcPojoTree as TTreePojo<TFsFieldLogicNode>,
       transformers.TFsFieldLogicNode.fromPojo
     );
+    // const genericTree = AbstractExpressionTree.fromPojo(
+    //   srcPojoTree as TTreePojo<TFsFieldLogicNode>,
+    //   transformers.TFsFieldLogicNode.fromPojo
+    // );
 
+    if (!genericTree) {
+      throw new Error("No Generic Tree");
+    }
     const fsTree = new FsTreeLogic(
       rootFieldId,
       // genericTree.rootNodeId,
@@ -204,7 +212,6 @@ class FsTreeLogic extends AbstractFsTreeLogic<TFsFieldLogicNode> {
     nodeId?: string | undefined,
     shouldObfuscate = true
   ): TTreePojo<TFsFieldLogicNode> {
-    // overload goes here
     const clearPojo = super.toPojoAt(
       this.rootNodeId,
       // @ts-ignore -- T is not compatible with TFsFieldLogicNode

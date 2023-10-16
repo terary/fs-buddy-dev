@@ -8,7 +8,11 @@ import { FsTreeCalcString } from "./FsTreeCalcString";
 import { FsTreeLogic } from "./FsTreeLogic";
 import { FsFieldVisibilityLinkNode } from "./nodes/FsFieldVisibilityLinkNode";
 import { AbstractFsTreeGeneric } from "./AbstractFsTreeGeneric";
-import { TFsVisibilityModes } from "../types";
+import {
+  TFsFieldLogicJunction,
+  TFsJunctionOperators,
+  TFsVisibilityModes,
+} from "../types";
 import { MultipleLogicTreeError } from "../../../errors/MultipleLogicTreeError";
 import { FsCircularDependencyNode } from "./FsLogicTreeDeep";
 import { AbstractNode } from "./nodes/AbstractNode";
@@ -118,6 +122,17 @@ class FsFieldModel extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
 
   public getLogicTree(): FsTreeLogic | null {
     const simpleLogicTree = this.getSingleTreeOfType<FsTreeLogic>(FsTreeLogic);
+    if (simpleLogicTree === null) {
+      return null;
+    }
+    const rootNodeContent = simpleLogicTree?.getChildContentAt(
+      simpleLogicTree.rootNodeId
+    ) as TFsFieldLogicJunction<TFsJunctionOperators>;
+    const { action } = rootNodeContent;
+
+    if (["hide", "Hide"].includes(action || "")) {
+      return simpleLogicTree.getNegatedClone();
+    }
 
     return simpleLogicTree;
   }
@@ -232,6 +247,7 @@ class FsFieldModel extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
 
   static fromFieldJson(fieldJson: TFsFieldAny): FsFieldModel {
     // I think there is issues with using fieldId and the way subtree get rooted and re-rooted
+    // such that fieldId is not a good rootNodeSeed
     const field = new FsFieldModel(`_FIELD_ID_: ${fieldJson.id}`, {
       // @ts-ignore
       fieldId: fieldJson.id,

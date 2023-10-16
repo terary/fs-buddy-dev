@@ -1,3 +1,4 @@
+import { transformers } from "../../../../../transformers";
 import type { TStatusRecord } from "../../../../Evaluator/type";
 import {
   TFsFieldLogicCheckLeaf,
@@ -44,7 +45,7 @@ class FsLogicLeafNode
     rootFieldId: string,
     dependentChainFieldIds?: string[]
   ): TStatusRecord[] {
-    const debugMessage = JSON.stringify({
+    const debugMessageObject = {
       nodeType: "FsLogicLeafNode",
       // english: `Logic Term: this field '${this.condition}' '${this.option}'`,
       fieldId: this.fieldId,
@@ -53,14 +54,15 @@ class FsLogicLeafNode
       option: this.option,
       // junctionOperator: this.parentBranchNode?.conditional,
       // json: this.fieldJson,
-    });
+    };
 
     const logicMessage = `logic: (root fieldId: ${rootFieldId}) requires  this field to '${this.condition}' ->  '${this.option}' `;
     return [
       {
         severity: "debug",
         fieldId: this.fieldId,
-        message: debugMessage,
+        message:
+          transformers.Utility.jsObjectToHtmlFriendlyString(debugMessageObject),
       },
       {
         severity: "logic",

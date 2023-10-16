@@ -1,3 +1,4 @@
+import { transformers } from "../../transformers";
 import { TFsFieldAny, TFsFieldType } from "../../type.field";
 import type {
   TUiEvaluationObject,
@@ -46,7 +47,9 @@ abstract class AbstractEvaluator {
         "debug",
         `fieldId: ${this._fieldJson.id}, type: ${
           this.fieldType
-        }, json: ${JSON.stringify(this.fieldJson)}`,
+        }, json: ${transformers.Utility.jsObjectToHtmlFriendlyString(
+          this.fieldJson
+        )}`,
         [],
         this.fieldId
       )

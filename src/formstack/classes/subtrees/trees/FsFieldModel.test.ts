@@ -409,6 +409,13 @@ describe("FsFieldModel", () => {
 
       expect(tree.getLogicTree()).toBeInstanceOf(FsTreeLogic);
     });
+    it('Should return negated tree if action is "Hide".', () => {
+      const tree = TestFsFieldModel.fromFieldJson(
+        transformers.fieldJson(TEST_JSON_FIELD as TFsFieldAnyJson)
+      ) as TestFsFieldModel;
+
+      expect(tree.getLogicTree()).toBeInstanceOf(FsTreeLogic);
+    });
     it("Throw error if there is more than one logic tree.", () => {
       const extraLogicTree = TestFsFieldModel.fromFieldJson(
         transformers.fieldJson(TEST_JSON_FIELD as TFsFieldAnyJson)

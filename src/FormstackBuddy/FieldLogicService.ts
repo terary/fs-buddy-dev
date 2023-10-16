@@ -106,12 +106,6 @@ class FieldLogicService {
     `;
 
     statusMessages.push(
-      // this.wrapAsStatusMessage(
-      //   "info",
-      //   `Logic composition (Extended) : ` +
-      //     transformers.Utility.jsObjectToHtmlFriendlyString(extendedCounts) +
-      //     extendCountHtmlLegend
-      // ),
       this.wrapAsStatusMessage(
         "info",
         `Logic composition: ` +
