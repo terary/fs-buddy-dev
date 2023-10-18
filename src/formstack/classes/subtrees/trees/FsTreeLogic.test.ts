@@ -1,9 +1,211 @@
+/* cspell:ignore unnegated */
+
 import { FsTreeLogic } from "./FsTreeLogic";
 import { AbstractFsTreeGeneric } from "./AbstractFsTreeGeneric";
 import { TFsFieldAnyJson } from "../../types";
+import formJson5487084 from "../../../../test-dev-resources/form-json/5487084.json";
+
 import fifthDegreeBadCircuitFormJson from "../../../../test-dev-resources/form-json/5375703.json";
+import { TTreePojo } from "predicate-tree-advanced-poc/dist/src";
+import {
+  TFsFieldLogicCheckLeaf,
+  TFsFieldLogicJunction,
+  TFsFieldLogicNode,
+  TFsJunctionOperators,
+  TSimpleDictionary,
+} from "../types";
+import { NegateVisitor } from "./NegateVisitor";
+import { transformers } from "../../../transformers";
+import { TFsFieldAny } from "../../../type.field";
+
+const formJson5487084FieldsById = formJson5487084.fields.reduce(
+  (p, c, i, a) => {
+    // p[c.id] = transformers.fieldJson(c as unknown as TFsFieldAnyJson);
+    p[c.id] = c as unknown as TFsFieldAnyJson; // transformers.fieldJson(c as unknown as TFsFieldAnyJson);
+    return p;
+  },
+  {} as TSimpleDictionary<TFsFieldAnyJson>
+);
 
 describe("FsTreeLogic", () => {
+  describe(".toPojoAt()", () => {
+    let tree: FsTreeLogic;
+    beforeEach(() => {
+      tree = FsTreeLogic.fromFieldJson(TEST_JSON_FIELD as TFsFieldAnyJson);
+    });
+    it("Should produce Pojo to sufficient to serial tree.", () => {
+      const pojo = tree.toPojoAt(undefined, false);
+      expect(JSON.stringify(pojo)).toStrictEqual(
+        JSON.stringify(test_field_pojo)
+      );
+    });
+  });
+  describe(".fromPojo()<FsTreeLogic, TFsFieldLogicNode>", () => {
+    it("Should inflate a tree from Pojo.", () => {
+      const tree = FsTreeLogic.fromPojo<FsTreeLogic, TFsFieldLogicNode>(
+        test_field_pojo as unknown as TTreePojo<TFsFieldLogicNode>
+      );
+      const rootBranch = tree.getChildContentAt(
+        tree.rootNodeId
+      ) as TFsFieldLogicJunction<TFsJunctionOperators>;
+      expect(tree).toBeInstanceOf(FsTreeLogic);
+      expect(rootBranch.action).toStrictEqual("show");
+      expect(rootBranch.conditional).toStrictEqual("all");
+      const children = tree.getChildrenContentOf(tree.rootNodeId);
+      expect(children.length).toEqual(4);
+    });
+    it("Should be able to create field from json, convert to pojo, and re-recreate from pojo", () => {
+      // there is an issue with 'checks' on root node.  They're becoming objects {1:{...}, 2:{...}}
+      // When they should be array.
+      const fieldIds = {
+        show_if_switzerland_is_neutral: "153055020",
+        show_if_switzerland_is_not_neutral: "153055033",
+        hide_if_switzerland_is_neutral: "153055011",
+        hide_if_switzerland_is_not_neutral: "153055021",
+        hide_if_switzerland_is_neutral_conflict_with_panel: "153055042",
+        show_if_switzerland_is_not_neutral_and_is_not_neutral_conflict:
+          "153058950",
+      };
+
+      const ary = [{ label: "one" }, { label: "two" }];
+      const treeFromJson = FsTreeLogic.fromFieldJson(
+        formJson5487084FieldsById[
+          fieldIds
+            .show_if_switzerland_is_not_neutral_and_is_not_neutral_conflict
+        ]
+      );
+
+      const treeFromPojo = FsTreeLogic.fromPojo<FsTreeLogic, TFsFieldLogicNode>(
+        treeFromJson.toPojoAt(undefined, false)
+      );
+
+      //
+      const pojo = treeFromPojo.toPojoAt(undefined, false);
+      expect(JSON.stringify(pojo)).toStrictEqual(
+        JSON.stringify(form5487084_expectedPojo["153058950"])
+      );
+    });
+    it("Should handle single child branches", () => {
+      // there is an issue with 'checks' on root node.  They're becoming objects {1:{...}, 2:{...}}
+      // When they should be array.
+      const fieldIds = {
+        show_if_switzerland_is_neutral: "153055020",
+        show_if_switzerland_is_not_neutral: "153055033",
+        hide_if_switzerland_is_neutral: "153055011",
+        hide_if_switzerland_is_not_neutral: "153055021",
+        hide_if_switzerland_is_neutral_conflict_with_panel: "153055042",
+        show_if_switzerland_is_not_neutral_and_is_not_neutral_conflict:
+          "153058950",
+      };
+
+      const ary = [{ label: "one" }, { label: "two" }];
+      const treeFromJson = FsTreeLogic.fromFieldJson(
+        formJson5487084FieldsById[fieldIds.hide_if_switzerland_is_neutral]
+      );
+
+      const treeFromPojo = FsTreeLogic.fromPojo<FsTreeLogic, TFsFieldLogicNode>(
+        treeFromJson.toPojoAt(undefined, false)
+      );
+
+      const pojo = treeFromPojo.toPojoAt(undefined, false);
+      expect(JSON.stringify(pojo)).toStrictEqual(
+        JSON.stringify(form5487084_expectedPojo["153055011"])
+      );
+    });
+  });
+  describe(".clone()", () => {
+    it("Should create carbon copy.  The contents are not references to original content.", () => {
+      const tree = FsTreeLogic.fromPojo<FsTreeLogic, TFsFieldLogicNode>(
+        test_field_pojo as unknown as TTreePojo<TFsFieldLogicNode>
+      ) as FsTreeLogic;
+
+      const clone = tree.cloneAt();
+      const clone2 = clone.cloneAt();
+
+      expect(clone.toPojoAt(undefined, false)).toStrictEqual(
+        tree.toPojoAt(undefined, false)
+      );
+      expect(clone2.toPojoAt(undefined, false)).toStrictEqual(
+        tree.toPojoAt(undefined, false)
+      );
+
+      expect(
+        JSON.stringify(clone.getChildContentAt(clone.rootNodeId))
+      ).toStrictEqual(JSON.stringify(tree.getChildContentAt(tree.rootNodeId)));
+
+      expect(clone).not.toBe(tree);
+      expect(clone.getChildContentAt(clone.rootNodeId)).not.toBe(
+        tree.getChildContentAt(tree.rootNodeId)
+      );
+      expect(tree.getChildContentAt(tree.rootNodeId)).toBe(
+        tree.getChildContentAt(tree.rootNodeId)
+      );
+      expect(clone).toBeInstanceOf(FsTreeLogic);
+      expect(
+        JSON.stringify(tree.getChildrenContentOf(tree.rootNodeId))
+      ).toStrictEqual(
+        JSON.stringify(clone.getChildrenContentOf(clone.rootNodeId))
+      );
+    });
+  });
+  describe(".negate()", () => {
+    it("Should negate a tree", () => {
+      const tree = FsTreeLogic.fromFieldJson(
+        TEST_JSON_FIELD as TFsFieldAnyJson
+      );
+      const negatedClone = tree.getNegatedClone();
+      const unnegatedClone = negatedClone.getNegatedClone();
+      expect(unnegatedClone.toPojoAt(undefined, false)).toStrictEqual(
+        tree.toPojoAt(undefined, false)
+      );
+
+      const parentNodeContent = negatedClone.getChildContentAtOrThrow(
+        negatedClone.rootNodeId
+      ) as TFsFieldLogicJunction<TFsJunctionOperators>;
+
+      expect(parentNodeContent.conditional).toEqual("any");
+      const children = negatedClone.getChildrenContentOf(
+        negatedClone.rootNodeId
+      ) as TFsFieldLogicCheckLeaf[];
+
+      const childrenOperators = children.map((child) => child.condition);
+      expect(childrenOperators).toStrictEqual([
+        "notequals",
+        "notequals",
+        "notequals",
+        "notequals",
+      ]);
+    });
+    it("Should be symmetric operation", () => {
+      const tree = FsTreeLogic.fromPojo(
+        test_field_pojo as unknown as TTreePojo<TFsFieldLogicNode>
+      ) as FsTreeLogic;
+
+      const negatedClone = tree.getNegatedClone();
+      const unnegatedClone = negatedClone.getNegatedClone();
+
+      expect(unnegatedClone.toPojoAt(undefined, false)).toStrictEqual(
+        tree.toPojoAt(undefined, false)
+      );
+
+      const parentNodeContent = negatedClone.getChildContentAtOrThrow(
+        negatedClone.rootNodeId
+      ) as TFsFieldLogicJunction<TFsJunctionOperators>;
+
+      expect(parentNodeContent.conditional).toEqual("any");
+      const children = negatedClone.getChildrenContentOf(
+        negatedClone.rootNodeId
+      ) as TFsFieldLogicCheckLeaf[];
+
+      const childrenOperators = children.map((child) => child.condition);
+      expect(childrenOperators).toStrictEqual([
+        "notequals",
+        "notequals",
+        "notequals",
+        "notequals",
+      ]);
+    });
+  });
   describe("Creation", () => {
     it("Should be awesome", () => {
       // const tree = new FsTreeLogic("_root_seed_");
@@ -295,3 +497,222 @@ const TEST_JSON_FIELD_OR = {
   section_text: "<p>The check boxes prevent this from showing.</p>",
   text_editor: "wysiwyg",
 } as unknown;
+
+const test_field_pojo = {
+  "147462596": {
+    parentId: "147462596",
+    nodeContent: {
+      fieldId: "147462596",
+      conditional: "all",
+      action: "show",
+      logicJson: {
+        action: "show",
+        conditional: "all",
+        checks: [
+          {
+            field: "147462595",
+            condition: "equals",
+            option: "True",
+          },
+          {
+            field: 147462598,
+            condition: "equals",
+            option: "True",
+          },
+          {
+            field: 147462600,
+            condition: "equals",
+            option: "True",
+          },
+          {
+            field: 147462597,
+            condition: "equals",
+            option: "True",
+          },
+        ],
+      },
+      checks: [
+        {
+          field: "147462595",
+          condition: "equals",
+          option: "True",
+        },
+        {
+          field: 147462598,
+          condition: "equals",
+          option: "True",
+        },
+        {
+          field: 147462600,
+          condition: "equals",
+          option: "True",
+        },
+        {
+          field: 147462597,
+          condition: "equals",
+          option: "True",
+        },
+      ],
+    },
+  },
+  "147462596:0": {
+    parentId: "147462596",
+    nodeContent: {
+      fieldId: "147462595",
+      fieldJson: {
+        field: "147462595",
+        condition: "equals",
+        option: "True",
+      },
+      condition: "equals",
+      option: "True",
+    },
+  },
+  "147462596:1": {
+    parentId: "147462596",
+    nodeContent: {
+      fieldId: "147462598",
+      fieldJson: {
+        field: 147462598,
+        condition: "equals",
+        option: "True",
+      },
+      condition: "equals",
+      option: "True",
+    },
+  },
+  "147462596:2": {
+    parentId: "147462596",
+    nodeContent: {
+      fieldId: "147462600",
+      fieldJson: {
+        field: 147462600,
+        condition: "equals",
+        option: "True",
+      },
+      condition: "equals",
+      option: "True",
+    },
+  },
+  "147462596:3": {
+    parentId: "147462596",
+    nodeContent: {
+      fieldId: "147462597",
+      fieldJson: {
+        field: 147462597,
+        condition: "equals",
+        option: "True",
+      },
+      condition: "equals",
+      option: "True",
+    },
+  },
+};
+
+const form5487084_expectedPojo = {
+  "153058950": {
+    "153058950": {
+      parentId: "153058950",
+      nodeContent: {
+        fieldId: "153058950",
+        conditional: "all",
+        action: "show",
+        logicJson: {
+          action: "show",
+          conditional: "all",
+          checks: [
+            {
+              field: "153055010",
+              condition: "notequals",
+              option: "Neutral",
+            },
+            {
+              field: "153055010",
+              condition: "equals",
+              option: "Neutral",
+            },
+          ],
+        },
+        checks: [
+          {
+            field: "153055010",
+            condition: "notequals",
+            option: "Neutral",
+          },
+          {
+            field: "153055010",
+            condition: "equals",
+            option: "Neutral",
+          },
+        ],
+      },
+    },
+    "153058950:0": {
+      parentId: "153058950",
+      nodeContent: {
+        fieldId: "153055010",
+        fieldJson: {
+          field: "153055010",
+          condition: "notequals",
+          option: "Neutral",
+        },
+        condition: "notequals",
+        option: "Neutral",
+      },
+    },
+    "153058950:1": {
+      parentId: "153058950",
+      nodeContent: {
+        fieldId: "153055010",
+        fieldJson: {
+          field: "153055010",
+          condition: "equals",
+          option: "Neutral",
+        },
+        condition: "equals",
+        option: "Neutral",
+      },
+    },
+  },
+  "153055011": {
+    "153055011": {
+      parentId: "153055011",
+      nodeContent: {
+        fieldId: "153055011",
+        conditional: "all",
+        action: "hide",
+        logicJson: {
+          action: "hide",
+          conditional: "all",
+          checks: [
+            {
+              field: "153055010",
+              condition: "equals",
+              option: "Neutral",
+            },
+          ],
+        },
+        checks: [
+          {
+            field: "153055010",
+            condition: "equals",
+            option: "Neutral",
+          },
+        ],
+      },
+    },
+    "153055011:0": {
+      parentId: "153055011",
+      nodeContent: {
+        fieldId: "153055010",
+        fieldJson: {
+          field: "153055010",
+          condition: "equals",
+          option: "Neutral",
+        },
+        condition: "equals",
+        option: "Neutral",
+      },
+    },
+  },
+};

@@ -3,8 +3,7 @@ import form5389250Json from "../../test-dev-resources/form-json/5389250.json";
 import { TApiForm, TApiFormJson } from "../type.form";
 
 describe("TApiFormFromJson", () => {
-  it.only("Should be awesome", () => {
-    // const TApiFormFromJson = (formJson: TApiFormJson): TApiForm => {
+  it("Should be awesome", () => {
     const f: TApiForm = TApiFormFromJson(
       form5389250Json as unknown as TApiFormJson
     );

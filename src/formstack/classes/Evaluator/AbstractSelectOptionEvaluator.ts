@@ -1,9 +1,9 @@
-import { TStatusRecord } from "../../../chrome-extension/type";
 import { TFsFieldAny, TFsSelectOption } from "../../type.field";
-import { AbstractEvaluator } from "./AbstractEvaluator";
 import { TSimpleDictionary, TUiEvaluationObject } from "./type";
-import { isFunctions } from "../../../common/isFunctions";
 import { AbstractComplexSubmissionDatumEvaluator } from "./AbstractComplexSubmissionDatumEvaluator";
+
+// when there are duplicate options should be a warn/error
+// when there are empty options should be a warn/error
 
 abstract class AbstractSelectOptionEvaluator extends AbstractComplexSubmissionDatumEvaluator {
   #fieldSelectOptions: TFsSelectOption[];

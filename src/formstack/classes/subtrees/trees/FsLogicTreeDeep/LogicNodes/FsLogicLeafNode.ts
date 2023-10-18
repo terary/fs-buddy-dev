@@ -1,3 +1,5 @@
+import { transformers } from "../../../../../transformers";
+import type { TStatusRecord } from "../../../../Evaluator/type";
 import {
   TFsFieldLogicCheckLeaf,
   TFsLeafOperators,
@@ -38,6 +40,33 @@ class FsLogicLeafNode
       condition: this.condition,
       option: this.option,
     };
+  }
+  getStatusMessage(
+    rootFieldId: string,
+    dependentChainFieldIds?: string[]
+  ): TStatusRecord[] {
+    const debugMessageObject = {
+      nodeType: "FsLogicLeafNode",
+      fieldId: this.fieldId,
+      condition: this.condition,
+      option: this.option,
+    };
+
+    const logicMessage = `logic: (root fieldId: ${rootFieldId}) requires  this field to '${this.condition}' ->  '${this.option}' `;
+    return [
+      {
+        severity: "debug",
+        fieldId: this.fieldId,
+        message:
+          transformers.Utility.jsObjectToHtmlFriendlyString(debugMessageObject),
+      },
+      {
+        severity: "logic",
+        fieldId: this.fieldId,
+        message: logicMessage,
+        relatedFieldIds: dependentChainFieldIds,
+      },
+    ];
   }
 }
 

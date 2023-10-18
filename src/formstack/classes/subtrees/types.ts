@@ -1,8 +1,8 @@
-import { FsTreeField } from "./trees";
+import { FsFieldModel } from "./trees";
 import {
   FsCircularDependencyNode,
   FsMaxDepthExceededNode,
-} from "./trees/FsTreeLogicDeep";
+} from "./trees/FsLogicTreeDeep";
 
 type TFsArithmeticOperator = { operator: "+" | "*" | "-" | "/" };
 type TFsArithmeticLeaf = {
@@ -10,8 +10,8 @@ type TFsArithmeticLeaf = {
   isFieldReference: boolean;
 };
 type TFsArithmeticNode = TFsArithmeticLeaf | TFsArithmeticOperator;
-type TLogicJunctionOperators = "$and" | "$or" | "$in"; // maybe not?
-type TLogicLeafOperators = "$eq" | "$ne" | "$gt" | "$lt"; // maybe not?,  I think *not* gets encoded? '$ne' not($gt) == $lte ?
+type xTLogicJunctionOperators = "$and" | "$or" | "$in"; // maybe not?
+type xTLogicLeafOperators = "$eq" | "$ne" | "$gt" | "$lt"; // maybe not?,  I think *not* gets encoded? '$ne' not($gt) == $lte ?
 type TFsLeafOperators =
   // these probably need to be confirmed
   | "lt" // numeric operators
@@ -23,16 +23,21 @@ type TFsLeafOperators =
   | "dateAfter"
   | "dateBefore"
   | "dateIsNotBetween" // (range)
-  | "dateIsBetween"; // (range);
+  | "dateIsBetween" // (range);
+  | "equals"
+  | "notequals"
+  | "lessthan"
+  | "$gte"
+  | "greaterthan"
+  | "$lte";
+type TFsJunctionOperators = "any" | "all" | "$not"; /// $not - extends FS junction operators
 
-type TFsJunctionOperators = "any" | "all"; /// these may actually be any/or
-
-type TLogicJunction = { operator: TLogicJunctionOperators };
-type TLogicLeaf = {
-  fieldId: string;
-  operator: TLogicLeafOperators;
-  value?: number | string | Date | null;
-};
+// type TLogicJunction = { operator: TLogicJunctionOperators };
+// type TLogicLeaf = {
+//   fieldId: string;
+//   operator: TLogicLeafOperators;
+//   value?: number | string | Date | null;
+// };
 
 type TFsVisibilityModes = "Show" | "Hide" | null; // null indicates the logic failed to evaluated (circular reference or similar error)
 
@@ -53,13 +58,14 @@ type TFsFieldLogicJunction<C> = {
   fieldJson: any;
   action: TFsVisibilityModes;
   conditional: C; // TLogicJunctionOperators;
+  checks?: null | "" | TFsFieldLogicCheckLeaf[];
   // 'ownerFieldId', doesn't belong here, because the json version will not have it.
   ownerFieldId: string; // all logic is has a field it belongs to
 };
 
 type TTreeFieldNode = {
   fieldId: string;
-  field: FsTreeField;
+  field: FsFieldModel;
 };
 
 // *tmc* does this actually override?
@@ -68,9 +74,12 @@ type TFsFieldLogicJunctionJson = Partial<
 > & {
   checks?: null | "" | TFsFieldLogicCheckLeafJson[];
 };
+type TFsFieldLogicNode =
+  | TFsFieldLogicJunction<TFsJunctionOperators>
+  | TFsFieldLogicCheckLeaf;
 
 type TFsLogicNode =
-  | TFsFieldLogicJunction<TLogicJunctionOperators>
+  | TFsFieldLogicJunction<TFsJunctionOperators>
   | TFsFieldLogicCheckLeaf
   | FsCircularDependencyNode
   | FsMaxDepthExceededNode;
@@ -86,12 +95,13 @@ export type {
   TFsFieldLogicCheckLeafJson,
   TFsFieldLogicJunction,
   TFsFieldLogicJunctionJson,
+  TFsFieldLogicNode,
   TFsJunctionOperators,
   TFsLeafOperators,
   TFsLogicNode,
   TFsLogicNodeJson,
   TFsVisibilityModes,
-  TLogicJunctionOperators,
+  // TLogicJunctionOperators,
   TSimpleDictionary,
   TTreeFieldNode,
 };

@@ -3,7 +3,6 @@
 console.log("hello from background.js");
 import { TreeManager } from "../common/TreeManager";
 import { SubmissionManager } from "../common/SubmissionManager";
-//import { ApiFormCacheManager } from "../common/ApiFormCacheManager";
 
 // import { ApiSubmissionCacheManager } from "../common/ApiSubmissionCacheManager";
 // @ts-ignore 'oninstall' not on Window
@@ -22,8 +21,6 @@ chrome.runtime.onMessage.addListener(function (
 
   switch (message.type) {
     case "GetFormAsJson":
-      // ApiFormCacheManager;
-      //      ApiFormCacheManager.getInstance()
       TreeManager.getInstance()
         .getTree(apiKey, fetchFormId)
         .then((treeJson: any) => {

@@ -1,30 +1,31 @@
 import {
   TFsFieldLogicJunction,
   TFsFieldLogicJunctionJson,
+  TFsJunctionOperators,
+  TFsLeafOperators,
   TFsVisibilityModes,
-  TLogicJunctionOperators,
+  // TLogicJunctionOperators,
 } from "../classes/subtrees/types";
 // TLogicJunctionOperators
-
+import { TFsFieldLogicCheckLeafFromJson } from "./TFsFieldLogicCheckLeafFromJson";
 const TFsFieldLogicJunctionFromJson = (
   fieldLogicJson: TFsFieldLogicJunctionJson,
   ownerFieldId: string
-): TFsFieldLogicJunction<TLogicJunctionOperators> => {
+): TFsFieldLogicJunction<TFsJunctionOperators> => {
   const action: TFsVisibilityModes = (
     ["SHOW", "HIDE"].includes(fieldLogicJson?.action?.toUpperCase() || "")
       ? upperFirst(fieldLogicJson?.action?.toLocaleLowerCase() || "")
       : null
   ) as TFsVisibilityModes;
 
-  // TFsJunctionOperators
+  const checks = TFsFieldLogicCheckLeafFromJson(fieldLogicJson?.checks || []); //
 
-  const conditional: TLogicJunctionOperators =
-    fieldLogicJson.conditional === "any" ? "$or" : "$and";
   return {
     fieldJson: fieldLogicJson,
     action,
-    conditional,
+    conditional: fieldLogicJson.conditional || "all",
     ownerFieldId,
+    checks,
   };
 };
 export { TFsFieldLogicJunctionFromJson };

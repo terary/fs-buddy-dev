@@ -1,25 +1,22 @@
-import { FsTreeFieldCollection, TTreeFieldNode } from "../formstack";
-import type { TFsFieldAnyJson } from "../formstack";
-import { FsTreeField } from "../formstack/classes/subtrees/trees";
-import { FsTreeLogicDeep } from "../formstack";
+import { FsFormModel, TTreeFieldNode } from "../formstack";
+import { FsFieldModel } from "../formstack/classes/subtrees/trees";
 import { FsFormRootNode } from "../formstack/classes/subtrees/trees/nodes";
 import {
   TSimpleDictionary,
   TStatusMessageSeverity,
+  TStatusRecord,
 } from "../formstack/classes/Evaluator/type";
 import { TApiForm } from "../formstack/type.form";
-import { IEValuator } from "../formstack/classes/Evaluator/IEvaluator";
 import { Evaluator } from "../formstack/classes/Evaluator";
 import { TFsFieldAny } from "../formstack/type.field";
-import { TStatusRecord } from "../chrome-extension/type";
 
 class FormAnalytics {
   private _fieldJson: TApiForm;
-  private _fieldCollection: FsTreeFieldCollection;
+  private _fieldCollection: FsFormModel;
 
   //TApiForm
   constructor(formJson: TApiForm) {
-    this._fieldCollection = FsTreeFieldCollection.fromApiFormJson(formJson);
+    this._fieldCollection = FsFormModel.fromApiFormJson(formJson);
     this._fieldJson = formJson;
   }
 
@@ -70,7 +67,9 @@ class FormAnalytics {
       const { fieldId, field } = node;
       const { fieldJson } = field;
       let label =
-        field.fieldType === "section" ? field.section_heading : field.label;
+        field.fieldType === "section"
+          ? field.section_heading
+          : field.label.trim();
 
       !label && (label = "_NO_LABEL_FOUND_" + (fieldJson as TFsFieldAny).type);
 
@@ -98,6 +97,7 @@ class FormAnalytics {
         ? this.wrapAsStatusMessage("info", 'Form/Workflow type: "workflow".')
         : this.wrapAsStatusMessage("info", 'Form/Workflow type: "form".')
     );
+
     messages.push(
       this.wrapAsStatusMessage(
         "info",
@@ -123,6 +123,8 @@ class FormAnalytics {
       }
     });
 
+    // messages.push(...this._fieldCollection.getAllLogicStatusMessages());
+    // FsFormModel
     return messages;
   }
 
@@ -130,7 +132,7 @@ class FormAnalytics {
     return this.getAllFieldNodes()
       .filter((fieldNode) => {
         const { field } = fieldNode as TTreeFieldNode;
-        return (field as FsTreeField).getLogicTree() !== null;
+        return (field as FsFieldModel).getLogicTree() !== null;
       })
       .map((fieldNode) => (fieldNode as TTreeFieldNode)?.fieldId);
   }
@@ -139,7 +141,7 @@ class FormAnalytics {
     return this.getAllFieldNodes()
       .filter((fieldNode) => {
         const { field } = fieldNode as TTreeFieldNode;
-        return (field as FsTreeField).getLogicTree() === null;
+        return (field as FsFieldModel).getLogicTree() === null;
       })
       .map((fieldNode) => (fieldNode as TTreeFieldNode)?.fieldId);
   }

@@ -1,1 +1,1 @@
-export { FsTreeField } from "./FsTreeField";
+export { FsFieldModel } from "./FsFieldModel";

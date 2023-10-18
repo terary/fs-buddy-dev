@@ -1,15 +1,20 @@
 import {
   AbstractExpressionTree,
   IExpressionTree,
+  ITree,
 } from "predicate-tree-advanced-poc/dist/src";
 import { TFsFieldAnyJson, TFsNode } from "../../types";
 import { FsTreeCalcString } from "./FsTreeCalcString";
 import { FsTreeLogic } from "./FsTreeLogic";
 import { FsFieldVisibilityLinkNode } from "./nodes/FsFieldVisibilityLinkNode";
 import { AbstractFsTreeGeneric } from "./AbstractFsTreeGeneric";
-import { TFsVisibilityModes } from "../types";
+import {
+  TFsFieldLogicJunction,
+  TFsJunctionOperators,
+  TFsVisibilityModes,
+} from "../types";
 import { MultipleLogicTreeError } from "../../../errors/MultipleLogicTreeError";
-import { FsCircularDependencyNode } from "./FsTreeLogicDeep";
+import { FsCircularDependencyNode } from "./FsLogicTreeDeep";
 import { AbstractNode } from "./nodes/AbstractNode";
 import {
   TFsFieldAny,
@@ -31,7 +36,7 @@ type TFsFieldTreeNodeTypes =
   | FsFieldVisibilityLinkNode
   | FsCircularDependencyNode;
 
-class FsTreeField extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
+class FsFieldModel extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
   private _fieldId!: string;
   private _dependantFieldIds: string[] = [];
 
@@ -39,7 +44,7 @@ class FsTreeField extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
   createSubtreeAt(
     targetNodeId: string
   ): IExpressionTree<TFsFieldTreeNodeTypes> {
-    const subtree = new FsTreeField("_subtree_");
+    const subtree = new FsFieldModel("_subtree_");
 
     const subtreeParentNodeId = this.appendChildNodeWithContent(
       targetNodeId,
@@ -109,8 +114,54 @@ class FsTreeField extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
     return (logicTrees.pop() as unknown as T) || null;
   }
 
+  public getVisibilityLogicTree() {
+    const visNode = this.getVisibilityNode();
+    const visualLogicTree = visNode?.parentNode?.getLogicTree() || null;
+    return visualLogicTree;
+  }
+
   public getLogicTree(): FsTreeLogic | null {
-    return this.getSingleTreeOfType<FsTreeLogic>(FsTreeLogic);
+    const simpleLogicTree = this.getSingleTreeOfType<FsTreeLogic>(FsTreeLogic);
+    if (simpleLogicTree === null) {
+      return null;
+    }
+    const rootNodeContent = simpleLogicTree?.getChildContentAt(
+      simpleLogicTree.rootNodeId
+    ) as TFsFieldLogicJunction<TFsJunctionOperators>;
+    const { action } = rootNodeContent;
+
+    if (["hide", "Hide"].includes(action || "")) {
+      return simpleLogicTree.getNegatedClone();
+    }
+
+    return simpleLogicTree;
+  }
+
+  public x_getLogicTree(): FsTreeLogic | null {
+    const simpleLogicTree = this.getSingleTreeOfType<FsTreeLogic>(FsTreeLogic);
+    const visualLogicTree = this.getVisibilityLogicTree();
+
+    let newTree: FsTreeLogic;
+    if (visualLogicTree) {
+      const visibilityFieldId = this.getVisibilityNode()?.parentNode?.fieldId;
+
+      // the result tree doe not look correct. It appears there is root -> uknonwn node -> visualLogic
+      // also this uses 'defaultJunction'  which works but dont have values for fieldJson etc
+      // meaning this is calling a junction once after we create the tree - hence two junctions when we one only 1
+
+      // @ts-ignore - conditional all is not a leaf
+      newTree = new FsTreeLogic(this.fieldId, {
+        conditional: "all",
+        fieldJson: {}, //
+        fieldId: visibilityFieldId || "_MISSING_FIELD_ID_",
+      });
+      newTree.appendTreeAt(newTree.rootNodeId, visualLogicTree);
+      simpleLogicTree &&
+        newTree.appendTreeAt(newTree.rootNodeId, simpleLogicTree);
+      //  .appendTree(...)   "appears" to work, but the nodeId look like 'root:0:0:appendTree:3'
+      return newTree;
+    }
+    return simpleLogicTree;
   }
 
   public getVisibilityNode(): FsFieldVisibilityLinkNode | null {
@@ -124,7 +175,7 @@ class FsTreeField extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
     if (visibilityNodes && visibilityNodes?.length > 1) {
       return null;
     }
-    return visibilityNodes.pop() || null;
+    return visibilityNodes[0] || null;
   }
 
   protected getCalcStringTree(): FsTreeCalcString | null {
@@ -174,43 +225,7 @@ class FsTreeField extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
     return Evaluator.getEvaluatorWithFieldJson(this.fieldJson as TFsFieldAny);
   }
 
-  private x_evaluateMultiSelect<T>(values: { [fieldId: string]: any }): {
-    [fieldId: string]: T; // | InvalidEvaluation;
-  } {
-    const options = (this.fieldJson as TSelectFields).options || [];
-    const selectedOption = options.find(
-      (option) => option.value === values[this.fieldId]
-    );
-
-    // if (selectedOption === undefined) {
-    //   return {
-    //     [this.fieldId]: new InvalidEvaluation("Selected option not found.", {
-    //       options,
-    //       searchValue: values[this.fieldId],
-    //     }),
-    //   };
-    // } else {
-    //   return { [this.fieldId]: selectedOption.value as T };
-    // }
-    return { [this.fieldId]: (selectedOption || {}).value as T };
-  }
-
-  private x_evaluateByFieldType<T>(values: { [fieldId: string]: any }): {
-    [fieldId: string]: T; //| InvalidEvaluation;
-  } {
-    const evaluator = Evaluator.getEvaluatorWithFieldJson(
-      this.fieldJson as TFsFieldAny
-    );
-    return {
-      [this.fieldId]: evaluator.evaluateWithValues<T>(
-        values[this.fieldId]
-      ) as T,
-    };
-  }
-
-  private getVisibilityLogicChain() {}
-
-  getInterdependentFieldIdsOf(subjectField: FsTreeField): string[] {
+  getInterdependentFieldIdsOf(subjectField: FsFieldModel): string[] {
     const thisLogic = this.getLogicTree();
     return [];
   }
@@ -219,7 +234,8 @@ class FsTreeField extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
     // I think this should also include linkNode
     return this.getLogicTree() === null;
   }
-  isInterdependentOf(subjectField: FsTreeField) {
+
+  isInterdependentOf(subjectField: FsFieldModel) {
     return this.getInterdependentFieldIdsOf(subjectField).length > 0;
   }
 
@@ -229,23 +245,24 @@ class FsTreeField extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
     return logicDep.concat(calcDep);
   }
 
-  static fromFieldJson(fieldJson: TFsFieldAny): FsTreeField {
+  static fromFieldJson(fieldJson: TFsFieldAny): FsFieldModel {
     // I think there is issues with using fieldId and the way subtree get rooted and re-rooted
-    const field = new FsTreeField(`_FIELD_ID_: ${fieldJson.id}`, {
+    // such that fieldId is not a good rootNodeSeed
+    const field = new FsFieldModel(`_FIELD_ID_: ${fieldJson.id}`, {
       // @ts-ignore
       fieldId: fieldJson.id,
       label: fieldJson.label,
       fieldJson: fieldJson as TFsFieldAny,
     });
 
-    field._fieldId = fieldJson.id || "_MISSING_ID_";
-    field._fieldJson = fieldJson as TFsFieldAny;
+    field._fieldId = fieldJson.id;
+    field._fieldJson = fieldJson;
 
     if (fieldJson.calculation) {
       const subtreeConstructor = (fieldJson: TFsFieldAny) =>
         FsTreeCalcString.fromFieldJson(fieldJson as unknown as TFsFieldAnyJson);
 
-      FsTreeField.createSubtreeFromFieldJson(
+      FsFieldModel.createSubtreeFromFieldJson(
         field,
         field.rootNodeId,
         fieldJson,
@@ -254,10 +271,15 @@ class FsTreeField extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
     }
 
     if (fieldJson.logic) {
-      const subtreeConstructor = (fieldJson: TFsFieldAny) =>
-        FsTreeLogic.fromFieldJson(fieldJson as unknown as TFsFieldAnyJson);
+      // const subtreeConstructor = (fieldJson: TFsFieldAny) =>
+      //   FsTreeLogic.fromFieldJson(fieldJson as unknown as TFsFieldAnyJson);
+      const subtreeConstructor = (fieldJson: TFsFieldAny): FsTreeLogic => {
+        return FsTreeLogic.fromFieldJson(
+          fieldJson as unknown as TFsFieldAnyJson
+        );
+      };
 
-      FsTreeField.createSubtreeFromFieldJson(
+      FsFieldModel.createSubtreeFromFieldJson(
         field,
         field.rootNodeId,
         fieldJson,
@@ -268,7 +290,7 @@ class FsTreeField extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
   }
 
   static createSubtreeFromFieldJson<T>(
-    rootTree: FsTreeField,
+    rootTree: FsFieldModel,
     targetRootId: string,
     fieldJson: TFsFieldAny,
     subtreeConstructor?:
@@ -277,10 +299,13 @@ class FsTreeField extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
   ): T {
     const subtree = subtreeConstructor
       ? subtreeConstructor(fieldJson)
-      : new FsTreeField(targetRootId);
+      : new FsFieldModel(targetRootId);
 
+    const parentTreeIncrementorAdjustment = (
+      subtree as FsFieldModel
+    ).countTotalNodes();
     /// --------------------
-    // const subtree = new FsTreeFieldCollection("_subtree_");
+    // const subtree = new FsFormModel("_subtree_");
 
     const subtreeParentNodeId = rootTree.appendChildNodeWithContent(
       targetRootId,
@@ -292,12 +317,16 @@ class FsTreeField extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
       (subtree as AbstractExpressionTree<TSubtrees>).rootNodeId,
       subtreeParentNodeId
     );
-    (subtree as FsTreeField)._rootNodeId = subtreeParentNodeId;
-    (subtree as FsTreeField)._incrementor = (
-      rootTree as unknown as FsTreeField
-    )._incrementor; // 'unknown' should get fix with proper typing
+    (subtree as FsFieldModel)._rootNodeId = subtreeParentNodeId;
+    (subtree as FsFieldModel)._incrementor = (
+      rootTree as unknown as FsFieldModel
+    )._incrementor;
+
+    for (let i = 0; i < parentTreeIncrementorAdjustment; i++) {
+      (subtree as FsFieldModel)._incrementor.next;
+    }
 
     return subtree as T;
   }
 }
-export { FsTreeField };
+export { FsFieldModel };

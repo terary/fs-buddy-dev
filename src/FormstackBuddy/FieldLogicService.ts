@@ -1,14 +1,26 @@
-import { FsTreeFieldCollection, TTreeFieldNode } from "../formstack";
+import { FsFormModel, TTreeFieldNode } from "../formstack";
 import type { TFsFieldAnyJson } from "../formstack";
-import { FsTreeField } from "../formstack/classes/subtrees/trees";
-import { FsTreeLogicDeep } from "../formstack";
+import { FsFieldModel } from "../formstack/classes/subtrees/trees";
+import { FsLogicTreeDeep } from "../formstack";
 import { FsFormRootNode } from "../formstack/classes/subtrees/trees/nodes";
 import { TApiForm } from "../formstack/type.form";
+// import { Utility } from "../formstack/transformers/Utility";
+import { transformers } from "../formstack/transformers";
+import {
+  TSimpleDictionary,
+  TStatusMessageSeverity,
+  TStatusRecord,
+} from "../formstack/classes/Evaluator/type";
+import {
+  TLogicTreeDeepStatisticCountRecord,
+  TLogicTreeDeepStatisticCountField,
+} from "../formstack/classes/subtrees/trees/FsLogicTreeDeep";
 
 class FieldLogicService {
-  private _fieldCollection: FsTreeFieldCollection;
+  // FsLogicTreeDeep
+  private _fieldCollection: FsFormModel;
   constructor(formJson: TApiForm) {
-    this._fieldCollection = FsTreeFieldCollection.fromApiFormJson(formJson);
+    this._fieldCollection = FsFormModel.fromApiFormJson(formJson);
   }
 
   private getAllFieldNodes(): TTreeFieldNode[] {
@@ -37,11 +49,153 @@ class FieldLogicService {
     return fieldSummaries;
   }
 
+  getExtendTreeForFieldId(fieldId: string) {
+    return this._fieldCollection.getDeepLogicTreeByFieldId(fieldId);
+  }
+
+  getFormLogicStatusMessages(): TStatusRecord[] {
+    const statusMessages: TStatusRecord[] = [];
+    const allFormFieldIds = this._fieldCollection.getAllFieldIds();
+    const fieldUsageCounts: TSimpleDictionary<number> = {};
+    const logicCounts: TLogicTreeDeepStatisticCountRecord = {
+      totalNodes: 0,
+      totalCircularLogicNodes: 0,
+      totalCircularExclusiveLogicNodes: 0,
+      totalCircularInclusiveLogicNodes: 0,
+      totalUnclassifiedNodes: 0,
+      totalLeafNodes: 0,
+      totalBranchNodes: 0,
+      totalRootNodes: 0,
+    };
+
+    allFormFieldIds.forEach((fieldId) => {
+      const logicTree =
+        this._fieldCollection.getDeepLogicTreeByFieldId(fieldId);
+      if (logicTree === null) {
+        return;
+      }
+
+      const x = logicTree.getAllFieldIdsLeafTermReference();
+      logicTree.getAllFieldIdsLeafTermReference().forEach((fieldId) => {
+        if (!fieldUsageCounts[fieldId]) {
+          fieldUsageCounts[fieldId] = 0;
+        }
+        fieldUsageCounts[fieldId]++;
+      });
+
+      const fieldCounts = logicTree.getStatisticCounts();
+      (Object.keys(fieldCounts) as TLogicTreeDeepStatisticCountField[]).forEach(
+        (statName) => {
+          this._fieldCollection;
+          logicCounts[statName] += fieldCounts[statName];
+        }
+      );
+    });
+
+    const extendedCounts = {
+      leafToNodeRatio: (
+        logicCounts.totalLeafNodes / logicCounts.totalNodes
+      ).toFixed(4),
+      branchToNodeRatio: (
+        logicCounts.totalBranchNodes / logicCounts.totalNodes
+      ).toFixed(4),
+      leafToBranchRatio: (
+        logicCounts.totalLeafNodes / logicCounts.totalBranchNodes
+      ).toFixed(4),
+    };
+
+    const countHtmlLegend = `
+      <ul>
+        <li>totalNodes - Each time a field involved in a logic expression. If a field is used twice this will be reflected in this number</li>
+        <li>totalCircularLogicNodes - Logic conflict at the branch level.</li>
+        <li>totalCircularExclusiveLogicNodes - Logic conflict at the leaf level, non-resolvable.</li>
+        <li>totalCircularInclusiveLogicNodes - Logic conflict at the leaf level, resolvable.</li>
+        <li>totalLeafNodes - Logic terms (the actual "x equal _SOMETHING_").</li>
+        <li>totalBranchNodes - Logic branch (something like: "Show" if _ANY_...).</li>
+        <li>totalRootNodes - The field that owns the logic expression.</li>
+        <li>Note: Circular nodes indicates invalid logic expression. If an expression is invalid these counts may not be accurate.</li>
+        <li>branchToNodeRatio - higher number indicates need to break into multiple forms.</li>
+        <li>leafToBranchRatio - higher number indicates good usage of logic .</li>
+      </ul>
+    `;
+
+    Object.keys(fieldUsageCounts).forEach((fieldId) => {
+      if (!this._fieldCollection.getAllFieldIds().includes(fieldId)) {
+        statusMessages.push(
+          this.wrapAsStatusMessage(
+            "error",
+            `Found fieldId used in logic but not in form. fieldId: "${fieldId}". `
+          )
+        );
+      }
+    });
+    statusMessages.push(
+      // fieldUsageCounts
+      this.wrapAsStatusMessage(
+        "info",
+        "Checked all fieldIds in logic expression are contained in this form (don't laugh, it happens).<br />"
+      )
+    );
+
+    statusMessages.push(
+      // fieldUsageCounts
+      this.wrapAsStatusMessage(
+        "info",
+        `Field Leaf Usage (field actual in leaf expression): ` +
+          transformers.Utility.jsObjectToHtmlFriendlyString(fieldUsageCounts)
+      ),
+      this.wrapAsStatusMessage(
+        "info",
+        `Logic composition: ` +
+          transformers.Utility.jsObjectToHtmlFriendlyString({
+            ...logicCounts,
+            ...extendedCounts,
+          }) +
+          countHtmlLegend
+      ),
+      this.wrapAsStatusMessage(
+        "info",
+        `Number of fields with root logic:  ${
+          this.getFieldIdsWithLogic().length
+        }`
+      ),
+      this.wrapAsStatusMessage(
+        "info",
+        `Number of fields without root logic:  ${
+          this.getFieldIdsWithoutLogic().length
+        }`
+      ),
+      this.wrapAsStatusMessage(
+        this.getFieldIdsWithCircularReferences().length === 0 ? "info" : "warn",
+        `Number of fields with circular references:  ${
+          this.getFieldIdsWithCircularReferences().length
+        }`
+      ),
+      this.wrapAsStatusMessage(
+        this.getFieldIdsWithCircularReferences().length === 0
+          ? "info"
+          : "error",
+        `Number of fields with general logic errors:  ${
+          this.getFieldIdsWithLogicError().length
+        }`
+      )
+    );
+    // Want to get the count of branch node, leaf node,
+    // const x = this.getFieldIdsWithCircularReferences();
+
+    //   want to calculate - number of branches  (branches/total fields -> copolit candidate)
+    //   number of leafs
+    //  const x = fieldLogicService.getFieldIdsWithCircularReferences();
+
+    // getStatusMessagesFieldId - gets called elsewhere or should add it here?
+    return statusMessages;
+  }
+
   getFieldIdsWithLogic(): string[] {
     return this.getAllFieldNodes()
       .filter((fieldNode) => {
         const { field } = fieldNode as TTreeFieldNode;
-        return (field as FsTreeField).getLogicTree() !== null;
+        return (field as FsFieldModel).getLogicTree() !== null;
       })
       .map((fieldNode) => (fieldNode as TTreeFieldNode)?.fieldId);
   }
@@ -50,7 +204,7 @@ class FieldLogicService {
     return this.getAllFieldNodes()
       .filter((fieldNode) => {
         const { field } = fieldNode as TTreeFieldNode;
-        return (field as FsTreeField).getLogicTree() === null;
+        return (field as FsFieldModel).getLogicTree() === null;
       })
       .map((fieldNode) => (fieldNode as TTreeFieldNode)?.fieldId);
   }
@@ -63,6 +217,10 @@ class FieldLogicService {
 
   getFieldIdsWithCircularReferences() {
     return this._fieldCollection.getFieldIdsWithCircularLogic();
+  }
+
+  getFieldIdsWithLogicError() {
+    return this._fieldCollection.getFieldIdsWithLogicError();
   }
 
   getCircularReferenceNodes(fieldId: string) {
@@ -87,18 +245,58 @@ class FieldLogicService {
       .getDependentFieldIds();
   }
 
-  wrapFieldIdsIntoLabelOptionList(fieldIds: string[]) {
+  getStatusMessagesFieldId(fieldId: string) {
+    const agTree = this._fieldCollection.aggregateLogicTree(fieldId);
+    return agTree.getStatusMessage();
+  }
+
+  // public for testing purposes.. There isn't much time invested in that test -
+  // better to make this private
+  public wrapFieldIdsIntoLabelOptionList(fieldIds: string[]) {
+    const circularReferenceFieldIds =
+      this.getFieldIdsWithCircularReferences().concat(
+        this.getFieldIdsWithLogicError()
+      );
     return fieldIds.map((fieldId) => {
       const field = this._fieldCollection.getFieldTreeByFieldId(fieldId);
-      const label =
-        field?.fieldType === "section"
-          ? "(section) " + field?.section_heading
-          : field?.label || "";
+      let label = circularReferenceFieldIds.includes(fieldId) ? "(Error) " : "";
+
+      switch (field?.fieldType) {
+        case "section":
+          label += "(section) " + field?.section_heading;
+          break;
+        case "richtext":
+          label += "(richtext)";
+          break;
+        default:
+          label += field?.label || "";
+          break; // <-- never stops being funny
+      }
+      // label +=
+      //   field?.fieldType === "section"
+      //     ? "(section) " + field?.section_heading
+      //     : field?.label || "";
+
       return {
         value: fieldId,
         label: label,
       };
     });
+  }
+
+  private wrapAsStatusMessage(
+    severity: TStatusMessageSeverity,
+    message: string,
+    relatedFieldIds: string[] = [],
+    fieldId?: string
+  ): TStatusRecord {
+    return {
+      severity,
+      //   fieldId: null,
+      fieldId: fieldId || null,
+      message,
+      relatedFieldIds,
+    };
   }
 }
 

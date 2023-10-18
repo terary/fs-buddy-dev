@@ -5,7 +5,20 @@ type TUiEvaluationObject = {
   value: string;
   statusMessages: any[];
 };
-type TStatusMessageSeverity = "debug" | "error" | "info" | "warn";
+
+type TStatusMessageSeverity = "debug" | "error" | "info" | "warn" | "logic";
 type TSimpleDictionary<T> = { [key: string]: T };
 
-export type { TStatusMessageSeverity, TUiEvaluationObject, TSimpleDictionary };
+type TStatusRecord = {
+  fieldId?: string | null;
+  severity: TStatusMessageSeverity;
+  message: string;
+  relatedFieldIds?: string[] | null;
+};
+
+export type {
+  TStatusMessageSeverity,
+  TUiEvaluationObject,
+  TSimpleDictionary,
+  TStatusRecord,
+};

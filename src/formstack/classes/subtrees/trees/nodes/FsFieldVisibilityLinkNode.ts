@@ -1,4 +1,4 @@
-import { FsTreeField } from "../FsTreeField";
+import { FsFieldModel } from "../FsFieldModel";
 import { FsTreeLogic } from "../FsTreeLogic";
 import { AbstractNode } from "./AbstractNode";
 
@@ -6,10 +6,10 @@ type TVisibilityFunction = (values: { [fieldId: string]: any }) => boolean;
 
 class FsFieldVisibilityLinkNode extends AbstractNode {
   private _isUltimatelyFn: TVisibilityFunction;
-  private _parentNode?: FsTreeField;
+  private _parentNode?: FsFieldModel;
   constructor(
     isUltimatelyFn: TVisibilityFunction,
-    parentSection?: FsTreeField
+    parentSection?: FsFieldModel
   ) {
     super();
     this._isUltimatelyFn = isUltimatelyFn;

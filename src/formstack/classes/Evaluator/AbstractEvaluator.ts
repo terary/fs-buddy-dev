@@ -1,7 +1,10 @@
+import { transformers } from "../../transformers";
 import { TFsFieldAny, TFsFieldType } from "../../type.field";
-import type { TStatusRecord } from "../../../chrome-extension/type";
-import { TUiEvaluationObject, TStatusMessageSeverity } from "./type";
-
+import type {
+  TUiEvaluationObject,
+  TStatusMessageSeverity,
+  TStatusRecord,
+} from "./type";
 abstract class AbstractEvaluator {
   private _fieldJson: TFsFieldAny;
   private _fieldId: string;
@@ -39,11 +42,39 @@ abstract class AbstractEvaluator {
     const nonVisibleTypes = ["section", "richtext", "embed"];
     const messages: TStatusRecord[] = [];
 
-    if (!nonVisibleTypes.includes(this.fieldType) && !this._fieldJson.label) {
+    messages.push(
+      this.wrapAsStatusMessage(
+        "debug",
+        `fieldId: ${this._fieldJson.id}, type: ${
+          this.fieldType
+        }, json: ${transformers.Utility.jsObjectToHtmlFriendlyString(
+          this.fieldJson
+        )}`,
+        [],
+        this.fieldId
+      )
+    );
+
+    if (nonVisibleTypes.includes(this.fieldType)) {
+      return [];
+    }
+
+    if (!this._fieldJson.label) {
       messages.push(
         this.wrapAsStatusMessage(
-          "info",
+          "warn",
           `No label for type: '${this.fieldType}', fieldId: '${this.fieldId}'.`,
+          [],
+          this.fieldId
+        )
+      );
+    }
+
+    if (this._fieldJson.label !== this._fieldJson.label.trim()) {
+      messages.push(
+        this.wrapAsStatusMessage(
+          "warn",
+          `White spaced detected at start or end. Label: "${this._fieldJson.label}".`,
           [],
           this.fieldId
         )

@@ -1,13 +1,13 @@
 import { transformers } from "../../../../transformers";
 import { TFsFieldAnyJson } from "../../../types";
-import { FsTreeField } from "../FsTreeField";
+import { FsFieldModel } from "../FsFieldModel";
 import { FsTreeLogic } from "../FsTreeLogic";
 import { FsFieldVisibilityLinkNode } from "./FsFieldVisibilityLinkNode";
 
 describe("FsFieldVisibilityLinkNode", () => {
-  let field: FsTreeField;
+  let field: FsFieldModel;
   beforeEach(() => {
-    field = FsTreeField.fromFieldJson(
+    field = FsFieldModel.fromFieldJson(
       transformers.fieldJson(TEST_JSON_FIELD as TFsFieldAnyJson)
     );
   });

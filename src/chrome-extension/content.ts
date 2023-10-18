@@ -1,10 +1,12 @@
+console.log("hello from content.js");
 import { FormstackBuddy } from "../FormstackBuddy/FormstackBuddy";
 import { FieldLogicService } from "../FormstackBuddy/FieldLogicService";
-import { FsTreeFieldCollection, TFsFieldAnyJson } from "../formstack";
-import type { TStatusRecord } from "./type";
+import { FsFormModel, TFsFieldAnyJson } from "../formstack";
+// import type { TStatusRecord } from "./type";
 import { FormAnalytics } from "../FormstackBuddy/FormAnalytics";
+import { TStatusRecord } from "../formstack/classes/Evaluator/type";
+import { transformers } from "../formstack/transformers";
 
-alert("Hello from content.js");
 function getFormIdFromLocation({ pathname }: Location = location) {
   const regExp = /\/admin\/form\/builder\/(?<formId>\d+)\/build(\/*)+/g;
   return regExp.exec(pathname)?.groups?.formId || null;
@@ -16,16 +18,12 @@ type TFieldStatusMessages = {
   [fieldId: string]: TStatusRecord[];
 };
 
-let devDebugFieldIds = [
-  "148136237",
-  "147462595",
-  "147462596",
-  "147462597",
-  "147462598",
-  "147462600",
-  "148135962",
-  "148136234",
-];
+// we create this here so we can access it without sending through the messaging system
+const passwordControl = document.createElement("input");
+passwordControl.type = "password";
+passwordControl.id = "fsBuddyApiKey";
+passwordControl.name = "fsBuddyApiKey";
+passwordControl.value = "cc17435f8800943cc1abd3063a8fe44f";
 
 function getChildFrameHtml() {
   const url = chrome.runtime.getURL("form-render-inject.html");
@@ -39,7 +37,7 @@ function buildIframe(iframeId: string): HTMLIFrameElement {
   const iframe = document.createElement("iframe");
   iframe.id = iframeId;
   iframe.style.width = "50%";
-  iframe.style.height = "1500px";
+  iframe.style.height = "100%";
   iframe.style.zIndex = "1001";
   iframe.style.top = "50px";
   iframe.style.right = "0px";
@@ -47,36 +45,44 @@ function buildIframe(iframeId: string): HTMLIFrameElement {
   iframe.style.backgroundColor = "green";
   return iframe;
 }
-let currentFieldCollection: FsTreeFieldCollection;
+let currentFieldCollection: FsFormModel;
+
+function getApiKey() {
+  const apiKey = passwordControl.value;
+  if (apiKey.length != 32) {
+    alert("API Key does not look correct. Aborting Get Form");
+    return;
+  }
+  return apiKey;
+}
 
 function getFormAsJson() {
   const fetchTreeFormId = getFormIdFromLocation();
-  if (fetchTreeFormId) {
+  const apiKey = getApiKey();
+  if (fetchTreeFormId && apiKey) {
     chrome.runtime.sendMessage(
       {
         type: "GetFormAsJson",
         fetchFormId: fetchTreeFormId,
-        apiKey: "cc17435f8800943cc1abd3063a8fe44f",
+        apiKey,
+        // apiKey: "cc17435f8800943cc1abd3063a8fe44f",
       },
       async (apiFormJson) => {
-        // is this await necessary?
         const childFrameHtml = await getChildFrameHtml();
         const iframe = buildIframe("theFrame");
         iframe.srcdoc = childFrameHtml + apiFormJson.html;
         const theBody = document.querySelector("body");
         theBody?.prepend(iframe);
-        devDebugFieldIds = [];
-        (apiFormJson?.fields || []).map((field: any) => {
-          devDebugFieldIds.push(field.id);
-        });
-        currentFieldCollection = FsTreeFieldCollection.fromFieldJson(
-          apiFormJson.fields
+
+        currentFieldCollection = FsFormModel.fromApiFormJson(
+          transformers.formJson(apiFormJson)
         );
+
         formAnalytic =
           FormstackBuddy.getInstance().getFormAnalyticService(apiFormJson);
 
         fieldLogicService = FormstackBuddy.getInstance().getFieldLogicService(
-          (apiFormJson.fields as TFsFieldAnyJson[]) || []
+          transformers.formJson(apiFormJson)
         );
       }
     );
@@ -86,33 +92,18 @@ function getFormAsJson() {
 }
 
 function getSubmissionAsJson(caller: MessageEventSource, submissionId: string) {
-  if (submissionId) {
+  const apiKey = getApiKey();
+  if (submissionId && apiKey) {
     chrome.runtime.sendMessage(
       {
         type: "GetSubmissionFromApiRequest",
         submissionId,
-        apiKey: "cc17435f8800943cc1abd3063a8fe44f",
+        apiKey,
+        // apiKey: "cc17435f8800943cc1abd3063a8fe44f",
       },
       async (apiSubmissionJson) => {
         const submissionUiDataItems =
           currentFieldCollection.getUiPopulateObject(apiSubmissionJson);
-
-        // const mappedSubmissionData = apiSubmissionJson.data.reduce(
-        //   (prev: any, cur: any) => {
-        //     // this is TSubmission type, I think
-        //     prev[cur.field] = cur.value;
-        //     return prev;
-        //   },
-        //   {}
-        // );
-        // const submissionUiDataItems = currentFieldCollection
-        //   .getAllFieldIds()
-        //   .map((fieldId) => {
-        //     const treeField = currentFieldCollection.getFieldById(fieldId);
-        //     const evaluator = treeField.getSubmissionEvaluator();
-        //     return evaluator.getUiPopulateObject(mappedSubmissionData);
-        //   });
-
         caller.postMessage({
           messageType: "fetchSubmissionResponse",
           payload: {
@@ -176,56 +167,20 @@ function handleFetchSubmissionRequest(
   });
 }
 
-function x_handleGetFieldStatusesRequest(
-  caller: MessageEventSource,
-  payload: any
-) {
-  const fieldStatusMessage = devDebugFieldIds.reduce(
-    (prev, current, cIdx, ary) => {
-      return { ...factoryStatusMessage(current), ...prev };
-    },
-    {}
-  );
-
-  const formStatusMessages = ["error", "warn", "info", "debug"].map(
-    (severity) => {
-      return {
-        severity,
-        message:
-          `The ${severity} message. This message should be long enough to cause "wrap" effect if applicable. Now I am just added text to make sure it's long enough. ` +
-          Math.random(),
-        relatedFieldIds: ["147738154", "148111228", "147738157"],
-      } as TStatusRecord;
-    }
-  );
-  formStatusMessages.push({
-    severity: "info",
-    message: `Status Retrieved At: '${new Date().toUTCString()}'.`,
-    // fieldId: null,
-    relatedFieldIds: null,
-  });
-  caller.postMessage({
-    messageType: "getFieldStatusesResponse",
-
-    payload: {
-      formStatusMessages: formStatusMessages as TStatusRecord[],
-      fieldStatusMessages: fieldStatusMessage as TFieldStatusMessages,
-    },
-  });
-}
-
 function handleGetFieldLogicDependentsRequest(
   caller: MessageEventSource,
   payload: any
 ) {
   const { fieldId } = payload;
   const fieldIds = fieldLogicService?.getFieldIdsExtendedLogicOf(fieldId);
+  const statusMessages = fieldLogicService?.getStatusMessagesFieldId(fieldId);
   const interdependentFieldIds =
     fieldLogicService?.getCircularReferenceFieldIds(fieldId);
   caller.postMessage({
     messageType: "getFieldLogicDependentsResponse",
     payload: {
       [fieldId]: {
+        statusMessages: statusMessages,
         dependentFieldIds: fieldIds,
         interdependentFieldIds: interdependentFieldIds,
       },
@@ -238,39 +193,47 @@ function handleGetAllFieldInfoRequest(
   payload: any
 ) {
   /// getFieldIdsExtendedLogicOf
+  if (fieldLogicService === null) {
+    console.log(
+      'handleGetAllFieldInfoRequest failed.  "fieldLogicService" not defined.'
+    );
+    return;
+  }
+  if (formAnalytic === null) {
+    console.log(
+      'handleGetAllFieldInfoRequest failed.  "formAnalytic" not defined.'
+    );
+    return;
+  }
+
   const fieldSummary = fieldLogicService?.getAllFieldSummary();
-  const formStatusMessages = formAnalytic?.findKnownSetupIssues();
-  // const formStatusMessages = [
-  //   {
-  //     severity: "info",
-  //     fieldId: "147738157",
-  //     message: "Message Two",
-  //     relatedFieldIds: ["xxxx"],
-  //   },
-  //   {
-  //     severity: "info",
-  //     fieldId: "147738157",
-  //     message: "Message One",
-  //     relatedFieldIds: ["yyyy"],
-  //   },
-  // ];
-  /// .getFieldIdsExtendedLogicOf(fieldId);
+  const formLogicStatusMessages =
+    fieldLogicService.getFormLogicStatusMessages();
+  const formStatusMessages = formAnalytic.findKnownSetupIssues();
+  const fieldIdsWithLogic = fieldLogicService?.wrapFieldIdsIntoLabelOptionList(
+    fieldLogicService?.getFieldIdsWithLogic()
+  );
+
   caller.postMessage({
     messageType: "getAllFieldInfoResponse",
-    payload: { fieldSummary, formStatusMessages },
+    payload: {
+      fieldSummary,
+      formStatusMessages: [...formStatusMessages, ...formLogicStatusMessages],
+      fieldIdsWithLogic,
+    },
   });
 }
 
-function getFieldsWithLogicResponse(caller: MessageEventSource) {
-  fieldLogicService?.getFieldIdsWithLogic;
-  const fieldIds = fieldLogicService?.wrapFieldIdsIntoLabelOptionList(
-    fieldLogicService?.getFieldIdsWithLogic()
-  );
-  caller.postMessage({
-    messageType: "getFieldsWithLogicResponse",
-    payload: { fieldIds },
-  });
-}
+// function getFieldsWithLogicResponse(caller: MessageEventSource) {
+//   const fieldIds = fieldLogicService?.wrapFieldIdsIntoLabelOptionList(
+//     fieldLogicService?.getFieldIdsWithLogic()
+//   );
+//   caller.postMessage({
+//     messageType: "getFieldsWithLogicResponse",
+//     payload: { fieldIds },
+//   });
+// }
+
 function removeFormHtml() {
   const theIFrame = document.getElementById("theFrame");
   if (theIFrame) {
@@ -286,10 +249,10 @@ window.onmessage = function (e) {
         payload: "pong",
       });
       break;
-    case "getFieldsWithLogicRequest":
-      e.source && getFieldsWithLogicResponse(e.source);
-      !e.source && console.log("No Source of message received.");
-      break;
+    // case "getFieldsWithLogicRequest":
+    //   e.source && getFieldsWithLogicResponse(e.source);
+    //   !e.source && console.log("No Source of message received.");
+    //   break;
     case "getFieldLogicDependentsRequest":
       e.source &&
         handleGetFieldLogicDependentsRequest(e.source, e.data.payload);
@@ -356,6 +319,10 @@ const createElementButton = ({
 const initializeFsBuddyControlPanel = () => {
   const theBody = document.querySelector("body");
 
+  const passwordLabel = document.createElement("label");
+  passwordLabel.innerText = "API Key: ";
+  passwordLabel.setAttribute("for", "fsBuddyApiKey");
+
   const fsBodyControlPanelHead = document.createElement("h3");
   fsBodyControlPanelHead.innerHTML = "FS Buddy Control Panel";
   fsBodyControlPanelHead.style.color = "black";
@@ -375,6 +342,8 @@ const initializeFsBuddyControlPanel = () => {
   fsBodyControlPanel.appendChild(fsBodyControlPanelGetFormHtmlButton);
   fsBodyControlPanel.appendChild(removeFormHtmlButton);
   fsBodyControlPanel.appendChild(document.createElement("hr"));
+  fsBodyControlPanel.appendChild(passwordLabel);
+  fsBodyControlPanel.appendChild(passwordControl);
 
   fsBodyControlPanel.style.backgroundColor = "#FFFFFF";
   fsBodyControlPanel.style.border = "1px black solid";

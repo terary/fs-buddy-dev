@@ -1,7 +1,4 @@
-import { TStatusRecord } from "../../../chrome-extension/type";
-import { AbstractEvaluator } from "./AbstractEvaluator";
 import { TUiEvaluationObject } from "./type";
-import { isFunctions } from "../../../common/isFunctions";
 import { ScalarEvaluator } from "./ScalarEvaluator";
 
 class DateEvaluator extends ScalarEvaluator {

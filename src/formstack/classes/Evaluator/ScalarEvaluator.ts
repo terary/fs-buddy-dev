@@ -1,8 +1,6 @@
-import { TStatusRecord } from "../../../chrome-extension/type";
 import { AbstractEvaluator } from "./AbstractEvaluator";
-import { TUiEvaluationObject } from "./type";
+import { TStatusRecord, TUiEvaluationObject } from "./type";
 import { isFunctions } from "../../../common/isFunctions";
-
 class ScalarEvaluator extends AbstractEvaluator {
   parseValues<S = string, T = string>(submissionDatum?: S): T {
     return submissionDatum as T;
