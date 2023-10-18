@@ -22,6 +22,7 @@ import { FsVirtualRootNode } from "./LogicNodes/FsVirtualRootNode";
 import { FsCircularMutualExclusiveNode } from "./LogicNodes/FsCircularMutualExclusiveNode";
 import { FsCircularMutualInclusiveNode } from "./LogicNodes/FsCircularMutualInclusiveNode";
 import type { TLogicTreeDeepStatisticCountRecord } from "./type";
+import { FsLogicErrorNode } from "./LogicNodes/FsLogicErrorNode";
 
 class FsLogicTreeDeep {
   static readonly MAX_TOTAL_NODES = 50;
@@ -72,6 +73,10 @@ class FsLogicTreeDeep {
     return this._fsDeepLogicTree.getChildContentByFieldId(fieldId);
   }
 
+  getLogicErrorNodes(): FsLogicErrorNode[] {
+    return this._fsDeepLogicTree.getLogicErrorNodes();
+  }
+
   getCircularLogicNodes(): FsCircularDependencyNode[] {
     return this._fsDeepLogicTree.getCircularLogicNodes();
   }
@@ -99,7 +104,7 @@ class FsLogicTreeDeep {
     return this._fsDeepLogicTree.rootNodeId;
   }
 
-  getStatusMessage(dependentChainFieldIds?: string[]): TStatusRecord[] {
+  getStatusMessage(): TStatusRecord[] {
     const statusMessages: TStatusRecord[] = [];
     this._fsDeepLogicTree.getTreeContentAt().forEach((logicNode) => {
       if (logicNode instanceof AbstractLogicNode) {
@@ -202,6 +207,18 @@ class FsLogicTreeDeep {
       targetFieldId,
       deepTree.getDependentFieldIds()
     );
+  }
+
+  /**
+   * Return all fieldIds within actual logical leaf term expressions
+   *
+   * leaf term expression: [fieldId] ["equal" | "noequals" | "gt" ...] [some given value]
+   *    returns every "[fieldId]"
+   */
+  public getAllFieldIdsLeafTermReference() {
+    return this._fsDeepLogicTree
+      .getAllLeafContents()
+      .map((leafNode) => leafNode.fieldId);
   }
 
   public getStatisticCounts(): TLogicTreeDeepStatisticCountRecord {
@@ -368,9 +385,22 @@ class FsLogicTreeDeep {
   ): FsLogicTreeDeep | null {
     const field = fieldCollection.getFieldTreeByFieldId(fieldId);
 
-    if (field === undefined) {
+    if (field === undefined && deepTree) {
+      deepTree.appendChildNodeWithContent(
+        deepTree.rootFieldId,
+        new FsLogicErrorNode(
+          deepTree.rootFieldId,
+          null,
+          fieldId,
+          `Failed to find fieldId in form. fieldId: "${fieldId}".`,
+          deepTree.getDependentChainFieldIds()
+        )
+      );
+      return null;
+    } else if (field === undefined) {
       return null;
     }
+
     const logicTree = field.getLogicTree() || null;
     // const visualTree =
     //   field.getVisibilityNode()?.parentNode?.getLogicTree() || null; //as FsTreeLogic;

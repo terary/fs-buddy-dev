@@ -3,13 +3,24 @@ import circularAndInterdependentJson from "../test-dev-resources/form-json/53757
 import { TFsFieldAnyJson } from "../formstack";
 import { transformers } from "../formstack/transformers";
 import { TApiFormJson } from "../formstack/type.form";
-
-// getFieldIdsAll
-// getFieldIdsWithLogic
-// getFieldIdsWithoutLogic
+import formJson5488291 from "../test-dev-resources/form-json/5488291.json";
 
 describe("FieldLogicService", () => {
   describe(".getFormLogicStatusMessages()", () => {
+    it("Should find fieldIds not in form.", () => {
+      // What is the simple way to determine if a fieldId is not in-form
+      // Do we only include leaves ?
+
+      // formJson5488291
+      const fieldLogicService = new FieldLogicService(
+        transformers.formJson(formJson5488291 as unknown as TApiFormJson)
+      );
+
+      const x = fieldLogicService.getFieldIdsWithLogicError();
+      expect(fieldLogicService.getFieldIdsWithLogicError()).toStrictEqual([
+        "153112633",
+      ]);
+    });
     it("Should", () => {
       const fieldLogicService = new FieldLogicService(
         transformers.formJson(
@@ -19,6 +30,20 @@ describe("FieldLogicService", () => {
 
       const statusMessages = fieldLogicService.getFormLogicStatusMessages();
       expect(statusMessages).toStrictEqual([
+        {
+          severity: "info",
+          fieldId: null,
+          message:
+            "Checked all fieldIds in logic expression are contained in this form (don't laugh, it happens).<br />",
+          relatedFieldIds: [],
+        },
+        {
+          severity: "info",
+          fieldId: null,
+          message:
+            'Field Leaf Usage (field actual in leaf expression): <pre><code>{\n  "148509474": 7,\n  "148509475": 7,\n  "148509477": 7,\n  "148509478": 7,\n  "148604239": 4,\n  "151678347": 7,\n  "152139063": 1,\n  "152139064": 1,\n  "152139066": 1,\n  "152139068": 1\n}</code></pre>',
+          relatedFieldIds: [],
+        },
         {
           severity: "info",
           fieldId: null,
@@ -42,6 +67,12 @@ describe("FieldLogicService", () => {
           severity: "warn",
           fieldId: null,
           message: "Number of fields with circular references:  17",
+          relatedFieldIds: [],
+        },
+        {
+          severity: "error",
+          fieldId: null,
+          message: "Number of fields with general logic errors:  0",
           relatedFieldIds: [],
         },
       ]);
@@ -229,10 +260,10 @@ describe("FieldLogicService", () => {
 
       expect(labelValueList).toStrictEqual([
         {
-          label: "(cr) (section) Inter-dependent (not so much circular)",
+          label: "(Error) (section) Inter-dependent (not so much circular)",
           value: "148509465",
         },
-        { label: "(cr) A.0", value: "148509478" },
+        { label: "(Error) A.0", value: "148509478" },
       ]);
     });
   });

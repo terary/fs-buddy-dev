@@ -49,9 +49,14 @@ class FieldLogicService {
     return fieldSummaries;
   }
 
+  getExtendTreeForFieldId(fieldId: string) {
+    return this._fieldCollection.getDeepLogicTreeByFieldId(fieldId);
+  }
+
   getFormLogicStatusMessages(): TStatusRecord[] {
     const statusMessages: TStatusRecord[] = [];
     const allFormFieldIds = this._fieldCollection.getAllFieldIds();
+    const fieldUsageCounts: TSimpleDictionary<number> = {};
     const logicCounts: TLogicTreeDeepStatisticCountRecord = {
       totalNodes: 0,
       totalCircularLogicNodes: 0,
@@ -70,9 +75,18 @@ class FieldLogicService {
         return;
       }
 
+      const x = logicTree.getAllFieldIdsLeafTermReference();
+      logicTree.getAllFieldIdsLeafTermReference().forEach((fieldId) => {
+        if (!fieldUsageCounts[fieldId]) {
+          fieldUsageCounts[fieldId] = 0;
+        }
+        fieldUsageCounts[fieldId]++;
+      });
+
       const fieldCounts = logicTree.getStatisticCounts();
       (Object.keys(fieldCounts) as TLogicTreeDeepStatisticCountField[]).forEach(
         (statName) => {
+          this._fieldCollection;
           logicCounts[statName] += fieldCounts[statName];
         }
       );
@@ -105,7 +119,31 @@ class FieldLogicService {
       </ul>
     `;
 
+    Object.keys(fieldUsageCounts).forEach((fieldId) => {
+      if (!this._fieldCollection.getAllFieldIds().includes(fieldId)) {
+        statusMessages.push(
+          this.wrapAsStatusMessage(
+            "error",
+            `Found fieldId used in logic but not in form. fieldId: "${fieldId}". `
+          )
+        );
+      }
+    });
     statusMessages.push(
+      // fieldUsageCounts
+      this.wrapAsStatusMessage(
+        "info",
+        "Checked all fieldIds in logic expression are contained in this form (don't laugh, it happens).<br />"
+      )
+    );
+
+    statusMessages.push(
+      // fieldUsageCounts
+      this.wrapAsStatusMessage(
+        "info",
+        `Field Leaf Usage (field actual in leaf expression): ` +
+          transformers.Utility.jsObjectToHtmlFriendlyString(fieldUsageCounts)
+      ),
       this.wrapAsStatusMessage(
         "info",
         `Logic composition: ` +
@@ -131,6 +169,14 @@ class FieldLogicService {
         this.getFieldIdsWithCircularReferences().length === 0 ? "info" : "warn",
         `Number of fields with circular references:  ${
           this.getFieldIdsWithCircularReferences().length
+        }`
+      ),
+      this.wrapAsStatusMessage(
+        this.getFieldIdsWithCircularReferences().length === 0
+          ? "info"
+          : "error",
+        `Number of fields with general logic errors:  ${
+          this.getFieldIdsWithLogicError().length
         }`
       )
     );
@@ -173,6 +219,10 @@ class FieldLogicService {
     return this._fieldCollection.getFieldIdsWithCircularLogic();
   }
 
+  getFieldIdsWithLogicError() {
+    return this._fieldCollection.getFieldIdsWithLogicError();
+  }
+
   getCircularReferenceNodes(fieldId: string) {
     return this._fieldCollection
       .aggregateLogicTree(fieldId)
@@ -203,10 +253,13 @@ class FieldLogicService {
   // public for testing purposes.. There isn't much time invested in that test -
   // better to make this private
   public wrapFieldIdsIntoLabelOptionList(fieldIds: string[]) {
-    const circularReferenceFieldIds = this.getFieldIdsWithCircularReferences();
+    const circularReferenceFieldIds =
+      this.getFieldIdsWithCircularReferences().concat(
+        this.getFieldIdsWithLogicError()
+      );
     return fieldIds.map((fieldId) => {
       const field = this._fieldCollection.getFieldTreeByFieldId(fieldId);
-      let label = circularReferenceFieldIds.includes(fieldId) ? "(cr) " : "";
+      let label = circularReferenceFieldIds.includes(fieldId) ? "(Error) " : "";
 
       switch (field?.fieldType) {
         case "section":

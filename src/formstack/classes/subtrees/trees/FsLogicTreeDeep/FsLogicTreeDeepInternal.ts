@@ -19,6 +19,7 @@ import { FsFieldModel } from "../FsFieldModel";
 import { TFsFieldAny } from "../../../../type.field";
 import { AbstractLogicNode } from "./LogicNodes/AbstractLogicNode";
 import { FsVirtualRootNode } from "./LogicNodes/FsVirtualRootNode";
+import { FsLogicErrorNode } from "./LogicNodes/FsLogicErrorNode";
 
 class FsLogicTreeDeepInternal extends AbstractFsTreeLogic<AbstractLogicNode> {
   private _dependantFieldIdsInOrder: string[] = [];
@@ -82,7 +83,8 @@ class FsLogicTreeDeepInternal extends AbstractFsTreeLogic<AbstractLogicNode> {
       return nodeContent.ownerFieldId;
     } else if (
       nodeContent instanceof FsLogicLeafNode ||
-      nodeContent instanceof FsVirtualRootNode
+      nodeContent instanceof FsVirtualRootNode ||
+      nodeContent instanceof FsLogicErrorNode
     ) {
       return nodeContent.fieldId;
     } else if (nodeContent instanceof FsCircularDependencyNode) {
@@ -107,6 +109,16 @@ class FsLogicTreeDeepInternal extends AbstractFsTreeLogic<AbstractLogicNode> {
     // This method guarantees order, filtering nodes does not guarantee order but is a
     //  better source of truth
     return this.dependantFieldIds;
+  }
+
+  getLogicErrorNodes(): FsLogicErrorNode[] {
+    return this.findAllNodesOfType<FsLogicErrorNode>(FsLogicErrorNode);
+  }
+
+  getAllLeafContents(): FsLogicLeafNode[] {
+    return this.getTreeContentAt().filter(
+      (nodeContent) => nodeContent instanceof FsLogicLeafNode
+    ) as FsLogicLeafNode[];
   }
 
   public isExistInDependencyChain(field: FsFieldModel): boolean {

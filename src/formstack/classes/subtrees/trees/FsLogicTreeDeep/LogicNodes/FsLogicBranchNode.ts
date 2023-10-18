@@ -1,3 +1,4 @@
+import { transformers } from "../../../../../transformers";
 import type { TStatusRecord } from "../../../../Evaluator/type";
 import type {
   TFsFieldLogicCheckLeaf,
@@ -76,7 +77,7 @@ class FsLogicBranchNode
     // branch status message should list all children with their conditions
     const statusMessage: TStatusRecord[] = [];
 
-    const debugMessage = JSON.stringify({
+    const debugMessage = transformers.Utility.jsObjectToHtmlFriendlyString({
       nodeType: "FsLogicBranchNode",
       // fieldId: node.fieldId,
       ownerFieldId: this.ownerFieldId,
@@ -90,7 +91,11 @@ class FsLogicBranchNode
 
     const message = `action: '${action}', conditional: '${conditional}', checks(${
       (checks || []).length
-    }): '${JSON.stringify(checks)}'.`;
+    }): '${transformers.Utility.jsObjectToHtmlFriendlyString({
+      action,
+      conditional,
+      checks,
+    })}'.`;
 
     statusMessage.push({
       severity: "debug",

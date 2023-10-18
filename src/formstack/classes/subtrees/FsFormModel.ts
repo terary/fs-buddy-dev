@@ -49,9 +49,6 @@ class FsFormModel extends AbstractExpressionTree<
   }
 
   getDeepLogicTreeByFieldId(fieldId: string): FsLogicTreeDeep | null {
-    // this only works for static trees (fromJson, fromPojo, fromXXX)
-    // dynamic trees MUST NOT cache
-
     if (this.#deepLogicTreesFieldIdMap === undefined) {
       this.#deepLogicTreesFieldIdMap = (this.getAllFieldIds() || []).reduce(
         (p, c, i, a) => {
@@ -62,7 +59,6 @@ class FsFormModel extends AbstractExpressionTree<
         {} as TSimpleDictionary<FsLogicTreeDeep | null>
       );
     }
-
     return this.#deepLogicTreesFieldIdMap[fieldId];
   }
 
@@ -86,22 +82,6 @@ class FsFormModel extends AbstractExpressionTree<
   ): FsLogicTreeDeep | null {
     return FsLogicTreeDeep.fromFormModel(field.fieldId, this);
   }
-
-  // private isTwoConditionsMutuallyExclusive(
-  //   fieldJson: TFsFieldAny,
-  //   conditionA: ILogicCheck, // TFsFieldLogicCheckLeaf,
-  //   conditionB: ILogicCheck //TFsFieldLogicCheckLeaf
-  // ) {
-  //   if (
-  //     ["select", "radio"].includes(fieldJson.type) &&
-  //     conditionA.condition === conditionB.condition &&
-  //     conditionA.option === conditionB.option
-  //   ) {
-  //     return false;
-  //   }
-
-  //   return true;
-  // }
 
   aggregateLogicTree(fieldId: string): FsLogicTreeDeep {
     const field = this.getFieldTreeByFieldId(fieldId) as FsFieldModel;
@@ -134,6 +114,16 @@ class FsFormModel extends AbstractExpressionTree<
     return this._fieldIdNodeMap[fieldId];
   }
 
+  getFieldIdsWithLogicError(): string[] {
+    const allFieldIds = Object.keys(this._fieldIdNodeMap);
+    return allFieldIds.filter((fieldId) => {
+      const agTree = this.aggregateLogicTree(fieldId);
+      if (agTree) {
+        return agTree.getLogicErrorNodes().length > 0;
+      }
+      // return false; // necessary?
+    });
+  }
   getFieldIdsWithCircularLogic(): string[] {
     const allFieldIds = Object.keys(this._fieldIdNodeMap);
     return allFieldIds.filter((fieldId) => {

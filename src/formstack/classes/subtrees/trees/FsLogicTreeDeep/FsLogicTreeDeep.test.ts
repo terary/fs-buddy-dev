@@ -2,6 +2,7 @@ import { FsLogicTreeDeep } from "./FsLogicTreeDeep";
 import formJson5375703 from "../../../../../test-dev-resources/form-json/5375703.json";
 import formJson5469299 from "../../../../../test-dev-resources/form-json/5469299.json";
 import formJson5487084 from "../../../../../test-dev-resources/form-json/5487084.json";
+import formJson5488291 from "../../../../../test-dev-resources/form-json/5488291.json";
 import { FsLogicBranchNode } from "./LogicNodes/FsLogicBranchNode";
 import { FsLogicLeafNode } from "./LogicNodes/FsLogicLeafNode";
 import { TApiFormJson } from "../../../../type.form";
@@ -9,6 +10,51 @@ import { FsFormModel } from "../../FsFormModel";
 import { transformers } from "../../../../transformers";
 describe("FsLogicTreeDeep", () => {
   describe("dev / debug", () => {
+    it("Should return branch with leafs.", () => {
+      const tree5488291 = FsFormModel.fromApiFormJson(
+        transformers.formJson(formJson5488291 as unknown as TApiFormJson)
+      );
+      const tree5469299 = FsFormModel.fromApiFormJson(
+        transformers.formJson(formJson5469299 as unknown as TApiFormJson)
+      );
+
+      const deepTree153112633 = tree5488291.aggregateLogicTree("153112633");
+      const smField = deepTree153112633.getStatusMessage();
+      const smTree = tree5488291.getAllLogicStatusMessages();
+      const deepTree152290560 = tree5469299.aggregateLogicTree("152290560"); // A) Ideal - two children
+      const pojo = deepTree153112633.toPojoAt(undefined, false);
+      expect(pojo).toStrictEqual({
+        "153112633": {
+          parentId: "153112633",
+          nodeContent: {
+            nodeType: "FsVirtualRootNode",
+            fieldId: "153112633",
+            conditional: "all",
+          },
+        },
+        "153112633:0": {
+          parentId: "153112633",
+          nodeContent: {
+            nodeType: "FsLogicBranchNode",
+            ownerFieldId: "153112633",
+            action: "show",
+            conditional: "all",
+          },
+        },
+        "153112633:1": {
+          parentId: "153112633",
+          nodeContent: {
+            nodeType: "FsLogicErrorNode",
+            rootFieldId: "153112633",
+            parentFieldId: null,
+            fieldId: "9153115414",
+            message: 'Failed to find fieldId in form. fieldId: "9153115414".',
+            dependentChainFieldIds: ["153112633"],
+          },
+        },
+      });
+      // 5487084
+    });
     it("Should convert logic with single child and 'Hide' action.", () => {
       const fieldIds = {
         show_if_switzerland_is_neutral: "153055020",

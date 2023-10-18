@@ -1,3 +1,4 @@
+import { transformers } from "../../transformers";
 import { AbstractComplexSubmissionDatumEvaluator } from "./AbstractComplexSubmissionDatumEvaluator";
 import { TUiEvaluationObject } from "./type";
 
@@ -25,7 +26,9 @@ abstract class AbstractNamedSubfieldEvaluator extends AbstractComplexSubmissionD
           "error",
           `No subfields with id: '${this.supportedSubfieldIds.join(
             "', '"
-          )}' found in submission data: '${submissionDatum}'.`
+          )}' found in submission data: '${transformers.Utility.jsObjectToHtmlFriendlyString(
+            submissionDatum
+          )}'.`
         )
       );
 

@@ -20,13 +20,13 @@ describe("FsLogicTreeDeepInternal", () => {
       const b = new FsLogicBranchNode("fieldId", "$not", "Hide", [], {});
       const tree = new FsLogicTreeDeepInternal("root", b);
       tree.appendChildNodeWithContent(
-        "l0",
+        tree.rootNodeId,
         new FsLogicLeafNode("l0", "dateAfter", "_OPTION_")
       );
 
       expect(tree.getDependantFieldIds()).toStrictEqual(["l0"]);
     });
-    it.only("Should maintain order.", () => {
+    it("Should maintain order.", () => {
       const root = new FsLogicBranchNode(
         "fieldId_root",
         "$not",

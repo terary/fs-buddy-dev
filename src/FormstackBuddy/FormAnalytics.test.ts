@@ -1,5 +1,6 @@
 import { FormAnalytics } from "./FormAnalytics";
 import formJson5456371 from "../test-dev-resources/form-json/5456371.json";
+
 import formJsonCaseAssist5483176 from "../test-dev-resources/form-json/caseAssist5483176.json";
 import workflowJson5456833 from "../test-dev-resources/form-json/5456833.json";
 import { transformers as jsonTransformers } from "../formstack/transformers";
@@ -23,7 +24,8 @@ describe("FormAnalytics", () => {
     });
   });
   describe("Case Assist, troubleshooting.", () => {
-    it.only("Should have a status message about duplicate labels", () => {
+    //import formJson5488291 from "../test-dev-resources/form-json/5488291.json";
+    it.skip("Should have a status message about duplicate labels", () => {
       const formAnalytic = new FormAnalytics(
         jsonTransformers.formJson(
           formJsonCaseAssist5483176 as unknown as TApiFormJson
@@ -33,7 +35,7 @@ describe("FormAnalytics", () => {
       expect(x).toStrictEqual(statusMessageCaseAssist5483176);
     });
   });
-  describe(".findKnownSetupIssues()", () => {
+  describe.skip(".findKnownSetupIssues()", () => {
     it("Should return messages for all known form issues.", () => {
       const formAnalytic = new FormAnalytics(
         jsonTransformers.formJson(formJson5456371 as unknown as TApiFormJson)

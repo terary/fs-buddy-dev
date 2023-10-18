@@ -130,14 +130,13 @@ describe("NameEvaluator", () => {
               severity: "info",
               fieldId: "147738156",
               message: "Stored value: '\"1984-01-18T00:00:00.000Z\"'.",
-
               relatedFieldIds: [],
             },
             {
               severity: "error",
               fieldId: "147738156",
               message:
-                "No subfields with id: 'first', 'last', 'initial', 'prefix', 'suffix', 'middle' found in submission data: 'Tue Jan 17 1984 18:00:00 GMT-0600 (Central Standard Time)'.",
+                "No subfields with id: 'first', 'last', 'initial', 'prefix', 'suffix', 'middle' found in submission data: '<pre><code>\"1984-01-18T00:00:00.000Z\"</code></pre>'.",
               relatedFieldIds: [],
             },
           ],

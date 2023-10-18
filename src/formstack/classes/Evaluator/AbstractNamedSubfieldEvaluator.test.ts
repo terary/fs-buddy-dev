@@ -35,7 +35,7 @@ describe("AbstractNamedSubfieldEvaluator", () => {
             {
               severity: "info",
               fieldId: "147738157",
-              message: "Stored value: 'undefined'.",
+              message: "Stored value: '__EMPTY_AND_REQUIRED__'.",
               relatedFieldIds: [],
             },
             {
@@ -68,8 +68,9 @@ describe("AbstractNamedSubfieldEvaluator", () => {
             },
             {
               severity: "error",
-              fieldId: "147738157", // if we exclude fieldId it should attached the message on the form, I think we want that here?
-              message: "Failed to parse field",
+              fieldId: "147738157",
+              message:
+                "No subfields with id: 'subfield0', 'subfield1', 'subfield2' found in submission data: '<pre><code>{}</code></pre>'.",
               relatedFieldIds: [],
             },
           ],
@@ -189,7 +190,7 @@ describe("AbstractNamedSubfieldEvaluator", () => {
 
       expect(actual).toStrictEqual({});
     });
-    it.only("Should return object with one key and empty string value if no new line contained in the datum.", () => {
+    it("Should return object with one key and empty string value if no new line contained in the datum.", () => {
       const evaluator = new TestSubfieldEvaluator(fieldJson);
       const actual = evaluator._transformSubmittedDatumToObject(
         "Simple string no key/value"

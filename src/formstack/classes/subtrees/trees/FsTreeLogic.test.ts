@@ -54,7 +54,7 @@ describe("FsTreeLogic", () => {
       const children = tree.getChildrenContentOf(tree.rootNodeId);
       expect(children.length).toEqual(4);
     });
-    it.skip("Should be able to create field from json, convert to pojo, and re-recreate from pojo", () => {
+    it("Should be able to create field from json, convert to pojo, and re-recreate from pojo", () => {
       // there is an issue with 'checks' on root node.  They're becoming objects {1:{...}, 2:{...}}
       // When they should be array.
       const fieldIds = {
@@ -85,7 +85,7 @@ describe("FsTreeLogic", () => {
         JSON.stringify(form5487084_expectedPojo["153058950"])
       );
     });
-    it.only("Should handle single child brancheds", () => {
+    it("Should handle single child branches", () => {
       // there is an issue with 'checks' on root node.  They're becoming objects {1:{...}, 2:{...}}
       // When they should be array.
       const fieldIds = {
