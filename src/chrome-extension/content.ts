@@ -20,10 +20,10 @@ type TFieldStatusMessages = {
 
 // we create this here so we can access it without sending through the messaging system
 const passwordControl = document.createElement("input");
-passwordControl.type = "password";
+// passwordControl.type = "password";   I think this causes odd behavior with autofill
 passwordControl.id = "fsBuddyApiKey";
 passwordControl.name = "fsBuddyApiKey";
-passwordControl.value = "cc17435f8800943cc1abd3063a8fe44f";
+// passwordControl.value = "cc17435f8800943cc1abd3063a8fe44f";
 
 function getChildFrameHtml() {
   const url = chrome.runtime.getURL("form-render-inject.html");
@@ -68,11 +68,21 @@ function getFormAsJson() {
         // apiKey: "cc17435f8800943cc1abd3063a8fe44f",
       },
       async (apiFormJson) => {
-        const childFrameHtml = await getChildFrameHtml();
+        const childFrameHtml = await getChildFrameHtml().catch((e) => {
+          console.log("Failed to get API");
+          console.log({ e });
+        });
         const iframe = buildIframe("theFrame");
         iframe.srcdoc = childFrameHtml + apiFormJson.html;
         const theBody = document.querySelector("body");
         theBody?.prepend(iframe);
+
+        if (!apiFormJson.id) {
+          // if there is no formId, then we probably didn't get real 200
+          throw new Error(
+            "Unrecognized response" + JSON.stringify(apiFormJson)
+          );
+        }
 
         currentFieldCollection = FsFormModel.fromApiFormJson(
           transformers.formJson(apiFormJson)
@@ -321,6 +331,16 @@ const initializeFsBuddyControlPanel = () => {
 
   const passwordLabel = document.createElement("label");
   passwordLabel.innerText = "API Key: ";
+
+  // passwordControl.onchange = () => {
+  //   if (passwordControl.value.length > 4) {
+  //     const pwEndingLastFour = (passwordControl.value || "").slice(-4);
+  //     passwordLabel.innerText = "API Key Ending: " + pwEndingLastFour;
+  //   } else {
+  //     passwordLabel.innerText = "API Key: ";
+  //   }
+  // };
+
   passwordLabel.setAttribute("for", "fsBuddyApiKey");
 
   const fsBodyControlPanelHead = document.createElement("h3");
