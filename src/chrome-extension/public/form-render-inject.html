@@ -308,6 +308,8 @@
         logicBuddyContainer.appendChild(divWithSelect);
       }
       removeAllCssName('fsHidden'); // show all fields
+      removeAllCssName('fsHiddenPage'); // show all fields
+      
     }
 
     const handleGetFieldLogicDependentsResponse = (payload)=>{
@@ -773,7 +775,7 @@
                           <button onclick="expandAllFsBuddyStatusItems()">Expand Statuses</button>                  
                     </td>
                     <td style="padding: 5px;">
-                        <button onclick="removeAllCssName('fsHidden');removeAllCssName('fsWorkflowHidden')">Remove All fsHidden</button>
+                        <button onclick="removeAllCssName('fsHidden');removeAllCssName('fsHiddenPage');removeAllCssName('fsWorkflowHidden')">Remove All fsHidden</button>
                     </td>
                     <td style="padding: 5px;">
                       <button onclick="removeAllFsBuddyCss()">Remove Logic CSS</button>

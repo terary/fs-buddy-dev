@@ -1,6 +1,6 @@
 // aka service worker
 
-console.log("hello from background.js");
+console.log("hello from formstackApi.js");
 import { TreeManager } from "../common/TreeManager";
 import { SubmissionManager } from "../common/SubmissionManager";
 
@@ -16,7 +16,6 @@ chrome.runtime.onMessage.addListener(function (
   sender,
   senderResponse
 ) {
-  console.log({ message, sender, senderResponse });
   const { apiKey, fetchFormId } = message;
 
   switch (message.type) {
