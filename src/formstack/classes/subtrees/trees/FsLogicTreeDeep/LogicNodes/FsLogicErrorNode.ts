@@ -32,6 +32,18 @@ class FsLogicErrorNode extends AbstractLogicNode {
     return this._fieldId;
   }
 
+  get rootFieldId() {
+    return this._rootFieldId;
+  }
+
+  get parentFieldId() {
+    return this._parentFieldId;
+  }
+
+  get message() {
+    return this._message;
+  }
+
   toPojo(): object {
     return {
       nodeType: this.nodeType,
@@ -68,5 +80,33 @@ class FsLogicErrorNode extends AbstractLogicNode {
       },
     ];
   }
+
+  static fromPojo(nodePojo: TNodePojo<AbstractLogicNode>): FsLogicErrorNode;
+  static fromPojo(nodePojo: TNodePojo<AbstractLogicNode>): AbstractLogicNode;
+  static fromPojo(nodePojo: TNodePojo<AbstractLogicNode>): AbstractLogicNode {
+    const { nodeContent } = nodePojo;
+    const {
+      rootFieldId,
+      parentFieldId,
+      fieldId,
+      message,
+      dependentChainFieldIds,
+    } = nodeContent as FsLogicErrorNode; // using type information, this will never be an instance
+    return new FsLogicErrorNode(
+      rootFieldId,
+      parentFieldId,
+      fieldId,
+      message,
+      dependentChainFieldIds
+    );
+  }
+
+  // constructor(
+  //   rootFieldId: string | null,
+  //   parentFieldId: string | null,
+  //   fieldId: string | null,
+  //   message: string,
+  //   dependencyChain: string[]
+  // ) {
 }
 export { FsLogicErrorNode };

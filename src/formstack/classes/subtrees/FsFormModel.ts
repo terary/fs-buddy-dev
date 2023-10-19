@@ -15,6 +15,8 @@ import { TStatusRecord, TUiEvaluationObject } from "../Evaluator/type";
 import { TApiForm, TSubmissionJson } from "../../type.form";
 import { IEValuator } from "../Evaluator/IEvaluator";
 import { TFsFieldAny } from "../../type.field";
+import { AbstractEvaluator } from "../Evaluator/AbstractEvaluator";
+import { Evaluator } from "../Evaluator";
 
 // interface ILogicCheck {
 //   fieldId: string;
@@ -108,6 +110,14 @@ class FsFormModel extends AbstractExpressionTree<
     );
   }
 
+  getFieldTreeByFieldIdOrThrow(fieldId: string): FsFieldModel {
+    const fieldModel = this.getFieldTreeByFieldId(fieldId);
+    if (fieldModel === undefined) {
+      throw new Error(`Failed to get field model with fieldId: '${fieldId}'.`);
+    }
+    return this._fieldIdNodeMap[fieldId];
+  }
+
   getFieldTreeByFieldId(fieldId: string): FsFieldModel | undefined {
     // I wounder if a look-up table wouldn't be better
     //  also you're filtering after map, if possible the other order would be preferred
@@ -139,6 +149,11 @@ class FsFormModel extends AbstractExpressionTree<
     return Object.entries(this._fieldIdNodeMap).map(([fieldId, field]) => {
       return field.evaluateWithValues(values);
     }) as T;
+  }
+
+  getEvaluator(fieldId: string): IEValuator {
+    const field = this.getFieldById(fieldId);
+    return Evaluator.getEvaluatorWithFieldJson(field.fieldJson);
   }
 
   x_getDependantFields(): string[] {

@@ -84,6 +84,10 @@ abstract class AbstractEvaluator {
     return messages;
   }
 
+  getJsMatcherExpression(): string {
+    return ` ${this.fieldId} `;
+  }
+
   protected getStoredValue<T = string>(submissionDatum?: T): T {
     if (this.isRequired && submissionDatum === undefined) {
       return "__EMPTY_AND_REQUIRED__" as T;

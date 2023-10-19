@@ -1,3 +1,4 @@
+import { TNodePojo } from "predicate-tree-advanced-poc/dist/src";
 import { transformers } from "../../../../../transformers";
 import type { TStatusRecord } from "../../../../Evaluator/type";
 import type {
@@ -9,7 +10,6 @@ import type {
 } from "../../../types";
 import { AbstractLogicNode } from "./AbstractLogicNode";
 
-//TFsFieldLogicJunction
 class FsLogicBranchNode
   extends AbstractLogicNode
   implements TFsFieldLogicJunction<TFsJunctionOperators>
@@ -17,7 +17,7 @@ class FsLogicBranchNode
   private _ownerFieldId: string;
   private _conditional: TFsJunctionOperators;
   private _action: TFsVisibilityModes;
-  private _checks: TFsFieldLogicCheckLeaf[];
+  // private _checks: TFsFieldLogicCheckLeaf[];
   private _fieldJson: TFsFieldLogicJunctionJson;
   constructor(
     ownerFieldId: string,
@@ -30,7 +30,7 @@ class FsLogicBranchNode
     this._ownerFieldId = ownerFieldId;
     this._conditional = conditional;
     this._action = action;
-    this._checks = checks;
+    // this._checks = checks;
     this._fieldJson = fieldJson;
   }
 
@@ -68,6 +68,23 @@ class FsLogicBranchNode
     // const { action, conditional, checks } = this.fieldJson;
     // this is bad.. The issue is that it's never clear what to expect in the field 'fieldJson'
     return { ...defaults, ...this.fieldJson };
+  }
+
+  static fromPojo(nodePojo: TNodePojo<AbstractLogicNode>): FsLogicBranchNode;
+  static fromPojo(nodePojo: TNodePojo<AbstractLogicNode>): AbstractLogicNode;
+  static fromPojo(nodePojo: TNodePojo<AbstractLogicNode>): AbstractLogicNode {
+    const { nodeContent } = nodePojo;
+    // @ts-ignore - doesn't like 'checks' and honestly doesn't belong here anyway
+
+    const { ownerFieldId, conditional, action, checks, fieldJson } =
+      nodeContent as FsLogicBranchNode;
+    return new FsLogicBranchNode(
+      ownerFieldId,
+      conditional,
+      action,
+      checks,
+      fieldJson
+    );
   }
 
   getStatusMessage(

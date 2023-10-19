@@ -70,5 +70,20 @@ class FsCircularDependencyNode extends AbstractLogicNode {
       },
     ];
   }
+
+  static fromPojo(
+    nodePojo: TNodePojo<AbstractLogicNode>
+  ): FsCircularDependencyNode;
+  static fromPojo(nodePojo: TNodePojo<AbstractLogicNode>): AbstractLogicNode;
+  static fromPojo(nodePojo: TNodePojo<AbstractLogicNode>): AbstractLogicNode {
+    const { nodeContent } = nodePojo;
+    const { sourceFieldId, targetFieldId, dependentChainFieldIds } =
+      nodeContent as FsCircularDependencyNode; // using type information, this will never be an instance
+    return new FsCircularDependencyNode(
+      sourceFieldId,
+      targetFieldId,
+      dependentChainFieldIds
+    );
+  }
 }
 export { FsCircularDependencyNode };

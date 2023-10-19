@@ -8,9 +8,131 @@ import { FsLogicLeafNode } from "./LogicNodes/FsLogicLeafNode";
 import { TApiFormJson } from "../../../../type.form";
 import { FsFormModel } from "../../FsFormModel";
 import { transformers } from "../../../../transformers";
+import { AbstractLogicNode } from "./LogicNodes/AbstractLogicNode";
+import { TTreePojo } from "predicate-tree-advanced-poc/dist/src";
 describe("FsLogicTreeDeep", () => {
+  describe("pojo", () => {
+    it("toPojo (dev/debug).", () => {
+      // fieldId:  152290560  // A (ideal)
+      const tree5469299 = FsFormModel.fromApiFormJson(
+        transformers.formJson(formJson5469299 as unknown as TApiFormJson)
+      );
+
+      const tree5375703 = FsFormModel.fromApiFormJson(
+        transformers.formJson(formJson5375703 as unknown as TApiFormJson)
+      );
+
+      const aTreeBad = tree5375703.aggregateLogicTree("148456742"); //148456742
+      const bTreeBad = FsLogicTreeDeep.fromPojo(aTreeBad.toPojoAt());
+      const aTreeBadPojo = aTreeBad.toPojoAt();
+
+      const bTreeBadPojo = FsLogicTreeDeep.fromPojo(
+        aTreeBad.toPojoAt()
+      ).toPojoAt(undefined, false);
+      //bTreeBadPojo148456742
+      expect(bTreeBadPojo).toStrictEqual(bTreeBadPojo148456742);
+      const aTree = tree5469299.aggregateLogicTree("152290560");
+      const aTreePojo = aTree.toPojoAt(undefined, false);
+      expect(aTreePojo).toStrictEqual({
+        "152290560": {
+          parentId: "152290560",
+          nodeContent: {
+            nodeType: "FsVirtualRootNode",
+            fieldId: "152290560",
+            conditional: "all",
+          },
+        },
+        "152290560:0": {
+          parentId: "152290560",
+          nodeContent: {
+            nodeType: "FsLogicBranchNode",
+            ownerFieldId: "152290560",
+            action: "show",
+            conditional: "all",
+          },
+        },
+        "152290560:0:1": {
+          parentId: "152290560:0",
+          nodeContent: {
+            nodeType: "FsLogicLeafNode",
+            fieldId: "152290561",
+            condition: "equals",
+            option: "True",
+          },
+        },
+        "152290560:0:2": {
+          parentId: "152290560:0",
+          nodeContent: {
+            nodeType: "FsLogicLeafNode",
+            fieldId: "152290564",
+            condition: "equals",
+            option: "True",
+          },
+        },
+      });
+
+      const bTree = FsLogicTreeDeep.fromPojo(aTreePojo);
+      const bTreePojo = bTree.toPojoAt(undefined, false);
+      expect(bTreePojo).toStrictEqual({
+        _root_: {
+          parentId: "_root_",
+          nodeContent: {
+            nodeType: "FsVirtualRootNode",
+            fieldId: "152290560",
+            conditional: "all",
+          },
+        },
+        "_root_:0": {
+          parentId: "_root_",
+          nodeContent: {
+            nodeType: "FsLogicBranchNode",
+            ownerFieldId: "152290560",
+            action: "show",
+            conditional: "all",
+          },
+        },
+        "_root_:0:1": {
+          parentId: "_root_:0",
+          nodeContent: {
+            nodeType: "FsLogicLeafNode",
+            fieldId: "152290561",
+            condition: "equals",
+            option: "True",
+          },
+        },
+        "_root_:0:2": {
+          parentId: "_root_:0",
+          nodeContent: {
+            nodeType: "FsLogicLeafNode",
+            fieldId: "152290564",
+            condition: "equals",
+            option: "True",
+          },
+        },
+      });
+
+      expect(aTree.getChildContentAt(aTree.rootFieldId)).toStrictEqual(
+        bTree.getChildContentAt(bTree.rootFieldId)
+      );
+    });
+
+    it("fromPojo (dev/debug).", () => {
+      // fieldId:  152290560  // A (ideal)
+      const tree5469299 = FsFormModel.fromApiFormJson(
+        transformers.formJson(formJson5469299 as unknown as TApiFormJson)
+      );
+      const aTree = tree5469299.aggregateLogicTree("152290560");
+      const aTreePojo = aTree.toPojoAt(undefined, false);
+      const bTree = FsLogicTreeDeep.fromPojo(aTreePojo);
+      const bTreePojo = bTree.toPojoAt(undefined, false);
+
+      expect(aTree.getChildContentAt(aTree.rootFieldId)).toStrictEqual(
+        bTree.getChildContentAt(bTree.rootFieldId)
+      );
+    });
+  });
   describe("dev / debug", () => {
-    it("Should return branch with leafs.", () => {
+    it("Should return branch with leaves.", () => {
       const tree5488291 = FsFormModel.fromApiFormJson(
         transformers.formJson(formJson5488291 as unknown as TApiFormJson)
       );
@@ -721,6 +843,77 @@ const formJson5487084Pojo = {
         targetSourceId: "153055010",
         dependentChainFieldIds: ["153055077", "153055010", "153055041"],
       },
+    },
+  },
+};
+
+const bTreeBadPojo148456742 = {
+  _root_: {
+    parentId: "_root_",
+    nodeContent: {
+      nodeType: "FsVirtualRootNode",
+      fieldId: "148456742",
+      conditional: "all",
+    },
+  },
+  "_root_:0": {
+    parentId: "_root_",
+    nodeContent: {
+      nodeType: "FsLogicBranchNode",
+      ownerFieldId: "148456742",
+      action: "show",
+      conditional: "all",
+    },
+  },
+  "_root_:1": {
+    parentId: "_root_",
+    nodeContent: {
+      nodeType: "FsLogicBranchNode",
+      ownerFieldId: "148456741",
+      action: "show",
+      conditional: "all",
+    },
+  },
+  "_root_:2": {
+    parentId: "_root_",
+    nodeContent: {
+      nodeType: "FsLogicBranchNode",
+      ownerFieldId: "148456740",
+      action: "show",
+      conditional: "all",
+    },
+  },
+  "_root_:3": {
+    parentId: "_root_",
+    nodeContent: {
+      nodeType: "FsLogicBranchNode",
+      ownerFieldId: "148456739",
+      action: "show",
+      conditional: "all",
+    },
+  },
+  "_root_:4": {
+    parentId: "_root_",
+    nodeContent: {
+      nodeType: "FsLogicBranchNode",
+      ownerFieldId: "148456734",
+      action: "show",
+      conditional: "all",
+    },
+  },
+  "_root_:4:5": {
+    parentId: "_root_:4",
+    nodeContent: {
+      nodeType: "FsCircularDependencyNode",
+      sourceFieldId: "148456742",
+      targetSourceId: undefined,
+      dependentChainFieldIds: [
+        "148456742",
+        "148456741",
+        "148456740",
+        "148456739",
+        "148456734",
+      ],
     },
   },
 };

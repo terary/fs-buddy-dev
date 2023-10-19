@@ -70,5 +70,13 @@ class FsVirtualRootNode extends AbstractLogicNode {
 
     return statusMessage;
   }
+
+  static fromPojo(nodePojo: TNodePojo<AbstractLogicNode>): FsVirtualRootNode;
+  static fromPojo(nodePojo: TNodePojo<AbstractLogicNode>): AbstractLogicNode;
+  static fromPojo(nodePojo: TNodePojo<AbstractLogicNode>): AbstractLogicNode {
+    const { nodeContent } = nodePojo;
+    const { fieldId } = nodeContent as FsVirtualRootNode; // using type information, this will never be an instance
+    return new FsVirtualRootNode(fieldId);
+  }
 }
 export { FsVirtualRootNode };

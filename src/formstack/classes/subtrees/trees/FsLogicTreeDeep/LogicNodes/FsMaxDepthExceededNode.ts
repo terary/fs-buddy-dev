@@ -1,3 +1,4 @@
+import { TNodePojo } from "predicate-tree-advanced-poc/dist/src";
 import type { TStatusRecord } from "../../../../Evaluator/type";
 import { AbstractLogicNode } from "./AbstractLogicNode";
 
@@ -26,6 +27,14 @@ class FsMaxDepthExceededNode extends AbstractLogicNode {
         relatedFieldIds: dependentChainFieldIds,
       },
     ];
+  }
+
+  static fromPojo(
+    nodePojo: TNodePojo<AbstractLogicNode>
+  ): FsMaxDepthExceededNode;
+  static fromPojo(nodePojo: TNodePojo<AbstractLogicNode>): AbstractLogicNode;
+  static fromPojo(nodePojo: TNodePojo<AbstractLogicNode>): AbstractLogicNode {
+    return new FsMaxDepthExceededNode();
   }
 }
 export { FsMaxDepthExceededNode };

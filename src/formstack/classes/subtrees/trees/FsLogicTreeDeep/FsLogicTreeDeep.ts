@@ -1,4 +1,11 @@
-import { ITree, TTreePojo } from "predicate-tree-advanced-poc/dist/src";
+import {
+  AbstractDirectedGraph,
+  ITree,
+  ITreeVisitor,
+  TGenericNodeContent,
+  TNodePojo,
+  TTreePojo,
+} from "predicate-tree-advanced-poc/dist/src";
 import { FsCircularDependencyNode } from "./LogicNodes/FsCircularDependencyNode";
 import { FsFieldModel } from "../FsFieldModel";
 import { TFsFieldAny } from "../../../../type.field";
@@ -28,6 +35,7 @@ class FsLogicTreeDeep {
   static readonly MAX_TOTAL_NODES = 50;
   private _fsDeepLogicTree: FsLogicTreeDeepInternal;
   private _rootFieldId: string;
+
   constructor(rootNodeId?: string, nodeContent?: AbstractLogicNode) {
     // @ts-ignore
     this._rootFieldId = nodeContent?.ownerFieldId
@@ -93,12 +101,12 @@ class FsLogicTreeDeep {
   }
 
   get ownerFieldId() {
-    return this._fsDeepLogicTree.ownerFieldId;
+    return this._fsDeepLogicTree.rootFieldId;
   }
 
-  set ownerFieldId(ownerFieldId: string) {
-    this._fsDeepLogicTree.ownerFieldId = ownerFieldId;
-  }
+  // set ownerFieldId(ownerFieldId: string) {
+  //   this._fsDeepLogicTree.ownerFieldId = ownerFieldId;
+  // }
 
   get rootNodeId() {
     return this._fsDeepLogicTree.rootNodeId;
@@ -131,6 +139,59 @@ class FsLogicTreeDeep {
       shouldObfuscate
     );
   }
+
+  visitAll(visitor: ITreeVisitor<TFsLogicNode>): void {
+    this._fsDeepLogicTree.visitAllAt(visitor);
+  }
+
+  static fromPojo(srcPojoTree: TTreePojo<AbstractLogicNode>): FsLogicTreeDeep {
+    const tree = new FsLogicTreeDeep();
+    const internalTree = FsLogicTreeDeepInternal.fromPojo2(srcPojoTree);
+    tree._fsDeepLogicTree = internalTree;
+    tree._rootFieldId = internalTree.rootFieldId;
+    return tree;
+  }
+
+  private static addChildrenFromPojoOf(
+    tree: FsLogicTreeDeep,
+    pojoNodeId: string,
+    pojoDocument: TTreePojo<AbstractLogicNode>
+  ): void {}
+
+  // static x_fromPojo<P extends object, Q>(
+  //   srcPojoTree: TTreePojo<P>,
+  //   transform?:
+  //     | ((nodeContent: TNodePojo<P>) => TGenericNodeContent<P>)
+  //     | undefined
+  // ): IExpressionTree<TFsLogicNodeJson> {
+  //   const rootFieldId = parseUniquePojoRootKeyOrThrow(srcPojoTree);
+
+  //   const genericTree = AbstractDirectedGraph.fromPojo(
+  //     srcPojoTree as TTreePojo<TFsFieldLogicNode>,
+  //     transformers.TFsFieldLogicNode.fromPojo
+  //   );
+  //   // const genericTree = AbstractExpressionTree.fromPojo(
+  //   //   srcPojoTree as TTreePojo<TFsFieldLogicNode>,
+  //   //   transformers.TFsFieldLogicNode.fromPojo
+  //   // );
+
+  //   if (!genericTree) {
+  //     throw new Error("No Generic Tree");
+  //   }
+  //   const fsTree = new FsTreeLogic(
+  //     rootFieldId,
+  //     // genericTree.rootNodeId,
+  //     genericTree.getChildContentAt(genericTree.rootNodeId) as TFsFieldLogicNode
+  //   );
+
+  //   genericTree
+  //     .getChildrenContentOf(genericTree.rootNodeId)
+  //     .forEach((childContent) => {
+  //       fsTree.appendChildNodeWithContent(fsTree.rootNodeId, childContent);
+  //     });
+
+  //   return fsTree as IExpressionTree<TFsLogicNodeJson>;
+  // }
 
   static fromFieldJson(fieldJson: TFsFieldAny): FsLogicTreeDeep {
     const internalTree = FsLogicTreeDeepInternal.fromFieldJson(fieldJson);

@@ -145,14 +145,6 @@ class FsTreeLogic extends AbstractFsTreeLogic<TFsFieldLogicNode> {
 
     return this;
   }
-  static x_fromPojo<P extends object, Q>(
-    srcPojoTree: TTreePojo<TFsFieldLogicNode>,
-    transform?:
-      | ((nodeContent: TNodePojo<P>) => TGenericNodeContent<P>)
-      | undefined
-  ): IExpressionTree<TFsFieldLogicNode> {
-    return super.fromPojo(srcPojoTree);
-  }
 
   static fromPojo<FsTreeLogic, TFsFieldLogicNode>(
     srcPojoTree: TTreePojo<TFsFieldLogicNode>,

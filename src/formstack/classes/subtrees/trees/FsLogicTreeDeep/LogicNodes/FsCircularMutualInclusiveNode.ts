@@ -1,6 +1,8 @@
+import { TNodePojo } from "predicate-tree-advanced-poc/dist/src";
 import { TStatusRecord } from "../../../../Evaluator/type";
 import { TFsFieldLogicCheckLeaf } from "../../../types";
 import { FsCircularDependencyNode } from "./FsCircularDependencyNode";
+import { AbstractLogicNode } from "./AbstractLogicNode";
 
 type RuleConflictType = {
   conditionalA: TFsFieldLogicCheckLeaf;
@@ -65,6 +67,26 @@ class FsCircularMutualInclusiveNode extends FsCircularDependencyNode {
         relatedFieldIds: dependentChainFieldIds,
       },
     ];
+  }
+
+  static fromPojo(
+    nodePojo: TNodePojo<AbstractLogicNode>
+  ): FsCircularMutualInclusiveNode;
+  static fromPojo(nodePojo: TNodePojo<AbstractLogicNode>): AbstractLogicNode;
+  static fromPojo(nodePojo: TNodePojo<AbstractLogicNode>): AbstractLogicNode {
+    const { nodeContent } = nodePojo;
+    const {
+      sourceFieldId,
+      targetFieldId,
+      dependentChainFieldIds,
+      ruleConflict,
+    } = nodeContent as FsCircularMutualInclusiveNode; // using type information, this will never be an instance
+    return new FsCircularMutualInclusiveNode(
+      sourceFieldId,
+      targetFieldId,
+      dependentChainFieldIds,
+      ruleConflict
+    );
   }
 }
 export { FsCircularMutualInclusiveNode };

@@ -1,6 +1,11 @@
 import {
+  AbstractDirectedGraph,
   AbstractTree,
+  IDirectedGraph,
   IExpressionTree,
+  ITreeVisitor,
+  TGenericNodeContent,
+  TNodePojo,
   TTreePojo,
 } from "predicate-tree-advanced-poc/dist/src";
 import {
@@ -10,6 +15,7 @@ import {
   TFsJunctionOperators,
   TSimpleDictionary,
   TFsFieldLogicCheckLeaf,
+  TFsVisibilityModes,
 } from "../../types";
 import { AbstractFsTreeLogic } from "../AbstractFsTreeLogic";
 import { FsCircularDependencyNode } from "./LogicNodes/FsCircularDependencyNode";
@@ -20,18 +26,34 @@ import { TFsFieldAny } from "../../../../type.field";
 import { AbstractLogicNode } from "./LogicNodes/AbstractLogicNode";
 import { FsVirtualRootNode } from "./LogicNodes/FsVirtualRootNode";
 import { FsLogicErrorNode } from "./LogicNodes/FsLogicErrorNode";
+import { FsCircularMutualExclusiveNode } from "./LogicNodes/FsCircularMutualExclusiveNode";
+import { FsFormModel } from "../../FsFormModel";
 
-class FsLogicTreeDeepInternal extends AbstractFsTreeLogic<AbstractLogicNode> {
+class FsLogicTreeDeepInternal extends AbstractDirectedGraph<AbstractLogicNode> {
   private _dependantFieldIdsInOrder: string[] = [];
   #dependantFieldIdMap: TSimpleDictionary<AbstractLogicNode> = {};
+  private _rootFieldId!: string;
+  private _fieldJson: any;
+  private _action: TFsVisibilityModes = "Show"; /// fieldJson and action do not make sense on this class
+
   constructor(rootNodeId?: string, nodeContent?: AbstractLogicNode) {
     super(rootNodeId, nodeContent);
-
-    // if (nodeContent !== undefined) {
-    //   const fieldId = this.extractFieldIdFromNodeContentOrThrow(nodeContent);
-    //   this.appendFieldIdNode(fieldId, nodeContent);
-    // }
   }
+
+  public clone(): FsLogicTreeDeepInternal {
+    return FsLogicTreeDeepInternal.fromPojo2(this.toPojoAt());
+  }
+
+  private _toJsMatcherExpressionAt(formModel: FsFormModel, nodeId: string) {
+    const nodeContent = this.getChildContentAt(nodeId);
+    if (nodeContent instanceof FsLogicLeafNode) {
+      formModel.getEvaluator(nodeContent.fieldId);
+    } else if (this.isBranch(nodeId)) {
+    }
+  }
+
+  toJsMatcherExpression(formModel: FsFormModel) {}
+
   public appendChildNodeWithContent(
     parentNodeId: string,
     nodeContent: AbstractLogicNode
@@ -57,10 +79,14 @@ class FsLogicTreeDeepInternal extends AbstractFsTreeLogic<AbstractLogicNode> {
     this._dependantFieldIdsInOrder.push(fieldId);
   }
 
-  createSubtreeAt(nodeId: string): IExpressionTree<AbstractLogicNode> {
-    // *tmc* needs to make this a real thing, I guess: or add it to the abstract?
-    return new FsLogicTreeDeepInternal();
+  get fieldJson() {
+    return this._fieldJson;
   }
+
+  // createSubtreeAt(nodeId: string): IExpressionTree<AbstractLogicNode> {
+  //   // *tmc* needs to make this a real thing, I guess: or add it to the abstract?
+  //   return new FsLogicTreeDeepInternal();
+  // }
 
   private get dependantFieldIds() {
     return this._dependantFieldIdsInOrder.slice();
@@ -111,6 +137,17 @@ class FsLogicTreeDeepInternal extends AbstractFsTreeLogic<AbstractLogicNode> {
     return this.dependantFieldIds;
   }
 
+  protected findAllNodesOfType<T>(objectType: any): T[] {
+    const nodeIds = this.getTreeNodeIdsAt(this.rootNodeId);
+    const logicTrees = nodeIds
+      .filter(
+        (nodeId: any) => this.getChildContentAt(nodeId) instanceof objectType
+      )
+      .map((nodeId) => this.getChildContentAt(nodeId)) as T[];
+
+    return logicTrees;
+  }
+
   getLogicErrorNodes(): FsLogicErrorNode[] {
     return this.findAllNodesOfType<FsLogicErrorNode>(FsLogicErrorNode);
   }
@@ -132,6 +169,10 @@ class FsLogicTreeDeepInternal extends AbstractFsTreeLogic<AbstractLogicNode> {
     return this.dependantFieldIds.includes(fieldId);
   }
 
+  get rootFieldId() {
+    return this._rootFieldId;
+  }
+
   toPojoAt(nodeId?: string | undefined): TTreePojo<AbstractLogicNode>;
   toPojoAt(
     nodeId?: string | undefined,
@@ -141,15 +182,80 @@ class FsLogicTreeDeepInternal extends AbstractFsTreeLogic<AbstractLogicNode> {
     nodeId?: string | undefined,
     shouldObfuscate = true
   ): TTreePojo<AbstractLogicNode> {
-    const transformer = (nodeContent: AbstractLogicNode) =>
-      nodeContent.toPojo();
-    // @ts-ignore - doesn't like generic and the signature, I think the generic is goofed
-    // return super.toPojoAt(nodeId, transformer);
+    // transformer?: (<T>(nodeContent: T) => TNodePojo<T>) | undefined): TTreePojo<AbstractLogicNode>
+    const transformer = (nodeContent: AbstractLogicNode) => {
+      if (nodeContent instanceof AbstractLogicNode) {
+        return nodeContent.toPojo();
+      }
+
+      if (nodeContent === null) {
+        return null;
+      }
+
+      if ("toPojo" in nodeContent) {
+        // this probably isn't necessary
+        //@ts-ignore -'toPojo' not on type 'never' ??
+        return nodeContent.toPojo();
+      }
+
+      return nodeContent;
+    };
+
+    // @ts-ignore - transform signature not correct
     const clearPojo = super.toPojoAt(nodeId, transformer);
     if (shouldObfuscate) {
       return AbstractTree.obfuscatePojo(clearPojo);
     }
     return clearPojo;
+  }
+
+  // static fromPojo<P extends object, Q>(srcPojoTree: TTreePojo<P>, transform?: ((nodeContent: TNodePojo<P>) => TGenericNodeContent<P>) | undefined): IDirectedGraph<P> {
+  static fromPojo2(
+    srcPojoTree: TTreePojo<AbstractLogicNode>
+    // transform?:
+    //   | ((nodeContent: TNodePojo<AbstractLogicNode>) => TGenericNodeContent<AbstractLogicNode>)
+    //   | undefined
+  ): FsLogicTreeDeepInternal {
+    const rootFieldId = parseUniquePojoRootKeyOrThrow(srcPojoTree);
+    const transform = (
+      nodePojo: TNodePojo<AbstractLogicNode>
+    ): AbstractLogicNode => {
+      const { nodeContent } = nodePojo;
+      switch (nodeContent.nodeType) {
+        case "FsVirtualRootNode":
+          // @ts-ignore - 'fieldId' does not exist on type TNodePojo
+          return new FsVirtualRootNode(nodeContent.fieldId);
+        case "FsLogicBranchNode":
+          return FsLogicBranchNode.fromPojo(nodePojo);
+        case "FsLogicLeafNode":
+          return FsLogicLeafNode.fromPojo(nodePojo);
+        case "FsLogicLeafNode":
+          return FsLogicLeafNode.fromPojo(nodePojo);
+        case "FsCircularDependencyNode":
+          return FsCircularDependencyNode.fromPojo(nodePojo);
+        case "FsCircularMutualExclusiveNode":
+          return FsCircularMutualExclusiveNode.fromPojo(nodePojo);
+        case "FsCircularMutualExclusiveNode":
+          return FsCircularMutualExclusiveNode.fromPojo(nodePojo);
+
+        default:
+          // @ts-ignore - missing properties
+          return nodeContent;
+      }
+    };
+
+    const dGraph = AbstractDirectedGraph.fromPojo<
+      AbstractLogicNode,
+      FsLogicTreeDeepInternal
+    >(srcPojoTree, transform) as FsLogicTreeDeepInternal;
+
+    const tree = new FsLogicTreeDeepInternal(rootFieldId);
+    tree._nodeDictionary = dGraph._nodeDictionary;
+    tree._rootNodeId = dGraph._rootNodeId;
+    // tree._rootFieldId = rootFieldId;
+    // dependantFieldInOrder is not set here.  I think it doesn't belong on this class.  Dependant fieldIds really a leaf thing, I think
+    tree._incrementor = dGraph._incrementor;
+    return tree;
   }
 
   static fromFieldJson(fieldJson: TFsFieldAny): FsLogicTreeDeepInternal {
@@ -171,14 +277,11 @@ class FsLogicTreeDeepInternal extends AbstractFsTreeLogic<AbstractLogicNode> {
       logicJson
     );
 
-    const tree = new FsLogicTreeDeepInternal(
-      fieldJson.id || "_calc_tree_",
-      rootNode
-    );
+    const tree = new FsLogicTreeDeepInternal(fieldJson.id, rootNode);
     tree._action = action || null;
-    // @ts-ignore - this should resolve once I figured out the other typing issues
     tree._fieldJson = logicJson;
-    tree._ownerFieldId = fieldJson.id || "_calc_tree_";
+
+    tree._rootFieldId = fieldJson.id;
 
     const { leafExpressions } = transformLogicLeafJsonToLogicLeafs(
       tree.fieldJson as TFsFieldLogicJunctionJson
@@ -214,4 +317,26 @@ const transformLogicLeafJsonToLogicLeafs = (
     };
   });
   return { leafExpressions };
+};
+
+const parseUniquePojoRootKeyOrThrow = <T>(pojoDocument: TTreePojo<T>) => {
+  const candidateRootIds = parseCandidateRootNodeId(pojoDocument);
+
+  if (candidateRootIds.length !== 1) {
+    throw new Error(
+      `No distinct root found. There must exist on and only one nodeId === {parentId}. Found ${candidateRootIds.length}.`
+    );
+  }
+
+  return candidateRootIds[0];
+};
+
+const parseCandidateRootNodeId = <T>(treeObject: TTreePojo<T>): string[] => {
+  const candidateRootIds: string[] = [];
+  Object.entries(treeObject).forEach(([key, node]) => {
+    if (key === node.parentId) {
+      candidateRootIds.push(key);
+    }
+  });
+  return candidateRootIds;
 };

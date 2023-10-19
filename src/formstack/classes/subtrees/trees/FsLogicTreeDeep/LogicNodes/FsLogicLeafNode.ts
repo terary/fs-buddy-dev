@@ -1,3 +1,4 @@
+import { TNodePojo } from "predicate-tree-advanced-poc/dist/src";
 import { transformers } from "../../../../../transformers";
 import type { TStatusRecord } from "../../../../Evaluator/type";
 import {
@@ -6,7 +7,11 @@ import {
   TFsVisibilityModes,
 } from "../../../types";
 import { AbstractLogicNode } from "./AbstractLogicNode";
-
+interface ITFsFieldLogicCheckLeaf {
+  fieldId: string;
+  condition: TFsLeafOperators;
+  option: string;
+}
 //TFsFieldLogicCheckLeaf
 class FsLogicLeafNode
   extends AbstractLogicNode
@@ -41,6 +46,7 @@ class FsLogicLeafNode
       option: this.option,
     };
   }
+
   getStatusMessage(
     rootFieldId: string,
     dependentChainFieldIds?: string[]
@@ -67,6 +73,14 @@ class FsLogicLeafNode
         relatedFieldIds: dependentChainFieldIds,
       },
     ];
+  }
+
+  static fromPojo(nodePojo: TNodePojo<AbstractLogicNode>): FsLogicLeafNode;
+  static fromPojo(nodePojo: TNodePojo<AbstractLogicNode>): AbstractLogicNode;
+  static fromPojo(nodePojo: TNodePojo<AbstractLogicNode>): AbstractLogicNode {
+    const { nodeContent } = nodePojo;
+    const { fieldId, condition, option } = nodeContent as FsLogicLeafNode; // using type information, this will never be an instance
+    return new FsLogicLeafNode(fieldId, condition, option);
   }
 }
 
