@@ -64,6 +64,8 @@ class FsLogicTreeDeep {
   }
 
   clone() {
+    // fromPojo does not current preserve _dependantFieldIdsInOrder
+    // which may lead to complications when checking for circular dependencies from a clone
     return FsLogicTreeDeep.fromPojo(this.toPojoAt());
   }
 
@@ -79,6 +81,10 @@ class FsLogicTreeDeep {
     nodeId: string
   ): AbstractLogicNode | ITree<AbstractLogicNode> | null {
     return this._fsDeepLogicTree.getChildContentAt(nodeId);
+  }
+
+  getChildrenNodeIdsOf(nodeId: string): string[] {
+    return this._fsDeepLogicTree.getChildrenNodeIdsOf(nodeId);
   }
 
   getChildContentByFieldId<T = AbstractLogicNode>(fieldId: string) {

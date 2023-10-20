@@ -28,6 +28,7 @@ import { FsVirtualRootNode } from "./LogicNodes/FsVirtualRootNode";
 import { FsLogicErrorNode } from "./LogicNodes/FsLogicErrorNode";
 import { FsCircularMutualExclusiveNode } from "./LogicNodes/FsCircularMutualExclusiveNode";
 import { FsFormModel } from "../../FsFormModel";
+import { FsCircularMutualInclusiveNode } from "./LogicNodes/FsCircularMutualInclusiveNode";
 
 class FsLogicTreeDeepInternal extends AbstractDirectedGraph<AbstractLogicNode> {
   private _dependantFieldIdsInOrder: string[] = [];
@@ -233,8 +234,16 @@ class FsLogicTreeDeepInternal extends AbstractDirectedGraph<AbstractLogicNode> {
     const rootNodeContent = dGraph.getChildContentAt(
       dGraph.rootNodeId
     ) as FsVirtualRootNode;
-    // tree._rootFieldId = rootNodeContent.fieldId;
+    tree._rootFieldId = rootNodeContent.fieldId;
     tree._rootNodeId = dGraph.rootNodeId;
+    tree.getDescendantContentOf(tree.rootNodeId).forEach((nodeContent) => {
+      if (nodeContent instanceof FsLogicBranchNode) {
+        tree.#dependantFieldIdMap[nodeContent.ownerFieldId] = nodeContent;
+      } else if (nodeContent instanceof FsLogicLeafNode) {
+        tree.#dependantFieldIdMap[nodeContent.fieldId] = nodeContent;
+      }
+    });
+    // return this.#dependantFieldIdMap[fieldId] as T;
 
     // dependantFieldInOrder is not set here.  I think it doesn't belong on this class.  Dependant fieldIds really a leaf thing, I think
     tree._incrementor = dGraph._incrementor;
@@ -342,8 +351,8 @@ const transformFsLogicTreeFromPojo = (
       return FsCircularDependencyNode.fromPojo(nodePojo);
     case "FsCircularMutualExclusiveNode":
       return FsCircularMutualExclusiveNode.fromPojo(nodePojo);
-    case "FsCircularMutualExclusiveNode":
-      return FsCircularMutualExclusiveNode.fromPojo(nodePojo);
+    case "FsCircularMutualInclusiveNode":
+      return FsCircularMutualInclusiveNode.fromPojo(nodePojo);
 
     default:
       // @ts-ignore - missing properties

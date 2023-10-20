@@ -13,7 +13,7 @@ import { TTreePojo } from "predicate-tree-advanced-poc/dist/src";
 import { FsVirtualRootNode } from "./LogicNodes/FsVirtualRootNode";
 describe("FsLogicTreeDeep", () => {
   describe("pojo", () => {
-    it.only("Should be able create logically identical clone.", () => {
+    it("(clone) Should be able create logically identical clone.", () => {
       const tree5469299 = FsFormModel.fromApiFormJson(
         transformers.formJson(formJson5469299 as unknown as TApiFormJson)
       );
@@ -29,6 +29,11 @@ describe("FsLogicTreeDeep", () => {
       const bRootNodeContent = bTree.getChildContentAt(
         bTree.rootNodeId
       ) as FsVirtualRootNode;
+
+      const aNodeContent = aTree.getChildContentByFieldId("152290561");
+      const bNodeContent = bTree.getChildContentByFieldId("152290561");
+      expect(aNodeContent).toStrictEqual(bNodeContent);
+      expect(aNodeContent).not.toBe(bNodeContent);
 
       expect(bRootNodeContent.conditional).toStrictEqual("all");
       expect(bRootNodeContent.fieldId).toStrictEqual("152290560");
@@ -142,9 +147,8 @@ describe("FsLogicTreeDeep", () => {
       const aTreePojo = aTree.toPojoAt(undefined, false);
       const bTree = FsLogicTreeDeep.fromPojo(aTreePojo);
       const bTreePojo = bTree.toPojoAt(undefined, false);
-
-      expect(aTree.getChildContentAt(aTree.rootFieldId)).toStrictEqual(
-        bTree.getChildContentAt(bTree.rootFieldId)
+      expect(aTree.getChildContentAt(aTree.rootNodeId)).toStrictEqual(
+        bTree.getChildContentAt(bTree.rootNodeId)
       );
     });
   });
