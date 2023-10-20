@@ -32,6 +32,10 @@ import { FsFormModel } from "../../FsFormModel";
 class FsLogicTreeDeepInternal extends AbstractDirectedGraph<AbstractLogicNode> {
   private _dependantFieldIdsInOrder: string[] = [];
   #dependantFieldIdMap: TSimpleDictionary<AbstractLogicNode> = {};
+  // these should not be used.  Chronological order will not be preserved across
+  // clones, or pojo must include it in the root node.
+  // but this doesn't make sense on root.  We're not doing subtrees
+
   private _rootFieldId!: string;
   private _fieldJson: any;
   private _action: TFsVisibilityModes = "Show"; /// fieldJson and action do not make sense on this class
@@ -216,43 +220,22 @@ class FsLogicTreeDeepInternal extends AbstractDirectedGraph<AbstractLogicNode> {
     //   | ((nodeContent: TNodePojo<AbstractLogicNode>) => TGenericNodeContent<AbstractLogicNode>)
     //   | undefined
   ): FsLogicTreeDeepInternal {
-    const rootFieldId = parseUniquePojoRootKeyOrThrow(srcPojoTree);
-    const transform = (
-      nodePojo: TNodePojo<AbstractLogicNode>
-    ): AbstractLogicNode => {
-      const { nodeContent } = nodePojo;
-      switch (nodeContent.nodeType) {
-        case "FsVirtualRootNode":
-          // @ts-ignore - 'fieldId' does not exist on type TNodePojo
-          return new FsVirtualRootNode(nodeContent.fieldId);
-        case "FsLogicBranchNode":
-          return FsLogicBranchNode.fromPojo(nodePojo);
-        case "FsLogicLeafNode":
-          return FsLogicLeafNode.fromPojo(nodePojo);
-        case "FsLogicLeafNode":
-          return FsLogicLeafNode.fromPojo(nodePojo);
-        case "FsCircularDependencyNode":
-          return FsCircularDependencyNode.fromPojo(nodePojo);
-        case "FsCircularMutualExclusiveNode":
-          return FsCircularMutualExclusiveNode.fromPojo(nodePojo);
-        case "FsCircularMutualExclusiveNode":
-          return FsCircularMutualExclusiveNode.fromPojo(nodePojo);
-
-        default:
-          // @ts-ignore - missing properties
-          return nodeContent;
-      }
-    };
+    const rootIdCandidate = parseUniquePojoRootKeyOrThrow(srcPojoTree);
 
     const dGraph = AbstractDirectedGraph.fromPojo<
       AbstractLogicNode,
       FsLogicTreeDeepInternal
-    >(srcPojoTree, transform) as FsLogicTreeDeepInternal;
+    >(srcPojoTree, transformFsLogicTreeFromPojo) as FsLogicTreeDeepInternal;
 
-    const tree = new FsLogicTreeDeepInternal(rootFieldId);
+    const tree = new FsLogicTreeDeepInternal(rootIdCandidate);
     tree._nodeDictionary = dGraph._nodeDictionary;
     tree._rootNodeId = dGraph._rootNodeId;
-    // tree._rootFieldId = rootFieldId;
+    const rootNodeContent = dGraph.getChildContentAt(
+      dGraph.rootNodeId
+    ) as FsVirtualRootNode;
+    // tree._rootFieldId = rootNodeContent.fieldId;
+    tree._rootNodeId = dGraph.rootNodeId;
+
     // dependantFieldInOrder is not set here.  I think it doesn't belong on this class.  Dependant fieldIds really a leaf thing, I think
     tree._incrementor = dGraph._incrementor;
     return tree;
@@ -339,4 +322,31 @@ const parseCandidateRootNodeId = <T>(treeObject: TTreePojo<T>): string[] => {
     }
   });
   return candidateRootIds;
+};
+
+const transformFsLogicTreeFromPojo = (
+  nodePojo: TNodePojo<AbstractLogicNode>
+): AbstractLogicNode => {
+  const { nodeContent } = nodePojo;
+  switch (nodeContent.nodeType) {
+    case "FsVirtualRootNode":
+      // @ts-ignore - 'fieldId' does not exist on type TNodePojo
+      return new FsVirtualRootNode(nodeContent.fieldId);
+    case "FsLogicBranchNode":
+      return FsLogicBranchNode.fromPojo(nodePojo);
+    case "FsLogicLeafNode":
+      return FsLogicLeafNode.fromPojo(nodePojo);
+    case "FsLogicLeafNode":
+      return FsLogicLeafNode.fromPojo(nodePojo);
+    case "FsCircularDependencyNode":
+      return FsCircularDependencyNode.fromPojo(nodePojo);
+    case "FsCircularMutualExclusiveNode":
+      return FsCircularMutualExclusiveNode.fromPojo(nodePojo);
+    case "FsCircularMutualExclusiveNode":
+      return FsCircularMutualExclusiveNode.fromPojo(nodePojo);
+
+    default:
+      // @ts-ignore - missing properties
+      return nodeContent;
+  }
 };

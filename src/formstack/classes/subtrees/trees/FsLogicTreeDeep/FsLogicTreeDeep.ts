@@ -63,6 +63,10 @@ class FsLogicTreeDeep {
     return this._rootFieldId;
   }
 
+  clone() {
+    return FsLogicTreeDeep.fromPojo(this.toPojoAt());
+  }
+
   countTotalNodes() {
     return this._fsDeepLogicTree.countTotalNodes();
   }
@@ -152,11 +156,11 @@ class FsLogicTreeDeep {
     return tree;
   }
 
-  private static addChildrenFromPojoOf(
-    tree: FsLogicTreeDeep,
-    pojoNodeId: string,
-    pojoDocument: TTreePojo<AbstractLogicNode>
-  ): void {}
+  // private static addChildrenFromPojoOf(
+  //   tree: FsLogicTreeDeep,
+  //   pojoNodeId: string,
+  //   pojoDocument: TTreePojo<AbstractLogicNode>
+  // ): void {}
 
   // static x_fromPojo<P extends object, Q>(
   //   srcPojoTree: TTreePojo<P>,

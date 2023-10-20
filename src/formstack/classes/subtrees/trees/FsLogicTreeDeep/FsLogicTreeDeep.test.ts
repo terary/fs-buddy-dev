@@ -10,8 +10,29 @@ import { FsFormModel } from "../../FsFormModel";
 import { transformers } from "../../../../transformers";
 import { AbstractLogicNode } from "./LogicNodes/AbstractLogicNode";
 import { TTreePojo } from "predicate-tree-advanced-poc/dist/src";
+import { FsVirtualRootNode } from "./LogicNodes/FsVirtualRootNode";
 describe("FsLogicTreeDeep", () => {
   describe("pojo", () => {
+    it.only("Should be able create logically identical clone.", () => {
+      const tree5469299 = FsFormModel.fromApiFormJson(
+        transformers.formJson(formJson5469299 as unknown as TApiFormJson)
+      );
+      const aTree = tree5469299.aggregateLogicTree("152290560");
+      const bTree = aTree.clone();
+
+      // FsLogicTreeDeep.fromPojo(aTree.toPojoAt());
+
+      expect(aTree.getChildContentAt(aTree.rootNodeId)).toStrictEqual(
+        bTree.getChildContentAt(bTree.rootNodeId)
+      );
+      const x = bTree.getChildContentAt(bTree.rootNodeId);
+      const bRootNodeContent = bTree.getChildContentAt(
+        bTree.rootNodeId
+      ) as FsVirtualRootNode;
+
+      expect(bRootNodeContent.conditional).toStrictEqual("all");
+      expect(bRootNodeContent.fieldId).toStrictEqual("152290560");
+    });
     it("toPojo (dev/debug).", () => {
       // fieldId:  152290560  // A (ideal)
       const tree5469299 = FsFormModel.fromApiFormJson(
@@ -110,10 +131,6 @@ describe("FsLogicTreeDeep", () => {
           },
         },
       });
-
-      expect(aTree.getChildContentAt(aTree.rootFieldId)).toStrictEqual(
-        bTree.getChildContentAt(bTree.rootFieldId)
-      );
     });
 
     it("fromPojo (dev/debug).", () => {
