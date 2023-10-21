@@ -1,6 +1,10 @@
 import { FsFormModel, FsLogicTreeDeep } from "../classes/subtrees";
 import { Evaluator } from "../classes/Evaluator";
-import { TFsLeafOperators } from "../classes/subtrees/types";
+import {
+  TFsJunctionOperators,
+  TFsLeafOperators,
+  TFsLogicNode,
+} from "../classes/subtrees/types";
 import {
   FsCircularDependencyNode,
   FsCircularMutualExclusiveNode,
@@ -11,29 +15,49 @@ import {
 import { FsVirtualRootNode } from "../classes/subtrees/trees/FsLogicTreeDeep/LogicNodes/FsVirtualRootNode";
 import { TFsFieldType } from "../type.field";
 
-const FsLogicTreeDeepToJsMatcher = (
+const getParameterCommentBlock = (
   tree: FsLogicTreeDeep,
-  formModel: FsFormModel
-): Function => {
-  let fnBody = "";
-  const fnParameterName = "_sd";
+  formModel: FsFormModel,
+  fnParameterName: string
+) => {
   const parameterCommentString = tree
-    .getDependentFieldIds()
-    .map((fieldId) => {
+    // .getDependentFieldIds()
+    .getAllLeafContents()
+    .map((leafNodeContent) => {
+      const { fieldId } = leafNodeContent;
       const fieldModel = formModel.getFieldTreeByFieldIdOrThrow(fieldId);
-      const evaluator = Evaluator.getEvaluatorWithFieldJson(
-        fieldModel.fieldJson
-      );
+      // const evaluator = Evaluator.getEvaluatorWithFieldJson(
+      //   fieldModel.fieldJson
+      // );
       return `// ${fnParameterName}['${fieldId}'], type: ${
         fieldModel?.fieldType
       }, label '${fieldModel?.label.substring(0, 99)}'`;
     })
     .join("\n");
+  return parameterCommentString;
+};
 
-  let jsExpression = transformTreeAt(tree, formModel, tree.rootNodeId, 0);
-  fnBody += `${parameterCommentString}\nreturn(\n ${jsExpression} \n);`;
+const FsLogicTreeDeepToJsMatcher = (
+  tree: FsLogicTreeDeep,
+  formModel: FsFormModel,
+  atNodeId?: string
+): Function => {
+  let fnBody = "";
+  const fnParameterName = "_sd";
+  const parameterCommentString = getParameterCommentBlock(
+    tree,
+    formModel,
+    fnParameterName
+  );
+  let jsExpression = transformTreeAt(
+    tree,
+    formModel,
+    atNodeId || tree.rootNodeId,
+    0
+  );
+  fnBody += `${parameterCommentString}\nreturn(\n ${jsExpression}\n);`;
   // console.log({ fnBody });
-  // console.log(fnBody);
+  console.log(fnBody);
   const fn = new Function(fnParameterName, fnBody);
 
   return fn;
@@ -48,7 +72,10 @@ const quoteEnclose = (value: string, fieldType: TFsFieldType) => {
       return `'${value}'`;
   }
 };
-const tab = (count: number) => "\t".repeat(count);
+const tabCharacter = " ";
+// const tabCharacter = "\t";
+const tab = (count: number = 0) => tabCharacter.repeat(count > 0 ? count : 0);
+
 const transformTreeAt = (
   tree: FsLogicTreeDeep,
   formModel: FsFormModel,
@@ -61,7 +88,7 @@ const transformTreeAt = (
       rootNodeContent.fieldId
     );
     const value = quoteEnclose(rootNodeContent.option, fieldType);
-    const operator = transformOperator(rootNodeContent.condition);
+    const operator = transformLeafOperator(rootNodeContent.condition);
     return `(_sd['${rootNodeContent.fieldId}'] ${operator} ${value})`;
   }
 
@@ -69,19 +96,31 @@ const transformTreeAt = (
     rootNodeContent instanceof FsLogicBranchNode ||
     rootNodeContent instanceof FsVirtualRootNode
   ) {
-    const x = tree.getChildrenNodeIdsOf(nodeId);
-    return (
-      `(\n` +
+    const x =
+      `${tab(tabCount + 1)}(\n${tab(tabCount + 3)} ` +
+      // `\n${tab(tabCount + 2)}(` +
+      // `\n${tab(tabCount + 2)}` +
       tree
         .getChildrenNodeIdsOf(nodeId)
-        .map(
-          (childNodeId) =>
-            `\n${tab(tabCount)}` +
-            transformTreeAt(tree, formModel, childNodeId, tabCount++)
+        .map((childNodeId, index) =>
+          transformTreeAt(tree, formModel, childNodeId, tabCount++)
         )
-        .join(`\n && `) +
-      `\n)`
-    );
+        .join(
+          `\n${tab(tabCount)} ${transformJunctionOperator(
+            rootNodeContent.conditional
+          )} `
+        ) +
+      `\n${tab(tabCount - 2)})`;
+    return x;
+    // return (
+    //   `${tab(tabCount)}` +
+    //   tree
+    //     .getChildrenNodeIdsOf(nodeId)
+    //     .map((childNodeId, index) =>
+    //       transformTreeAt(tree, formModel, childNodeId, tabCount++)
+    //     )
+    //     .join(`\n && `)
+    // );
   }
 
   return ""; // what shall we do with virtual and/or error nodes?
@@ -89,7 +128,17 @@ const transformTreeAt = (
 
 export { FsLogicTreeDeepToJsMatcher };
 
-const transformOperator = (operator: TFsLeafOperators): TFsJsOperators => {
+const transformJunctionOperator = (
+  operator: TFsJunctionOperators
+): TFsJsJunctionOperators => {
+  if (operator == "any") {
+    return "||";
+  }
+  return "&&";
+};
+const transformLeafOperator = (
+  operator: TFsLeafOperators
+): TFsJsLeafOperators => {
   switch (operator) {
     case "lessthan":
     case "lt": // numeric operators
@@ -118,8 +167,8 @@ const transformOperator = (operator: TFsLeafOperators): TFsJsOperators => {
       return "?";
   }
 };
-
-type TFsJsOperators =
+type TFsJsJunctionOperators = "&&" | "||";
+type TFsJsLeafOperators =
   // these probably need to be confirmed
   | "<" // numeric operators
   | ">" // numeric operators

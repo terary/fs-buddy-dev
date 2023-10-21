@@ -73,6 +73,10 @@ class FsLogicTreeDeep {
     return this._fsDeepLogicTree.countTotalNodes();
   }
 
+  getAllLeafContents(): FsLogicLeafNode[] {
+    return this._fsDeepLogicTree.getAllLeafContents();
+  }
+
   getDependentChainFieldIds() {
     return this._fsDeepLogicTree.getDependantFieldIds() || [];
   }
