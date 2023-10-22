@@ -105,15 +105,14 @@ return(
     // );
     // agTree152290560.appendChildNodeWithContent(childrenId[0], newLeaf);
 
-      two paths forward:
-      A) Optimize tree
-      B) When encounter single child - duplicate it.  Effectively will have no effect
+    // two paths forward:
+    // A) Optimize tree
+    // B) When encounter single child - duplicate it.  Effectively will have no effect
 
-
-      ** More important ** 
-      Why are the system/error messages not show for panels
-      Why are the circular node errors showing on logic (see 153413615 vs. the tree - there are two circular ref that dont show)
-      Need to resolve circular ref better - if parent is and/or ... 
+    // ** More important **
+    // Why are the system/error messages not show for panels
+    // Why are the circular node errors showing on logic (see 153413615 vs. the tree - there are two circular ref that dont show)
+    // Need to resolve circular ref better - if parent is and/or ...
 
     const matcherFunction = FsLogicTreeDeepToJsMatcher(
       agTree153413615,
