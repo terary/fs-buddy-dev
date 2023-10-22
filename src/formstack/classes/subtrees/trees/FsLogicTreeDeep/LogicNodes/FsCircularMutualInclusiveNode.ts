@@ -1,4 +1,5 @@
 import { TNodePojo } from "predicate-tree-advanced-poc/dist/src";
+import { transformers } from "../../../../../transformers";
 import { TStatusRecord } from "../../../../Evaluator/type";
 import { TFsFieldLogicCheckLeaf } from "../../../types";
 import { FsCircularDependencyNode } from "./FsCircularDependencyNode";
@@ -51,8 +52,9 @@ class FsCircularMutualInclusiveNode extends FsCircularDependencyNode {
   ): TStatusRecord[] {
     const dependentsAsString = "'" + dependentChainFieldIds?.join("', '") + "'";
     const message =
-      `Logic: circular reference. root field: ${rootFieldId}, attempted fieldId: '${this.targetFieldId}', dependency chain: "${dependentsAsString}".` +
-      "  Potentially resolvable.";
+      `Logic: Mutually Inclusive circular reference. root field: ${rootFieldId}, attempted fieldId: '${this.targetFieldId}', dependency chain: "${dependentsAsString}".` +
+      "  Potentially resolvable. Rule Conflict:" +
+      transformers.Utility.jsObjectToHtmlFriendlyString(this.ruleConflict);
     return [
       {
         severity: "logic",
@@ -90,3 +92,9 @@ class FsCircularMutualInclusiveNode extends FsCircularDependencyNode {
   }
 }
 export { FsCircularMutualInclusiveNode };
+
+// (warn), Number of fields with Mutually Inclusive (resolvable) circular references: 3
+// (warn), Number of fields with Mutually Exclusive circular references: 1
+// (warn), Number of fields with circular references: 15
+
+// Thoses numbers do not make sense

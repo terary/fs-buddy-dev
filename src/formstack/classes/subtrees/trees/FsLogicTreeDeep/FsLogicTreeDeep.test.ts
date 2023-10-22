@@ -153,6 +153,118 @@ describe("FsLogicTreeDeep", () => {
     });
   });
   describe("dev / debug", () => {
+    it.only("dev/debug.", () => {
+      // const tree5488291 = FsFormModel.fromApiFormJson(
+      //   transformers.formJson(formJson5488291 as unknown as TApiFormJson)
+      // );
+      const tree5469299 = FsFormModel.fromApiFormJson(
+        transformers.formJson(formJson5469299 as unknown as TApiFormJson)
+      );
+
+      const deepTree153413615 = tree5469299.aggregateLogicTree("153413615");
+      const allStatusMessages = deepTree153413615.getStatusMessage();
+      const allStatusMessagesFiltered = allStatusMessages.filter(
+        (message) => message.severity != "debug"
+      );
+
+      const logicStatusMessage = tree5469299.getAllLogicStatusMessages();
+      const pojo = deepTree153413615.toPojoAt(undefined, false);
+      expect(pojo).toStrictEqual({
+        "153413615": {
+          parentId: "153413615",
+          nodeContent: {
+            nodeType: "FsVirtualRootNode",
+            fieldId: "153413615",
+            conditional: "all",
+          },
+        },
+        "153413615:0": {
+          parentId: "153413615",
+          nodeContent: {
+            nodeType: "FsLogicBranchNode",
+            ownerFieldId: "153413615",
+            action: "show",
+            conditional: "all",
+          },
+        },
+        "153413615:0:1": {
+          parentId: "153413615:0",
+          nodeContent: {
+            nodeType: "FsLogicLeafNode",
+            fieldId: "152290551",
+            condition: "equals",
+            option: "Neutral",
+          },
+        },
+        "153413615:2": {
+          parentId: "153413615",
+          nodeContent: {
+            nodeType: "FsLogicBranchNode",
+            ownerFieldId: "153413614",
+            action: "show",
+            conditional: "any",
+          },
+        },
+        "153413615:2:3": {
+          parentId: "153413615:2",
+          nodeContent: {
+            nodeType: "FsCircularMutualInclusiveNode",
+            ruleConflict: {
+              conditionalB: {
+                condition: "equals",
+                option: "Neutral",
+                fieldId: "152290551",
+              },
+              conditionalA: {
+                option: "Neutral",
+                condition: "equals",
+                fieldId: "152290551",
+              },
+            },
+            sourceFieldId: "153413615",
+            targetSourceId: "152290551",
+            dependentChainFieldIds: ["153413615", "152290551", "153413614"],
+          },
+        },
+        "153413615:2:4": {
+          parentId: "153413615:2",
+          nodeContent: {
+            nodeType: "FsLogicLeafNode",
+            fieldId: "152293117",
+            condition: "equals",
+            option: "Zero",
+          },
+        },
+        "153413615:2:5": {
+          parentId: "153413615:2",
+          nodeContent: {
+            nodeType: "FsCircularMutualInclusiveNode",
+            ruleConflict: {
+              conditionalB: {
+                condition: "equals",
+                option: "Zero",
+                fieldId: "152293117",
+              },
+              conditionalA: {
+                option: "One",
+                condition: "equals",
+                fieldId: "152293117",
+              },
+            },
+            sourceFieldId: "153413615",
+            targetSourceId: "152293117",
+            dependentChainFieldIds: [
+              "153413615",
+              "152290551",
+              "153413614",
+              "152290551",
+              "152293117",
+            ],
+          },
+        },
+      });
+      // 5487084
+    });
     it("Should return branch with leaves.", () => {
       const tree5488291 = FsFormModel.fromApiFormJson(
         transformers.formJson(formJson5488291 as unknown as TApiFormJson)

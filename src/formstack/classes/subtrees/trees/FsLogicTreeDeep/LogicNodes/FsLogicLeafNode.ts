@@ -31,9 +31,11 @@ class FsLogicLeafNode
   get fieldId() {
     return this._fieldId;
   }
+
   get condition() {
     return this._condition;
   }
+
   get option() {
     return this._option;
   }

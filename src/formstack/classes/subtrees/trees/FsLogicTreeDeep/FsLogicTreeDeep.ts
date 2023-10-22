@@ -63,6 +63,10 @@ class FsLogicTreeDeep {
     return this._rootFieldId;
   }
 
+  getParentNodeId(childNodeId: string): string {
+    return this._fsDeepLogicTree.getParentNodeId(childNodeId);
+  }
+
   clone() {
     // fromPojo does not current preserve _dependantFieldIdsInOrder
     // which may lead to complications when checking for circular dependencies from a clone
@@ -81,10 +85,13 @@ class FsLogicTreeDeep {
     return this._fsDeepLogicTree.getDependantFieldIds() || [];
   }
 
-  getChildContentAt(
-    nodeId: string
-  ): AbstractLogicNode | ITree<AbstractLogicNode> | null {
-    return this._fsDeepLogicTree.getChildContentAt(nodeId);
+  // getChildContentAt<T>(nodeId: string): T;
+  // getChildContentAt(
+  //   nodeId: string
+  // ): AbstractLogicNode | ITree<AbstractLogicNode> | null;
+
+  getChildContentAt<T = AbstractLogicNode>(nodeId: string): T {
+    return this._fsDeepLogicTree.getChildContentAt(nodeId) as T;
   }
 
   getChildrenNodeIdsOf(nodeId: string): string[] {
@@ -101,6 +108,14 @@ class FsLogicTreeDeep {
 
   getCircularLogicNodes(): FsCircularDependencyNode[] {
     return this._fsDeepLogicTree.getCircularLogicNodes();
+  }
+
+  getCircularMutuallyExclusiveLogicNodes(): FsCircularDependencyNode[] {
+    return this._fsDeepLogicTree.getCircularMutuallyExclusiveLogicNodes();
+  }
+
+  getCircularMutuallyInclusiveLogicNodes(): FsCircularDependencyNode[] {
+    return this._fsDeepLogicTree.getCircularMutuallyInclusiveLogicNodes();
   }
 
   getDependentFieldIds(): string[] {
@@ -236,7 +251,9 @@ class FsLogicTreeDeep {
   private static getCircularReferenceNode(
     targetFieldId: string,
     deepTree: FsLogicTreeDeep,
-    targetFieldContent: TFsLogicNode
+    targetFieldContent: TFsLogicNode,
+    formModel: FsFormModel,
+    parentJunctionOperator?: TFsJunctionOperators
   ): FsCircularDependencyNode {
     const existingChildContent = deepTree.getChildContentByFieldId(
       targetFieldId
@@ -244,22 +261,43 @@ class FsLogicTreeDeep {
       | TFsFieldLogicJunction<TFsJunctionOperators>
       | TFsFieldLogicCheckLeaf;
 
+    // const parentField =
+
     if (existingChildContent instanceof FsLogicLeafNode) {
+      // parentJunctionOperator
       if (
-        // @ts-ignore - not sure target is leaf (therefore maybe now "condition")
-        targetFieldContent.condition === existingChildContent.condition &&
-        // @ts-ignore - not sure target is leaf (therefore maybe now "option")
-        targetFieldContent.option === existingChildContent.option
+        ((targetFieldContent as FsLogicLeafNode).condition ===
+          existingChildContent.condition &&
+          (targetFieldContent as FsLogicLeafNode).option ===
+            existingChildContent.option) ||
+        parentJunctionOperator == "any" // this "any" could be further refined.
       ) {
+        const {
+          option: optionA,
+          condition: conditionA,
+          fieldId: fieldIdA,
+        } = targetFieldContent as FsLogicLeafNode;
+        const {
+          option: optionB,
+          condition: conditionB,
+          fieldId: fieldIdB,
+        } = existingChildContent as FsLogicLeafNode;
+
         return new FsCircularMutualInclusiveNode(
           deepTree.rootFieldId,
           targetFieldId,
           deepTree.getDependentFieldIds(),
           {
-            conditionalA:
-              targetFieldContent as unknown as TFsFieldLogicCheckLeaf,
-            conditionalB:
-              existingChildContent as unknown as TFsFieldLogicCheckLeaf,
+            conditionalA: {
+              option: optionA,
+              condition: conditionA,
+              fieldId: fieldIdA,
+            },
+            conditionalB: {
+              option: optionB,
+              condition: conditionB,
+              fieldId: fieldIdB,
+            },
           }
         );
       } else {
@@ -371,12 +409,17 @@ class FsLogicTreeDeep {
 
     // @ts-ignore  -- maybe isExist should be defined with an interface
     if (deepTree._fsDeepLogicTree.isExistInDependencyChain(nodeContent)) {
+      // const { conditional: parentJunctionOperator } =
+      //   deepTree.getChildContentAt<FsLogicBranchNode>(parentFieldId);
+      // console.log({ parentJunctionOperator });
+
       deepTree.appendChildNodeWithContent(
         deepTreeNodeId,
         FsLogicTreeDeep.getCircularReferenceNode(
           parentFieldId,
           deepTree,
-          nodeContent
+          nodeContent,
+          fieldCollection
         )
       );
       return deepTree;
@@ -425,10 +468,18 @@ class FsLogicTreeDeep {
       const childTreeField = fieldCollection.getFieldTreeByFieldId(fieldId);
 
       if (deepTree.isExistInDependencyChain(childTreeField)) {
+        // if two children from the same parent, conflict, and the parent is "any" then conflict resolves 1, else 0
+
+        // const grandParentNodeId = deepTree.getParentNodeId(newBranchNodeId);
+        const { conditional: parentJunctionOperator } =
+          deepTree.getChildContentAt<FsLogicBranchNode>(newBranchNodeId);
+
         const circularReferenceNode = FsLogicTreeDeep.getCircularReferenceNode(
           fieldId,
           deepTree,
-          childNodeContent
+          childNodeContent,
+          fieldCollection,
+          parentJunctionOperator
         );
         deepTree.appendChildNodeWithContent(
           newBranchNodeId,

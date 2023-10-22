@@ -1,4 +1,6 @@
 import { TNodePojo } from "predicate-tree-advanced-poc/dist/src";
+import { transformers } from "../../../../../transformers";
+import { TStatusRecord } from "../../../../Evaluator/type";
 import { TFsFieldLogicCheckLeaf } from "../../../types";
 import { FsCircularDependencyNode } from "./FsCircularDependencyNode";
 import { AbstractLogicNode } from "./AbstractLogicNode";
@@ -44,24 +46,29 @@ class FsCircularMutualExclusiveNode extends FsCircularDependencyNode {
     };
   }
 
-  static fromPojo(
-    nodePojo: TNodePojo<AbstractLogicNode>
-  ): FsCircularMutualExclusiveNode;
-  static fromPojo(nodePojo: TNodePojo<AbstractLogicNode>): AbstractLogicNode;
-  static fromPojo(nodePojo: TNodePojo<AbstractLogicNode>): AbstractLogicNode {
-    const { nodeContent } = nodePojo;
-    const {
-      sourceFieldId,
-      targetFieldId,
-      dependentChainFieldIds,
-      ruleConflict,
-    } = nodeContent as FsCircularMutualExclusiveNode; // using type information, this will never be an instance
-    return new FsCircularMutualExclusiveNode(
-      sourceFieldId,
-      targetFieldId,
-      dependentChainFieldIds,
-      ruleConflict
-    );
+  getStatusMessage(
+    rootFieldId: string,
+    dependentChainFieldIds?: string[]
+  ): TStatusRecord[] {
+    const dependentsAsString = "'" + dependentChainFieldIds?.join("', '") + "'";
+    const message =
+      `Logic: Mutually Exclusive circular reference. root field: ${rootFieldId}, attempted fieldId: '${this.targetFieldId}', dependency chain: "${dependentsAsString}".` +
+      "Rule Conflict:" +
+      transformers.Utility.jsObjectToHtmlFriendlyString(this.ruleConflict);
+    return [
+      {
+        severity: "logic",
+        fieldId: this.targetFieldId,
+        message,
+        relatedFieldIds: dependentChainFieldIds,
+      },
+      {
+        severity: "warn", // duplicate message is intentional
+        fieldId: this.targetFieldId,
+        message,
+        relatedFieldIds: dependentChainFieldIds,
+      },
+    ];
   }
 }
 export { FsCircularMutualExclusiveNode };

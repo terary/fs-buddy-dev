@@ -29,7 +29,7 @@ class FsFormModel extends AbstractExpressionTree<
 > {
   private _dependantFieldIds: string[] = []; // is this really used?
   private _fieldIdNodeMap: { [fieldId: string]: FsFieldModel } = {};
-  #deepLogicTreesFieldIdMap!: TSimpleDictionary<FsLogicTreeDeep | null>;
+  #deepLogicTreesFieldIdMap!: TSimpleDictionary<FsLogicTreeDeep | null>; // = {};
 
   createSubtreeAt(targetNodeId: string): FsFormModel {
     const subtree = new FsFormModel("_subtree_");
@@ -82,6 +82,12 @@ class FsFormModel extends AbstractExpressionTree<
     // atNodeId?: string,
     // extendedTree?: FsLogicTreeDeep
   ): FsLogicTreeDeep | null {
+    // #deepLogicTreesFieldIdMap
+    // if (this.#deepLogicTreesFieldIdMap[field.fieldId] === undefined) {
+    //   this.#deepLogicTreesFieldIdMap[field.fieldId] =
+    //     FsLogicTreeDeep.fromFormModel(field.fieldId, this);
+    // }
+    // return this.#deepLogicTreesFieldIdMap[field.fieldId];
     return FsLogicTreeDeep.fromFormModel(field.fieldId, this);
   }
 
@@ -134,12 +140,34 @@ class FsFormModel extends AbstractExpressionTree<
       // return false; // necessary?
     });
   }
+
   getFieldIdsWithCircularLogic(): string[] {
+    const allFieldIds = Object.keys(this._fieldIdNodeMap);
+    return allFieldIds.filter((fieldId) => {
+      const agTree = this.getDeepLogicTreeByFieldId(fieldId);
+      if (agTree) {
+        return agTree.getCircularLogicNodes().length > 0;
+      }
+    });
+  }
+
+  getFieldIdsWithCircularMutuallyExclusiveLogic(): string[] {
     const allFieldIds = Object.keys(this._fieldIdNodeMap);
     return allFieldIds.filter((fieldId) => {
       const agTree = this.aggregateLogicTree(fieldId);
       if (agTree) {
-        return agTree.getCircularLogicNodes().length > 0;
+        return agTree.getCircularMutuallyExclusiveLogicNodes().length > 0;
+      }
+      // return false; // necessary?
+    });
+  }
+
+  getFieldIdsWithCircularMutuallyInclusiveLogic(): string[] {
+    const allFieldIds = Object.keys(this._fieldIdNodeMap);
+    return allFieldIds.filter((fieldId) => {
+      const agTree = this.aggregateLogicTree(fieldId);
+      if (agTree) {
+        return agTree.getCircularMutuallyInclusiveLogicNodes().length > 0;
       }
       // return false; // necessary?
     });
