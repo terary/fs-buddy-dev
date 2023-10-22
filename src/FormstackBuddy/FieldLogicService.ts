@@ -75,7 +75,7 @@ class FieldLogicService {
         return;
       }
 
-      const x = logicTree.getAllFieldIdsLeafTermReference();
+      // const x = logicTree.getAllFieldIdsLeafTermReference();
       logicTree.getAllFieldIdsLeafTermReference().forEach((fieldId) => {
         if (!fieldUsageCounts[fieldId]) {
           fieldUsageCounts[fieldId] = 0;
@@ -86,7 +86,6 @@ class FieldLogicService {
       const fieldCounts = logicTree.getStatisticCounts();
       (Object.keys(fieldCounts) as TLogicTreeDeepStatisticCountField[]).forEach(
         (statName) => {
-          this._fieldCollection;
           logicCounts[statName] += fieldCounts[statName];
         }
       );
@@ -136,6 +135,11 @@ class FieldLogicService {
         "Checked all fieldIds in logic expression are contained in this form (don't laugh, it happens).<br />"
       )
     );
+    const circularMI =
+      this.getFieldIdsWithCircularMutuallyInclusiveReferences();
+    const circularEE =
+      this.getFieldIdsWithCircularMutuallyExclusiveReferences();
+    const circular = this.getFieldIdsWithCircularReferences();
 
     statusMessages.push(
       // fieldUsageCounts
@@ -157,7 +161,8 @@ class FieldLogicService {
         "info",
         `Number of fields with root logic:  ${
           this.getFieldIdsWithLogic().length
-        }`
+        }`,
+        this.getFieldIdsWithLogic()
       ),
       this.wrapAsStatusMessage(
         "info",
@@ -169,25 +174,35 @@ class FieldLogicService {
         this.getFieldIdsWithCircularReferences().length === 0 ? "info" : "warn",
         `Number of fields with circular references:  ${
           this.getFieldIdsWithCircularReferences().length
-        }`
+        }`,
+        this.getFieldIdsWithCircularReferences()
       ),
       this.wrapAsStatusMessage(
-        this.getFieldIdsWithCircularReferences().length === 0
+        this.getFieldIdsWithCircularMutuallyExclusiveReferences().length === 0
           ? "info"
-          : "error",
+          : "warn",
+        `Number of fields with Mutually Exclusive circular references:  ${
+          this.getFieldIdsWithCircularMutuallyExclusiveReferences().length
+        }`,
+        this.getFieldIdsWithCircularMutuallyExclusiveReferences()
+      ),
+      this.wrapAsStatusMessage(
+        this.getFieldIdsWithCircularMutuallyInclusiveReferences().length === 0
+          ? "info"
+          : "warn",
+        `Number of fields with Mutually Inclusive (resolvable) circular references:  ${
+          this.getFieldIdsWithCircularMutuallyInclusiveReferences().length
+        }`,
+        this.getFieldIdsWithCircularMutuallyInclusiveReferences()
+      ),
+      this.wrapAsStatusMessage(
+        this.getFieldIdsWithLogicError().length === 0 ? "info" : "error",
         `Number of fields with general logic errors:  ${
           this.getFieldIdsWithLogicError().length
-        }`
+        }`,
+        this.getFieldIdsWithLogicError()
       )
     );
-    // Want to get the count of branch node, leaf node,
-    // const x = this.getFieldIdsWithCircularReferences();
-
-    //   want to calculate - number of branches  (branches/total fields -> copolit candidate)
-    //   number of leafs
-    //  const x = fieldLogicService.getFieldIdsWithCircularReferences();
-
-    // getStatusMessagesFieldId - gets called elsewhere or should add it here?
     return statusMessages;
   }
 
@@ -217,6 +232,14 @@ class FieldLogicService {
 
   getFieldIdsWithCircularReferences() {
     return this._fieldCollection.getFieldIdsWithCircularLogic();
+  }
+
+  getFieldIdsWithCircularMutuallyExclusiveReferences() {
+    return this._fieldCollection.getFieldIdsWithCircularMutuallyExclusiveLogic();
+  }
+
+  getFieldIdsWithCircularMutuallyInclusiveReferences() {
+    return this._fieldCollection.getFieldIdsWithCircularMutuallyInclusiveLogic();
   }
 
   getFieldIdsWithLogicError() {
