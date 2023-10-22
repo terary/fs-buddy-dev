@@ -24,6 +24,25 @@ describe("FsLogicTreeDeep", () => {
         (message) => message.severity != "debug"
       );
 
+      // const logicStatusMessage = tree5469299.getAllLogicStatusMessages();
+      // const pojo = deepTree153413615.toPojoAt(undefined, false);
+      // 5487084
+    });
+
+    it.skip("dev/debug.", () => {
+      // const tree5488291 = FsFormModel.fromApiFormJson(
+      //   transformers.formJson(formJson5488291 as unknown as TApiFormJson)
+      // );
+      const tree5469299 = FsFormModel.fromApiFormJson(
+        transformers.formJson(formJson5469299 as unknown as TApiFormJson)
+      );
+
+      const deepTree153413615 = tree5469299.aggregateLogicTree("153413615");
+      const allStatusMessages = deepTree153413615.getStatusMessage();
+      const allStatusMessagesFiltered = allStatusMessages.filter(
+        (message) => message.severity != "debug"
+      );
+
       const logicStatusMessage = tree5469299.getAllLogicStatusMessages();
       const pojo = deepTree153413615.toPojoAt(undefined, false);
       expect(pojo).toStrictEqual({
