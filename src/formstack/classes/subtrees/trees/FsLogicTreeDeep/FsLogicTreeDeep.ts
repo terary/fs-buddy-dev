@@ -399,8 +399,6 @@ class FsLogicTreeDeep {
         const { conditional: parentJunctionOperator } =
           deepTree.getChildContentAt<FsLogicBranchNode>(newBranchNodeId);
 
-        console.log({ parentJunctionOperator });
-
         const circularReferenceNode = FsLogicTreeDeep.getCircularReferenceNode(
           fieldId,
           deepTree,
