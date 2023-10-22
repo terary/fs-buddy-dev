@@ -57,6 +57,7 @@ function getApiKey() {
 }
 
 function getFormAsJson() {
+  removeFormHtml();
   const fetchTreeFormId = getFormIdFromLocation();
   const apiKey = getApiKey();
   if (fetchTreeFormId && apiKey) {
