@@ -10,7 +10,32 @@ import { FsFormModel } from "../../FsFormModel";
 import { transformers } from "../../../../transformers";
 describe("FsLogicTreeDeep", () => {
   describe("dev / debug", () => {
-    it.only("dev/debug.", () => {
+    describe("FsLogicTreeDeep.fromModel()", () => {
+      it.only("Should be awesome", () => {
+        const tree5469299 = FsFormModel.fromApiFormJson(
+          transformers.formJson(formJson5469299 as unknown as TApiFormJson)
+        );
+
+        // D) no leaf for D, leaf for E, A
+        const agTree152290548 = tree5469299.aggregateLogicTree("152290548"); // (D) A->B->C-D->E->A (logic)
+        const agTree152586428 = tree5469299.aggregateLogicTree("152586428"); // Non conflict - short answer
+        const agTree152290553 = tree5469299.aggregateLogicTree("152290553"); // "A" Interdependent
+
+        // E) branch + leaf for A, expected
+        const agTree152290549 = tree5469299.aggregateLogicTree("152290549"); // (E) A->B->C-D->E->A (logic)
+
+        const agTree152290546 = tree5469299.aggregateLogicTree("152290546"); // (B) A->B->C-D->E->A (logic)
+        //
+
+        const pojo152290549 = agTree152290549.toPojoAt(undefined, false);
+        expect(pojo152290549).toStrictEqual({ some: "thing" });
+
+        const pojo152290546 = agTree152290546.toPojoAt(undefined, false);
+        expect(pojo152290546).toStrictEqual({ some: "thing" });
+      });
+    });
+
+    it("dev/debug.", () => {
       // const tree5488291 = FsFormModel.fromApiFormJson(
       //   transformers.formJson(formJson5488291 as unknown as TApiFormJson)
       // );

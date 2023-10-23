@@ -166,7 +166,7 @@ class FsLogicTreeDeepInternal extends AbstractFsTreeLogic<AbstractLogicNode> {
     return clearPojo;
   }
 
-  static fromFieldJson(fieldJson: TFsFieldAny): FsLogicTreeDeepInternal {
+  static x_fromFieldJson(fieldJson: TFsFieldAny): FsLogicTreeDeepInternal {
     // we should be receiving fieldJson.logic, but the Abstract._fieldJson is not typed properly
     // const logicJson: TFsLogicNodeJson = fieldJson.logic;
     // or maybe always get the whole json?

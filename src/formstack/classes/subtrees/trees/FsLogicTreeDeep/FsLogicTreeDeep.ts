@@ -13,6 +13,7 @@ import {
   TFsJunctionOperators,
   TSimpleDictionary,
   TFsLogicNode,
+  TFsFieldLogicNode,
 } from "../../types";
 
 import { FsLogicBranchNode } from "./LogicNodes/FsLogicBranchNode";
@@ -147,8 +148,8 @@ class FsLogicTreeDeep {
     );
   }
 
-  static fromFieldJson(fieldJson: TFsFieldAny): FsLogicTreeDeep {
-    const internalTree = FsLogicTreeDeepInternal.fromFieldJson(fieldJson);
+  static x_fromFieldJson(fieldJson: TFsFieldAny): FsLogicTreeDeep {
+    const internalTree = FsLogicTreeDeepInternal.x_fromFieldJson(fieldJson);
 
     const tree = new FsLogicTreeDeep();
     tree._fsDeepLogicTree = internalTree;
@@ -321,6 +322,7 @@ class FsLogicTreeDeep {
 
     // @ts-ignore -- need to work-out the "fieldId" and "ownerFieldId"
     const parentFieldId = nodeContent?.fieldId || nodeContent?.ownerFieldId;
+
     if (!parentFieldId) {
       throw Error("Found no field id" + JSON.stringify(nodeContent));
     }
@@ -352,6 +354,7 @@ class FsLogicTreeDeep {
     }
 
     if (childrenNodeIds.length === 0) {
+      // // maybe not this?
       const { fieldId, condition, option } =
         nodeContent as TFsFieldLogicCheckLeaf;
       deepTree.appendChildNodeWithContent(
@@ -383,6 +386,7 @@ class FsLogicTreeDeep {
       deepTreeNodeId,
       newBranchNode
     );
+
     childrenNodeIds.forEach((childNodeId) => {
       const childNodeContent =
         fieldLogicTree.getChildContentAtOrThrow<TFsFieldLogicCheckLeaf>(
@@ -411,34 +415,48 @@ class FsLogicTreeDeep {
           circularReferenceNode
         );
       } else if (childTreeField?.getLogicTree() === null) {
+        // is this necessary?
         // append leaf
         deepTree.appendChildNodeWithContent(
           newBranchNodeId,
           new FsLogicLeafNode(fieldId, condition, option)
         );
       } else {
-        // recursive call
+        // deepTree.appendChildNodeWithContent(
+        //   newBranchNodeId,
+        //   new FsLogicLeafNode(fieldId, condition, option)
+        // );
+
+        // const newChildNodeId = deepTree.appendChildNodeWithContent(
+        //   newBranchNodeId,
+        //   new FsLogicLeafNode(fieldId, condition, option)
+        // );
+
+        // recursive call - not truly 'recursive' in that it's calling a different function which in-turn calls this function
+        // this is a dangerous pattern and needs to be reworked to call itself, at a minimum
         return FsLogicTreeDeep.fromFormModel(
           fieldId,
           fieldCollection,
-          deepTree
+          deepTree,
+          newBranchNodeId
         );
       }
     });
 
     return deepTree;
   }
-  // this may cause circular imports (FieldCollection imports LogicDeep, LogicDeep imports FieldCOllection) ??
+
   static fromFormModel(
     fieldId: string,
     fieldCollection: FsFormModel,
-    deepTree?: FsLogicTreeDeep
+    deepTree?: FsLogicTreeDeep,
+    deepTreeParentNodeId?: string
   ): FsLogicTreeDeep | null {
     const field = fieldCollection.getFieldTreeByFieldId(fieldId);
 
     if (field === undefined && deepTree) {
       deepTree.appendChildNodeWithContent(
-        deepTree.rootFieldId,
+        deepTreeParentNodeId || deepTree.rootNodeId,
         new FsLogicErrorNode(
           deepTree.rootFieldId,
           null,
@@ -473,13 +491,13 @@ class FsLogicTreeDeep {
         // field.fieldId,
         new FsVirtualRootNode(fieldId)
       );
-
+    const parentNodeId = deepTreeParentNodeId || tree.rootNodeId;
     if (!logicTree) {
       return FsLogicTreeDeep.appendFieldTreeNodeToLogicDeep(
         visualTree as FsTreeLogic,
         (visualTree as FsTreeLogic).rootNodeId,
         tree,
-        tree.rootNodeId,
+        parentNodeId,
         fieldCollection
       );
     }
@@ -489,7 +507,7 @@ class FsLogicTreeDeep {
         logicTree as FsTreeLogic,
         (logicTree as FsTreeLogic).rootNodeId,
         tree,
-        tree.rootNodeId,
+        parentNodeId,
         fieldCollection
       );
     }
@@ -498,14 +516,14 @@ class FsLogicTreeDeep {
       logicTree as FsTreeLogic,
       (logicTree as FsTreeLogic).rootNodeId,
       tree,
-      tree.rootNodeId,
+      parentNodeId,
       fieldCollection
     );
     return FsLogicTreeDeep.appendFieldTreeNodeToLogicDeep(
       visualTree as FsTreeLogic,
       (visualTree as FsTreeLogic).rootNodeId,
       tree,
-      tree.rootNodeId,
+      parentNodeId,
       fieldCollection
     );
   }
