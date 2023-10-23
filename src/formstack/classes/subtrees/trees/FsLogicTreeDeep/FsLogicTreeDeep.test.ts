@@ -11,7 +11,7 @@ import { transformers } from "../../../../transformers";
 describe("FsLogicTreeDeep", () => {
   describe("dev / debug", () => {
     describe("FsLogicTreeDeep.fromModel()", () => {
-      it.only("Should be awesome", () => {
+      it.skip("Should be awesome", () => {
         const tree5469299 = FsFormModel.fromApiFormJson(
           transformers.formJson(formJson5469299 as unknown as TApiFormJson)
         );
@@ -35,7 +35,7 @@ describe("FsLogicTreeDeep", () => {
       });
     });
 
-    it("dev/debug.", () => {
+    it.skip("dev/debug.", () => {
       // const tree5488291 = FsFormModel.fromApiFormJson(
       //   transformers.formJson(formJson5488291 as unknown as TApiFormJson)
       // );
@@ -197,8 +197,8 @@ describe("FsLogicTreeDeep", () => {
             conditional: "all",
           },
         },
-        "153112633:1": {
-          parentId: "153112633",
+        "153112633:0:1": {
+          parentId: "153112633:0",
           nodeContent: {
             nodeType: "FsLogicErrorNode",
             rootFieldId: "153112633",
@@ -359,14 +359,9 @@ const dev_debug_pojo_smoke_test = {
             fieldId: "152293117",
           },
           conditionalA: {
-            fieldId: "152293117",
-            fieldJson: {
-              field: 152293117,
-              condition: "equals",
-              option: "Zero",
-            },
-            condition: "equals",
             option: "Zero",
+            condition: "equals",
+            fieldId: "152293117",
           },
         },
         sourceFieldId: "152297010",
@@ -447,8 +442,8 @@ const dev_debug_pojo_smoke_test = {
         conditional: "all",
       },
     },
-    "152290546:1": {
-      parentId: "152290546",
+    "152290546:0:1": {
+      parentId: "152290546:0",
       nodeContent: {
         nodeType: "FsLogicBranchNode",
         ownerFieldId: "152290547",
@@ -456,8 +451,8 @@ const dev_debug_pojo_smoke_test = {
         conditional: "all",
       },
     },
-    "152290546:2": {
-      parentId: "152290546",
+    "152290546:0:1:2": {
+      parentId: "152290546:0:1",
       nodeContent: {
         nodeType: "FsLogicBranchNode",
         ownerFieldId: "152290548",
@@ -465,8 +460,8 @@ const dev_debug_pojo_smoke_test = {
         conditional: "all",
       },
     },
-    "152290546:3": {
-      parentId: "152290546",
+    "152290546:0:1:2:3": {
+      parentId: "152290546:0:1:2",
       nodeContent: {
         nodeType: "FsLogicBranchNode",
         ownerFieldId: "152290549",
@@ -474,8 +469,8 @@ const dev_debug_pojo_smoke_test = {
         conditional: "all",
       },
     },
-    "152290546:3:4": {
-      parentId: "152290546:3",
+    "152290546:0:1:2:3:4": {
+      parentId: "152290546:0:1:2:3",
       nodeContent: {
         nodeType: "FsLogicLeafNode",
         fieldId: "152290545",
@@ -502,8 +497,8 @@ const dev_debug_pojo_smoke_test = {
         conditional: "all",
       },
     },
-    "148456742:1": {
-      parentId: "148456742",
+    "148456742:0:1": {
+      parentId: "148456742:0",
       nodeContent: {
         nodeType: "FsLogicBranchNode",
         ownerFieldId: "148456741",
@@ -511,8 +506,8 @@ const dev_debug_pojo_smoke_test = {
         conditional: "all",
       },
     },
-    "148456742:2": {
-      parentId: "148456742",
+    "148456742:0:1:2": {
+      parentId: "148456742:0:1",
       nodeContent: {
         nodeType: "FsLogicBranchNode",
         ownerFieldId: "148456740",
@@ -520,8 +515,8 @@ const dev_debug_pojo_smoke_test = {
         conditional: "all",
       },
     },
-    "148456742:3": {
-      parentId: "148456742",
+    "148456742:0:1:2:3": {
+      parentId: "148456742:0:1:2",
       nodeContent: {
         nodeType: "FsLogicBranchNode",
         ownerFieldId: "148456739",
@@ -529,8 +524,8 @@ const dev_debug_pojo_smoke_test = {
         conditional: "all",
       },
     },
-    "148456742:4": {
-      parentId: "148456742",
+    "148456742:0:1:2:3:4": {
+      parentId: "148456742:0:1:2:3",
       nodeContent: {
         nodeType: "FsLogicBranchNode",
         ownerFieldId: "148456734",
@@ -538,8 +533,8 @@ const dev_debug_pojo_smoke_test = {
         conditional: "all",
       },
     },
-    "148456742:4:5": {
-      parentId: "148456742:4",
+    "148456742:0:1:2:3:4:5": {
+      parentId: "148456742:0:1:2:3:4",
       nodeContent: {
         nodeType: "FsCircularDependencyNode",
         sourceFieldId: "148456742",
@@ -613,17 +608,8 @@ const dev_debug_pojo_smoke_test = {
         ],
       },
     },
-    "148509470:3:9": {
+    "148509470:3:5": {
       parentId: "148509470:3",
-      nodeContent: {
-        nodeType: "FsLogicLeafNode",
-        fieldId: "151678347",
-        condition: "equals",
-        option: "Neutral",
-      },
-    },
-    "148509470:5": {
-      parentId: "148509470",
       nodeContent: {
         nodeType: "FsLogicBranchNode",
         ownerFieldId: "148509476",
@@ -631,8 +617,8 @@ const dev_debug_pojo_smoke_test = {
         conditional: "all",
       },
     },
-    "148509470:5:6": {
-      parentId: "148509470:5",
+    "148509470:3:5:6": {
+      parentId: "148509470:3:5",
       nodeContent: {
         nodeType: "FsLogicLeafNode",
         fieldId: "148509477",
@@ -640,8 +626,8 @@ const dev_debug_pojo_smoke_test = {
         option: "True",
       },
     },
-    "148509470:5:7": {
-      parentId: "148509470:5",
+    "148509470:3:5:7": {
+      parentId: "148509470:3:5",
       nodeContent: {
         nodeType: "FsLogicLeafNode",
         fieldId: "148509474",
@@ -649,8 +635,8 @@ const dev_debug_pojo_smoke_test = {
         option: "True",
       },
     },
-    "148509470:8": {
-      parentId: "148509470",
+    "148509470:3:8": {
+      parentId: "148509470:3",
       nodeContent: {
         nodeType: "FsCircularDependencyNode",
         sourceFieldId: "148509470",
@@ -665,6 +651,15 @@ const dev_debug_pojo_smoke_test = {
           "148509477",
           "148509474",
         ],
+      },
+    },
+    "148509470:3:9": {
+      parentId: "148509470:3",
+      nodeContent: {
+        nodeType: "FsLogicLeafNode",
+        fieldId: "151678347",
+        condition: "equals",
+        option: "Neutral",
       },
     },
   },
@@ -863,14 +858,9 @@ const formJson5487084Pojo = {
             fieldId: "153055010",
           },
           conditionalA: {
-            fieldId: "153055010",
-            fieldJson: {
-              field: "153055010",
-              condition: "equals",
-              option: "Neutral",
-            },
-            condition: "equals",
             option: "Neutral",
+            condition: "equals",
+            fieldId: "153055010",
           },
         },
         sourceFieldId: "153055077",
