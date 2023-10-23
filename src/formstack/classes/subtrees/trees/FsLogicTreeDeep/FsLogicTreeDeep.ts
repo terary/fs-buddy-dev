@@ -241,6 +241,34 @@ class FsLogicTreeDeep {
       }
     }
 
+    I dont know if MutuallyInclusive is the same way
+    would it worth keeping dictionary of fieldExpressions and determine coflicts there?
+    could use evaluator - maybe
+
+    is it worth rewriting the whole tree structure?
+    
+    if (parentJunctionOperator == "any") {
+      return new FsCircularMutualInclusiveNode(
+        deepTree.rootFieldId,
+        targetFieldId,
+        deepTree.getDependentFieldIds(),
+        // @ts-ignore
+        {}
+        // {
+        //   conditionalA: {
+        //     option: optionA,
+        //     condition: conditionA,
+        //     fieldId: fieldIdA,
+        //   },
+        //   conditionalB: {
+        //     option: optionB,
+        //     condition: conditionB,
+        //     fieldId: fieldIdB,
+        //   },
+        // }
+      );
+    }
+
     return new FsCircularDependencyNode(
       deepTree.rootFieldId,
       targetFieldId,
@@ -396,6 +424,11 @@ class FsLogicTreeDeep {
       const { fieldId, condition, option } = childNodeContent;
       const childTreeField = fieldCollection.getFieldTreeByFieldId(fieldId);
 
+      deepTree.appendChildNodeWithContent(
+        newBranchNodeId,
+        new FsLogicLeafNode(fieldId, condition, option)
+      );
+
       if (deepTree.isExistInDependencyChain(childTreeField)) {
         // if two children from the same parent, conflict, and the parent is "any" then conflict resolves 1, else 0
 
@@ -417,10 +450,10 @@ class FsLogicTreeDeep {
       } else if (childTreeField?.getLogicTree() === null) {
         // is this necessary?
         // append leaf
-        deepTree.appendChildNodeWithContent(
-          newBranchNodeId,
-          new FsLogicLeafNode(fieldId, condition, option)
-        );
+        // deepTree.appendChildNodeWithContent(
+        //   newBranchNodeId,
+        //   new FsLogicLeafNode(fieldId, condition, option)
+        // );
       } else {
         // deepTree.appendChildNodeWithContent(
         //   newBranchNodeId,

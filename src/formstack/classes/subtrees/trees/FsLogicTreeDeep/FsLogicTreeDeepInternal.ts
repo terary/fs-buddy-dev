@@ -40,12 +40,14 @@ class FsLogicTreeDeepInternal extends AbstractFsTreeLogic<AbstractLogicNode> {
   ): string {
     const fieldId = this.extractFieldIdFromNodeContentOrThrow(nodeContent);
 
-    this.appendFieldIdNode(fieldId, nodeContent);
-
     if (!this.isNodeIdExist(parentNodeId)) {
       throw new Error(
         `parentNodeId does not exists. parentNodeId: '${parentNodeId}'.`
       );
+    }
+
+    if (nodeContent instanceof FsLogicBranchNode) {
+      this.appendFieldIdNode(fieldId, nodeContent);
     }
     return super.appendChildNodeWithContent(parentNodeId, nodeContent);
   }

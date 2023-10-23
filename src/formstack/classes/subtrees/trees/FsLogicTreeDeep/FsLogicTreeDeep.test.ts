@@ -11,15 +11,24 @@ import { transformers } from "../../../../transformers";
 describe("FsLogicTreeDeep", () => {
   describe("dev / debug", () => {
     describe("FsLogicTreeDeep.fromModel()", () => {
-      it.skip("Should be awesome", () => {
+      it.only("Should be awesome", () => {
         const tree5469299 = FsFormModel.fromApiFormJson(
           transformers.formJson(formJson5469299 as unknown as TApiFormJson)
         );
+        const tree5375703 = FsFormModel.fromApiFormJson(
+          transformers.formJson(formJson5375703 as unknown as TApiFormJson)
+        );
+        const agTree152290553 = tree5469299.aggregateLogicTree("152290553"); // "A" Interdependent
 
-        // D) no leaf for D, leaf for E, A
+        const agTree148456742 = tree5375703.aggregateLogicTree("148456742"); // (B) A->B->C-D->E->A (logic)
+        const agTree148509470 = tree5375703.aggregateLogicTree("148509470"); // A Inter-dependent (not so much circular)
+
+        const agTree152293116 = tree5469299.aggregateLogicTree("152293116"); // Mutually Exclusive
+        const agTree152297010 = tree5469299.aggregateLogicTree("152297010"); // Mutually Inclusive
+        // const agTree152290553 = tree5469299.aggregateLogicTree("152290553"); //  "A" - Inter-dependent (fixed with 'any')
+
         const agTree152290548 = tree5469299.aggregateLogicTree("152290548"); // (D) A->B->C-D->E->A (logic)
         const agTree152586428 = tree5469299.aggregateLogicTree("152586428"); // Non conflict - short answer
-        const agTree152290553 = tree5469299.aggregateLogicTree("152290553"); // "A" Interdependent
 
         // E) branch + leaf for A, expected
         const agTree152290549 = tree5469299.aggregateLogicTree("152290549"); // (E) A->B->C-D->E->A (logic)
