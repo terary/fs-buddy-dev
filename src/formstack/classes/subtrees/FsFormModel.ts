@@ -77,8 +77,6 @@ class FsFormModel extends AbstractExpressionTree<
   // Looks like this generic is not being used - git rid of it
   private getExtendedTree<T extends FsLogicTreeDeep = FsLogicTreeDeep>(
     field: FsFieldModel
-    // atNodeId?: string,
-    // extendedTree?: FsLogicTreeDeep
   ): FsLogicTreeDeep | null {
     // #deepLogicTreesFieldIdMap
     // if (this.#deepLogicTreesFieldIdMap[field.fieldId] === undefined) {

@@ -947,14 +947,9 @@ const dev_debug_logicTreePojo = {
             fieldId: "152293117",
           },
           conditionalA: {
-            fieldId: "152293117",
-            // fieldJson: {
-            //   field: 152293117,
-            //   condition: "equals",
-            //   option: "Zero",
-            // },
-            condition: "equals",
             option: "Zero",
+            condition: "equals",
+            fieldId: "152293117",
           },
         },
         sourceFieldId: "152297010",
@@ -981,8 +976,8 @@ const dev_debug_logicTreePojo = {
         conditional: "all",
       },
     },
-    "152290546:1": {
-      parentId: "152290546",
+    "152290546:0:1": {
+      parentId: "152290546:0",
       nodeContent: {
         nodeType: "FsLogicBranchNode",
         ownerFieldId: "152290547",
@@ -990,8 +985,8 @@ const dev_debug_logicTreePojo = {
         conditional: "all",
       },
     },
-    "152290546:2": {
-      parentId: "152290546",
+    "152290546:0:1:2": {
+      parentId: "152290546:0:1",
       nodeContent: {
         nodeType: "FsLogicBranchNode",
         ownerFieldId: "152290548",
@@ -999,8 +994,8 @@ const dev_debug_logicTreePojo = {
         conditional: "all",
       },
     },
-    "152290546:3": {
-      parentId: "152290546",
+    "152290546:0:1:2:3": {
+      parentId: "152290546:0:1:2",
       nodeContent: {
         nodeType: "FsLogicBranchNode",
         ownerFieldId: "152290549",
@@ -1008,8 +1003,8 @@ const dev_debug_logicTreePojo = {
         conditional: "all",
       },
     },
-    "152290546:3:4": {
-      parentId: "152290546:3",
+    "152290546:0:1:2:3:4": {
+      parentId: "152290546:0:1:2:3",
       nodeContent: {
         nodeType: "FsLogicLeafNode",
         fieldId: "152290545",
@@ -1036,8 +1031,8 @@ const dev_debug_logicTreePojo = {
         conditional: "all",
       },
     },
-    "148456742:1": {
-      parentId: "148456742",
+    "148456742:0:1": {
+      parentId: "148456742:0",
       nodeContent: {
         nodeType: "FsLogicBranchNode",
         ownerFieldId: "148456741",
@@ -1045,8 +1040,8 @@ const dev_debug_logicTreePojo = {
         conditional: "all",
       },
     },
-    "148456742:2": {
-      parentId: "148456742",
+    "148456742:0:1:2": {
+      parentId: "148456742:0:1",
       nodeContent: {
         nodeType: "FsLogicBranchNode",
         ownerFieldId: "148456740",
@@ -1054,8 +1049,8 @@ const dev_debug_logicTreePojo = {
         conditional: "all",
       },
     },
-    "148456742:3": {
-      parentId: "148456742",
+    "148456742:0:1:2:3": {
+      parentId: "148456742:0:1:2",
       nodeContent: {
         nodeType: "FsLogicBranchNode",
         ownerFieldId: "148456739",
@@ -1063,8 +1058,8 @@ const dev_debug_logicTreePojo = {
         conditional: "all",
       },
     },
-    "148456742:4": {
-      parentId: "148456742",
+    "148456742:0:1:2:3:4": {
+      parentId: "148456742:0:1:2:3",
       nodeContent: {
         nodeType: "FsLogicBranchNode",
         ownerFieldId: "148456734",
@@ -1072,8 +1067,8 @@ const dev_debug_logicTreePojo = {
         conditional: "all",
       },
     },
-    "148456742:4:5": {
-      parentId: "148456742:4",
+    "148456742:0:1:2:3:4:5": {
+      parentId: "148456742:0:1:2:3:4",
       nodeContent: {
         nodeType: "FsCircularDependencyNode",
         sourceFieldId: "148456742",
@@ -1147,17 +1142,8 @@ const dev_debug_logicTreePojo = {
         ],
       },
     },
-    "148509470:3:9": {
+    "148509470:3:5": {
       parentId: "148509470:3",
-      nodeContent: {
-        nodeType: "FsLogicLeafNode",
-        fieldId: "151678347",
-        condition: "equals",
-        option: "Neutral",
-      },
-    },
-    "148509470:5": {
-      parentId: "148509470",
       nodeContent: {
         nodeType: "FsLogicBranchNode",
         ownerFieldId: "148509476",
@@ -1165,8 +1151,8 @@ const dev_debug_logicTreePojo = {
         conditional: "all",
       },
     },
-    "148509470:5:6": {
-      parentId: "148509470:5",
+    "148509470:3:5:6": {
+      parentId: "148509470:3:5",
       nodeContent: {
         nodeType: "FsLogicLeafNode",
         fieldId: "148509477",
@@ -1174,8 +1160,8 @@ const dev_debug_logicTreePojo = {
         option: "True",
       },
     },
-    "148509470:5:7": {
-      parentId: "148509470:5",
+    "148509470:3:5:7": {
+      parentId: "148509470:3:5",
       nodeContent: {
         nodeType: "FsLogicLeafNode",
         fieldId: "148509474",
@@ -1183,8 +1169,8 @@ const dev_debug_logicTreePojo = {
         option: "True",
       },
     },
-    "148509470:8": {
-      parentId: "148509470",
+    "148509470:3:8": {
+      parentId: "148509470:3",
       nodeContent: {
         nodeType: "FsCircularDependencyNode",
         sourceFieldId: "148509470",
@@ -1199,6 +1185,15 @@ const dev_debug_logicTreePojo = {
           "148509477",
           "148509474",
         ],
+      },
+    },
+    "148509470:3:9": {
+      parentId: "148509470:3",
+      nodeContent: {
+        nodeType: "FsLogicLeafNode",
+        fieldId: "151678347",
+        condition: "equals",
+        option: "Neutral",
       },
     },
   },
