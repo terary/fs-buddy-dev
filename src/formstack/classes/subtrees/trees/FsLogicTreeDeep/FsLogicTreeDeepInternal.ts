@@ -157,8 +157,16 @@ class FsLogicTreeDeepInternal extends AbstractFsTreeLogic<AbstractLogicNode> {
     nodeId?: string | undefined,
     shouldObfuscate = true
   ): TTreePojo<AbstractLogicNode> {
-    const transformer = (nodeContent: AbstractLogicNode) =>
-      nodeContent.toPojo();
+    const transformer = (nodeContent: AbstractLogicNode) => {
+      try {
+        return nodeContent && "toPojo" in nodeContent
+          ? nodeContent.toPojo()
+          : nodeContent;
+      } catch (e) {
+        console.log({ e });
+        return nodeContent;
+      }
+    };
     // @ts-ignore - doesn't like generic and the signature, I think the generic is goofed
     // return super.toPojoAt(nodeId, transformer);
     const clearPojo = super.toPojoAt(nodeId, transformer);

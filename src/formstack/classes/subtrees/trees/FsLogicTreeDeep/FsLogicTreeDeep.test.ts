@@ -19,11 +19,23 @@ describe("FsLogicTreeDeep", () => {
           transformers.formJson(formJson5375703 as unknown as TApiFormJson)
         );
         const agTree152290553 = tree5469299.aggregateLogicTree("152290553"); // "A" Interdependent
+        agTree152290553.dev_debug();
+
+        const agTree153413615 = tree5469299.aggregateLogicTree("153413615"); // Short Answer (non-conflict with 'any')
+        agTree153413615.dev_debug();
 
         const agTree148456742 = tree5375703.aggregateLogicTree("148456742"); // (B) A->B->C-D->E->A (logic)
-        const agTree148509470 = tree5375703.aggregateLogicTree("148509470"); // A Inter-dependent (not so much circular)
+        agTree148456742.dev_debug();
 
         const agTree152293116 = tree5469299.aggregateLogicTree("152293116"); // Mutually Exclusive
+        const pojo152290553 = agTree152290553.toPojoAt(undefined, false);
+
+        // This is adding the circular node and the original node
+        // I would expect 1 node + 2 circular (3),  Instead I am getting 3 node + 2 circular
+        expect(pojo152290553).toStrictEqual({ some: "thing" });
+
+        const agTree148509470 = tree5375703.aggregateLogicTree("148509470"); // A Inter-dependent (not so much circular)
+
         const agTree152297010 = tree5469299.aggregateLogicTree("152297010"); // Mutually Inclusive
         // const agTree152290553 = tree5469299.aggregateLogicTree("152290553"); //  "A" - Inter-dependent (fixed with 'any')
 

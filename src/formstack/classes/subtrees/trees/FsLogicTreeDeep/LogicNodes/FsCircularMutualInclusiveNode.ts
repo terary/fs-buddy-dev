@@ -9,19 +9,19 @@ type RuleConflictType = {
 };
 
 class FsCircularMutualInclusiveNode extends FsCircularDependencyNode {
-  private _ruleConflict: RuleConflictType;
+  private _ruleConflict?: RuleConflictType;
   constructor(
     sourceFieldId: string,
     targetFieldId: string,
     dependentChainFieldIds: string[],
-    ruleConflict: RuleConflictType
+    ruleConflict?: RuleConflictType
   ) {
     super(sourceFieldId, targetFieldId, dependentChainFieldIds);
     this._ruleConflict = ruleConflict;
   }
 
-  get ruleConflict(): RuleConflictType {
-    return this._ruleConflict;
+  get ruleConflict(): RuleConflictType | null {
+    return this._ruleConflict || null;
   }
 
   getLastVisitedFieldId() {
@@ -29,17 +29,26 @@ class FsCircularMutualInclusiveNode extends FsCircularDependencyNode {
   }
 
   toPojo(): object {
-    const {
-      conditionalB: { condition, option, fieldId },
-    } = this.ruleConflict;
+    // const {
+    //   conditionalB: { condition, option, fieldId },
+    // } = this.ruleConflict;
+
+    const ruleConflict = this.ruleConflict
+      ? {
+          // because there is some weird typing issue
+          conditionalB: this.ruleConflict.conditionalB, //{ condition, option, fieldId },
+          conditionalA: this.ruleConflict.conditionalA,
+        }
+      : null;
 
     return {
       nodeType: this.nodeType,
-      ruleConflict: {
-        // because there is some weird typing issue
-        conditionalB: { condition, option, fieldId },
-        conditionalA: this.ruleConflict.conditionalA,
-      },
+      ruleConflict,
+      // ruleConflict: {
+      //   // because there is some weird typing issue
+      //   conditionalB: { condition, option, fieldId },
+      //   conditionalA: this.ruleConflict.conditionalA,
+      // },
       ...super.toPojo(),
     };
   }

@@ -175,14 +175,14 @@ class FsLogicTreeDeep {
   }
 
   private static getCircularReferenceNode(
-    targetFieldId: string,
+    sourceFieldId: string,
     deepTree: FsLogicTreeDeep,
     targetFieldContent: TFsLogicNode,
     formModel: FsFormModel,
     parentJunctionOperator?: TFsJunctionOperators
   ): FsCircularDependencyNode {
     const existingChildContent = deepTree.getChildContentByFieldId(
-      targetFieldId
+      sourceFieldId
     ) as unknown as
       | TFsFieldLogicJunction<TFsJunctionOperators>
       | TFsFieldLogicCheckLeaf;
@@ -210,8 +210,8 @@ class FsLogicTreeDeep {
         } = existingChildContent as FsLogicLeafNode;
 
         return new FsCircularMutualInclusiveNode(
+          sourceFieldId,
           deepTree.rootFieldId,
-          targetFieldId,
           deepTree.getDependentFieldIds(),
           {
             conditionalA: {
@@ -228,8 +228,8 @@ class FsLogicTreeDeep {
         );
       } else {
         return new FsCircularMutualExclusiveNode(
+          sourceFieldId,
           deepTree.rootFieldId,
-          targetFieldId,
           deepTree.getDependentFieldIds(),
           {
             conditionalA:
@@ -241,16 +241,10 @@ class FsLogicTreeDeep {
       }
     }
 
-    I dont know if MutuallyInclusive is the same way
-    would it worth keeping dictionary of fieldExpressions and determine coflicts there?
-    could use evaluator - maybe
-
-    is it worth rewriting the whole tree structure?
-    
     if (parentJunctionOperator == "any") {
       return new FsCircularMutualInclusiveNode(
         deepTree.rootFieldId,
-        targetFieldId,
+        sourceFieldId,
         deepTree.getDependentFieldIds(),
         // @ts-ignore
         {}
@@ -270,10 +264,22 @@ class FsLogicTreeDeep {
     }
 
     return new FsCircularDependencyNode(
+      sourceFieldId,
       deepTree.rootFieldId,
-      targetFieldId,
       deepTree.getDependentFieldIds()
     );
+  }
+
+  dev_debug() {
+    const childrenContent = this._fsDeepLogicTree.getAllLeafContents();
+    const treeContent = this._fsDeepLogicTree.getTreeContentAt();
+    const branchContent = treeContent.filter(
+      (nodeContent) => nodeContent instanceof FsLogicBranchNode
+    );
+    const childrenFieldIds = childrenContent.map(
+      (nodeContent) => nodeContent.fieldId
+    );
+    console.log({ childrenContent });
   }
 
   /**
@@ -364,10 +370,19 @@ class FsLogicTreeDeep {
 
     // @ts-ignore  -- maybe isExist should be defined with an interface
     if (deepTree._fsDeepLogicTree.isExistInDependencyChain(nodeContent)) {
-      // const { conditional: parentJunctionOperator } =
-      //   deepTree.getChildContentAt<FsLogicBranchNode>(parentFieldId);
-      // console.log({ parentJunctionOperator });
+      // @ts-ignore
+      const { conditional: parentJunctionOperator } = nodeContent;
+      // @ts-ignore
+      const { ownerFieldId } = nodeContent.ownerFieldId || nodeContent.fieldId;
 
+      //   deepTree.getChildContentByFieldId(
+      //     // @ts-ignore
+      //     (nodeContent as FsLogicBranchNode).fieldId
+      //   );
+      // const x = deepTree.getChildContentByFieldId(
+      //   // @ts-ignore
+      //   (nodeContent as FsLogicBranchNode).fieldId
+      // );
       deepTree.appendChildNodeWithContent(
         deepTreeNodeId,
         FsLogicTreeDeep.getCircularReferenceNode(
@@ -375,6 +390,7 @@ class FsLogicTreeDeep {
           deepTree,
           nodeContent,
           fieldCollection
+          // parentJunctionOperator
         )
       );
       return deepTree;
@@ -435,9 +451,10 @@ class FsLogicTreeDeep {
         // const grandParentNodeId = deepTree.getParentNodeId(newBranchNodeId);
         const { conditional: parentJunctionOperator } =
           deepTree.getChildContentAt<FsLogicBranchNode>(newBranchNodeId);
-
+        // here
         const circularReferenceNode = FsLogicTreeDeep.getCircularReferenceNode(
-          fieldId,
+          newBranchNode.ownerFieldId,
+          // fieldId,
           deepTree,
           childNodeContent,
           fieldCollection,
@@ -509,7 +526,7 @@ class FsLogicTreeDeep {
 
     const visualTree = field.getVisibilityLogicTree();
     if (!logicTree && !visualTree) {
-      // this is a field with no logic - therefore null as a logic tree
+      // this is a field with no logic -  as a logic tree
       // when evaluating it should simple return the value provided.  Evaluation is a
       // different animal but is related.
 
