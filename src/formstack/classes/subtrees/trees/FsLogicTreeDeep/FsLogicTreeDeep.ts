@@ -270,18 +270,6 @@ class FsLogicTreeDeep {
     );
   }
 
-  dev_debug() {
-    const childrenContent = this._fsDeepLogicTree.getAllLeafContents();
-    const treeContent = this._fsDeepLogicTree.getTreeContentAt();
-    const branchContent = treeContent.filter(
-      (nodeContent) => nodeContent instanceof FsLogicBranchNode
-    );
-    const childrenFieldIds = childrenContent.map(
-      (nodeContent) => nodeContent.fieldId
-    );
-    console.log({ childrenContent });
-  }
-
   /**
    * Return all fieldIds within actual logical leaf term expressions
    *
@@ -370,19 +358,6 @@ class FsLogicTreeDeep {
 
     // @ts-ignore  -- maybe isExist should be defined with an interface
     if (deepTree._fsDeepLogicTree.isExistInDependencyChain(nodeContent)) {
-      // @ts-ignore
-      const { conditional: parentJunctionOperator } = nodeContent;
-      // @ts-ignore
-      const { ownerFieldId } = nodeContent.ownerFieldId || nodeContent.fieldId;
-
-      //   deepTree.getChildContentByFieldId(
-      //     // @ts-ignore
-      //     (nodeContent as FsLogicBranchNode).fieldId
-      //   );
-      // const x = deepTree.getChildContentByFieldId(
-      //   // @ts-ignore
-      //   (nodeContent as FsLogicBranchNode).fieldId
-      // );
       deepTree.appendChildNodeWithContent(
         deepTreeNodeId,
         FsLogicTreeDeep.getCircularReferenceNode(
@@ -394,7 +369,6 @@ class FsLogicTreeDeep {
         )
       );
       return deepTree;
-      // return null;
     }
 
     if (childrenNodeIds.length === 0) {
@@ -464,6 +438,7 @@ class FsLogicTreeDeep {
           newBranchNodeId,
           circularReferenceNode
         );
+        return deepTree; // because this is forEach, all nodes will get added.  Maybe change that to for.. and stop if circular? or not
       } else if (childTreeField?.getLogicTree() === null) {
         // is this necessary?
         // append leaf
