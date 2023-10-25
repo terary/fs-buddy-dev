@@ -31,6 +31,7 @@ describe("FsLogicTreeDeep", () => {
       const agTree148456742 = tree5375703.aggregateLogicTree("148456742"); // (B) A->B->C-D->E->A (logic)
 
       const pojo = {
+        pojo148604236: agTree148604236.toPojoAt(undefined, false),
         pojo152290553: agTree152290553.toPojoAt(undefined, false),
         pojo153413615: agTree153413615.toPojoAt(undefined, false),
         pojo152293116: agTree152293116.toPojoAt(undefined, false),
@@ -42,6 +43,42 @@ describe("FsLogicTreeDeep", () => {
         pojo148509470: agTree148509470.toPojoAt(undefined, false),
         pojo148456742: agTree148456742.toPojoAt(undefined, false),
       };
+
+      expect(smoke_test_pojo_many_forms.pojo152290553).toStrictEqual(
+        pojo.pojo152290553
+      );
+      expect(smoke_test_pojo_many_forms.pojo148604236).toStrictEqual(
+        pojo.pojo148604236
+      );
+      expect(smoke_test_pojo_many_forms.pojo153413615).toStrictEqual(
+        pojo.pojo153413615
+      );
+      expect(smoke_test_pojo_many_forms.pojo152293116).toStrictEqual(
+        pojo.pojo152293116
+      );
+      expect(smoke_test_pojo_many_forms.pojo152297010).toStrictEqual(
+        pojo.pojo152297010
+      );
+      expect(smoke_test_pojo_many_forms.pojo152290548).toStrictEqual(
+        pojo.pojo152290548
+      );
+      expect(smoke_test_pojo_many_forms.pojo152586428).toStrictEqual(
+        pojo.pojo152586428
+      );
+      expect(smoke_test_pojo_many_forms.pojo152290549).toStrictEqual(
+        pojo.pojo152290549
+      );
+      expect(smoke_test_pojo_many_forms.pojo152290546).toStrictEqual(
+        pojo.pojo152290546
+      );
+
+      expect(smoke_test_pojo_many_forms.pojo148456742).toStrictEqual(
+        pojo.pojo148456742
+      );
+
+      expect(smoke_test_pojo_many_forms.pojo148509470).toStrictEqual(
+        pojo.pojo148509470
+      );
 
       expect(pojo).toStrictEqual(smoke_test_pojo_many_forms);
     });
@@ -885,6 +922,92 @@ const formJson5487084Pojo = {
 };
 
 const smoke_test_pojo_many_forms = {
+  pojo148604236: {
+    "148604236": {
+      parentId: "148604236",
+      nodeContent: {
+        nodeType: "FsVirtualRootNode",
+        fieldId: "148604236",
+        conditional: "all",
+      },
+    },
+    "148604236:0": {
+      parentId: "148604236",
+      nodeContent: {
+        nodeType: "FsLogicBranchNode",
+        ownerFieldId: "148604236",
+        action: "show",
+        conditional: "all",
+      },
+    },
+    "148604236:0:1": {
+      parentId: "148604236:0",
+      nodeContent: {
+        nodeType: "FsLogicLeafNode",
+        fieldId: "148604235",
+        condition: "equals",
+        option: "True",
+      },
+    },
+    "148604236:0:2": {
+      parentId: "148604236:0",
+      nodeContent: {
+        nodeType: "FsLogicBranchNode",
+        ownerFieldId: "148604235",
+        action: "show",
+        conditional: "any",
+      },
+    },
+    "148604236:0:2:3": {
+      parentId: "148604236:0:2",
+      nodeContent: {
+        nodeType: "FsLogicLeafNode",
+        fieldId: "148604234",
+        condition: "equals",
+        option: "True",
+      },
+    },
+    "148604236:0:2:4": {
+      parentId: "148604236:0:2",
+      nodeContent: {
+        nodeType: "FsLogicBranchNode",
+        ownerFieldId: "148604234",
+        action: "show",
+        conditional: "any",
+      },
+    },
+    "148604236:0:2:4:5": {
+      parentId: "148604236:0:2:4",
+      nodeContent: {
+        nodeType: "FsLogicLeafNode",
+        fieldId: "148604236",
+        condition: "equals",
+        option: "True",
+      },
+    },
+    "148604236:0:2:4:6": {
+      parentId: "148604236:0:2:4",
+      nodeContent: {
+        nodeType: "FsCircularMutualInclusiveNode",
+        ruleConflict: {
+          conditionalB: undefined,
+          conditionalA: undefined,
+        },
+        sourceFieldId: "148604236",
+        targetSourceId: "148604234",
+        dependentChainFieldIds: ["148604236", "148604235", "148604234"],
+      },
+    },
+    "148604236:0:2:4:7": {
+      parentId: "148604236:0:2:4",
+      nodeContent: {
+        nodeType: "FsLogicLeafNode",
+        fieldId: "148604239",
+        condition: "greaterthan",
+        option: 10,
+      },
+    },
+  },
   pojo152290553: {
     "152290553": {
       parentId: "152290553",

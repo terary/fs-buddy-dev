@@ -356,7 +356,7 @@ class FsLogicTreeDeep {
       throw new Error("What - too many nodes");
     }
 
-    // @ts-ignore  -- maybe isExist should be defined with an interface
+    // @ts-ignore
     if (deepTree._fsDeepLogicTree.isExistInDependencyChain(nodeContent)) {
       deepTree.appendChildNodeWithContent(
         deepTreeNodeId,
@@ -411,13 +411,26 @@ class FsLogicTreeDeep {
           childNodeId
         );
 
-      const { fieldId, condition, option } = childNodeContent;
-      const childTreeField = fieldCollection.getFieldTreeByFieldId(fieldId);
+      // const { fieldId, condition, option } = childNodeContent;
+      const childTreeField = fieldCollection.getFieldTreeByFieldId(
+        childNodeContent.fieldId
+      );
 
+      // add leaf AND add circular reference under same branch.
+      // circular reference should always be a branch. If we do not do both leaf and circular reference
+      // the current branch will not have leaves..I think this approach is more comprehensive but also more confusing.
       deepTree.appendChildNodeWithContent(
         newBranchNodeId,
-        new FsLogicLeafNode(fieldId, condition, option)
+        new FsLogicLeafNode(
+          childNodeContent.fieldId,
+          childNodeContent.condition,
+          childNodeContent.option
+        )
       );
+
+      if (childTreeField?.getLogicTree() === null) {
+        return deepTree;
+      }
 
       if (deepTree.isExistInDependencyChain(childTreeField)) {
         // if two children from the same parent, conflict, and the parent is "any" then conflict resolves 1, else 0
@@ -439,28 +452,11 @@ class FsLogicTreeDeep {
           circularReferenceNode
         );
         return deepTree; // because this is forEach, all nodes will get added.  Maybe change that to for.. and stop if circular? or not
-      } else if (childTreeField?.getLogicTree() === null) {
-        // is this necessary?
-        // append leaf
-        // deepTree.appendChildNodeWithContent(
-        //   newBranchNodeId,
-        //   new FsLogicLeafNode(fieldId, condition, option)
-        // );
       } else {
-        // deepTree.appendChildNodeWithContent(
-        //   newBranchNodeId,
-        //   new FsLogicLeafNode(fieldId, condition, option)
-        // );
-
-        // const newChildNodeId = deepTree.appendChildNodeWithContent(
-        //   newBranchNodeId,
-        //   new FsLogicLeafNode(fieldId, condition, option)
-        // );
-
         // recursive call - not truly 'recursive' in that it's calling a different function which in-turn calls this function
         // this is a dangerous pattern and needs to be reworked to call itself, at a minimum
         return FsLogicTreeDeep.fromFormModel(
-          fieldId,
+          childNodeContent.fieldId,
           fieldCollection,
           deepTree,
           newBranchNodeId
