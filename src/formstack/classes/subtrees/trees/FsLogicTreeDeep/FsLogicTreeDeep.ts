@@ -81,6 +81,10 @@ class FsLogicTreeDeep {
     return this._fsDeepLogicTree.getChildContentByFieldId(fieldId);
   }
 
+  getNodeIdOfNodeContent(nodeContent: AbstractLogicNode): string | null {
+    return this._fsDeepLogicTree.getNodeIdOfNodeContent(nodeContent);
+  }
+
   getLogicErrorNodes(): FsLogicErrorNode[] {
     return this._fsDeepLogicTree.getLogicErrorNodes();
   }
@@ -136,12 +140,13 @@ class FsLogicTreeDeep {
     return statusMessages;
   }
 
-  // toPojoAt(nodeId?: string | undefined): TTreePojo<AbstractLogicNode>;
-  // toPojoAt(nodeId?: string | undefined, shouldObfuscate = true);
   toPojoAt(
     nodeId?: string,
     shouldObfuscate = true
   ): TTreePojo<AbstractLogicNode> {
+    // this has issues because circular reference nodes are using nodeId(s) which
+    // do not get converted to UUID.
+
     return this._fsDeepLogicTree.toPojoAt(
       nodeId || this._fsDeepLogicTree.rootNodeId,
       shouldObfuscate
@@ -181,6 +186,12 @@ class FsLogicTreeDeep {
     formModel: FsFormModel,
     parentJunctionOperator?: TFsJunctionOperators
   ): FsCircularDependencyNode {
+    `
+    This should find circular references
+    It needs to know, a the target/source node id (fieldId not as relevant)
+    this should only be checking branches?
+    current conflict seems to be leaf/branch
+`;
     const existingChildContent = deepTree.getChildContentByFieldId(
       sourceFieldId
     ) as unknown as
@@ -211,7 +222,10 @@ class FsLogicTreeDeep {
 
         return new FsCircularMutualInclusiveNode(
           sourceFieldId,
-          deepTree.rootFieldId,
+          deepTree.getNodeIdOfNodeContent(existingChildContent),
+
+          deepTree.rootFieldId, /// These are always root?
+          deepTree.rootNodeId, /// These are always root?
           deepTree.getDependentFieldIds(),
           {
             conditionalA: {
@@ -229,7 +243,9 @@ class FsLogicTreeDeep {
       } else {
         return new FsCircularMutualExclusiveNode(
           sourceFieldId,
-          deepTree.rootFieldId,
+          deepTree.getNodeIdOfNodeContent(existingChildContent),
+          deepTree.rootFieldId, /// These are always root?  Most likely last dependant?
+          deepTree.rootNodeId, /// These are always root?  Most likely last dependant?
           deepTree.getDependentFieldIds(),
           {
             conditionalA:
@@ -242,30 +258,73 @@ class FsLogicTreeDeep {
     }
 
     if (parentJunctionOperator == "any") {
+      // const targetNodeId = deepTree.getNodeIdOfNodeContent(
+      //   targetFieldContent as AbstractLogicNode
+      // );
+
+      // not effecient but maybe it works?
+      const x = deepTree._fsDeepLogicTree.getChildContentByFieldId(
+        // @ts-ignore
+        targetFieldContent.fieldId
+      );
+      const targetNodeId = deepTree.getNodeIdOfNodeContent(
+        x as AbstractLogicNode
+      );
+      const {
+        option: optionA,
+        condition: conditionA,
+        fieldId: fieldIdA,
+      } = targetFieldContent as FsLogicLeafNode;
+      const {
+        option: optionB,
+        condition: conditionB,
+        fieldId: fieldIdB,
+      } = existingChildContent as FsLogicLeafNode;
+
+      const targetFieldId =
+        // @ts-ignore - fieldId/ownerFieldId not element of union type
+        targetFieldContent?.fieldId || targetFieldContent?.ownerFieldId;
+      // const targetNodeId = deepTree.getNodeIdOfNodeContent(targetFieldContent);
+
       return new FsCircularMutualInclusiveNode(
-        deepTree.rootFieldId,
         sourceFieldId,
+        existingChildContent !== null
+          ? deepTree.getNodeIdOfNodeContent(
+              existingChildContent as unknown as AbstractLogicNode
+            )
+          : null,
+        targetFieldId,
+        targetNodeId,
+        // deepTree.rootFieldId, /// These are always root?  Most likely last dependant?
+        //        deepTree.rootNodeId, /// These are always root?  Most likely last dependant?
         deepTree.getDependentFieldIds(),
         // @ts-ignore
-        {}
-        // {
-        //   conditionalA: {
-        //     option: optionA,
-        //     condition: conditionA,
-        //     fieldId: fieldIdA,
-        //   },
-        //   conditionalB: {
-        //     option: optionB,
-        //     condition: conditionB,
-        //     fieldId: fieldIdB,
-        //   },
-        // }
+        //        {}
+        {
+          conditionalA: {
+            option: optionA,
+            condition: conditionA,
+            fieldId: fieldIdA,
+          },
+          conditionalB: {
+            option: optionB,
+            condition: conditionB,
+            fieldId: fieldIdB,
+          },
+        }
       );
     }
 
     return new FsCircularDependencyNode(
       sourceFieldId,
+      existingChildContent !== null
+        ? deepTree.getNodeIdOfNodeContent(
+            existingChildContent as unknown as AbstractLogicNode
+          )
+        : null,
+
       deepTree.rootFieldId,
+      deepTree.rootNodeId,
       deepTree.getDependentFieldIds()
     );
   }
@@ -358,6 +417,14 @@ class FsLogicTreeDeep {
 
     // @ts-ignore
     if (deepTree._fsDeepLogicTree.isExistInDependencyChain(nodeContent)) {
+      `
+        I think remove this check.  Let the child loop catch circular references.
+
+        However, that will likely change the tree structure.  I need to look at the differences
+        to make sure everything is ok.
+        
+      `;
+
       deepTree.appendChildNodeWithContent(
         deepTreeNodeId,
         FsLogicTreeDeep.getCircularReferenceNode(

@@ -8,6 +8,100 @@ import { FsLogicLeafNode } from "./LogicNodes/FsLogicLeafNode";
 import { TApiFormJson } from "../../../../type.form";
 import { FsFormModel } from "../../FsFormModel";
 import { transformers } from "../../../../transformers";
+import { FsVirtualRootNode } from "./LogicNodes/FsVirtualRootNode";
+import { TTreePojo } from "predicate-tree-advanced-poc/dist/src";
+import { AbstractLogicNode } from "./LogicNodes/AbstractLogicNode";
+import { FsCircularDependencyNode } from "./LogicNodes/FsCircularDependencyNode";
+import { FsCircularMutualInclusiveNode } from "./LogicNodes/FsCircularMutualInclusiveNode";
+
+type TGraphNode = {
+  nodeId: string;
+  parentId: string;
+  nodeContent: {
+    fieldId: string;
+    nodeId: string;
+    label: string;
+    nodeType: keyof AbstractLogicNode;
+  };
+};
+
+const pojoToD3TableData = (
+  pojo: TTreePojo<AbstractLogicNode>,
+  formModel: FsFormModel
+): TGraphNode[] => {
+  return Object.entries(pojo).map(([nodeId, nodeBody]) => {
+    // @ts-ignore
+    const { nodeContent } = nodeBody;
+
+    let pojoNodeContent = {
+      nodeId,
+      nodeType: nodeContent.nodeType,
+    };
+
+    const fieldId =
+      // @ts-ignore
+      nodeContent?.ownerFieldId || nodeContent?.fieldId || "_FIELD_ID_";
+    // @ts-ignore
+    pojoNodeContent.fieldId = fieldId;
+
+    // @ts-ignore
+    pojoNodeContent.fieldId = fieldId;
+    // finish with this label business
+    // Probably want "label", "fieldId", "nodeID"
+    // also how to present (operator value subject)?
+    const fieldModel = formModel.getFieldTreeByFieldId(fieldId);
+
+    switch (nodeContent.nodeType) {
+      case "FsLogicBranchNode":
+      case "FsVirtualRootNode":
+        const { action, conditional } = nodeContent as FsLogicBranchNode;
+        // @ts-ignore
+        pojoNodeContent.label = `${action || "show"} if ${conditional}`;
+        break;
+
+      case "FsLogicLeafNode":
+        const { condition, option } = nodeContent as FsLogicLeafNode;
+        // @ts-ignore
+        pojoNodeContent.label = `[${(fieldModel?.label || "").slice(
+          0,
+          25
+        )}] is ${condition} '${option}' `;
+        break;
+
+      case "FsCircularMutualInclusiveNode":
+      case "FsCircularMutualExclusiveNode":
+      case "FsCircularDependencyNode":
+        const { sourceFieldId, ruleConflict } =
+          nodeContent as FsCircularMutualInclusiveNode;
+        // @ts-ignore - fieldId not element of pojoNodeContent
+        pojoNodeContent.fieldId = sourceFieldId;
+        // @ts-ignore - ruleConflict not element of pojoNodeContent
+        pojoNodeContent.ruleConflict = ruleConflict;
+
+        const sourceFieldModel = formModel.getFieldTreeByFieldId(sourceFieldId);
+
+        // @ts-ignore - ruleConflict not element of pojoNodeContent
+        pojoNodeContent.label = `[${(sourceFieldModel?.label || "").slice(
+          0,
+          25
+        )}] is ${ruleConflict?.conditionalA.condition} '${
+          ruleConflict?.conditionalA.option
+        }' `;
+        break;
+
+      default:
+        pojoNodeContent = { ...nodeContent, ...pojoNodeContent };
+        break; // <-- never stops being funny
+    }
+
+    return {
+      nodeId,
+      parentId: nodeBody.parentId === nodeId ? "" : nodeBody.parentId, // root should be empty string
+      nodeContent: pojoNodeContent,
+    } as TGraphNode;
+  });
+};
+
 describe("FsLogicTreeDeep", () => {
   describe("Pojo Smoke test.", () => {
     it.only("Smoke Test", () => {
@@ -17,8 +111,20 @@ describe("FsLogicTreeDeep", () => {
       const tree5375703 = FsFormModel.fromApiFormJson(
         transformers.formJson(formJson5375703 as unknown as TApiFormJson)
       );
-      const agTree148604236 = tree5375703.aggregateLogicTree("148604236"); // (B) A->B->C-D->E->A (logic)
+      const agTree148604161 = tree5375703.aggregateLogicTree("148604161"); // (A) Big Dipper A->B->C->D->(B ^ E)
 
+      const d3Map148604161 = pojoToD3TableData(
+        agTree148604161.toPojoAt(undefined, false),
+        tree5375703
+      );
+
+      `
+        newest version of circular reference is missing source/target stuff, I think?
+        Doesn't work see error messages
+
+`;
+
+      const agTree148604236 = tree5375703.aggregateLogicTree("148604236"); // (B) Big Dipper A->B->C->D->(B ^ E)
       const agTree152290553 = tree5469299.aggregateLogicTree("152290553"); //  "A" - Inter-dependent (fixed with 'any')
       const agTree153413615 = tree5469299.aggregateLogicTree("153413615"); // Short Answer (non-conflict with 'any')
       const agTree152293116 = tree5469299.aggregateLogicTree("152293116"); // Mutually Exclusive
@@ -29,6 +135,19 @@ describe("FsLogicTreeDeep", () => {
       const agTree152290546 = tree5469299.aggregateLogicTree("152290546"); // (B) A->B->C-D->E->A (logic)
       const agTree148509470 = tree5375703.aggregateLogicTree("148509470"); // A Inter-dependent (not so much circular)
       const agTree148456742 = tree5375703.aggregateLogicTree("148456742"); // (B) A->B->C-D->E->A (logic)
+
+      // d3 looks ok but needs this to be fixed before it can go furhter.
+      // circularNode always uses root?? I as source (or ) terget  I dont think that is correct
+
+      const d3FieldTable148509470 = pojoToD3TableData(
+        agTree148509470.toPojoAt(undefined, false),
+        tree5375703
+      );
+
+      const d3FieldTable148456742 = pojoToD3TableData(
+        agTree148456742.toPojoAt(undefined, false),
+        tree5375703
+      );
 
       const pojo = {
         pojo148604236: agTree148604236.toPojoAt(undefined, false),

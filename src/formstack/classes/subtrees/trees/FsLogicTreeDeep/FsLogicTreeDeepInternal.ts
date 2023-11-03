@@ -98,6 +98,12 @@ class FsLogicTreeDeepInternal extends AbstractFsTreeLogic<AbstractLogicNode> {
     return null;
   }
 
+  getAllLeafContents(): FsLogicLeafNode[] {
+    return this.getTreeContentAt().filter(
+      (nodeContent) => nodeContent instanceof FsLogicLeafNode
+    ) as FsLogicLeafNode[];
+  }
+
   getChildContentByFieldId<T = AbstractLogicNode>(fieldId: string) {
     return this.#dependantFieldIdMap[fieldId] as T;
   }
@@ -131,10 +137,14 @@ class FsLogicTreeDeepInternal extends AbstractFsTreeLogic<AbstractLogicNode> {
     return this.findAllNodesOfType<FsLogicErrorNode>(FsLogicErrorNode);
   }
 
-  getAllLeafContents(): FsLogicLeafNode[] {
-    return this.getTreeContentAt().filter(
-      (nodeContent) => nodeContent instanceof FsLogicLeafNode
-    ) as FsLogicLeafNode[];
+  getNodeIdOfNodeContent(nodeContent: AbstractLogicNode): string | null {
+    const matchingNodeContent = this.getTreeNodeIdsAt(this.rootNodeId).filter(
+      (nodeId) => Object.is(this.getChildContentAt(nodeId), nodeContent)
+    );
+    if (matchingNodeContent.length === 1) {
+      return matchingNodeContent[0];
+    }
+    return null;
   }
 
   public isExistInDependencyChain(field: FsFieldModel): boolean {

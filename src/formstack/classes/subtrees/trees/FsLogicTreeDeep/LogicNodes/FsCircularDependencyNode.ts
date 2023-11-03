@@ -4,17 +4,23 @@ import type { TStatusRecord } from "../../../../Evaluator/type";
 
 class FsCircularDependencyNode extends AbstractLogicNode {
   _sourceFieldId: string;
+  _sourceNodeId: string | null;
   _targetFieldId: string;
+  _targetNodeId: string | null;
   private _dependentChainFieldIds: string[];
 
   constructor(
     sourceFieldId: string,
+    sourceNodeId: string | null,
     targetFieldId: string,
+    targetNodeId: string | null,
     dependentChainFieldIds: string[]
   ) {
     super();
     this._sourceFieldId = sourceFieldId;
+    this._sourceNodeId = sourceNodeId;
     this._targetFieldId = targetFieldId;
+    this._targetNodeId = targetNodeId;
     this._dependentChainFieldIds = dependentChainFieldIds;
   }
 
@@ -36,15 +42,26 @@ class FsCircularDependencyNode extends AbstractLogicNode {
   get sourceFieldId() {
     return this._sourceFieldId;
   }
+
+  get sourceNodeId(): string | null {
+    return this._sourceNodeId;
+  }
+
   get targetFieldId() {
     return this._targetFieldId;
+  }
+
+  get targetNodeId(): string | null {
+    return this._targetNodeId;
   }
 
   toPojo(): object {
     return {
       nodeType: this.nodeType,
       sourceFieldId: this.sourceFieldId,
-      targetSourceId: this.targetFieldId,
+      sourceNodeId: this.sourceNodeId,
+      targetFieldId: this.targetFieldId,
+      targetNodeId: this.targetNodeId,
       dependentChainFieldIds: this.dependentChainFieldIds,
     };
   }

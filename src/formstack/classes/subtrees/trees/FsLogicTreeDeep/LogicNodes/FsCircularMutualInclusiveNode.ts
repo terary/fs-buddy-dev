@@ -12,11 +12,19 @@ class FsCircularMutualInclusiveNode extends FsCircularDependencyNode {
   private _ruleConflict?: RuleConflictType;
   constructor(
     sourceFieldId: string,
+    sourceNodeId: string | null,
     targetFieldId: string,
+    targetNodeId: string | null,
     dependentChainFieldIds: string[],
-    ruleConflict?: RuleConflictType
+    ruleConflict: RuleConflictType
   ) {
-    super(sourceFieldId, targetFieldId, dependentChainFieldIds);
+    super(
+      sourceFieldId,
+      sourceNodeId,
+      targetFieldId,
+      targetNodeId,
+      dependentChainFieldIds
+    );
     this._ruleConflict = ruleConflict;
   }
 
