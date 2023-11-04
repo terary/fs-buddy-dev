@@ -14,94 +14,6 @@ import { AbstractLogicNode } from "./LogicNodes/AbstractLogicNode";
 import { FsCircularDependencyNode } from "./LogicNodes/FsCircularDependencyNode";
 import { FsCircularMutualInclusiveNode } from "./LogicNodes/FsCircularMutualInclusiveNode";
 
-type TGraphNode = {
-  nodeId: string;
-  parentId: string;
-  nodeContent: {
-    fieldId: string;
-    nodeId: string;
-    label: string;
-    nodeType: keyof AbstractLogicNode;
-  };
-};
-
-const pojoToD3TableData = (
-  pojo: TTreePojo<AbstractLogicNode>,
-  formModel: FsFormModel
-): TGraphNode[] => {
-  return Object.entries(pojo).map(([nodeId, nodeBody]) => {
-    // @ts-ignore
-    const { nodeContent } = nodeBody;
-
-    let pojoNodeContent = {
-      nodeId,
-      nodeType: nodeContent.nodeType,
-    };
-
-    const fieldId =
-      // @ts-ignore
-      nodeContent?.ownerFieldId || nodeContent?.fieldId || "_FIELD_ID_";
-    // @ts-ignore
-    pojoNodeContent.fieldId = fieldId;
-
-    // @ts-ignore
-    pojoNodeContent.fieldId = fieldId;
-    // finish with this label business
-    // Probably want "label", "fieldId", "nodeID"
-    // also how to present (operator value subject)?
-    const fieldModel = formModel.getFieldTreeByFieldId(fieldId);
-
-    switch (nodeContent.nodeType) {
-      case "FsLogicBranchNode":
-      case "FsVirtualRootNode":
-        const { action, conditional } = nodeContent as FsLogicBranchNode;
-        // @ts-ignore
-        pojoNodeContent.label = `${action || "show"} if ${conditional}`;
-        break;
-
-      case "FsLogicLeafNode":
-        const { condition, option } = nodeContent as FsLogicLeafNode;
-        // @ts-ignore
-        pojoNodeContent.label = `[${(fieldModel?.label || "").slice(
-          0,
-          25
-        )}] is ${condition} '${option}' `;
-        break;
-
-      case "FsCircularMutualInclusiveNode":
-      case "FsCircularMutualExclusiveNode":
-      case "FsCircularDependencyNode":
-        const { sourceFieldId, ruleConflict } =
-          nodeContent as FsCircularMutualInclusiveNode;
-        // @ts-ignore - fieldId not element of pojoNodeContent
-        pojoNodeContent.fieldId = sourceFieldId;
-        // @ts-ignore - ruleConflict not element of pojoNodeContent
-        pojoNodeContent.ruleConflict = ruleConflict;
-
-        const sourceFieldModel = formModel.getFieldTreeByFieldId(sourceFieldId);
-
-        // @ts-ignore - ruleConflict not element of pojoNodeContent
-        pojoNodeContent.label = `[${(sourceFieldModel?.label || "").slice(
-          0,
-          25
-        )}] is ${ruleConflict?.conditionalA.condition} '${
-          ruleConflict?.conditionalA.option
-        }' `;
-        break;
-
-      default:
-        pojoNodeContent = { ...nodeContent, ...pojoNodeContent };
-        break; // <-- never stops being funny
-    }
-
-    return {
-      nodeId,
-      parentId: nodeBody.parentId === nodeId ? "" : nodeBody.parentId, // root should be empty string
-      nodeContent: pojoNodeContent,
-    } as TGraphNode;
-  });
-};
-
 describe("FsLogicTreeDeep", () => {
   describe("Pojo Smoke test.", () => {
     it.only("Smoke Test", () => {
@@ -113,7 +25,7 @@ describe("FsLogicTreeDeep", () => {
       );
       const agTree148604161 = tree5375703.aggregateLogicTree("148604161"); // (A) Big Dipper A->B->C->D->(B ^ E)
 
-      const d3Map148604161 = pojoToD3TableData(
+      const d3Map148604161 = transformers.pojoToD3TableData(
         agTree148604161.toPojoAt(undefined, false),
         tree5375703
       );
@@ -139,13 +51,13 @@ describe("FsLogicTreeDeep", () => {
       // d3 looks ok but needs this to be fixed before it can go furhter.
       // circularNode always uses root?? I as source (or ) terget  I dont think that is correct
 
-      const d3FieldTable148509470 = pojoToD3TableData(
-        agTree148509470.toPojoAt(undefined, false),
+      const d3FieldTable148456742 = transformers.pojoToD3TableData(
+        agTree148456742.toPojoAt(undefined, false),
         tree5375703
       );
 
-      const d3FieldTable148456742 = pojoToD3TableData(
-        agTree148456742.toPojoAt(undefined, false),
+      const d3FieldTable148509470 = transformers.pojoToD3TableData(
+        agTree148509470.toPojoAt(undefined, false),
         tree5375703
       );
 
