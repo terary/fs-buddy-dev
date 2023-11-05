@@ -62,6 +62,7 @@ class FsCircularDependencyNode extends AbstractLogicNode {
       sourceNodeId: this.sourceNodeId,
       targetFieldId: this.targetFieldId,
       targetNodeId: this.targetNodeId,
+      ruleConflict: {},
       dependentChainFieldIds: this.dependentChainFieldIds,
     };
   }

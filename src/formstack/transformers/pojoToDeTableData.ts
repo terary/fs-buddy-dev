@@ -57,6 +57,14 @@ const pojoToD3TableData = (
         pojoNodeContent.label = `[${(fieldModel?.label || "").slice(0, 25)}]
         ${condition}
         '${option}' `;
+
+        // @ts-ignore
+        pojoNodeContent.label = [
+          (fieldModel?.label || "").slice(0, 25),
+          condition,
+          option,
+        ];
+
         break;
 
       case "FsCircularMutualInclusiveNode":
@@ -84,13 +92,29 @@ const pojoToD3TableData = (
 
         const sourceFieldModel = formModel.getFieldTreeByFieldId(sourceFieldId);
 
+        // {
+        //   "nodeId": "148509465:0:5",
+        //   "parentId": "148509465:0",
+        //   "nodeContent": {
+        //     "nodeId": "148509465:0:5",
+        //     "nodeType": "FsCircularDependencyNode",
+        //     "fieldId": "148509465",
+        //     "sourceFieldId": "148509465",
+        //     "sourceNodeId": "148509465:0",
+        //     "targetFieldId": "148509465",
+        //     "targetNodeId": "148509465",
+        //     "label": ["", null, null]
+        //   }
+        // },
         // @ts-ignore - ruleConflict not element of pojoNodeContent
-        pojoNodeContent.label = `[${(sourceFieldModel?.label || "").slice(
-          0,
-          25
-        )}] is ${ruleConflict?.conditionalA.condition} '${
-          ruleConflict?.conditionalA.option
-        }' `;
+        pojoNodeContent.label = [
+          (sourceFieldModel?.label || "").slice(0, 25),
+          ruleConflict?.conditionalA.condition,
+          ruleConflict?.conditionalA.option,
+          ruleConflict?.conditionalB.condition,
+          ruleConflict?.conditionalB.option,
+        ];
+
         break;
 
       default:

@@ -48,6 +48,10 @@ describe("FsLogicTreeDeep", () => {
       const agTree148509470 = tree5375703.aggregateLogicTree("148509470"); // A Inter-dependent (not so much circular)
       const agTree148456742 = tree5375703.aggregateLogicTree("148456742"); // (B) A->B->C-D->E->A (logic)
 
+      // 148509470 - two nodes without labels
+
+      // this appears to connect branc to leaf? sometimes circular node will have label sometimes not?
+
       // d3 looks ok but needs this to be fixed before it can go furhter.
       // circularNode always uses root?? I as source (or ) terget  I dont think that is correct
 

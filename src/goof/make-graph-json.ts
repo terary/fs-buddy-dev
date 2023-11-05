@@ -33,8 +33,13 @@ const main = () => {
   const tree5375703 = FsFormModel.fromApiFormJson(
     transformers.formJson(formJson5375703 as unknown as TApiFormJson)
   );
+  const agTree148509465 = tree5375703.aggregateLogicTree("148509465");
+  const p = agTree148509465.toPojoAt(undefined, false);
+  const d3Map148509465 = transformers.pojoToD3TableData(
+    agTree148509465.toPojoAt(undefined, false),
+    tree5375703
+  );
   const agTree148604161 = tree5375703.aggregateLogicTree("148604161"); // (A) Big Dipper A->B->C->D->(B ^ E)
-
   const d3Map148604161 = transformers.pojoToD3TableData(
     agTree148604161.toPojoAt(undefined, false),
     tree5375703
@@ -49,6 +54,7 @@ const main = () => {
   const graphJson = {};
 
   [
+    "148509465", // (panel) Inter-dependent (not so much circular)
     "148604236", // (B) Big Dipper A->B->C->D->(B ^ E)
     "148509470", // A Inter-dependent (not so much circular)
     "148456742", // (B) A->B->C-D->E->A (logic)
