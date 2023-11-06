@@ -6,6 +6,7 @@ import {
   FsLogicBranchNode,
   FsLogicLeafNode,
 } from "../classes/subtrees/trees/FsLogicTreeDeep";
+import { TFsFieldSection } from "../type.field";
 
 type TGraphNode = {
   nodeId: string;
@@ -106,12 +107,23 @@ const pojoToD3TableData = (
         //     "label": ["", null, null]
         //   }
         // },
+
         // @ts-ignore - ruleConflict not element of pojoNodeContent
         pojoNodeContent.label = [
-          (sourceFieldModel?.label || "").slice(0, 25),
+          (
+            sourceFieldModel?.label ||
+            (sourceFieldModel?.fieldJson as TFsFieldSection)[
+              "section_heading"
+            ] ||
+            ""
+          ).slice(0, 25),
+          // @ts-ignore
           ruleConflict?.conditionalA.condition,
+          // @ts-ignore
           ruleConflict?.conditionalA.option,
+          // @ts-ignore
           ruleConflict?.conditionalB.condition,
+          // @ts-ignore
           ruleConflict?.conditionalB.option,
         ];
 

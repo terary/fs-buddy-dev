@@ -51,7 +51,7 @@ const main = () => {
 
 `;
 
-  const graphJson = {};
+  const logicTreeGraphJson = {};
 
   [
     "148509465", // (panel) Inter-dependent (not so much circular)
@@ -62,7 +62,7 @@ const main = () => {
     const agTree = tree5375703.aggregateLogicTree(fieldId); // (B) Big Dipper A->B->C->D->(B ^ E)
 
     // @ts-ignore
-    graphJson[fieldId] = transformers.pojoToD3TableData(
+    logicTreeGraphJson[fieldId] = transformers.pojoToD3TableData(
       agTree.toPojoAt(undefined, false),
       tree5375703
     );
@@ -84,12 +84,16 @@ const main = () => {
     const agTree = tree5469299.aggregateLogicTree(fieldId); // (B) Big Dipper A->B->C->D->(B ^ E)
 
     // @ts-ignore
-    graphJson[fieldId] = transformers.pojoToD3TableData(
+    logicTreeGraphJson[fieldId] = transformers.pojoToD3TableData(
       agTree.toPojoAt(undefined, false),
       tree5469299
     );
   });
 
+  const graphJson = {
+    version: new Date().toISOString(),
+    logicTrees: logicTreeGraphJson,
+  };
   console.log(graphJson);
   //   const filename = "../../plot-network-graph/graph.json";
   const filename = "./plot-network-graph/graph.json";

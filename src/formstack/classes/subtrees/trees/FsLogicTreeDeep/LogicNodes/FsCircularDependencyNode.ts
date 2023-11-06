@@ -1,12 +1,14 @@
 import { TNodePojo } from "predicate-tree-advanced-poc/dist/src";
 import { AbstractLogicNode } from "./AbstractLogicNode";
 import type { TStatusRecord } from "../../../../Evaluator/type";
+import { RuleConflictType } from "./type";
 
 class FsCircularDependencyNode extends AbstractLogicNode {
   _sourceFieldId: string;
   _sourceNodeId: string | null;
   _targetFieldId: string;
   _targetNodeId: string | null;
+  private _ruleConflict: RuleConflictType | null = null;
   private _dependentChainFieldIds: string[];
 
   constructor(
@@ -14,7 +16,8 @@ class FsCircularDependencyNode extends AbstractLogicNode {
     sourceNodeId: string | null,
     targetFieldId: string,
     targetNodeId: string | null,
-    dependentChainFieldIds: string[]
+    dependentChainFieldIds: string[],
+    ruleConflict?: RuleConflictType
   ) {
     super();
     this._sourceFieldId = sourceFieldId;
@@ -22,12 +25,16 @@ class FsCircularDependencyNode extends AbstractLogicNode {
     this._targetFieldId = targetFieldId;
     this._targetNodeId = targetNodeId;
     this._dependentChainFieldIds = dependentChainFieldIds;
+    this._ruleConflict = ruleConflict || null;
   }
 
   getLastVisitedFieldId() {
     return this.dependentChainFieldIds.length >= 1
       ? this.dependentChainFieldIds[this.dependentChainFieldIds.length - 1]
       : -1; // a bit over kill, *should* always be 0 or more elements
+  }
+  get ruleConflict(): RuleConflictType | null {
+    return this._ruleConflict;
   }
 
   get dependentChainFieldIds() {
@@ -55,6 +62,10 @@ class FsCircularDependencyNode extends AbstractLogicNode {
     return this._targetNodeId;
   }
 
+  set targetNodeId(nodeId: string) {
+    this._targetNodeId = nodeId;
+  }
+
   toPojo(): object {
     return {
       nodeType: this.nodeType,
@@ -62,7 +73,7 @@ class FsCircularDependencyNode extends AbstractLogicNode {
       sourceNodeId: this.sourceNodeId,
       targetFieldId: this.targetFieldId,
       targetNodeId: this.targetNodeId,
-      ruleConflict: {},
+      ruleConflict: this.ruleConflict,
       dependentChainFieldIds: this.dependentChainFieldIds,
     };
   }

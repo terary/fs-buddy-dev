@@ -9,7 +9,6 @@ type RuleConflictType = {
 };
 
 class FsCircularMutualInclusiveNode extends FsCircularDependencyNode {
-  private _ruleConflict?: RuleConflictType;
   constructor(
     sourceFieldId: string,
     sourceNodeId: string | null,
@@ -23,13 +22,10 @@ class FsCircularMutualInclusiveNode extends FsCircularDependencyNode {
       sourceNodeId,
       targetFieldId,
       targetNodeId,
-      dependentChainFieldIds
+      dependentChainFieldIds,
+      ruleConflict
     );
-    this._ruleConflict = ruleConflict;
-  }
-
-  get ruleConflict(): RuleConflictType | null {
-    return this._ruleConflict || null;
+    // this._ruleConflict = ruleConflict;
   }
 
   getLastVisitedFieldId() {

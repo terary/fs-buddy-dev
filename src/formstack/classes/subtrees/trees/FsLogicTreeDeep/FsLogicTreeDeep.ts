@@ -322,10 +322,31 @@ class FsLogicTreeDeep {
             existingChildContent as unknown as AbstractLogicNode
           )
         : null,
-
-      deepTree.rootFieldId,
+      // @ts-ignore
+      targetFieldContent.fieldId,
+      // deepTree.rootFieldId,
       deepTree.rootNodeId,
-      deepTree.getDependentFieldIds()
+      deepTree.getDependentFieldIds(),
+      {
+        // @ts-ignore
+        conditionalA: {
+          // @ts-ignore
+          condition: existingChildContent.conditional,
+          // @ts-ignore
+          action: existingChildContent.action,
+          // @ts-ignore
+          option: existingChildContent.option,
+        },
+        // @ts-ignore
+        conditionalB: {
+          // @ts-ignore
+          condition: targetFieldContent.conditional,
+          // @ts-ignore
+          action: targetFieldContent.action,
+          // @ts-ignore
+          option: targetFieldContent.option,
+        },
+      }
     );
   }
 
@@ -425,7 +446,7 @@ class FsLogicTreeDeep {
         
       `;
 
-      deepTree.appendChildNodeWithContent(
+      const circularNodeId = deepTree.appendChildNodeWithContent(
         deepTreeNodeId,
         FsLogicTreeDeep.getCircularReferenceNode(
           parentFieldId,
@@ -435,6 +456,11 @@ class FsLogicTreeDeep {
           // parentJunctionOperator
         )
       );
+      // const circularNodeContent =
+      //   deepTree.getChildContentAt<FsCircularDependencyNode>(circularNodeId);
+      deepTree.getChildContentAt<FsCircularDependencyNode>(
+        circularNodeId
+      ).targetNodeId = circularNodeId;
       return deepTree;
     }
 
@@ -473,6 +499,8 @@ class FsLogicTreeDeep {
     );
 
     childrenNodeIds.forEach((childNodeId) => {
+      // for (let i = 0; i < childrenNodeIds.length; i++) {
+      // let childNodeId = childrenNodeIds[i];
       const childNodeContent =
         fieldLogicTree.getChildContentAtOrThrow<TFsFieldLogicCheckLeaf>(
           childNodeId
@@ -514,10 +542,14 @@ class FsLogicTreeDeep {
           fieldCollection,
           parentJunctionOperator
         );
-        deepTree.appendChildNodeWithContent(
+        const circularNodeId = deepTree.appendChildNodeWithContent(
           newBranchNodeId,
           circularReferenceNode
         );
+        deepTree.getChildContentAt<FsCircularDependencyNode>(
+          circularNodeId
+        ).targetNodeId = circularNodeId;
+
         return deepTree; // because this is forEach, all nodes will get added.  Maybe change that to for.. and stop if circular? or not
       } else {
         // recursive call - not truly 'recursive' in that it's calling a different function which in-turn calls this function

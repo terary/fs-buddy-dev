@@ -2,14 +2,9 @@ import { transformers } from "../../../../../transformers";
 import { TStatusRecord } from "../../../../Evaluator/type";
 import { TFsFieldLogicCheckLeaf } from "../../../types";
 import { FsCircularDependencyNode } from "./FsCircularDependencyNode";
-
-type RuleConflictType = {
-  conditionalA: TFsFieldLogicCheckLeaf;
-  conditionalB: TFsFieldLogicCheckLeaf;
-};
-
+import type { RuleConflictType } from "./type";
 class FsCircularMutualExclusiveNode extends FsCircularDependencyNode {
-  private _ruleConflict: RuleConflictType;
+  //  private _ruleConflict: RuleConflictType;
   constructor(
     sourceFieldId: string,
     sourceNodeId: string | null,
@@ -23,13 +18,10 @@ class FsCircularMutualExclusiveNode extends FsCircularDependencyNode {
       sourceNodeId,
       targetFieldId,
       targetNodeId,
-      dependentChainFieldIds
+      dependentChainFieldIds,
+      ruleConflict
     );
-    this._ruleConflict = ruleConflict;
-  }
-
-  get ruleConflict(): RuleConflictType {
-    return this._ruleConflict;
+    //    this._ruleConflict = ruleConflict;
   }
 
   getLastVisitedFieldId() {
@@ -38,6 +30,7 @@ class FsCircularMutualExclusiveNode extends FsCircularDependencyNode {
 
   toPojo(): object {
     const {
+      // @ts-ignore
       conditionalB: { condition, option, fieldId },
     } = this.ruleConflict;
 
@@ -46,6 +39,7 @@ class FsCircularMutualExclusiveNode extends FsCircularDependencyNode {
       ruleConflict: {
         // because there is some weird typing issue
         conditionalB: { condition, option, fieldId },
+        // @ts-ignore
         conditionalA: this.ruleConflict.conditionalA,
       },
       ...super.toPojo(),
