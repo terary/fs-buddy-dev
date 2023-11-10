@@ -59,6 +59,7 @@ const main = () => {
     };
   });
 
+  const agTree154328261 = tree5375703.aggregateLogicTree("154328261"); // B.0 (no internal logic)
   const agTree148604161 = tree5375703.aggregateLogicTree("148604161"); // (A) Big Dipper A->B->C->D->(B ^ E)
   const d3Map148604161 = transformers.pojoToD3TableData(
     agTree148604161.toPojoAt(undefined, false),
@@ -79,6 +80,8 @@ const main = () => {
   const logicTreeGraphJson = {};
 
   [
+    "148509475", // B.0 (inter-dependent)
+    "154328261", // B.0 (no internal logic)
     "148509465", // (panel) Inter-dependent (not so much circular)
     "148604236", // (B) Big Dipper A->B->C->D->(B ^ E)
     "148509470", // A Inter-dependent (not so much circular)
@@ -87,11 +90,22 @@ const main = () => {
   ].forEach((fieldId) => {
     const agTree = tree5375703.aggregateLogicTree(fieldId); // (B) Big Dipper A->B->C->D->(B ^ E)
 
+    // // @ts-ignore
+    // logicTreeGraphJson[fieldId] = transformers.pojoToD3TableData(
+    //   agTree.toPojoAt(undefined, false),
+    //   tree5375703
+    // );
+
+    // // const agTree = tree5469299.aggregateLogicTree(fieldId); // (B) Big Dipper A->B->C->D->(B ^ E)
+
     // @ts-ignore
-    logicTreeGraphJson[fieldId] = transformers.pojoToD3TableData(
-      agTree.toPojoAt(undefined, false),
-      tree5375703
-    );
+    logicTreeGraphJson[fieldId] = {
+      label: tree5375703.getFieldTreeByFieldId(fieldId)?.label,
+      graphMapping: transformers.pojoToD3TableData(
+        agTree.toPojoAt(undefined, false),
+        tree5375703
+      ),
+    };
   });
 
   [
@@ -110,10 +124,13 @@ const main = () => {
     const agTree = tree5469299.aggregateLogicTree(fieldId); // (B) Big Dipper A->B->C->D->(B ^ E)
 
     // @ts-ignore
-    logicTreeGraphJson[fieldId] = transformers.pojoToD3TableData(
-      agTree.toPojoAt(undefined, false),
-      tree5469299
-    );
+    logicTreeGraphJson[fieldId] = {
+      label: tree5469299.getFieldTreeByFieldId(fieldId)?.label,
+      graphMapping: transformers.pojoToD3TableData(
+        agTree.toPojoAt(undefined, false),
+        tree5469299
+      ),
+    };
   });
 
   const graphJson = {

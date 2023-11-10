@@ -523,9 +523,9 @@ class FsLogicTreeDeep {
         )
       );
 
-      if (childTreeField?.getLogicTree() === null) {
-        return deepTree;
-      }
+      // if (childTreeField?.getLogicTree() === null) {
+      //   return deepTree;
+      // }
 
       if (deepTree.isExistInDependencyChain(childTreeField)) {
         // if two children from the same parent, conflict, and the parent is "any" then conflict resolves 1, else 0
