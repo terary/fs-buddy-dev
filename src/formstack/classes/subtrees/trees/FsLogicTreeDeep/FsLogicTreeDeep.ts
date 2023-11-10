@@ -552,14 +552,30 @@ class FsLogicTreeDeep {
 
         return deepTree; // because this is forEach, all nodes will get added.  Maybe change that to for.. and stop if circular? or not
       } else {
-        // recursive call - not truly 'recursive' in that it's calling a different function which in-turn calls this function
-        // this is a dangerous pattern and needs to be reworked to call itself, at a minimum
         return FsLogicTreeDeep.fromFormModel(
           childNodeContent.fieldId,
           fieldCollection,
           deepTree,
           newBranchNodeId
         );
+        // this is not finding circular within a panel first degree
+        // see: 154328256, Inter-dependent (not so much circular) no internal logic
+
+        // Also when detecting circular its not adding target/source - only target/target or source/source (I don't recall which)
+        // return FsLogicTreeDeep.appendFieldTreeNodeToLogicDeep(
+        //   // fieldLogicTree: FsTreeLogic,
+        //   // @ts-ignore - could be null/undefined
+        //   fieldCollection.getFieldTreeByFieldId(childNodeContent.fieldId),
+        //   // fieldLogicNodeId: string,
+        //   childNodeContent.fieldId,
+        //   // `_FIELD_ID_: ${childNodeContent.fieldId}`,
+        //   // deepTree: FsLogicTreeDeep,
+        //   deepTree,
+        //   // deepTreeNodeId: string,
+        //   newBranchNodeId,
+        //   // fieldCollection: FsFormModel
+        //   fieldCollection
+        // );
       }
     });
 

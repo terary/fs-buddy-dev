@@ -39,16 +39,41 @@ const main = () => {
     agTree148509465.toPojoAt(undefined, false),
     tree5375703
   );
+
+  const fields = {};
+  // @ts-ignore
+  const fieldMapping = d3Map148509465.map((d3MapGraphNode) => {
+    const parentNode = agTree148509465.getChildContentAt(
+      d3MapGraphNode.parentId
+    );
+
+    const parentId = !parentNode
+      ? ""
+      : // @ts-ignore
+        parentNode.fieldId || parentNode.ownerFieldId;
+
+    return {
+      nodeId: d3MapGraphNode.nodeContent.fieldId,
+      parentId,
+      nodeContent: d3MapGraphNode,
+    };
+  });
+
   const agTree148604161 = tree5375703.aggregateLogicTree("148604161"); // (A) Big Dipper A->B->C->D->(B ^ E)
   const d3Map148604161 = transformers.pojoToD3TableData(
     agTree148604161.toPojoAt(undefined, false),
     tree5375703
   );
 
-  `
-      newest version of circular reference is missing source/target stuff, I think?
-      Doesn't work see error messages
+  const agTree154328256 = tree5375703.aggregateLogicTree("154328256"); // (A) Big Dipper A->B->C->D->(B ^ E)
+  const d3Map154328256 = transformers.pojoToD3TableData(
+    agTree148604161.toPojoAt(undefined, false),
+    tree5375703
+  );
 
+  `
+    newest version of circular reference is missing source/target stuff, I think?
+    Doesn't work see error messages
 `;
 
   const logicTreeGraphJson = {};
@@ -57,6 +82,7 @@ const main = () => {
     "148509465", // (panel) Inter-dependent (not so much circular)
     "148604236", // (B) Big Dipper A->B->C->D->(B ^ E)
     "148509470", // A Inter-dependent (not so much circular)
+    "154328256", // Inter-dependent (not so much circular) no internal logic
     "148456742", // (B) A->B->C-D->E->A (logic)
   ].forEach((fieldId) => {
     const agTree = tree5375703.aggregateLogicTree(fieldId); // (B) Big Dipper A->B->C->D->(B ^ E)
