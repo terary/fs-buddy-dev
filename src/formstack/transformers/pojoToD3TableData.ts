@@ -2,7 +2,7 @@ import { TTreePojo } from "predicate-tree-advanced-poc/dist/src";
 import { FsFormModel } from "../classes/subtrees";
 import { AbstractLogicNode } from "../classes/subtrees/trees/FsLogicTreeDeep/LogicNodes/AbstractLogicNode";
 import {
-  FsCircularMutualInclusiveNode,
+  FsCircularDependencyNode,
   FsLogicBranchNode,
   FsLogicLeafNode,
 } from "../classes/subtrees/trees/FsLogicTreeDeep";
@@ -72,11 +72,9 @@ const pojoToD3TableData = (
 
         break;
 
-      case "FsCircularMutualInclusiveNode":
-      case "FsCircularMutualExclusiveNode":
       case "FsCircularDependencyNode":
         const { sourceFieldId, ruleConflict } =
-          nodeContent as FsCircularMutualInclusiveNode;
+          nodeContent as FsCircularDependencyNode;
         // @ts-ignore - fieldId not element of pojoNodeContent
         pojoNodeContent.fieldId = sourceFieldId;
         // @ts-ignore - ruleConflict not element of pojoNodeContent

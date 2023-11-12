@@ -7,12 +7,6 @@ import { transformers } from "../formstack/transformers";
 import formJson5375703 from "../../src/test-dev-resources/form-json/5375703.json";
 import formJson5469299 from "../../src/test-dev-resources/form-json/5469299.json";
 
-import {
-  FsCircularDependencyNode,
-  FsCircularMutualInclusiveNode,
-  FsLogicBranchNode,
-  FsLogicLeafNode,
-} from "../formstack/classes/subtrees/trees/FsLogicTreeDeep";
 import { TApiFormJson } from "../formstack/type.form";
 type TGraphNode = {
   nodeId: string;

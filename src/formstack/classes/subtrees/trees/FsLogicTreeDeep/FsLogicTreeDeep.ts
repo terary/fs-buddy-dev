@@ -17,8 +17,6 @@ import { FsLogicBranchNode } from "./LogicNodes/FsLogicBranchNode";
 
 import { FsLogicLeafNode } from "./LogicNodes/FsLogicLeafNode";
 import { FsVirtualRootNode } from "./LogicNodes/FsVirtualRootNode";
-import { FsCircularMutualExclusiveNode } from "./LogicNodes/FsCircularMutualExclusiveNode";
-import { FsCircularMutualInclusiveNode } from "./LogicNodes/FsCircularMutualInclusiveNode";
 import type { TLogicTreeDeepStatisticCountRecord } from "./type";
 import { FsLogicErrorNode } from "./LogicNodes/FsLogicErrorNode";
 
@@ -79,14 +77,6 @@ class FsLogicTreeDeep {
 
   getCircularLogicNodes(): FsCircularDependencyNode[] {
     return this._fsDeepLogicTree.getCircularLogicNodes();
-  }
-
-  getCircularMutuallyExclusiveLogicNodes(): FsCircularDependencyNode[] {
-    return this._fsDeepLogicTree.getCircularMutuallyExclusiveLogicNodes();
-  }
-
-  getCircularMutuallyInclusiveLogicNodes(): FsCircularDependencyNode[] {
-    return this._fsDeepLogicTree.getCircularMutuallyInclusiveLogicNodes();
   }
 
   getDependentFieldIds(): string[] {
@@ -227,15 +217,6 @@ class FsLogicTreeDeep {
     this._fsDeepLogicTree.getTreeContentAt().forEach((nodeContent) => {
       countRecords.totalNodes++;
       switch (true) {
-        case nodeContent instanceof FsCircularMutualExclusiveNode:
-          countRecords.totalCircularLogicNodes++;
-          countRecords.totalCircularExclusiveLogicNodes++;
-          break;
-
-        case nodeContent instanceof FsCircularMutualInclusiveNode:
-          countRecords.totalCircularLogicNodes++;
-          countRecords.totalCircularInclusiveLogicNodes++;
-          break;
         case nodeContent instanceof FsCircularDependencyNode:
           countRecords.totalCircularLogicNodes++;
           break;

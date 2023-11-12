@@ -12,8 +12,6 @@ import { FsFieldModel } from "../FsFieldModel";
 import { AbstractLogicNode } from "./LogicNodes/AbstractLogicNode";
 import { FsVirtualRootNode } from "./LogicNodes/FsVirtualRootNode";
 import { FsLogicErrorNode } from "./LogicNodes/FsLogicErrorNode";
-import { FsCircularMutualInclusiveNode } from "./LogicNodes/FsCircularMutualInclusiveNode";
-import { FsCircularMutualExclusiveNode } from "./LogicNodes/FsCircularMutualExclusiveNode";
 import { AbstractLogicTree } from "./AbstractLogicTree";
 class FsLogicTreeDeepInternal extends AbstractLogicTree<AbstractLogicNode> {
   private _dependantFieldIdsInOrder: string[] = [];
@@ -109,18 +107,6 @@ class FsLogicTreeDeepInternal extends AbstractLogicTree<AbstractLogicNode> {
   getCircularLogicNodes(): FsCircularDependencyNode[] {
     return this.findAllNodesOfType<FsCircularDependencyNode>(
       FsCircularDependencyNode
-    );
-  }
-
-  getCircularMutuallyExclusiveLogicNodes(): FsCircularDependencyNode[] {
-    return this.findAllNodesOfType<FsCircularMutualExclusiveNode>(
-      FsCircularMutualExclusiveNode
-    );
-  }
-
-  getCircularMutuallyInclusiveLogicNodes(): FsCircularDependencyNode[] {
-    return this.findAllNodesOfType<FsCircularMutualInclusiveNode>(
-      FsCircularMutualInclusiveNode
     );
   }
 

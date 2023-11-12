@@ -937,7 +937,7 @@ const dev_debug_logicTreePojo = {
     "152297010:0:2": {
       parentId: "152297010:0",
       nodeContent: {
-        nodeType: "FsCircularMutualInclusiveNode",
+        nodeType: "_CIRCULAR_NODE_",
         ruleConflict: {
           conditionalB: {
             condition: "equals",

@@ -148,28 +148,6 @@ class FsFormModel extends AbstractExpressionTree<
     });
   }
 
-  getFieldIdsWithCircularMutuallyExclusiveLogic(): string[] {
-    const allFieldIds = Object.keys(this._fieldIdNodeMap);
-    return allFieldIds.filter((fieldId) => {
-      const agTree = this.aggregateLogicTree(fieldId);
-      if (agTree) {
-        return agTree.getCircularMutuallyExclusiveLogicNodes().length > 0;
-      }
-      // return false; // necessary?
-    });
-  }
-
-  getFieldIdsWithCircularMutuallyInclusiveLogic(): string[] {
-    const allFieldIds = Object.keys(this._fieldIdNodeMap);
-    return allFieldIds.filter((fieldId) => {
-      const agTree = this.aggregateLogicTree(fieldId);
-      if (agTree) {
-        return agTree.getCircularMutuallyInclusiveLogicNodes().length > 0;
-      }
-      // return false; // necessary?
-    });
-  }
-
   evaluateWithValues<T>(values: { [fieldId: string]: any }): T {
     return Object.entries(this._fieldIdNodeMap).map(([fieldId, field]) => {
       return field.evaluateWithValues(values);

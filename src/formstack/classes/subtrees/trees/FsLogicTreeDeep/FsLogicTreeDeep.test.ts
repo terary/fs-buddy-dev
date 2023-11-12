@@ -12,8 +12,6 @@ import { transformers } from "../../../../transformers";
 import { FsVirtualRootNode } from "./LogicNodes/FsVirtualRootNode";
 import { TTreePojo } from "predicate-tree-advanced-poc/dist/src";
 import { AbstractLogicNode } from "./LogicNodes/AbstractLogicNode";
-import { FsCircularDependencyNode } from "./LogicNodes/FsCircularDependencyNode";
-import { FsCircularMutualInclusiveNode } from "./LogicNodes/FsCircularMutualInclusiveNode";
 
 describe("FsLogicTreeDeep", () => {
   describe("Pojo Smoke test.", () => {
@@ -316,7 +314,7 @@ describe("FsLogicTreeDeep", () => {
         "153413615:2:3": {
           parentId: "153413615:2",
           nodeContent: {
-            nodeType: "FsCircularMutualInclusiveNode",
+            nodeType: "_CIRCULAR_NODE_",
             ruleConflict: {
               conditionalB: {
                 condition: "equals",
@@ -346,7 +344,7 @@ describe("FsLogicTreeDeep", () => {
         "153413615:2:5": {
           parentId: "153413615:2",
           nodeContent: {
-            nodeType: "FsCircularMutualInclusiveNode",
+            nodeType: "_CIRCULAR_NODE_",
             ruleConflict: {
               conditionalB: {
                 condition: "equals",
@@ -558,7 +556,7 @@ const dev_debug_pojo_smoke_test = {
     "152297010:0:2": {
       parentId: "152297010:0",
       nodeContent: {
-        nodeType: "FsCircularMutualInclusiveNode",
+        nodeType: "_CIRCULAR_NODE_",
         ruleConflict: {
           conditionalB: {
             condition: "equals",
@@ -1057,7 +1055,7 @@ const formJson5487084Pojo = {
     "153055077:2:3": {
       parentId: "153055077:2",
       nodeContent: {
-        nodeType: "FsCircularMutualInclusiveNode",
+        nodeType: "_CIRCULAR_NODE_",
         ruleConflict: {
           conditionalB: {
             condition: "equals",
@@ -1145,7 +1143,7 @@ const smoke_test_pojo_many_forms = {
     "148604236:0:2:4:6": {
       parentId: "148604236:0:2:4",
       nodeContent: {
-        nodeType: "FsCircularMutualInclusiveNode",
+        nodeType: "_CIRCULAR_NODE_",
         ruleConflict: {
           conditionalA: {
             option: "True",
@@ -1223,7 +1221,7 @@ const smoke_test_pojo_many_forms = {
     "152290553:0:2:4": {
       parentId: "152290553:0:2",
       nodeContent: {
-        nodeType: "FsCircularMutualInclusiveNode",
+        nodeType: "_CIRCULAR_NODE_",
         ruleConflict: {
           conditionalA: {
             option: "True",
