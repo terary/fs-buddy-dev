@@ -80,6 +80,7 @@ const main = () => {
   const logicTreeGraphJson = {};
 
   [
+    "148604161", // (A) Big Dipper A->B->C->D->(B ^ E)
     "148509475", // B.0 (inter-dependent)
     "154328261", // B.0 (no internal logic)
     "148509465", // (panel) Inter-dependent (not so much circular)
@@ -100,7 +101,7 @@ const main = () => {
 
     // @ts-ignore
     logicTreeGraphJson[fieldId] = {
-      label: tree5375703.getFieldTreeByFieldId(fieldId)?.label,
+      label: tree5375703.getFieldModel(fieldId)?.label,
       graphMapping: transformers.pojoToD3TableData(
         agTree.toPojoAt(undefined, false),
         tree5375703
@@ -109,7 +110,6 @@ const main = () => {
   });
 
   [
-    // "148604236", // (B) Big Dipper A->B->C->D->(B ^ E)
     "152290553", //  "A" - Inter-dependent (fixed with 'any')
     "153413615", // Short Answer (non-conflict with 'any')
     "152293116", // Mutually Exclusive
@@ -125,7 +125,7 @@ const main = () => {
 
     // @ts-ignore
     logicTreeGraphJson[fieldId] = {
-      label: tree5469299.getFieldTreeByFieldId(fieldId)?.label,
+      label: tree5469299.getFieldModel(fieldId)?.label,
       graphMapping: transformers.pojoToD3TableData(
         agTree.toPojoAt(undefined, false),
         tree5469299

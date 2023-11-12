@@ -88,7 +88,7 @@ class FsFormModel extends AbstractExpressionTree<
   }
 
   aggregateLogicTree(fieldId: string): FsLogicTreeDeep {
-    const field = this.getFieldTreeByFieldId(fieldId) as FsFieldModel;
+    const field = this.getFieldModel(fieldId) as FsFieldModel;
 
     // @ts-ignore - possible null
     return this.getExtendedTree(field);
@@ -112,7 +112,16 @@ class FsFormModel extends AbstractExpressionTree<
     );
   }
 
-  getFieldTreeByFieldId(fieldId: string): FsFieldModel | undefined {
+  getFieldModelOrThrow(fieldId: string): FsFieldModel {
+    const fieldModel = this.getFieldModel(fieldId);
+    if (fieldModel === undefined) {
+      throw new Error(`Failed to get field model by id: '${fieldId}'`);
+    }
+
+    return fieldModel;
+  }
+
+  getFieldModel(fieldId: string): FsFieldModel | undefined {
     // I wounder if a look-up table wouldn't be better
     //  also you're filtering after map, if possible the other order would be preferred
     return this._fieldIdNodeMap[fieldId];

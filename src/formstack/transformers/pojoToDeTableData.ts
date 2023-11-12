@@ -19,6 +19,8 @@ type TGraphNode = {
   };
 };
 
+const truncate = (text = "", length = 25) => text.slice(0, length);
+
 const pojoToD3TableData = (
   pojo: TTreePojo<AbstractLogicNode>,
   formModel: FsFormModel
@@ -42,26 +44,28 @@ const pojoToD3TableData = (
     // finish with this label business
     // Probably want "label", "fieldId", "nodeID"
     // also how to present (operator value subject)?
-    const fieldModel = formModel.getFieldTreeByFieldId(fieldId);
+    const fieldModel = formModel.getFieldModel(fieldId);
 
     switch (nodeContent.nodeType) {
       case "FsLogicBranchNode":
       case "FsVirtualRootNode":
         const { action, conditional } = nodeContent as FsLogicBranchNode;
         // @ts-ignore
-        pojoNodeContent.label = `${action || "show"} if ${conditional}`;
+        pojoNodeContent.label = `${action || "show"} '${truncate(
+          fieldModel?.label
+        )}' if ${conditional}`;
         break;
 
       case "FsLogicLeafNode":
         const { condition, option } = nodeContent as FsLogicLeafNode;
         // @ts-ignore
-        pojoNodeContent.label = `[${(fieldModel?.label || "").slice(0, 25)}]
+        pojoNodeContent.label = `[${truncate(fieldModel?.label)}]
         ${condition}
         '${option}' `;
 
         // @ts-ignore
         pojoNodeContent.label = [
-          (fieldModel?.label || "").slice(0, 25),
+          truncate(fieldModel?.label),
           condition,
           option,
         ];
@@ -91,7 +95,7 @@ const pojoToD3TableData = (
         // @ts-ignore -
         pojoNodeContent.targetNodeId = nodeContent.targetNodeId;
 
-        const sourceFieldModel = formModel.getFieldTreeByFieldId(sourceFieldId);
+        const sourceFieldModel = formModel.getFieldModel(sourceFieldId);
 
         // {
         //   "nodeId": "148509465:0:5",
@@ -110,13 +114,13 @@ const pojoToD3TableData = (
 
         // @ts-ignore - ruleConflict not element of pojoNodeContent
         pojoNodeContent.label = [
-          (
+          truncate(
             sourceFieldModel?.label ||
-            (sourceFieldModel?.fieldJson as TFsFieldSection)[
-              "section_heading"
-            ] ||
-            ""
-          ).slice(0, 25),
+              (sourceFieldModel?.fieldJson as TFsFieldSection)[
+                "section_heading"
+              ] ||
+              ""
+          ),
           // @ts-ignore
           ruleConflict?.conditionalA.condition,
           // @ts-ignore

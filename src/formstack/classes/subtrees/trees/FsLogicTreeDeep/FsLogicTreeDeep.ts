@@ -183,7 +183,6 @@ class FsLogicTreeDeep {
     sourceFieldId: string,
     deepTree: FsLogicTreeDeep,
     targetFieldContent: TFsLogicNode,
-    formModel: FsFormModel,
     parentJunctionOperator?: TFsJunctionOperators
   ): FsCircularDependencyNode {
     `
@@ -204,8 +203,10 @@ class FsLogicTreeDeep {
       // parentJunctionOperator
       if (
         ((targetFieldContent as FsLogicLeafNode).condition ===
+          // @ts-ignore
           existingChildContent.condition &&
           (targetFieldContent as FsLogicLeafNode).option ===
+            // @ts-ignore
             existingChildContent.option) ||
         parentJunctionOperator == "any" // this "any" could be further refined.
       ) {
@@ -222,6 +223,7 @@ class FsLogicTreeDeep {
 
         return new FsCircularMutualInclusiveNode(
           sourceFieldId,
+          // @ts-ignore
           deepTree.getNodeIdOfNodeContent(existingChildContent),
 
           deepTree.rootFieldId, /// These are always root?
@@ -243,6 +245,7 @@ class FsLogicTreeDeep {
       } else {
         return new FsCircularMutualExclusiveNode(
           sourceFieldId,
+          // @ts-ignore
           deepTree.getNodeIdOfNodeContent(existingChildContent),
           deepTree.rootFieldId, /// These are always root?  Most likely last dependant?
           deepTree.rootNodeId, /// These are always root?  Most likely last dependant?
@@ -315,16 +318,16 @@ class FsLogicTreeDeep {
       );
     }
     // targetFieldContent
-    return new FsCircularDependencyNode(
-      sourceFieldId,
+    const sourceNodeId =
       existingChildContent !== null
         ? deepTree.getNodeIdOfNodeContent(
             existingChildContent as unknown as AbstractLogicNode
           )
-        : null,
-      // @ts-ignore
-      targetFieldContent.fieldId,
-      // deepTree.rootFieldId,
+        : null;
+    return new FsCircularDependencyNode(
+      sourceFieldId,
+      sourceNodeId,
+      deepTree.getDependentChainFieldIds().slice(-1)[0],
       deepTree.rootNodeId,
       deepTree.getDependentFieldIds(),
       {
@@ -436,8 +439,10 @@ class FsLogicTreeDeep {
       throw new Error("What - too many nodes");
     }
 
-    // @ts-ignore
-    if (deepTree._fsDeepLogicTree.isExistInDependencyChain(nodeContent)) {
+    if (
+      // @ts-ignore
+      deepTree._fsDeepLogicTree.isExistInDependencyChain(nodeContent)
+    ) {
       `
         I think remove this check.  Let the child loop catch circular references.
 
@@ -451,13 +456,11 @@ class FsLogicTreeDeep {
         FsLogicTreeDeep.getCircularReferenceNode(
           parentFieldId,
           deepTree,
-          nodeContent,
-          fieldCollection
+          nodeContent
+          // fieldCollection
           // parentJunctionOperator
         )
       );
-      // const circularNodeContent =
-      //   deepTree.getChildContentAt<FsCircularDependencyNode>(circularNodeId);
       deepTree.getChildContentAt<FsCircularDependencyNode>(
         circularNodeId
       ).targetNodeId = circularNodeId;
@@ -465,7 +468,6 @@ class FsLogicTreeDeep {
     }
 
     if (childrenNodeIds.length === 0) {
-      // // maybe not this?
       const { fieldId, condition, option } =
         nodeContent as TFsFieldLogicCheckLeaf;
       deepTree.appendChildNodeWithContent(
@@ -507,7 +509,7 @@ class FsLogicTreeDeep {
         );
 
       // const { fieldId, condition, option } = childNodeContent;
-      const childTreeField = fieldCollection.getFieldTreeByFieldId(
+      const childTreeField = fieldCollection.getFieldModel(
         childNodeContent.fieldId
       );
 
@@ -527,30 +529,28 @@ class FsLogicTreeDeep {
       //   return deepTree;
       // }
 
-      if (deepTree.isExistInDependencyChain(childTreeField)) {
-        // if two children from the same parent, conflict, and the parent is "any" then conflict resolves 1, else 0
-
-        // const grandParentNodeId = deepTree.getParentNodeId(newBranchNodeId);
+      if (false && deepTree.isExistInDependencyChain(childTreeField)) {
         const { conditional: parentJunctionOperator } =
           deepTree.getChildContentAt<FsLogicBranchNode>(newBranchNodeId);
-        // here
+
         const circularReferenceNode = FsLogicTreeDeep.getCircularReferenceNode(
           newBranchNode.ownerFieldId,
-          // fieldId,
           deepTree,
           childNodeContent,
-          fieldCollection,
+          // fieldCollection,
           parentJunctionOperator
         );
+
         const circularNodeId = deepTree.appendChildNodeWithContent(
           newBranchNodeId,
           circularReferenceNode
         );
+
         deepTree.getChildContentAt<FsCircularDependencyNode>(
           circularNodeId
         ).targetNodeId = circularNodeId;
 
-        return deepTree; // because this is forEach, all nodes will get added.  Maybe change that to for.. and stop if circular? or not
+        return deepTree;
       } else {
         return FsLogicTreeDeep.fromFormModel(
           childNodeContent.fieldId,
@@ -558,24 +558,6 @@ class FsLogicTreeDeep {
           deepTree,
           newBranchNodeId
         );
-        // this is not finding circular within a panel first degree
-        // see: 154328256, Inter-dependent (not so much circular) no internal logic
-
-        // Also when detecting circular its not adding target/source - only target/target or source/source (I don't recall which)
-        // return FsLogicTreeDeep.appendFieldTreeNodeToLogicDeep(
-        //   // fieldLogicTree: FsTreeLogic,
-        //   // @ts-ignore - could be null/undefined
-        //   fieldCollection.getFieldTreeByFieldId(childNodeContent.fieldId),
-        //   // fieldLogicNodeId: string,
-        //   childNodeContent.fieldId,
-        //   // `_FIELD_ID_: ${childNodeContent.fieldId}`,
-        //   // deepTree: FsLogicTreeDeep,
-        //   deepTree,
-        //   // deepTreeNodeId: string,
-        //   newBranchNodeId,
-        //   // fieldCollection: FsFormModel
-        //   fieldCollection
-        // );
       }
     });
 
@@ -588,46 +570,20 @@ class FsLogicTreeDeep {
     deepTree?: FsLogicTreeDeep,
     deepTreeParentNodeId?: string
   ): FsLogicTreeDeep | null {
-    const field = fieldCollection.getFieldTreeByFieldId(fieldId);
-
-    if (field === undefined && deepTree) {
-      deepTree.appendChildNodeWithContent(
-        deepTreeParentNodeId || deepTree.rootNodeId,
-        new FsLogicErrorNode(
-          deepTree.rootFieldId,
-          null,
-          fieldId,
-          `Failed to find fieldId in form. fieldId: "${fieldId}".`,
-          deepTree.getDependentChainFieldIds()
-        )
-      );
-      return null;
-    } else if (field === undefined) {
-      return null;
-    }
-
+    const field = fieldCollection.getFieldModelOrThrow(fieldId);
     const logicTree = field.getLogicTree() || null;
-    // const visualTree =
-    //   field.getVisibilityNode()?.parentNode?.getLogicTree() || null; //as FsTreeLogic;
-
     const visualTree = field.getVisibilityLogicTree();
-    if (!logicTree && !visualTree) {
-      // this is a field with no logic -  as a logic tree
-      // when evaluating it should simple return the value provided.  Evaluation is a
-      // different animal but is related.
 
+    if (!logicTree && !visualTree) {
       return null; // non-leaf, non-logic
     }
 
     const tree =
       deepTree ||
-      new FsLogicTreeDeep(
-        field.fieldId,
-        // "_ROOT_", // this should be fieldId - but for the time being want to rule out name conflicts
-        // field.fieldId,
-        new FsVirtualRootNode(fieldId)
-      );
+      new FsLogicTreeDeep(field.fieldId, new FsVirtualRootNode(fieldId));
+
     const parentNodeId = deepTreeParentNodeId || tree.rootNodeId;
+
     if (!logicTree) {
       return FsLogicTreeDeep.appendFieldTreeNodeToLogicDeep(
         visualTree as FsTreeLogic,

@@ -18,14 +18,14 @@ import { TSimpleDictionary } from "./types";
 import { TStatusMessageSeverity, TStatusRecord } from "../Evaluator/type";
 describe("FsFormModel", () => {
   /// --------------------------------
-  describe(".getFieldTreeByFieldId(...)", () => {
+  describe(".getFieldModel(...)", () => {
     it("Should be awesome", () => {
       const tree = FsFormModel.fromApiFormJson({
         // @ts-ignore
         fields: TEST_JSON_FIELDS,
       });
-      const field_0 = tree.getFieldTreeByFieldId(TEST_JSON_FIELDS[0].id || "");
-      const field_1 = tree.getFieldTreeByFieldId(TEST_JSON_FIELDS[1].id || "");
+      const field_0 = tree.getFieldModel(TEST_JSON_FIELDS[0].id || "");
+      const field_1 = tree.getFieldModel(TEST_JSON_FIELDS[1].id || "");
       expect(field_0?.fieldId).toStrictEqual(TEST_JSON_FIELDS[0].id);
       expect(field_1?.fieldId).toStrictEqual(TEST_JSON_FIELDS[1].id);
       // expect(field.fieldJson["name"]).toStrictEqual(TEST_JSON_FIELDS[0].name);
@@ -41,9 +41,7 @@ describe("FsFormModel", () => {
           circularAndInterdependentJson as unknown as TApiFormJson
         )
       );
-      const sectionField = tree.getFieldTreeByFieldId(
-        "148509465"
-      ) as FsFieldModel;
+      const sectionField = tree.getFieldModel("148509465") as FsFieldModel;
       const fieldsInSection = tree.getFieldsBySection(sectionField);
       const fieldIdsInSection = fieldsInSection.map((field) => field.fieldId);
       expect(fieldIdsInSection.sort()).toStrictEqual(

@@ -34,7 +34,20 @@ class FsCircularDependencyNode extends AbstractLogicNode {
       : -1; // a bit over kill, *should* always be 0 or more elements
   }
   get ruleConflict(): RuleConflictType | null {
-    return this._ruleConflict;
+    const ruleConflict: RuleConflictType = {
+      ...this._ruleConflict,
+    } as RuleConflictType;
+    // @ts-ignore - dev/debug
+    if (ruleConflict.conditionalA.option === undefined) {
+      // @ts-ignore - dev/debug
+      ruleConflict.conditionalA.option = "undefined";
+    }
+    // @ts-ignore - dev/debug
+    if (ruleConflict.conditionalB.option === undefined) {
+      // @ts-ignore - dev/debug
+      ruleConflict.conditionalB.option = "undefined";
+    }
+    return ruleConflict;
   }
 
   get dependentChainFieldIds() {

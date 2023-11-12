@@ -281,7 +281,7 @@ class FieldLogicService {
         this.getFieldIdsWithLogicError()
       );
     return fieldIds.map((fieldId) => {
-      const field = this._fieldCollection.getFieldTreeByFieldId(fieldId);
+      const field = this._fieldCollection.getFieldModel(fieldId);
       let label = circularReferenceFieldIds.includes(fieldId) ? "(Error) " : "";
 
       switch (field?.fieldType) {
