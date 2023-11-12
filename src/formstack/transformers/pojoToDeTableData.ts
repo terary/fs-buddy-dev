@@ -123,12 +123,12 @@ const pojoToD3TableData = (
           ),
           // @ts-ignore
           ruleConflict?.conditionalA.condition,
-          // @ts-ignore
-          ruleConflict?.conditionalA.option,
+          // // @ts-ignore
+          // ruleConflict?.conditionalA.option,
           // @ts-ignore
           ruleConflict?.conditionalB.condition,
-          // @ts-ignore
-          ruleConflict?.conditionalB.option,
+          // // @ts-ignore
+          // ruleConflict?.conditionalB.option,
         ];
 
         break;

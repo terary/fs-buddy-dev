@@ -182,8 +182,8 @@ class FsLogicTreeDeep {
   private static getCircularReferenceNode(
     sourceFieldId: string,
     deepTree: FsLogicTreeDeep,
-    targetFieldContent: TFsLogicNode,
-    parentJunctionOperator?: TFsJunctionOperators
+    targetFieldContent: TFsLogicNode
+    // parentJunctionOperator?: TFsJunctionOperators
   ): FsCircularDependencyNode {
     `
     This should find circular references
@@ -199,124 +199,6 @@ class FsLogicTreeDeep {
 
     // const parentField =
 
-    if (existingChildContent instanceof FsLogicLeafNode) {
-      // parentJunctionOperator
-      if (
-        ((targetFieldContent as FsLogicLeafNode).condition ===
-          // @ts-ignore
-          existingChildContent.condition &&
-          (targetFieldContent as FsLogicLeafNode).option ===
-            // @ts-ignore
-            existingChildContent.option) ||
-        parentJunctionOperator == "any" // this "any" could be further refined.
-      ) {
-        const {
-          option: optionA,
-          condition: conditionA,
-          fieldId: fieldIdA,
-        } = targetFieldContent as FsLogicLeafNode;
-        const {
-          option: optionB,
-          condition: conditionB,
-          fieldId: fieldIdB,
-        } = existingChildContent as FsLogicLeafNode;
-
-        return new FsCircularMutualInclusiveNode(
-          sourceFieldId,
-          // @ts-ignore
-          deepTree.getNodeIdOfNodeContent(existingChildContent),
-
-          deepTree.rootFieldId, /// These are always root?
-          deepTree.rootNodeId, /// These are always root?
-          deepTree.getDependentFieldIds(),
-          {
-            conditionalA: {
-              option: optionA,
-              condition: conditionA,
-              fieldId: fieldIdA,
-            },
-            conditionalB: {
-              option: optionB,
-              condition: conditionB,
-              fieldId: fieldIdB,
-            },
-          }
-        );
-      } else {
-        return new FsCircularMutualExclusiveNode(
-          sourceFieldId,
-          // @ts-ignore
-          deepTree.getNodeIdOfNodeContent(existingChildContent),
-          deepTree.rootFieldId, /// These are always root?  Most likely last dependant?
-          deepTree.rootNodeId, /// These are always root?  Most likely last dependant?
-          deepTree.getDependentFieldIds(),
-          {
-            conditionalA:
-              targetFieldContent as unknown as TFsFieldLogicCheckLeaf,
-            conditionalB:
-              existingChildContent as unknown as TFsFieldLogicCheckLeaf,
-          }
-        );
-      }
-    }
-
-    if (parentJunctionOperator == "any") {
-      // const targetNodeId = deepTree.getNodeIdOfNodeContent(
-      //   targetFieldContent as AbstractLogicNode
-      // );
-
-      // not effecient but maybe it works?
-      const x = deepTree._fsDeepLogicTree.getChildContentByFieldId(
-        // @ts-ignore
-        targetFieldContent.fieldId
-      );
-      const targetNodeId = deepTree.getNodeIdOfNodeContent(
-        x as AbstractLogicNode
-      );
-      const {
-        option: optionA,
-        condition: conditionA,
-        fieldId: fieldIdA,
-      } = targetFieldContent as FsLogicLeafNode;
-      const {
-        option: optionB,
-        condition: conditionB,
-        fieldId: fieldIdB,
-      } = existingChildContent as FsLogicLeafNode;
-
-      const targetFieldId =
-        // @ts-ignore - fieldId/ownerFieldId not element of union type
-        targetFieldContent?.fieldId || targetFieldContent?.ownerFieldId;
-      // const targetNodeId = deepTree.getNodeIdOfNodeContent(targetFieldContent);
-
-      return new FsCircularMutualInclusiveNode(
-        sourceFieldId,
-        existingChildContent !== null
-          ? deepTree.getNodeIdOfNodeContent(
-              existingChildContent as unknown as AbstractLogicNode
-            )
-          : null,
-        targetFieldId,
-        targetNodeId,
-        // deepTree.rootFieldId, /// These are always root?  Most likely last dependant?
-        //        deepTree.rootNodeId, /// These are always root?  Most likely last dependant?
-        deepTree.getDependentFieldIds(),
-        // @ts-ignore
-        //        {}
-        {
-          conditionalA: {
-            option: optionA,
-            condition: conditionA,
-            fieldId: fieldIdA,
-          },
-          conditionalB: {
-            option: optionB,
-            condition: conditionB,
-            fieldId: fieldIdB,
-          },
-        }
-      );
-    }
     // targetFieldContent
     const sourceNodeId =
       existingChildContent !== null
@@ -337,8 +219,8 @@ class FsLogicTreeDeep {
           condition: existingChildContent.conditional,
           // @ts-ignore
           action: existingChildContent.action,
-          // @ts-ignore
-          option: existingChildContent.option,
+          // // @ts-ignore
+          // option: existingChildContent.option,
         },
         // @ts-ignore
         conditionalB: {
@@ -346,8 +228,8 @@ class FsLogicTreeDeep {
           condition: targetFieldContent.conditional,
           // @ts-ignore
           action: targetFieldContent.action,
-          // @ts-ignore
-          option: targetFieldContent.option,
+          // // @ts-ignore
+          // option: targetFieldContent.option,
         },
       }
     );
@@ -443,27 +325,19 @@ class FsLogicTreeDeep {
       // @ts-ignore
       deepTree._fsDeepLogicTree.isExistInDependencyChain(nodeContent)
     ) {
-      `
-        I think remove this check.  Let the child loop catch circular references.
-
-        However, that will likely change the tree structure.  I need to look at the differences
-        to make sure everything is ok.
-        
-      `;
-
       const circularNodeId = deepTree.appendChildNodeWithContent(
         deepTreeNodeId,
         FsLogicTreeDeep.getCircularReferenceNode(
           parentFieldId,
           deepTree,
           nodeContent
-          // fieldCollection
-          // parentJunctionOperator
         )
       );
+
       deepTree.getChildContentAt<FsCircularDependencyNode>(
         circularNodeId
       ).targetNodeId = circularNodeId;
+
       return deepTree;
     }
 
@@ -507,15 +381,6 @@ class FsLogicTreeDeep {
         fieldLogicTree.getChildContentAtOrThrow<TFsFieldLogicCheckLeaf>(
           childNodeId
         );
-
-      // const { fieldId, condition, option } = childNodeContent;
-      const childTreeField = fieldCollection.getFieldModel(
-        childNodeContent.fieldId
-      );
-
-      // add leaf AND add circular reference under same branch.
-      // circular reference should always be a branch. If we do not do both leaf and circular reference
-      // the current branch will not have leaves..I think this approach is more comprehensive but also more confusing.
       deepTree.appendChildNodeWithContent(
         newBranchNodeId,
         new FsLogicLeafNode(
@@ -524,41 +389,12 @@ class FsLogicTreeDeep {
           childNodeContent.option
         )
       );
-
-      // if (childTreeField?.getLogicTree() === null) {
-      //   return deepTree;
-      // }
-
-      if (false && deepTree.isExistInDependencyChain(childTreeField)) {
-        const { conditional: parentJunctionOperator } =
-          deepTree.getChildContentAt<FsLogicBranchNode>(newBranchNodeId);
-
-        const circularReferenceNode = FsLogicTreeDeep.getCircularReferenceNode(
-          newBranchNode.ownerFieldId,
-          deepTree,
-          childNodeContent,
-          // fieldCollection,
-          parentJunctionOperator
-        );
-
-        const circularNodeId = deepTree.appendChildNodeWithContent(
-          newBranchNodeId,
-          circularReferenceNode
-        );
-
-        deepTree.getChildContentAt<FsCircularDependencyNode>(
-          circularNodeId
-        ).targetNodeId = circularNodeId;
-
-        return deepTree;
-      } else {
-        return FsLogicTreeDeep.fromFormModel(
-          childNodeContent.fieldId,
-          fieldCollection,
-          deepTree,
-          newBranchNodeId
-        );
-      }
+      return FsLogicTreeDeep.fromFormModel(
+        childNodeContent.fieldId,
+        fieldCollection,
+        deepTree,
+        newBranchNodeId
+      );
     });
 
     return deepTree;

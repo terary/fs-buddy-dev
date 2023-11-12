@@ -111,13 +111,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": [
@@ -240,13 +238,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": [
@@ -369,13 +365,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": [
@@ -498,13 +492,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": [
@@ -627,13 +619,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": [
@@ -702,13 +692,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["148509465", "148509470"]
@@ -734,13 +722,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["148509465", "148509470"]
@@ -757,13 +743,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["148509465", "148509470"]
@@ -807,13 +791,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["148509465", "148509470", "148509476"]
@@ -839,13 +821,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["148509465", "148509470", "148509476"]
@@ -862,13 +842,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["148509465", "148509470", "148509476"]
@@ -940,13 +918,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["148509470", "148509465"]
@@ -963,13 +939,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["148509470", "148509465"]
@@ -1013,13 +987,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["148509470", "148509465", "148509476"]
@@ -1045,13 +1017,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["148509470", "148509465", "148509476"]
@@ -1068,13 +1038,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["148509470", "148509465", "148509476"]
@@ -1109,13 +1077,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["148509470", "148509465", "148509476"]
@@ -1132,13 +1098,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["148509470", "148509465", "148509476"]
@@ -1201,13 +1165,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["148509465", "148509470"]
@@ -1233,13 +1195,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["148509465", "148509470"]
@@ -1256,13 +1216,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["148509465", "148509470"]
@@ -1306,13 +1264,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["148509465", "148509470", "148509476"]
@@ -1338,13 +1294,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["148509465", "148509470", "148509476"]
@@ -1361,13 +1315,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["148509465", "148509470", "148509476"]
@@ -1439,13 +1391,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["148509465", "148509470"]
@@ -1471,13 +1421,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["148509465", "148509470"]
@@ -1494,13 +1442,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["148509465", "148509470"]
@@ -1544,13 +1490,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["148509465", "148509470", "148509476"]
@@ -1576,13 +1520,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["148509465", "148509470", "148509476"]
@@ -1599,13 +1541,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["148509465", "148509470", "148509476"]
@@ -1695,13 +1635,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["148509476", "148509465", "148509470"]
@@ -1727,13 +1665,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["148509476", "148509465", "148509470"]
@@ -1750,13 +1686,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["148509476", "148509465", "148509470"]
@@ -1782,13 +1716,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["148509476", "148509465", "148509470"]
@@ -1805,13 +1737,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["148509476", "148509465", "148509470"]
@@ -1846,13 +1776,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["148509476", "148509465", "148509470"]
@@ -1869,13 +1797,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["148509476", "148509465", "148509470"]
@@ -1938,13 +1864,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["148509465", "148509470"]
@@ -1970,13 +1894,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["148509465", "148509470"]
@@ -1993,13 +1915,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["148509465", "148509470"]
@@ -2043,13 +1963,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["148509465", "148509470", "148509476"]
@@ -2075,13 +1993,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["148509465", "148509470", "148509476"]
@@ -2098,13 +2014,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["148509465", "148509470", "148509476"]
@@ -2176,13 +2090,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["148509465", "148509470"]
@@ -2208,13 +2120,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["148509465", "148509470"]
@@ -2231,13 +2141,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["148509465", "148509470"]
@@ -2281,13 +2189,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["148509465", "148509470", "148509476"]
@@ -2313,13 +2219,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["148509465", "148509470", "148509476"]
@@ -2336,13 +2240,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["148509465", "148509470", "148509476"]
@@ -2451,13 +2353,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": [
@@ -2552,13 +2452,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["148604234", "148604236", "148604235"]
@@ -2648,13 +2546,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["148604235", "148604234", "148604236"]
@@ -2744,13 +2640,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["148604236", "148604235", "148604234"]
@@ -2896,13 +2790,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": [
@@ -3304,13 +3196,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["152290552", "152290553"]
@@ -3336,13 +3226,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["152290552", "152290553"]
@@ -3359,13 +3247,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["152290552", "152290553"]
@@ -3409,13 +3295,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["152290552", "152290553", "152290556"]
@@ -3441,13 +3325,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["152290552", "152290553", "152290556"]
@@ -3464,13 +3346,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["152290552", "152290553", "152290556"]
@@ -3542,13 +3422,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["152290553", "152290552"]
@@ -3565,13 +3443,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["152290553", "152290552"]
@@ -3615,13 +3491,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["152290553", "152290552", "152290556"]
@@ -3647,13 +3521,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["152290553", "152290552", "152290556"]
@@ -3670,13 +3542,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["152290553", "152290552", "152290556"]
@@ -3711,13 +3581,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["152290553", "152290552", "152290556"]
@@ -3734,13 +3602,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["152290553", "152290552", "152290556"]
@@ -3803,13 +3669,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["152290552", "152290553"]
@@ -3835,13 +3699,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["152290552", "152290553"]
@@ -3858,13 +3720,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["152290552", "152290553"]
@@ -3908,13 +3768,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["152290552", "152290553", "152290556"]
@@ -3940,13 +3798,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["152290552", "152290553", "152290556"]
@@ -3963,13 +3819,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["152290552", "152290553", "152290556"]
@@ -4041,13 +3895,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["152290552", "152290553"]
@@ -4073,13 +3925,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["152290552", "152290553"]
@@ -4096,13 +3946,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["152290552", "152290553"]
@@ -4146,13 +3994,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["152290552", "152290553", "152290556"]
@@ -4178,13 +4024,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["152290552", "152290553", "152290556"]
@@ -4201,13 +4045,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["152290552", "152290553", "152290556"]
@@ -4297,13 +4139,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["152290556", "152290552", "152290553"]
@@ -4329,13 +4169,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["152290556", "152290552", "152290553"]
@@ -4352,13 +4190,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["152290556", "152290552", "152290553"]
@@ -4384,13 +4220,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["152290556", "152290552", "152290553"]
@@ -4407,13 +4241,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["152290556", "152290552", "152290553"]
@@ -4448,13 +4280,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["152290556", "152290552", "152290553"]
@@ -4471,13 +4301,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["152290556", "152290552", "152290553"]
@@ -4540,13 +4368,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["152290552", "152290553"]
@@ -4572,13 +4398,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["152290552", "152290553"]
@@ -4595,13 +4419,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["152290552", "152290553"]
@@ -4645,13 +4467,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["152290552", "152290553", "152290556"]
@@ -4677,13 +4497,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["152290552", "152290553", "152290556"]
@@ -4700,13 +4518,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["152290552", "152290553", "152290556"]
@@ -4778,13 +4594,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["152290552", "152290553"]
@@ -4810,13 +4624,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["152290552", "152290553"]
@@ -4833,13 +4645,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["152290552", "152290553"]
@@ -4883,13 +4693,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["152290552", "152290553", "152290556"]
@@ -4915,13 +4723,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["152290552", "152290553", "152290556"]
@@ -4938,13 +4744,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["152290552", "152290553", "152290556"]
@@ -5132,13 +4936,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": [
@@ -5233,13 +5035,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["152290568", "152290569", "152290570"]
@@ -5329,13 +5129,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["152290569", "152290570", "152290568"]
@@ -5425,13 +5223,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["152290570", "152290568", "152290569"]
@@ -5849,13 +5645,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["154328256"]
@@ -5881,13 +5675,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["154328256"]
@@ -5941,13 +5733,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["154328256"]
@@ -5973,13 +5763,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["154328256"]
@@ -6033,13 +5821,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["154328256"]
@@ -6065,13 +5851,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["154328256"]
@@ -6125,13 +5909,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["154328256"]
@@ -6157,13 +5939,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["154328256"]
@@ -6217,13 +5997,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["154328256"]
@@ -6249,13 +6027,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["154328256"]
@@ -6309,13 +6085,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["154328256"]
@@ -6341,13 +6115,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["154328256"]
@@ -6401,13 +6173,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["154328256"]
@@ -6433,13 +6203,11 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "dependentChainFieldIds": ["154328256"]
@@ -6579,26 +6347,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148456734",
           "sourceNodeId": "148456734:0",
           "targetFieldId": "148456739",
           "targetNodeId": "148456734:0:2:4:6:8:10",
-          "label": [
-            "(A) A->B->C-D->E->A (logi",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["(A) A->B->C-D->E->A (logi", "all", "all"]
         }
       }
     ],
@@ -6723,26 +6483,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148456739",
           "sourceNodeId": "148456739:0",
           "targetFieldId": "148456740",
           "targetNodeId": "148456739:0:2:4:6:8:10",
-          "label": [
-            "(E) A->B->C-D->E->A (logi",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["(E) A->B->C-D->E->A (logi", "all", "all"]
         }
       }
     ],
@@ -6867,26 +6619,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148456740",
           "sourceNodeId": "148456740:0",
           "targetFieldId": "148456741",
           "targetNodeId": "148456740:0:2:4:6:8:10",
-          "label": [
-            "(D) A->B->C-D->E->A (logi",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["(D) A->B->C-D->E->A (logi", "all", "all"]
         }
       }
     ],
@@ -7011,26 +6755,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148456741",
           "sourceNodeId": "148456741:0",
           "targetFieldId": "148456742",
           "targetNodeId": "148456741:0:2:4:6:8:10",
-          "label": [
-            "(C) A->B->C-D->E->A (logi",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["(C) A->B->C-D->E->A (logi", "all", "all"]
         }
       }
     ],
@@ -7155,26 +6891,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148456742",
           "sourceNodeId": "148456742:0",
           "targetFieldId": "148456734",
           "targetNodeId": "148456742:0:2:4:6:8:10",
-          "label": [
-            "(B) A->B->C-D->E->A (logi",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["(B) A->B->C-D->E->A (logi", "all", "all"]
         }
       }
     ],
@@ -7239,26 +6967,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148509465",
           "sourceNodeId": "148509465:0",
           "targetFieldId": "148509470",
           "targetNodeId": "148509465:0:2:4",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -7281,26 +7001,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148509465",
           "sourceNodeId": "148509465:0",
           "targetFieldId": "148509470",
           "targetNodeId": "148509465:0:2:6",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -7313,26 +7025,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148509465",
           "sourceNodeId": "148509465:0",
           "targetFieldId": "148509470",
           "targetNodeId": "148509465:0:7",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -7375,26 +7079,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148509465",
           "sourceNodeId": "148509465:0",
           "targetFieldId": "148509476",
           "targetNodeId": "148509465:0:9:11",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -7417,26 +7113,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148509465",
           "sourceNodeId": "148509465:0",
           "targetFieldId": "148509476",
           "targetNodeId": "148509465:0:9:13",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -7449,26 +7137,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148509465",
           "sourceNodeId": "148509465:0",
           "targetFieldId": "148509476",
           "targetNodeId": "148509465:0:14",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -7543,26 +7223,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148509470",
           "sourceNodeId": "148509470:0",
           "targetFieldId": "148509465",
           "targetNodeId": "148509470:0:2:4",
-          "label": [
-            "A (inter-dependent) ",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["A (inter-dependent) ", "all", "all"]
         }
       },
       {
@@ -7575,26 +7247,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148509465",
           "sourceNodeId": "148509470:0:2",
           "targetFieldId": "148509465",
           "targetNodeId": "148509470:0:2:5",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -7637,26 +7301,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148509465",
           "sourceNodeId": "148509470:0:2",
           "targetFieldId": "148509476",
           "targetNodeId": "148509470:0:2:7:9",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -7679,26 +7335,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148509465",
           "sourceNodeId": "148509470:0:2",
           "targetFieldId": "148509476",
           "targetNodeId": "148509470:0:2:7:11",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -7711,26 +7359,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148509465",
           "sourceNodeId": "148509470:0:2",
           "targetFieldId": "148509476",
           "targetNodeId": "148509470:0:2:12",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -7763,26 +7403,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148509465",
           "sourceNodeId": "148509470:0:2",
           "targetFieldId": "148509476",
           "targetNodeId": "148509470:0:15",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -7795,26 +7427,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148509465",
           "sourceNodeId": "148509470:0:2",
           "targetFieldId": "148509476",
           "targetNodeId": "148509470:16",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       }
     ],
@@ -7879,26 +7503,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148509465",
           "sourceNodeId": "148509474:0",
           "targetFieldId": "148509470",
           "targetNodeId": "148509474:0:2:4",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -7921,26 +7537,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148509465",
           "sourceNodeId": "148509474:0",
           "targetFieldId": "148509470",
           "targetNodeId": "148509474:0:2:6",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -7953,26 +7561,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148509465",
           "sourceNodeId": "148509474:0",
           "targetFieldId": "148509470",
           "targetNodeId": "148509474:0:7",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -8015,26 +7615,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148509465",
           "sourceNodeId": "148509474:0",
           "targetFieldId": "148509476",
           "targetNodeId": "148509474:0:9:11",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -8057,26 +7649,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148509465",
           "sourceNodeId": "148509474:0",
           "targetFieldId": "148509476",
           "targetNodeId": "148509474:0:9:13",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -8089,26 +7673,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148509465",
           "sourceNodeId": "148509474:0",
           "targetFieldId": "148509476",
           "targetNodeId": "148509474:0:14",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -8183,26 +7759,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148509465",
           "sourceNodeId": "148509475:0",
           "targetFieldId": "148509470",
           "targetNodeId": "148509475:0:2:4",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -8225,26 +7793,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148509465",
           "sourceNodeId": "148509475:0",
           "targetFieldId": "148509470",
           "targetNodeId": "148509475:0:2:6",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -8257,26 +7817,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148509465",
           "sourceNodeId": "148509475:0",
           "targetFieldId": "148509470",
           "targetNodeId": "148509475:0:7",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -8319,26 +7871,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148509465",
           "sourceNodeId": "148509475:0",
           "targetFieldId": "148509476",
           "targetNodeId": "148509475:0:9:11",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -8361,26 +7905,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148509465",
           "sourceNodeId": "148509475:0",
           "targetFieldId": "148509476",
           "targetNodeId": "148509475:0:9:13",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -8393,26 +7929,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148509465",
           "sourceNodeId": "148509475:0",
           "targetFieldId": "148509476",
           "targetNodeId": "148509475:0:14",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -8507,26 +8035,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148509465",
           "sourceNodeId": "148509476:0:2",
           "targetFieldId": "148509470",
           "targetNodeId": "148509476:0:2:4:6",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -8549,26 +8069,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148509465",
           "sourceNodeId": "148509476:0:2",
           "targetFieldId": "148509470",
           "targetNodeId": "148509476:0:2:4:8",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -8581,26 +8093,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148509465",
           "sourceNodeId": "148509476:0:2",
           "targetFieldId": "148509470",
           "targetNodeId": "148509476:0:2:9",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -8623,26 +8127,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148509476",
           "sourceNodeId": "148509476:0",
           "targetFieldId": "148509470",
           "targetNodeId": "148509476:0:2:11",
-          "label": [
-            "B (inter-dependent)",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["B (inter-dependent)", "all", "all"]
         }
       },
       {
@@ -8655,26 +8151,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148509465",
           "sourceNodeId": "148509476:0:2",
           "targetFieldId": "148509470",
           "targetNodeId": "148509476:0:2:12",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -8707,26 +8195,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148509465",
           "sourceNodeId": "148509476:0:2",
           "targetFieldId": "148509470",
           "targetNodeId": "148509476:0:15",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -8739,26 +8219,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148509465",
           "sourceNodeId": "148509476:0:2",
           "targetFieldId": "148509470",
           "targetNodeId": "148509476:16",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       }
     ],
@@ -8823,26 +8295,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148509465",
           "sourceNodeId": "148509477:0",
           "targetFieldId": "148509470",
           "targetNodeId": "148509477:0:2:4",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -8865,26 +8329,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148509465",
           "sourceNodeId": "148509477:0",
           "targetFieldId": "148509470",
           "targetNodeId": "148509477:0:2:6",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -8897,26 +8353,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148509465",
           "sourceNodeId": "148509477:0",
           "targetFieldId": "148509470",
           "targetNodeId": "148509477:0:7",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -8959,26 +8407,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148509465",
           "sourceNodeId": "148509477:0",
           "targetFieldId": "148509476",
           "targetNodeId": "148509477:0:9:11",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -9001,26 +8441,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148509465",
           "sourceNodeId": "148509477:0",
           "targetFieldId": "148509476",
           "targetNodeId": "148509477:0:9:13",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -9033,26 +8465,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148509465",
           "sourceNodeId": "148509477:0",
           "targetFieldId": "148509476",
           "targetNodeId": "148509477:0:14",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -9127,26 +8551,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148509465",
           "sourceNodeId": "148509478:0",
           "targetFieldId": "148509470",
           "targetNodeId": "148509478:0:2:4",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -9169,26 +8585,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148509465",
           "sourceNodeId": "148509478:0",
           "targetFieldId": "148509470",
           "targetNodeId": "148509478:0:2:6",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -9201,26 +8609,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148509465",
           "sourceNodeId": "148509478:0",
           "targetFieldId": "148509470",
           "targetNodeId": "148509478:0:7",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -9263,26 +8663,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148509465",
           "sourceNodeId": "148509478:0",
           "targetFieldId": "148509476",
           "targetNodeId": "148509478:0:9:11",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -9305,26 +8697,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148509465",
           "sourceNodeId": "148509478:0",
           "targetFieldId": "148509476",
           "targetNodeId": "148509478:0:9:13",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -9337,26 +8721,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148509465",
           "sourceNodeId": "148509478:0",
           "targetFieldId": "148509476",
           "targetNodeId": "148509478:0:14",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -9472,26 +8848,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148604236",
           "sourceNodeId": "148604161:0:2",
           "targetFieldId": "148604234",
           "targetNodeId": "148604161:0:2:4:6:8",
-          "label": [
-            "(B) Big Dipper A->B->C->D",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["(B) Big Dipper A->B->C->D", "all", "all"]
         }
       },
       {
@@ -9586,26 +8954,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148604234",
           "sourceNodeId": "148604234:0",
           "targetFieldId": "148604235",
           "targetNodeId": "148604234:0:2:4:6",
-          "label": [
-            "(D) Big Dipper A->B->C->D",
-            "any",
-            "undefined",
-            "any",
-            "undefined"
-          ]
+          "label": ["(D) Big Dipper A->B->C->D", "any", "any"]
         }
       },
       {
@@ -9700,26 +9060,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148604235",
           "sourceNodeId": "148604235:0",
           "targetFieldId": "148604236",
           "targetNodeId": "148604235:0:2:4:6",
-          "label": [
-            "(C) Big Dipper A->B->C->D",
-            "any",
-            "undefined",
-            "any",
-            "undefined"
-          ]
+          "label": ["(C) Big Dipper A->B->C->D", "any", "any"]
         }
       },
       {
@@ -9814,26 +9166,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148604236",
           "sourceNodeId": "148604236:0",
           "targetFieldId": "148604234",
           "targetNodeId": "148604236:0:2:4:6",
-          "label": [
-            "(B) Big Dipper A->B->C->D",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["(B) Big Dipper A->B->C->D", "all", "all"]
         }
       },
       {
@@ -9990,26 +9334,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "148456734",
           "sourceNodeId": "151701616:0:2",
           "targetFieldId": "148456739",
           "targetNodeId": "151701616:0:2:4:6:8:10:12",
-          "label": [
-            "(A) A->B->C-D->E->A (logi",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["(A) A->B->C-D->E->A (logi", "all", "all"]
         }
       }
     ],
@@ -10448,26 +9784,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "152290552",
           "sourceNodeId": "152290552:0",
           "targetFieldId": "152290553",
           "targetNodeId": "152290552:0:2:4",
-          "label": [
-            "Inter-dependent (fixed wi",
-            "any",
-            "undefined",
-            "any",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (fixed wi", "any", "any"]
         }
       },
       {
@@ -10490,26 +9818,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "152290552",
           "sourceNodeId": "152290552:0",
           "targetFieldId": "152290553",
           "targetNodeId": "152290552:0:2:6",
-          "label": [
-            "Inter-dependent (fixed wi",
-            "any",
-            "undefined",
-            "any",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (fixed wi", "any", "any"]
         }
       },
       {
@@ -10522,26 +9842,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "152290552",
           "sourceNodeId": "152290552:0",
           "targetFieldId": "152290553",
           "targetNodeId": "152290552:0:7",
-          "label": [
-            "Inter-dependent (fixed wi",
-            "any",
-            "undefined",
-            "any",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (fixed wi", "any", "any"]
         }
       },
       {
@@ -10584,26 +9896,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "152290552",
           "sourceNodeId": "152290552:0",
           "targetFieldId": "152290556",
           "targetNodeId": "152290552:0:9:11",
-          "label": [
-            "Inter-dependent (fixed wi",
-            "any",
-            "undefined",
-            "any",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (fixed wi", "any", "any"]
         }
       },
       {
@@ -10626,26 +9930,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "152290552",
           "sourceNodeId": "152290552:0",
           "targetFieldId": "152290556",
           "targetNodeId": "152290552:0:9:13",
-          "label": [
-            "Inter-dependent (fixed wi",
-            "any",
-            "undefined",
-            "any",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (fixed wi", "any", "any"]
         }
       },
       {
@@ -10658,26 +9954,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "152290552",
           "sourceNodeId": "152290552:0",
           "targetFieldId": "152290556",
           "targetNodeId": "152290552:0:14",
-          "label": [
-            "Inter-dependent (fixed wi",
-            "any",
-            "undefined",
-            "any",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (fixed wi", "any", "any"]
         }
       },
       {
@@ -10752,20 +10040,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "152290553",
           "sourceNodeId": "152290553:0",
           "targetFieldId": "152290552",
           "targetNodeId": "152290553:0:2:4",
-          "label": ["A", "all", "undefined", "all", "undefined"]
+          "label": ["A", "all", "all"]
         }
       },
       {
@@ -10778,26 +10064,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "152290552",
           "sourceNodeId": "152290553:0:2",
           "targetFieldId": "152290552",
           "targetNodeId": "152290553:0:2:5",
-          "label": [
-            "Inter-dependent (fixed wi",
-            "any",
-            "undefined",
-            "any",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (fixed wi", "any", "any"]
         }
       },
       {
@@ -10840,26 +10118,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "152290552",
           "sourceNodeId": "152290553:0:2",
           "targetFieldId": "152290556",
           "targetNodeId": "152290553:0:2:7:9",
-          "label": [
-            "Inter-dependent (fixed wi",
-            "any",
-            "undefined",
-            "any",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (fixed wi", "any", "any"]
         }
       },
       {
@@ -10882,26 +10152,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "152290552",
           "sourceNodeId": "152290553:0:2",
           "targetFieldId": "152290556",
           "targetNodeId": "152290553:0:2:7:11",
-          "label": [
-            "Inter-dependent (fixed wi",
-            "any",
-            "undefined",
-            "any",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (fixed wi", "any", "any"]
         }
       },
       {
@@ -10914,26 +10176,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "152290552",
           "sourceNodeId": "152290553:0:2",
           "targetFieldId": "152290556",
           "targetNodeId": "152290553:0:2:12",
-          "label": [
-            "Inter-dependent (fixed wi",
-            "any",
-            "undefined",
-            "any",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (fixed wi", "any", "any"]
         }
       },
       {
@@ -10966,26 +10220,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "152290552",
           "sourceNodeId": "152290553:0:2",
           "targetFieldId": "152290556",
           "targetNodeId": "152290553:0:15",
-          "label": [
-            "Inter-dependent (fixed wi",
-            "any",
-            "undefined",
-            "any",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (fixed wi", "any", "any"]
         }
       },
       {
@@ -10998,26 +10244,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "152290552",
           "sourceNodeId": "152290553:0:2",
           "targetFieldId": "152290556",
           "targetNodeId": "152290553:16",
-          "label": [
-            "Inter-dependent (fixed wi",
-            "any",
-            "undefined",
-            "any",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (fixed wi", "any", "any"]
         }
       }
     ],
@@ -11082,26 +10320,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "152290552",
           "sourceNodeId": "152290554:0",
           "targetFieldId": "152290553",
           "targetNodeId": "152290554:0:2:4",
-          "label": [
-            "Inter-dependent (fixed wi",
-            "any",
-            "undefined",
-            "any",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (fixed wi", "any", "any"]
         }
       },
       {
@@ -11124,26 +10354,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "152290552",
           "sourceNodeId": "152290554:0",
           "targetFieldId": "152290553",
           "targetNodeId": "152290554:0:2:6",
-          "label": [
-            "Inter-dependent (fixed wi",
-            "any",
-            "undefined",
-            "any",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (fixed wi", "any", "any"]
         }
       },
       {
@@ -11156,26 +10378,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "152290552",
           "sourceNodeId": "152290554:0",
           "targetFieldId": "152290553",
           "targetNodeId": "152290554:0:7",
-          "label": [
-            "Inter-dependent (fixed wi",
-            "any",
-            "undefined",
-            "any",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (fixed wi", "any", "any"]
         }
       },
       {
@@ -11218,26 +10432,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "152290552",
           "sourceNodeId": "152290554:0",
           "targetFieldId": "152290556",
           "targetNodeId": "152290554:0:9:11",
-          "label": [
-            "Inter-dependent (fixed wi",
-            "any",
-            "undefined",
-            "any",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (fixed wi", "any", "any"]
         }
       },
       {
@@ -11260,26 +10466,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "152290552",
           "sourceNodeId": "152290554:0",
           "targetFieldId": "152290556",
           "targetNodeId": "152290554:0:9:13",
-          "label": [
-            "Inter-dependent (fixed wi",
-            "any",
-            "undefined",
-            "any",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (fixed wi", "any", "any"]
         }
       },
       {
@@ -11292,26 +10490,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "152290552",
           "sourceNodeId": "152290554:0",
           "targetFieldId": "152290556",
           "targetNodeId": "152290554:0:14",
-          "label": [
-            "Inter-dependent (fixed wi",
-            "any",
-            "undefined",
-            "any",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (fixed wi", "any", "any"]
         }
       },
       {
@@ -11386,26 +10576,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "152290552",
           "sourceNodeId": "152290555:0",
           "targetFieldId": "152290553",
           "targetNodeId": "152290555:0:2:4",
-          "label": [
-            "Inter-dependent (fixed wi",
-            "any",
-            "undefined",
-            "any",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (fixed wi", "any", "any"]
         }
       },
       {
@@ -11428,26 +10610,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "152290552",
           "sourceNodeId": "152290555:0",
           "targetFieldId": "152290553",
           "targetNodeId": "152290555:0:2:6",
-          "label": [
-            "Inter-dependent (fixed wi",
-            "any",
-            "undefined",
-            "any",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (fixed wi", "any", "any"]
         }
       },
       {
@@ -11460,26 +10634,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "152290552",
           "sourceNodeId": "152290555:0",
           "targetFieldId": "152290553",
           "targetNodeId": "152290555:0:7",
-          "label": [
-            "Inter-dependent (fixed wi",
-            "any",
-            "undefined",
-            "any",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (fixed wi", "any", "any"]
         }
       },
       {
@@ -11522,26 +10688,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "152290552",
           "sourceNodeId": "152290555:0",
           "targetFieldId": "152290556",
           "targetNodeId": "152290555:0:9:11",
-          "label": [
-            "Inter-dependent (fixed wi",
-            "any",
-            "undefined",
-            "any",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (fixed wi", "any", "any"]
         }
       },
       {
@@ -11564,26 +10722,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "152290552",
           "sourceNodeId": "152290555:0",
           "targetFieldId": "152290556",
           "targetNodeId": "152290555:0:9:13",
-          "label": [
-            "Inter-dependent (fixed wi",
-            "any",
-            "undefined",
-            "any",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (fixed wi", "any", "any"]
         }
       },
       {
@@ -11596,26 +10746,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "152290552",
           "sourceNodeId": "152290555:0",
           "targetFieldId": "152290556",
           "targetNodeId": "152290555:0:14",
-          "label": [
-            "Inter-dependent (fixed wi",
-            "any",
-            "undefined",
-            "any",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (fixed wi", "any", "any"]
         }
       },
       {
@@ -11710,26 +10852,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "152290552",
           "sourceNodeId": "152290556:0:2",
           "targetFieldId": "152290553",
           "targetNodeId": "152290556:0:2:4:6",
-          "label": [
-            "Inter-dependent (fixed wi",
-            "any",
-            "undefined",
-            "any",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (fixed wi", "any", "any"]
         }
       },
       {
@@ -11752,26 +10886,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "152290552",
           "sourceNodeId": "152290556:0:2",
           "targetFieldId": "152290553",
           "targetNodeId": "152290556:0:2:4:8",
-          "label": [
-            "Inter-dependent (fixed wi",
-            "any",
-            "undefined",
-            "any",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (fixed wi", "any", "any"]
         }
       },
       {
@@ -11784,26 +10910,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "152290552",
           "sourceNodeId": "152290556:0:2",
           "targetFieldId": "152290553",
           "targetNodeId": "152290556:0:2:9",
-          "label": [
-            "Inter-dependent (fixed wi",
-            "any",
-            "undefined",
-            "any",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (fixed wi", "any", "any"]
         }
       },
       {
@@ -11826,20 +10944,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "152290556",
           "sourceNodeId": "152290556:0",
           "targetFieldId": "152290553",
           "targetNodeId": "152290556:0:2:11",
-          "label": ["B", "all", "undefined", "all", "undefined"]
+          "label": ["B", "all", "all"]
         }
       },
       {
@@ -11852,26 +10968,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "152290552",
           "sourceNodeId": "152290556:0:2",
           "targetFieldId": "152290553",
           "targetNodeId": "152290556:0:2:12",
-          "label": [
-            "Inter-dependent (fixed wi",
-            "any",
-            "undefined",
-            "any",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (fixed wi", "any", "any"]
         }
       },
       {
@@ -11904,26 +11012,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "152290552",
           "sourceNodeId": "152290556:0:2",
           "targetFieldId": "152290553",
           "targetNodeId": "152290556:0:15",
-          "label": [
-            "Inter-dependent (fixed wi",
-            "any",
-            "undefined",
-            "any",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (fixed wi", "any", "any"]
         }
       },
       {
@@ -11936,26 +11036,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "152290552",
           "sourceNodeId": "152290556:0:2",
           "targetFieldId": "152290553",
           "targetNodeId": "152290556:16",
-          "label": [
-            "Inter-dependent (fixed wi",
-            "any",
-            "undefined",
-            "any",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (fixed wi", "any", "any"]
         }
       }
     ],
@@ -12020,26 +11112,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "152290552",
           "sourceNodeId": "152290557:0",
           "targetFieldId": "152290553",
           "targetNodeId": "152290557:0:2:4",
-          "label": [
-            "Inter-dependent (fixed wi",
-            "any",
-            "undefined",
-            "any",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (fixed wi", "any", "any"]
         }
       },
       {
@@ -12062,26 +11146,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "152290552",
           "sourceNodeId": "152290557:0",
           "targetFieldId": "152290553",
           "targetNodeId": "152290557:0:2:6",
-          "label": [
-            "Inter-dependent (fixed wi",
-            "any",
-            "undefined",
-            "any",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (fixed wi", "any", "any"]
         }
       },
       {
@@ -12094,26 +11170,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "152290552",
           "sourceNodeId": "152290557:0",
           "targetFieldId": "152290553",
           "targetNodeId": "152290557:0:7",
-          "label": [
-            "Inter-dependent (fixed wi",
-            "any",
-            "undefined",
-            "any",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (fixed wi", "any", "any"]
         }
       },
       {
@@ -12156,26 +11224,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "152290552",
           "sourceNodeId": "152290557:0",
           "targetFieldId": "152290556",
           "targetNodeId": "152290557:0:9:11",
-          "label": [
-            "Inter-dependent (fixed wi",
-            "any",
-            "undefined",
-            "any",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (fixed wi", "any", "any"]
         }
       },
       {
@@ -12198,26 +11258,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "152290552",
           "sourceNodeId": "152290557:0",
           "targetFieldId": "152290556",
           "targetNodeId": "152290557:0:9:13",
-          "label": [
-            "Inter-dependent (fixed wi",
-            "any",
-            "undefined",
-            "any",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (fixed wi", "any", "any"]
         }
       },
       {
@@ -12230,26 +11282,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "152290552",
           "sourceNodeId": "152290557:0",
           "targetFieldId": "152290556",
           "targetNodeId": "152290557:0:14",
-          "label": [
-            "Inter-dependent (fixed wi",
-            "any",
-            "undefined",
-            "any",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (fixed wi", "any", "any"]
         }
       },
       {
@@ -12324,26 +11368,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "152290552",
           "sourceNodeId": "152290558:0",
           "targetFieldId": "152290553",
           "targetNodeId": "152290558:0:2:4",
-          "label": [
-            "Inter-dependent (fixed wi",
-            "any",
-            "undefined",
-            "any",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (fixed wi", "any", "any"]
         }
       },
       {
@@ -12366,26 +11402,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "152290552",
           "sourceNodeId": "152290558:0",
           "targetFieldId": "152290553",
           "targetNodeId": "152290558:0:2:6",
-          "label": [
-            "Inter-dependent (fixed wi",
-            "any",
-            "undefined",
-            "any",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (fixed wi", "any", "any"]
         }
       },
       {
@@ -12398,26 +11426,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "152290552",
           "sourceNodeId": "152290558:0",
           "targetFieldId": "152290553",
           "targetNodeId": "152290558:0:7",
-          "label": [
-            "Inter-dependent (fixed wi",
-            "any",
-            "undefined",
-            "any",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (fixed wi", "any", "any"]
         }
       },
       {
@@ -12460,26 +11480,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "152290552",
           "sourceNodeId": "152290558:0",
           "targetFieldId": "152290556",
           "targetNodeId": "152290558:0:9:11",
-          "label": [
-            "Inter-dependent (fixed wi",
-            "any",
-            "undefined",
-            "any",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (fixed wi", "any", "any"]
         }
       },
       {
@@ -12502,26 +11514,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "152290552",
           "sourceNodeId": "152290558:0",
           "targetFieldId": "152290556",
           "targetNodeId": "152290558:0:9:13",
-          "label": [
-            "Inter-dependent (fixed wi",
-            "any",
-            "undefined",
-            "any",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (fixed wi", "any", "any"]
         }
       },
       {
@@ -12534,26 +11538,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "152290552",
           "sourceNodeId": "152290558:0",
           "targetFieldId": "152290556",
           "targetNodeId": "152290558:0:14",
-          "label": [
-            "Inter-dependent (fixed wi",
-            "any",
-            "undefined",
-            "any",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (fixed wi", "any", "any"]
         }
       },
       {
@@ -12758,26 +11754,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "152290568",
           "sourceNodeId": "152290567:0:2",
           "targetFieldId": "152290570",
           "targetNodeId": "152290567:0:2:4:6:8",
-          "label": [
-            "(B) Big Dipper A->B->C->D",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["(B) Big Dipper A->B->C->D", "all", "all"]
         }
       },
       {
@@ -12872,26 +11860,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "152290568",
           "sourceNodeId": "152290568:0",
           "targetFieldId": "152290570",
           "targetNodeId": "152290568:0:2:4:6",
-          "label": [
-            "(B) Big Dipper A->B->C->D",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["(B) Big Dipper A->B->C->D", "all", "all"]
         }
       },
       {
@@ -12986,26 +11966,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "152290569",
           "sourceNodeId": "152290569:0",
           "targetFieldId": "152290568",
           "targetNodeId": "152290569:0:2:4:6",
-          "label": [
-            "(C) Big Dipper A->B->C->D",
-            "any",
-            "undefined",
-            "any",
-            "undefined"
-          ]
+          "label": ["(C) Big Dipper A->B->C->D", "any", "any"]
         }
       },
       {
@@ -13100,26 +12072,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "any",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "152290570",
           "sourceNodeId": "152290570:0",
           "targetFieldId": "152290569",
           "targetNodeId": "152290570:0:2:4:6",
-          "label": [
-            "(D) Big Dipper A->B->C->D",
-            "any",
-            "undefined",
-            "any",
-            "undefined"
-          ]
+          "label": ["(D) Big Dipper A->B->C->D", "any", "any"]
         }
       },
       {
@@ -13586,26 +12550,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "154328256",
           "sourceNodeId": "154328256:0",
           "targetFieldId": "154328256",
           "targetNodeId": "154328256:0:2",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -13628,26 +12584,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "154328256",
           "sourceNodeId": "154328256:0",
           "targetFieldId": "154328256",
           "targetNodeId": "154328256:0:4",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -13702,26 +12650,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "154328256",
           "sourceNodeId": "154328257:0",
           "targetFieldId": "154328256",
           "targetNodeId": "154328257:0:2",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -13744,26 +12684,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "154328256",
           "sourceNodeId": "154328257:0",
           "targetFieldId": "154328256",
           "targetNodeId": "154328257:0:4",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -13818,26 +12750,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "154328256",
           "sourceNodeId": "154328258:0",
           "targetFieldId": "154328256",
           "targetNodeId": "154328258:0:2",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -13860,26 +12784,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "154328256",
           "sourceNodeId": "154328258:0",
           "targetFieldId": "154328256",
           "targetNodeId": "154328258:0:4",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -13934,26 +12850,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "154328256",
           "sourceNodeId": "154328259:0",
           "targetFieldId": "154328256",
           "targetNodeId": "154328259:0:2",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -13976,26 +12884,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "154328256",
           "sourceNodeId": "154328259:0",
           "targetFieldId": "154328256",
           "targetNodeId": "154328259:0:4",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -14050,26 +12950,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "154328256",
           "sourceNodeId": "154328260:0",
           "targetFieldId": "154328256",
           "targetNodeId": "154328260:0:2",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -14092,26 +12984,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "154328256",
           "sourceNodeId": "154328260:0",
           "targetFieldId": "154328256",
           "targetNodeId": "154328260:0:4",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -14166,26 +13050,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "154328256",
           "sourceNodeId": "154328261:0",
           "targetFieldId": "154328256",
           "targetNodeId": "154328261:0:2",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -14208,26 +13084,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "154328256",
           "sourceNodeId": "154328261:0",
           "targetFieldId": "154328256",
           "targetNodeId": "154328261:0:4",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -14282,26 +13150,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "154328256",
           "sourceNodeId": "154328262:0",
           "targetFieldId": "154328256",
           "targetNodeId": "154328262:0:2",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {
@@ -14324,26 +13184,18 @@
           "ruleConflict": {
             "conditionalA": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             },
             "conditionalB": {
               "condition": "all",
-              "action": "show",
-              "option": "undefined"
+              "action": "show"
             }
           },
           "sourceFieldId": "154328256",
           "sourceNodeId": "154328262:0",
           "targetFieldId": "154328256",
           "targetNodeId": "154328262:0:4",
-          "label": [
-            "Inter-dependent (not so m",
-            "all",
-            "undefined",
-            "all",
-            "undefined"
-          ]
+          "label": ["Inter-dependent (not so m", "all", "all"]
         }
       },
       {

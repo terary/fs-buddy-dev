@@ -17,7 +17,68 @@ import { FsCircularMutualInclusiveNode } from "./LogicNodes/FsCircularMutualIncl
 
 describe("FsLogicTreeDeep", () => {
   describe("Pojo Smoke test.", () => {
-    it.only("Smoke Test", () => {
+    it.only("Smoke Test II", () => {
+      const tree5469299 = FsFormModel.fromApiFormJson(
+        transformers.formJson(formJson5469299 as unknown as TApiFormJson)
+      );
+      const tree5375703 = FsFormModel.fromApiFormJson(
+        transformers.formJson(formJson5375703 as unknown as TApiFormJson)
+      );
+
+      `
+        newest version of circular reference is missing source/target stuff, I think?
+        Doesn't work see error messages
+
+`;
+
+      // const agTree148604161 = tree5375703.aggregateLogicTree("148604161"); // (A) Big Dipper A->B->C->D->(B ^ E)
+      // const pojo148604161 = agTree148604161.toPojoAt(undefined, false);
+      // const d3FieldTable148604161 = transformers.pojoToD3TableData(
+      //   agTree148604161.toPojoAt(undefined, false),
+      //   tree5375703
+      // );
+
+      const agTrees: { [fieldId: string]: FsLogicTreeDeep } = {};
+      const pojos: { [fieldId: string]: TTreePojo<AbstractLogicNode> | null } =
+        {};
+      const d3Mappings: { [fieldId: string]: any } = {};
+      tree5469299.getAllFieldIds().forEach((fieldId) => {
+        agTrees[fieldId] = tree5469299.aggregateLogicTree(fieldId);
+
+        if (agTrees[fieldId] === null) {
+          pojos[fieldId] = null;
+          d3Mappings[fieldId] = null;
+        } else {
+          pojos[fieldId] = agTrees[fieldId].toPojoAt(undefined, false);
+          d3Mappings[fieldId] = transformers.pojoToD3TableData(
+            pojos[fieldId] as TTreePojo<AbstractLogicNode>,
+            tree5469299
+          );
+        }
+      });
+      tree5375703.getAllFieldIds().forEach((fieldId) => {
+        agTrees[fieldId] = tree5375703.aggregateLogicTree(fieldId);
+        if (agTrees[fieldId] === null) {
+          pojos[fieldId] = null;
+          d3Mappings[fieldId] = null;
+        } else {
+          pojos[fieldId] = agTrees[fieldId].toPojoAt(undefined, false);
+          d3Mappings[fieldId] = transformers.pojoToD3TableData(
+            pojos[fieldId] as TTreePojo<AbstractLogicNode>,
+            tree5375703
+          );
+        }
+      });
+
+      const actualSnapshotJson = {
+        // agTrees,
+        pojos,
+        d3Mappings,
+      };
+
+      expect(actualSnapshotJson).toStrictEqual(expectSnapshotJson);
+    });
+    it("Smoke Test", () => {
       const tree5469299 = FsFormModel.fromApiFormJson(
         transformers.formJson(formJson5469299 as unknown as TApiFormJson)
       );
