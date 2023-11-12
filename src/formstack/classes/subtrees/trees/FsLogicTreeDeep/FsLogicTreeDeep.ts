@@ -1,19 +1,16 @@
-import { ITree, TTreePojo } from "predicate-tree-advanced-poc/dist/src";
+import { TTreePojo } from "predicate-tree-advanced-poc/dist/src";
 import { FsCircularDependencyNode } from "./LogicNodes/FsCircularDependencyNode";
 import { FsFieldModel } from "../FsFieldModel";
-import { TFsFieldAny } from "../../../../type.field";
 import { AbstractLogicNode } from "./LogicNodes/AbstractLogicNode";
 import { FsLogicTreeDeepInternal } from "./FsLogicTreeDeepInternal";
 import { TStatusRecord } from "../../../Evaluator/type";
 import { FsFormModel } from "../../FsFormModel";
-import { FsTreeLogic } from "../FsTreeLogic";
+import { FsFieldLogicModel } from "../FsFieldLogicModel";
 import {
   TFsFieldLogicJunction,
   TFsFieldLogicCheckLeaf,
   TFsJunctionOperators,
-  TSimpleDictionary,
   TFsLogicNode,
-  TFsFieldLogicNode,
 } from "../../types";
 
 import { FsLogicBranchNode } from "./LogicNodes/FsLogicBranchNode";
@@ -29,13 +26,9 @@ class FsLogicTreeDeep {
   static readonly MAX_TOTAL_NODES = 50;
   private _fsDeepLogicTree: FsLogicTreeDeepInternal;
   private _rootFieldId: string;
-  constructor(rootNodeId?: string, nodeContent?: AbstractLogicNode) {
-    // @ts-ignore
-    this._rootFieldId = nodeContent?.ownerFieldId
-      ? // @ts-ignore
-        nodeContent?.ownerFieldId
-      : // @ts-ignore
-        nodeContent?.fieldId;
+
+  constructor(rootNodeId: string, nodeContent: FsVirtualRootNode) {
+    this._rootFieldId = nodeContent.fieldId;
     this._fsDeepLogicTree = new FsLogicTreeDeepInternal(
       rootNodeId,
       nodeContent
@@ -67,11 +60,6 @@ class FsLogicTreeDeep {
   getDependentChainFieldIds() {
     return this._fsDeepLogicTree.getDependantFieldIds() || [];
   }
-
-  // getChildContentAt<T>(nodeId: string): T;
-  // getChildContentAt(
-  //   nodeId: string
-  // ): AbstractLogicNode | ITree<AbstractLogicNode> | null;
 
   getChildContentAt<T = AbstractLogicNode>(nodeId: string): T {
     return this._fsDeepLogicTree.getChildContentAt(nodeId) as T;
@@ -112,13 +100,13 @@ class FsLogicTreeDeep {
     return this._fsDeepLogicTree.isExistInDependencyChain(field);
   }
 
-  get ownerFieldId() {
-    return this._fsDeepLogicTree.ownerFieldId;
-  }
+  // get ownerFieldId() {
+  //   return this._fsDeepLogicTree.ownerFieldId;
+  // }
 
-  set ownerFieldId(ownerFieldId: string) {
-    this._fsDeepLogicTree.ownerFieldId = ownerFieldId;
-  }
+  // set ownerFieldId(ownerFieldId: string) {
+  //   this._fsDeepLogicTree.ownerFieldId = ownerFieldId;
+  // }
 
   get rootNodeId() {
     return this._fsDeepLogicTree.rootNodeId;
@@ -163,8 +151,9 @@ class FsLogicTreeDeep {
       }) as AbstractLogicNode[];
 
     logicNodes.forEach((logicNode) => {
-      const s = logicNodes;
-      statusMessages.push(...logicNode.getStatusMessage(this.ownerFieldId, []));
+      // const s = logicNodes;
+      // statusMessages.push(...logicNode.getStatusMessage(this.ownerFieldId, []));
+      statusMessages.push(...logicNode.getStatusMessage(this.rootFieldId, []));
     });
 
     return statusMessages;
@@ -174,29 +163,25 @@ class FsLogicTreeDeep {
     sourceFieldId: string,
     deepTree: FsLogicTreeDeep,
     targetFieldContent: TFsLogicNode
-    // parentJunctionOperator?: TFsJunctionOperators
   ): FsCircularDependencyNode {
-    `
-    This should find circular references
-    It needs to know, a the target/source node id (fieldId not as relevant)
-    this should only be checking branches?
-    current conflict seems to be leaf/branch
-`;
     const existingChildContent = deepTree.getChildContentByFieldId(
       sourceFieldId
     ) as unknown as
       | TFsFieldLogicJunction<TFsJunctionOperators>
       | TFsFieldLogicCheckLeaf;
 
-    // const parentField =
-
-    // targetFieldContent
     const sourceNodeId =
       existingChildContent !== null
         ? deepTree.getNodeIdOfNodeContent(
             existingChildContent as unknown as AbstractLogicNode
           )
         : null;
+
+    const conditionalA =
+      existingChildContent as TFsFieldLogicJunction<TFsJunctionOperators>;
+    const conditionalB =
+      targetFieldContent as TFsFieldLogicJunction<TFsJunctionOperators>;
+
     return new FsCircularDependencyNode(
       sourceFieldId,
       sourceNodeId,
@@ -204,23 +189,13 @@ class FsLogicTreeDeep {
       deepTree.rootNodeId,
       deepTree.getDependentFieldIds(),
       {
-        // @ts-ignore
         conditionalA: {
-          // @ts-ignore
-          condition: existingChildContent.conditional,
-          // @ts-ignore
-          action: existingChildContent.action,
-          // // @ts-ignore
-          // option: existingChildContent.option,
+          condition: conditionalA.conditional,
+          action: conditionalA.action,
         },
-        // @ts-ignore
         conditionalB: {
-          // @ts-ignore
-          condition: targetFieldContent.conditional,
-          // @ts-ignore
-          action: targetFieldContent.action,
-          // // @ts-ignore
-          // option: targetFieldContent.option,
+          condition: conditionalB.conditional,
+          action: conditionalB.action,
         },
       }
     );
@@ -287,7 +262,7 @@ class FsLogicTreeDeep {
   }
 
   private static appendFieldTreeNodeToLogicDeep(
-    fieldLogicTree: FsTreeLogic,
+    fieldLogicTree: FsFieldLogicModel,
     fieldLogicNodeId: string,
     deepTree: FsLogicTreeDeep,
     deepTreeNodeId: string,
@@ -393,11 +368,11 @@ class FsLogicTreeDeep {
 
   static fromFormModel(
     fieldId: string,
-    fieldCollection: FsFormModel,
+    formModel: FsFormModel,
     deepTree?: FsLogicTreeDeep,
     deepTreeParentNodeId?: string
   ): FsLogicTreeDeep | null {
-    const field = fieldCollection.getFieldModelOrThrow(fieldId);
+    const field = formModel.getFieldModelOrThrow(fieldId);
     const logicTree = field.getLogicTree() || null;
     const visualTree = field.getVisibilityLogicTree();
 
@@ -413,37 +388,37 @@ class FsLogicTreeDeep {
 
     if (!logicTree) {
       return FsLogicTreeDeep.appendFieldTreeNodeToLogicDeep(
-        visualTree as FsTreeLogic,
-        (visualTree as FsTreeLogic).rootNodeId,
+        visualTree as FsFieldLogicModel,
+        (visualTree as FsFieldLogicModel).rootNodeId,
         tree,
         parentNodeId,
-        fieldCollection
+        formModel
       );
     }
 
     if (!visualTree) {
       return FsLogicTreeDeep.appendFieldTreeNodeToLogicDeep(
-        logicTree as FsTreeLogic,
-        (logicTree as FsTreeLogic).rootNodeId,
+        logicTree as FsFieldLogicModel,
+        (logicTree as FsFieldLogicModel).rootNodeId,
         tree,
         parentNodeId,
-        fieldCollection
+        formModel
       );
     }
 
     FsLogicTreeDeep.appendFieldTreeNodeToLogicDeep(
-      logicTree as FsTreeLogic,
-      (logicTree as FsTreeLogic).rootNodeId,
+      logicTree as FsFieldLogicModel,
+      (logicTree as FsFieldLogicModel).rootNodeId,
       tree,
       parentNodeId,
-      fieldCollection
+      formModel
     );
     return FsLogicTreeDeep.appendFieldTreeNodeToLogicDeep(
-      visualTree as FsTreeLogic,
-      (visualTree as FsTreeLogic).rootNodeId,
+      visualTree as FsFieldLogicModel,
+      (visualTree as FsFieldLogicModel).rootNodeId,
       tree,
       parentNodeId,
-      fieldCollection
+      formModel
     );
   }
 }

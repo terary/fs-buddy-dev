@@ -2,15 +2,19 @@ import {
   TFsFieldLogicCheckLeaf,
   TFsFieldLogicJunction,
   TFsJunctionOperators,
+  TFsVisibilityModes,
 } from "../../../types";
 
+// action: TFsVisibilityModes;
+// conditional: C; // TLogicJunctionOperators;
+// TFsJunctionOperators
+type BranchToBranchConflictRule = {
+  action: TFsVisibilityModes;
+  condition: TFsJunctionOperators;
+};
 type RuleConflictType = {
-  conditionalA:
-    | TFsFieldLogicCheckLeaf
-    | TFsFieldLogicJunction<TFsJunctionOperators>;
-  conditionalB:
-    | TFsFieldLogicCheckLeaf
-    | TFsFieldLogicJunction<TFsJunctionOperators>;
+  conditionalA: BranchToBranchConflictRule;
+  conditionalB: BranchToBranchConflictRule;
 };
 
 export type { RuleConflictType };

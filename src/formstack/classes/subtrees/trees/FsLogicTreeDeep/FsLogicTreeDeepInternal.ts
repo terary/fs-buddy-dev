@@ -1,63 +1,37 @@
 import {
-  AbstractDirectedGraph,
-  AbstractExpressionTree,
   AbstractTree,
   IExpressionTree,
   TTreePojo,
 } from "predicate-tree-advanced-poc/dist/src";
-import {
-  TFsFieldLogicJunction,
-  TFsFieldLogicJunctionJson,
-  TFsLogicNode,
-  TFsJunctionOperators,
-  TSimpleDictionary,
-  TFsFieldLogicCheckLeaf,
-} from "../../types";
-import { AbstractFsTreeLogic } from "../AbstractFsTreeLogic";
+import { TSimpleDictionary } from "../../types";
+
 import { FsCircularDependencyNode } from "./LogicNodes/FsCircularDependencyNode";
 import { FsLogicBranchNode } from "./LogicNodes/FsLogicBranchNode";
 import { FsLogicLeafNode } from "./LogicNodes/FsLogicLeafNode";
 import { FsFieldModel } from "../FsFieldModel";
-import { TFsFieldAny } from "../../../../type.field";
 import { AbstractLogicNode } from "./LogicNodes/AbstractLogicNode";
 import { FsVirtualRootNode } from "./LogicNodes/FsVirtualRootNode";
 import { FsLogicErrorNode } from "./LogicNodes/FsLogicErrorNode";
 import { FsCircularMutualInclusiveNode } from "./LogicNodes/FsCircularMutualInclusiveNode";
 import { FsCircularMutualExclusiveNode } from "./LogicNodes/FsCircularMutualExclusiveNode";
 import { AbstractLogicTree } from "./AbstractLogicTree";
-// AbstractExpressionTree
-// const x:AbstractExpressionTree;
-// const x: AbstractFsTreeLogic
-// const x: AbstractFsTreeLogic<AbstractLogicNode>;
-// class FsLogicTreeDeepInternal extends AbstractFsTreeLogic<AbstractLogicNode> {
 class FsLogicTreeDeepInternal extends AbstractLogicTree<AbstractLogicNode> {
-  // class FsLogicTreeDeepInternal extends AbstractDirectedGraph<AbstractLogicNode> {
   private _dependantFieldIdsInOrder: string[] = [];
 
-  protected _ownerFieldId!: string;
-
-  // get action(): TFsVisibilityModes {
-  //   // FS
-  //   return this._action;
+  // protected _ownerFieldId!: string;
+  // set ownerFieldId(value: string) {
+  //   this._ownerFieldId = value; // *tmc* should determine if this is being used, and remove it
   // }
 
-  set ownerFieldId(value: string) {
-    this._ownerFieldId = value; // *tmc* should determine if this is being used, and remove it
-  }
-
-  get ownerFieldId() {
-    return this._ownerFieldId;
-  }
+  // get ownerFieldId() {
+  //   return this._ownerFieldId;
+  // }
 
   #dependantFieldIdMap: TSimpleDictionary<AbstractLogicNode> = {};
   constructor(rootNodeId?: string, nodeContent?: AbstractLogicNode) {
     super(rootNodeId, nodeContent);
-
-    // if (nodeContent !== undefined) {
-    //   const fieldId = this.extractFieldIdFromNodeContentOrThrow(nodeContent);
-    //   this.appendFieldIdNode(fieldId, nodeContent);
-    // }
   }
+
   public appendChildNodeWithContent(
     parentNodeId: string,
     nodeContent: AbstractLogicNode
@@ -212,21 +186,3 @@ class FsLogicTreeDeepInternal extends AbstractLogicTree<AbstractLogicNode> {
 }
 
 export { FsLogicTreeDeepInternal };
-
-const transformLogicLeafJsonToLogicLeafs = (
-  logicJson: TFsFieldLogicJunctionJson
-) => {
-  const { action, conditional, checks } = logicJson || {};
-  const op = conditional === "all" ? "$and" : "$or";
-  // this doesn't look right, we're not use "op", "action", "conditional" ?
-  const leafExpressions = (checks || []).map((check) => {
-    const { condition, fieldId, option } = check;
-    return {
-      fieldId: fieldId + "" || "__MISSING_ID__",
-      fieldJson: check,
-      condition: check.condition,
-      option,
-    };
-  });
-  return { leafExpressions };
-};

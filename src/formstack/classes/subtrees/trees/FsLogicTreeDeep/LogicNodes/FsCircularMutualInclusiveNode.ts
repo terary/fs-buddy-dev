@@ -23,6 +23,7 @@ class FsCircularMutualInclusiveNode extends FsCircularDependencyNode {
       targetFieldId,
       targetNodeId,
       dependentChainFieldIds,
+      // @ts-ignore
       ruleConflict
     );
     // this._ruleConflict = ruleConflict;

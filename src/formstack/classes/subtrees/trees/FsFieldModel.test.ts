@@ -1,6 +1,6 @@
 import { FsFieldModel } from "./FsFieldModel";
 import { TFsFieldAnyJson } from "../../types";
-import { FsTreeLogic } from "./FsTreeLogic";
+import { FsFieldLogicModel } from "./FsFieldLogicModel";
 import type { TFsFieldAny, TFsFieldType } from "../../../type.field";
 // TFsFieldType
 import { MultipleLogicTreeError } from "../../../errors/MultipleLogicTreeError";
@@ -393,7 +393,7 @@ describe("FsFieldModel", () => {
   });
   describe(".getLogicTree()", () => {
     class TestFsFieldModel extends FsFieldModel {
-      getLogicTree(): FsTreeLogic | null {
+      getLogicTree(): FsFieldLogicModel | null {
         return super.getLogicTree();
       }
     }
@@ -407,14 +407,14 @@ describe("FsFieldModel", () => {
         transformers.fieldJson(TEST_JSON_FIELD as TFsFieldAnyJson)
       ) as TestFsFieldModel;
 
-      expect(tree.getLogicTree()).toBeInstanceOf(FsTreeLogic);
+      expect(tree.getLogicTree()).toBeInstanceOf(FsFieldLogicModel);
     });
     it('Should return negated tree if action is "Hide".', () => {
       const tree = TestFsFieldModel.fromFieldJson(
         transformers.fieldJson(TEST_JSON_FIELD as TFsFieldAnyJson)
       ) as TestFsFieldModel;
 
-      expect(tree.getLogicTree()).toBeInstanceOf(FsTreeLogic);
+      expect(tree.getLogicTree()).toBeInstanceOf(FsFieldLogicModel);
     });
     it("Throw error if there is more than one logic tree.", () => {
       const extraLogicTree = TestFsFieldModel.fromFieldJson(
@@ -422,7 +422,7 @@ describe("FsFieldModel", () => {
       );
 
       const subtreeConstructor = (fieldJson: TFsFieldAny) =>
-        FsTreeLogic.fromFieldJson(TEST_JSON_FIELD as TFsFieldAnyJson);
+        FsFieldLogicModel.fromFieldJson(TEST_JSON_FIELD as TFsFieldAnyJson);
 
       FsFieldModel.createSubtreeFromFieldJson(
         extraLogicTree,
