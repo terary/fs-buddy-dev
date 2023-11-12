@@ -150,12 +150,12 @@ class FsLogicTreeDeep {
   }
 
   private static getCircularReferenceNode(
-    sourceFieldId: string,
+    targetFieldId: string,
     deepTree: FsLogicTreeDeep,
     targetFieldContent: TFsLogicNode
   ): FsCircularDependencyNode {
     const existingChildContent = deepTree.getChildContentByFieldId(
-      sourceFieldId
+      targetFieldId
     ) as unknown as
       | TFsFieldLogicJunction<TFsJunctionOperators>
       | TFsFieldLogicCheckLeaf;
@@ -173,9 +173,9 @@ class FsLogicTreeDeep {
       targetFieldContent as TFsFieldLogicJunction<TFsJunctionOperators>;
 
     return new FsCircularDependencyNode(
-      sourceFieldId,
-      sourceNodeId,
       deepTree.getDependentChainFieldIds().slice(-1)[0],
+      sourceNodeId,
+      targetFieldId,
       deepTree.rootNodeId,
       deepTree.getDependentFieldIds(),
       {
@@ -243,16 +243,16 @@ class FsLogicTreeDeep {
   }
 
   private static appendFieldTreeNodeToLogicDeep(
-    fieldLogicTree: FsFieldLogicModel,
+    fieldLogicModel: FsFieldLogicModel,
     fieldLogicNodeId: string,
     deepTree: FsLogicTreeDeep,
     deepTreeNodeId: string,
     fieldCollection: FsFormModel
   ): FsLogicTreeDeep | null {
     const nodeContent =
-      fieldLogicTree.getChildContentAtOrThrow(fieldLogicNodeId);
+      fieldLogicModel.getChildContentAtOrThrow(fieldLogicNodeId);
     const childrenNodeIds =
-      fieldLogicTree.getChildrenNodeIdsOf(fieldLogicNodeId);
+      fieldLogicModel.getChildrenNodeIdsOf(fieldLogicNodeId);
 
     // @ts-ignore -- need to work-out the "fieldId" and "ownerFieldId"
     const parentFieldId = nodeContent?.fieldId || nodeContent?.ownerFieldId;
@@ -325,7 +325,7 @@ class FsLogicTreeDeep {
       // for (let i = 0; i < childrenNodeIds.length; i++) {
       // let childNodeId = childrenNodeIds[i];
       const childNodeContent =
-        fieldLogicTree.getChildContentAtOrThrow<TFsFieldLogicCheckLeaf>(
+        fieldLogicModel.getChildContentAtOrThrow<TFsFieldLogicCheckLeaf>(
           childNodeId
         );
       deepTree.appendChildNodeWithContent(

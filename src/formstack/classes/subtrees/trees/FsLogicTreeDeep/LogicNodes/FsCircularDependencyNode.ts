@@ -97,7 +97,7 @@ class FsCircularDependencyNode extends AbstractLogicNode {
     dependentChainFieldIds?: string[]
   ): TStatusRecord[] {
     const dependentsAsString = "'" + dependentChainFieldIds?.join("', '") + "'";
-    const message = `Logic: circular reference. root field: ${rootFieldId}, attempted fieldId: '${this.targetFieldId}', dependency chain: "${dependentsAsString}".`;
+    const message = `circular reference. root field: '${rootFieldId}', logic of source field '${this.targetFieldId}' attempted to add logic for fieldId: '${this.targetFieldId}' which is already in the dependency chain. dependency chain: "${dependentsAsString}".`;
     return [
       {
         severity: "logic",

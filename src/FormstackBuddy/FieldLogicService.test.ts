@@ -99,14 +99,14 @@ describe("FieldLogicService", () => {
           severity: "info",
           fieldId: null,
           message:
-            'Field Leaf Usage (field actual in leaf expression): <pre><code>{\n  "152290545": 5,\n  "152290551": 10,\n  "152290554": 7,\n  "152290555": 7,\n  "152290557": 7,\n  "152290558": 7,\n  "152290561": 1,\n  "152290562": 1,\n  "152290564": 1,\n  "152290565": 1,\n  "152290571": 4,\n  "152291690": 1,\n  "152293117": 6\n}</code></pre>',
+            'Field Leaf Usage (field actual in leaf expression): <pre><code>{\n  "152290545": 5,\n  "152290547": 1,\n  "152290548": 2,\n  "152290549": 3,\n  "152290551": 11,\n  "152290553": 7,\n  "152290554": 7,\n  "152290555": 7,\n  "152290556": 7,\n  "152290557": 7,\n  "152290558": 7,\n  "152290561": 1,\n  "152290562": 1,\n  "152290564": 1,\n  "152290565": 1,\n  "152290568": 5,\n  "152290569": 4,\n  "152290570": 4,\n  "152290571": 4,\n  "152291690": 1,\n  "152293117": 10\n}</code></pre>',
           relatedFieldIds: [],
         },
         {
           severity: "info",
           fieldId: null,
           message:
-            'Logic composition: <pre><code>{\n  "totalNodes": 162,\n  "totalCircularLogicNodes": 23,\n  "totalCircularExclusiveLogicNodes": 1,\n  "totalCircularInclusiveLogicNodes": 4,\n  "totalUnclassifiedNodes": 0,\n  "totalLeafNodes": 58,\n  "totalBranchNodes": 56,\n  "totalRootNodes": 25,\n  "leafToNodeRatio": "0.3580",\n  "branchToNodeRatio": "0.3457",\n  "leafToBranchRatio": "1.0357"\n}</code></pre>\n      <ul>\n        <li>totalNodes - Each time a field involved in a logic expression. If a field is used twice this will be reflected in this number</li>\n        <li>totalCircularLogicNodes - Logic conflict at the branch level.</li>\n        <li>totalCircularExclusiveLogicNodes - Logic conflict at the leaf level, non-resolvable.</li>\n        <li>totalCircularInclusiveLogicNodes - Logic conflict at the leaf level, resolvable.</li>\n        <li>totalLeafNodes - Logic terms (the actual "x equal _SOMETHING_").</li>\n        <li>totalBranchNodes - Logic branch (something like: "Show" if _ANY_...).</li>\n        <li>totalRootNodes - The field that owns the logic expression.</li>\n        <li>Note: Circular nodes indicates invalid logic expression. If an expression is invalid these counts may not be accurate.</li>\n        <li>branchToNodeRatio - higher number indicates need to break into multiple forms.</li>\n        <li>leafToBranchRatio - higher number indicates good usage of logic .</li>\n      </ul>\n    ',
+            'Logic composition: <pre><code>{\n  "totalNodes": 225,\n  "totalCircularLogicNodes": 48,\n  "totalCircularExclusiveLogicNodes": 0,\n  "totalCircularInclusiveLogicNodes": 0,\n  "totalUnclassifiedNodes": 0,\n  "totalLeafNodes": 96,\n  "totalBranchNodes": 56,\n  "totalRootNodes": 25,\n  "leafToNodeRatio": "0.4267",\n  "branchToNodeRatio": "0.2489",\n  "leafToBranchRatio": "1.7143"\n}</code></pre>\n      <ul>\n        <li>totalNodes - Each time a field involved in a logic expression. If a field is used twice this will be reflected in this number</li>\n        <li>totalCircularLogicNodes - Logic conflict at the branch level.</li>\n        <li>totalCircularExclusiveLogicNodes - Logic conflict at the leaf level, non-resolvable.</li>\n        <li>totalCircularInclusiveLogicNodes - Logic conflict at the leaf level, resolvable.</li>\n        <li>totalLeafNodes - Logic terms (the actual "x equal _SOMETHING_").</li>\n        <li>totalBranchNodes - Logic branch (something like: "Show" if _ANY_...).</li>\n        <li>totalRootNodes - The field that owns the logic expression.</li>\n        <li>Note: Circular nodes indicates invalid logic expression. If an expression is invalid these counts may not be accurate.</li>\n        <li>branchToNodeRatio - higher number indicates need to break into multiple forms.</li>\n        <li>leafToBranchRatio - higher number indicates good usage of logic .</li>\n      </ul>\n    ',
           relatedFieldIds: [],
         },
         {
@@ -146,7 +146,7 @@ describe("FieldLogicService", () => {
         {
           severity: "warn",
           fieldId: null,
-          message: "Number of fields with circular references:  15",
+          message: "Number of fields with circular references:  11",
           relatedFieldIds: [
             "152290552",
             "152290553",
@@ -159,25 +159,7 @@ describe("FieldLogicService", () => {
             "152290568",
             "152290569",
             "152290570",
-            "152293116",
-            "152297010",
-            "153413614",
-            "153413615",
           ],
-        },
-        {
-          severity: "warn",
-          fieldId: null,
-          message:
-            "Number of fields with Mutually Exclusive circular references:  1",
-          relatedFieldIds: ["152293116"],
-        },
-        {
-          severity: "warn",
-          fieldId: null,
-          message:
-            "Number of fields with Mutually Inclusive (resolvable) circular references:  3",
-          relatedFieldIds: ["152297010", "153413614", "153413615"],
         },
         {
           severity: "info",

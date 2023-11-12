@@ -135,11 +135,6 @@ class FieldLogicService {
         "Checked all fieldIds in logic expression are contained in this form (don't laugh, it happens).<br />"
       )
     );
-    const circularMI =
-      this.getFieldIdsWithCircularMutuallyInclusiveReferences();
-    const circularEE =
-      this.getFieldIdsWithCircularMutuallyExclusiveReferences();
-    const circular = this.getFieldIdsWithCircularReferences();
 
     statusMessages.push(
       // fieldUsageCounts
@@ -178,24 +173,6 @@ class FieldLogicService {
         this.getFieldIdsWithCircularReferences()
       ),
       this.wrapAsStatusMessage(
-        this.getFieldIdsWithCircularMutuallyExclusiveReferences().length === 0
-          ? "info"
-          : "warn",
-        `Number of fields with Mutually Exclusive circular references:  ${
-          this.getFieldIdsWithCircularMutuallyExclusiveReferences().length
-        }`,
-        this.getFieldIdsWithCircularMutuallyExclusiveReferences()
-      ),
-      this.wrapAsStatusMessage(
-        this.getFieldIdsWithCircularMutuallyInclusiveReferences().length === 0
-          ? "info"
-          : "warn",
-        `Number of fields with Mutually Inclusive (resolvable) circular references:  ${
-          this.getFieldIdsWithCircularMutuallyInclusiveReferences().length
-        }`,
-        this.getFieldIdsWithCircularMutuallyInclusiveReferences()
-      ),
-      this.wrapAsStatusMessage(
         this.getFieldIdsWithLogicError().length === 0 ? "info" : "error",
         `Number of fields with general logic errors:  ${
           this.getFieldIdsWithLogicError().length
@@ -232,14 +209,6 @@ class FieldLogicService {
 
   getFieldIdsWithCircularReferences() {
     return this._fieldCollection.getFieldIdsWithCircularLogic();
-  }
-
-  getFieldIdsWithCircularMutuallyExclusiveReferences() {
-    return this._fieldCollection.getFieldIdsWithCircularMutuallyExclusiveLogic();
-  }
-
-  getFieldIdsWithCircularMutuallyInclusiveReferences() {
-    return this._fieldCollection.getFieldIdsWithCircularMutuallyInclusiveLogic();
   }
 
   getFieldIdsWithLogicError() {
