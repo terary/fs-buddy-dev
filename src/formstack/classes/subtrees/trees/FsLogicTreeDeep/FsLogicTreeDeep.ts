@@ -153,15 +153,6 @@ class FsLogicTreeDeep {
     );
   }
 
-  static x_fromFieldJson(fieldJson: TFsFieldAny): FsLogicTreeDeep {
-    const internalTree = FsLogicTreeDeepInternal.x_fromFieldJson(fieldJson);
-
-    const tree = new FsLogicTreeDeep();
-    tree._fsDeepLogicTree = internalTree;
-
-    return tree;
-  }
-
   public getAllLogicStatusMessages(): TStatusRecord[] {
     const statusMessages: TStatusRecord[] = [];
 

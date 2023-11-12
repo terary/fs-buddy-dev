@@ -1,4 +1,6 @@
 import {
+  AbstractDirectedGraph,
+  AbstractExpressionTree,
   AbstractTree,
   IExpressionTree,
   TTreePojo,
@@ -22,9 +24,31 @@ import { FsVirtualRootNode } from "./LogicNodes/FsVirtualRootNode";
 import { FsLogicErrorNode } from "./LogicNodes/FsLogicErrorNode";
 import { FsCircularMutualInclusiveNode } from "./LogicNodes/FsCircularMutualInclusiveNode";
 import { FsCircularMutualExclusiveNode } from "./LogicNodes/FsCircularMutualExclusiveNode";
-
-class FsLogicTreeDeepInternal extends AbstractFsTreeLogic<AbstractLogicNode> {
+import { AbstractLogicTree } from "./AbstractLogicTree";
+// AbstractExpressionTree
+// const x:AbstractExpressionTree;
+// const x: AbstractFsTreeLogic
+// const x: AbstractFsTreeLogic<AbstractLogicNode>;
+// class FsLogicTreeDeepInternal extends AbstractFsTreeLogic<AbstractLogicNode> {
+class FsLogicTreeDeepInternal extends AbstractLogicTree<AbstractLogicNode> {
+  // class FsLogicTreeDeepInternal extends AbstractDirectedGraph<AbstractLogicNode> {
   private _dependantFieldIdsInOrder: string[] = [];
+
+  protected _ownerFieldId!: string;
+
+  // get action(): TFsVisibilityModes {
+  //   // FS
+  //   return this._action;
+  // }
+
+  set ownerFieldId(value: string) {
+    this._ownerFieldId = value; // *tmc* should determine if this is being used, and remove it
+  }
+
+  get ownerFieldId() {
+    return this._ownerFieldId;
+  }
+
   #dependantFieldIdMap: TSimpleDictionary<AbstractLogicNode> = {};
   constructor(rootNodeId?: string, nodeContent?: AbstractLogicNode) {
     super(rootNodeId, nodeContent);
@@ -184,49 +208,6 @@ class FsLogicTreeDeepInternal extends AbstractFsTreeLogic<AbstractLogicNode> {
       return AbstractTree.obfuscatePojo(clearPojo);
     }
     return clearPojo;
-  }
-
-  static x_fromFieldJson(fieldJson: TFsFieldAny): FsLogicTreeDeepInternal {
-    // we should be receiving fieldJson.logic, but the Abstract._fieldJson is not typed properly
-    // const logicJson: TFsLogicNodeJson = fieldJson.logic;
-    // or maybe always get the whole json?
-
-    const logicJson: TFsFieldLogicJunction<TFsJunctionOperators> =
-      // @ts-ignore - what is this supposed to be ?
-      fieldJson.logic as TFsFieldLogicJunction<TFsJunctionOperators>;
-
-    const { action, conditional, checks } = logicJson;
-
-    const rootNode = new FsLogicBranchNode(
-      `${fieldJson.id}`,
-      conditional,
-      action,
-      checks as TFsFieldLogicCheckLeaf[],
-      logicJson
-    );
-
-    const tree = new FsLogicTreeDeepInternal(
-      fieldJson.id || "_calc_tree_",
-      rootNode
-    );
-    tree._action = action || null;
-    // @ts-ignore - this should resolve once I figured out the other typing issues
-    tree._fieldJson = logicJson;
-    tree._ownerFieldId = fieldJson.id || "_calc_tree_";
-
-    const { leafExpressions } = transformLogicLeafJsonToLogicLeafs(
-      tree.fieldJson as TFsFieldLogicJunctionJson
-    );
-
-    // @ts-ignore
-    leafExpressions.forEach((childNode: TFsLogicNode) => {
-      const { condition, fieldId, option } = childNode as FsLogicLeafNode;
-      const leafNode = new FsLogicLeafNode(fieldId, condition, option);
-      tree.appendChildNodeWithContent(tree.rootNodeId, leafNode);
-      // should this be done at a different level. I mean calculated?
-    });
-
-    return tree;
   }
 }
 
