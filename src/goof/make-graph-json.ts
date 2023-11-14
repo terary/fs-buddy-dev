@@ -54,23 +54,18 @@ const main = () => {
   });
 
   const agTree154328261 = tree5375703.aggregateLogicTree("154328261"); // B.0 (no internal logic)
+
   const agTree148604161 = tree5375703.aggregateLogicTree("148604161"); // (A) Big Dipper A->B->C->D->(B ^ E)
   const d3Map148604161 = transformers.pojoToD3TableData(
     agTree148604161.toPojoAt(undefined, false),
     tree5375703
   );
 
-  const agTree154328256 = tree5375703.aggregateLogicTree("154328256"); // (A) Big Dipper A->B->C->D->(B ^ E)
+  const agTree154328256 = tree5375703.aggregateLogicTree("154328256"); // section Inter-dependent (not so much circular) no internal logic
   const d3Map154328256 = transformers.pojoToD3TableData(
     agTree148604161.toPojoAt(undefined, false),
     tree5375703
   );
-
-  `
-    newest version of circular reference is missing source/target stuff, I think?
-    Doesn't work see error messages
-`;
-
   const logicTreeGraphJson = {};
 
   [

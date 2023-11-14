@@ -28,7 +28,7 @@ describe("FieldLogicService", () => {
           circularAndInterdependentJson as unknown as TApiFormJson
         )
       );
-
+      const graphMap = fieldLogicService.getLogicNodeGraphMap("148604161");
       const statusMessages = fieldLogicService.getFormLogicStatusMessages();
       expect(statusMessages).toStrictEqual([
         {

@@ -14,6 +14,8 @@ class FsLogicBranchNode
   extends AbstractLogicNode
   implements TFsFieldLogicJunction<TFsJunctionOperators>
 {
+  protected _nodeType = "FsLogicBranchNode";
+
   private _ownerFieldId: string;
   private _conditional: TFsJunctionOperators;
   private _action: TFsVisibilityModes;

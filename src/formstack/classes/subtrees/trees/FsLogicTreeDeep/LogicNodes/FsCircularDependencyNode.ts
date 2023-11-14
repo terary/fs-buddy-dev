@@ -8,6 +8,8 @@ class FsCircularDependencyNode extends AbstractLogicNode {
   _sourceNodeId: string | null;
   _targetFieldId: string;
   _targetNodeId: string | null;
+  protected _nodeType = "FsCircularDependencyNode";
+
   private _ruleConflict: RuleConflictType | null = null;
   private _dependentChainFieldIds: string[];
 

@@ -2,8 +2,11 @@ import type { TStatusRecord } from "../../../../Evaluator/type";
 
 abstract class AbstractLogicNode {
   abstract toPojo(): object;
+  protected abstract _nodeType: string;
   get nodeType(): string {
-    return this.constructor.name;
+    // this is a problem if ran minified
+    // this.constructor.name, won't work if minified
+    return this._nodeType;
   }
 
   abstract getStatusMessage(

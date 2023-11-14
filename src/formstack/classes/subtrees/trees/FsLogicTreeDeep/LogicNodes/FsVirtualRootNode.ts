@@ -4,7 +4,8 @@ import type { TStatusRecord } from "../../../../Evaluator/type";
 import { TFsFieldLogicJunction, TFsJunctionOperators } from "../../../types";
 
 class FsVirtualRootNode extends AbstractLogicNode {
-  // implements TFsFieldLogicJunction<TFsJunctionOperators>
+  protected _nodeType = "FsVirtualRootNode";
+
   private _fieldId: string;
   private _conditional: TFsJunctionOperators = "all";
   constructor(fieldId: string) {

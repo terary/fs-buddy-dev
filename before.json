@@ -1,1023 +1,98 @@
-{
-  "pojo148604236": {
-    "148604236": {
-      "parentId": "148604236",
+[
+  //   {
+  //     nodeId: "148509465",
+  //     parentId: "",
+  //     nodeContent: {
+  //       nodeId: "148509465",
+  //       parentId: "",
+  //       nodeContent: {
+  //         nodeId: "148509465",
+  //         nodeType: "FsVirtualRootNode",
+  //         fieldId: "148509465",
+  //         label: "show if all",
+  //       },
+  //     },
+  //   },
+  {
+    "nodeId": "148509465",
+    "parentId": "",
+    "nodeContent": {
+      "nodeId": "148509465:0",
+      "parentId": "148509465",
       "nodeContent": {
-        "nodeType": "FsVirtualRootNode",
-        "fieldId": "148604236",
-        "conditional": "all"
-      }
-    },
-    "148604236:0": {
-      "parentId": "148604236",
-      "nodeContent": {
+        "nodeId": "148509465:0",
         "nodeType": "FsLogicBranchNode",
-        "ownerFieldId": "148604236",
-        "action": "show",
-        "conditional": "all"
-      }
-    },
-    "148604236:0:1": {
-      "parentId": "148604236:0",
-      "nodeContent": {
-        "nodeType": "FsLogicLeafNode",
-        "fieldId": "148604235",
-        "condition": "equals",
-        "option": "True"
-      }
-    },
-    "148604236:0:2": {
-      "parentId": "148604236:0",
-      "nodeContent": {
-        "nodeType": "FsLogicBranchNode",
-        "ownerFieldId": "148604235",
-        "action": "show",
-        "conditional": "any"
-      }
-    },
-    "148604236:0:2:3": {
-      "parentId": "148604236:0:2",
-      "nodeContent": {
-        "nodeType": "FsLogicLeafNode",
-        "fieldId": "148604234",
-        "condition": "equals",
-        "option": "True"
-      }
-    },
-    "148604236:0:2:4": {
-      "parentId": "148604236:0:2",
-      "nodeContent": {
-        "nodeType": "FsLogicBranchNode",
-        "ownerFieldId": "148604234",
-        "action": "show",
-        "conditional": "any"
-      }
-    },
-    "148604236:0:2:4:5": {
-      "parentId": "148604236:0:2:4",
-      "nodeContent": {
-        "nodeType": "FsLogicLeafNode",
-        "fieldId": "148604236",
-        "condition": "equals",
-        "option": "True"
-      }
-    },
-    "148604236:0:2:4:6": {
-      "parentId": "148604236:0:2:4",
-      "nodeContent": {
-        "nodeType": "FsCircularMutualInclusiveNode",
-        "ruleConflict": {
-          "conditionalA": {
-            "option": "True",
-            "condition": "equals",
-            "fieldId": "148604236"
-          },
-          "conditionalB": {
-            "option": undefined,
-            "condition": undefined,
-            "fieldId": undefined
-          }
-        },
-        "sourceFieldId": "148604234",
-        "sourceNodeId": "148604236:0:2:4",
-        "targetFieldId": "148604236",
-        "targetNodeId": "148604236:0:2:4:6",
-        "dependentChainFieldIds": ["148604236", "148604235", "148604234"]
-      }
-    },
-    "148604236:0:2:4:7": {
-      "parentId": "148604236:0:2:4",
-      "nodeContent": {
-        "nodeType": "FsLogicLeafNode",
-        "fieldId": "148604239",
-        "condition": "greaterthan",
-        "option": 10
+        "fieldId": "148509465",
+        "label": "show if all"
       }
     }
   },
-  "pojo152290553": {
-    "152290553": {
-      "parentId": "152290553",
+  {
+    "nodeId": "148509470-leaf",
+    "parentId": "148509465",
+    "nodeContent": {
+      "nodeId": "148509465:0:1",
+      "parentId": "148509465:0",
       "nodeContent": {
-        "nodeType": "FsVirtualRootNode",
-        "fieldId": "152290553",
-        "conditional": "all"
-      }
-    },
-    "152290553:0": {
-      "parentId": "152290553",
-      "nodeContent": {
-        "nodeType": "FsLogicBranchNode",
-        "ownerFieldId": "152290553",
-        "action": "show",
-        "conditional": "all"
-      }
-    },
-    "152290553:0:1": {
-      "parentId": "152290553:0",
-      "nodeContent": {
+        "nodeId": "148509465:0:1",
         "nodeType": "FsLogicLeafNode",
-        "fieldId": "152290554",
-        "condition": "equals",
-        "option": "True"
-      }
-    },
-    "152290553:0:2": {
-      "parentId": "152290553:0",
-      "nodeContent": {
-        "nodeType": "FsLogicBranchNode",
-        "ownerFieldId": "152290552",
-        "action": "show",
-        "conditional": "any"
-      }
-    },
-    "152290553:0:2:3": {
-      "parentId": "152290553:0:2",
-      "nodeContent": {
-        "nodeType": "FsLogicLeafNode",
-        "fieldId": "152290553",
-        "condition": "equals",
-        "option": "True"
-      }
-    },
-    "152290553:0:2:4": {
-      "parentId": "152290553:0:2",
-      "nodeContent": {
-        "nodeType": "FsCircularMutualInclusiveNode",
-        "ruleConflict": {
-          "conditionalA": {
-            "option": "True",
-            "condition": "equals",
-            "fieldId": "152290553"
-          },
-          "conditionalB": {
-            "option": undefined,
-            "condition": undefined,
-            "fieldId": undefined
-          }
-        },
-        "sourceFieldId": "152290552",
-        "sourceNodeId": "152290553:0:2",
-        "targetFieldId": "152290553",
-        "targetNodeId": "152290553:0:2:4",
-        "dependentChainFieldIds": ["152290553", "152290552"]
-      }
-    },
-    "152290553:0:2:5": {
-      "parentId": "152290553:0:2",
-      "nodeContent": {
-        "nodeType": "FsLogicLeafNode",
-        "fieldId": "152290556",
-        "condition": "equals",
-        "option": "True"
-      }
-    },
-    "152290553:0:2:6": {
-      "parentId": "152290553:0:2",
-      "nodeContent": {
-        "nodeType": "FsLogicBranchNode",
-        "ownerFieldId": "152290556",
-        "action": "show",
-        "conditional": "all"
-      }
-    },
-    "152290553:0:2:6:7": {
-      "parentId": "152290553:0:2:6",
-      "nodeContent": {
-        "nodeType": "FsLogicLeafNode",
-        "fieldId": "152290555",
-        "condition": "equals",
-        "option": "True"
-      }
-    },
-    "152290553:0:2:6:8": {
-      "parentId": "152290553:0:2:6",
-      "nodeContent": {
-        "nodeType": "FsCircularDependencyNode",
-        "sourceFieldId": "152290552",
-        "sourceNodeId": "152290553:0:2",
-        "targetFieldId": "152290552",
-        "targetNodeId": "152290553:0:2:6:8",
-        "ruleConflict": {
-          "conditionalA": {
-            "condition": "any",
-            "action": "show",
-            "option": undefined
-          },
-          "conditionalB": {
-            "condition": "any",
-            "action": "show",
-            "option": undefined
-          }
-        },
-        "dependentChainFieldIds": ["152290553", "152290552", "152290556"]
-      }
-    },
-    "152290553:0:2:6:9": {
-      "parentId": "152290553:0:2:6",
-      "nodeContent": {
-        "nodeType": "FsLogicLeafNode",
-        "fieldId": "152290558",
-        "condition": "equals",
-        "option": "True"
-      }
-    },
-    "152290553:0:2:6:10": {
-      "parentId": "152290553:0:2:6",
-      "nodeContent": {
-        "nodeType": "FsCircularDependencyNode",
-        "sourceFieldId": "152290552",
-        "sourceNodeId": "152290553:0:2",
-        "targetFieldId": "152290552",
-        "targetNodeId": "152290553:0:2:6:10",
-        "ruleConflict": {
-          "conditionalA": {
-            "condition": "any",
-            "action": "show",
-            "option": undefined
-          },
-          "conditionalB": {
-            "condition": "any",
-            "action": "show",
-            "option": undefined
-          }
-        },
-        "dependentChainFieldIds": ["152290553", "152290552", "152290556"]
-      }
-    },
-    "152290553:0:2:11": {
-      "parentId": "152290553:0:2",
-      "nodeContent": {
-        "nodeType": "FsCircularDependencyNode",
-        "sourceFieldId": "152290552",
-        "sourceNodeId": "152290553:0:2",
-        "targetFieldId": "152290552",
-        "targetNodeId": "152290553:0:2:11",
-        "ruleConflict": {
-          "conditionalA": {
-            "condition": "any",
-            "action": "show",
-            "option": undefined
-          },
-          "conditionalB": {
-            "condition": "any",
-            "action": "show",
-            "option": undefined
-          }
-        },
-        "dependentChainFieldIds": ["152290553", "152290552", "152290556"]
-      }
-    },
-    "152290553:0:2:12": {
-      "parentId": "152290553:0:2",
-      "nodeContent": {
-        "nodeType": "FsLogicLeafNode",
-        "fieldId": "152290551",
-        "condition": "equals",
-        "option": "Neutral"
-      }
-    },
-    "152290553:0:13": {
-      "parentId": "152290553:0",
-      "nodeContent": {
-        "nodeType": "FsLogicLeafNode",
-        "fieldId": "152290557",
-        "condition": "equals",
-        "option": "True"
-      }
-    },
-    "152290553:0:14": {
-      "parentId": "152290553:0",
-      "nodeContent": {
-        "nodeType": "FsCircularDependencyNode",
-        "sourceFieldId": "152290552",
-        "sourceNodeId": "152290553:0:2",
-        "targetFieldId": "152290552",
-        "targetNodeId": "152290553:0:14",
-        "ruleConflict": {
-          "conditionalA": {
-            "condition": "any",
-            "action": "show",
-            "option": undefined
-          },
-          "conditionalB": {
-            "condition": "any",
-            "action": "show",
-            "option": undefined
-          }
-        },
-        "dependentChainFieldIds": ["152290553", "152290552", "152290556"]
-      }
-    },
-    "152290553:15": {
-      "parentId": "152290553",
-      "nodeContent": {
-        "nodeType": "FsCircularDependencyNode",
-        "sourceFieldId": "152290552",
-        "sourceNodeId": "152290553:0:2",
-        "targetFieldId": "152290552",
-        "targetNodeId": "152290553:15",
-        "ruleConflict": {
-          "conditionalA": {
-            "condition": "any",
-            "action": "show",
-            "option": undefined
-          },
-          "conditionalB": {
-            "condition": "any",
-            "action": "show",
-            "option": undefined
-          }
-        },
-        "dependentChainFieldIds": ["152290553", "152290552", "152290556"]
-      }
-    }
-  },
-  "pojo153413615": {
-    "153413615": {
-      "parentId": "153413615",
-      "nodeContent": {
-        "nodeType": "FsVirtualRootNode",
-        "fieldId": "153413615",
-        "conditional": "all"
-      }
-    },
-    "153413615:0": {
-      "parentId": "153413615",
-      "nodeContent": {
-        "nodeType": "FsLogicBranchNode",
-        "ownerFieldId": "153413615",
-        "action": "show",
-        "conditional": "all"
-      }
-    },
-    "153413615:0:1": {
-      "parentId": "153413615:0",
-      "nodeContent": {
-        "nodeType": "FsLogicLeafNode",
-        "fieldId": "152290551",
-        "condition": "equals",
-        "option": "Neutral"
-      }
-    },
-    "153413615:2": {
-      "parentId": "153413615",
-      "nodeContent": {
-        "nodeType": "FsLogicBranchNode",
-        "ownerFieldId": "153413614",
-        "action": "show",
-        "conditional": "any"
-      }
-    },
-    "153413615:2:3": {
-      "parentId": "153413615:2",
-      "nodeContent": {
-        "nodeType": "FsLogicLeafNode",
-        "fieldId": "152290551",
-        "condition": "equals",
-        "option": "Neutral"
-      }
-    },
-    "153413615:2:4": {
-      "parentId": "153413615:2",
-      "nodeContent": {
-        "nodeType": "FsLogicLeafNode",
-        "fieldId": "152293117",
-        "condition": "equals",
-        "option": "Zero"
-      }
-    },
-    "153413615:2:5": {
-      "parentId": "153413615:2",
-      "nodeContent": {
-        "nodeType": "FsLogicLeafNode",
-        "fieldId": "152293117",
-        "condition": "equals",
-        "option": "One"
-      }
-    }
-  },
-  "pojo152293116": {
-    "152293116": {
-      "parentId": "152293116",
-      "nodeContent": {
-        "nodeType": "FsVirtualRootNode",
-        "fieldId": "152293116",
-        "conditional": "all"
-      }
-    },
-    "152293116:0": {
-      "parentId": "152293116",
-      "nodeContent": {
-        "nodeType": "FsLogicBranchNode",
-        "ownerFieldId": "152293116",
-        "action": "show",
-        "conditional": "all"
-      }
-    },
-    "152293116:0:1": {
-      "parentId": "152293116:0",
-      "nodeContent": {
-        "nodeType": "FsLogicLeafNode",
-        "fieldId": "152293117",
-        "condition": "equals",
-        "option": "Zero"
-      }
-    },
-    "152293116:0:2": {
-      "parentId": "152293116:0",
-      "nodeContent": {
-        "nodeType": "FsLogicLeafNode",
-        "fieldId": "152293117",
-        "condition": "equals",
-        "option": "One"
-      }
-    }
-  },
-  "pojo152297010": {
-    "152297010": {
-      "parentId": "152297010",
-      "nodeContent": {
-        "nodeType": "FsVirtualRootNode",
-        "fieldId": "152297010",
-        "conditional": "all"
-      }
-    },
-    "152297010:0": {
-      "parentId": "152297010",
-      "nodeContent": {
-        "nodeType": "FsLogicBranchNode",
-        "ownerFieldId": "152297010",
-        "action": "show",
-        "conditional": "all"
-      }
-    },
-    "152297010:0:1": {
-      "parentId": "152297010:0",
-      "nodeContent": {
-        "nodeType": "FsLogicLeafNode",
-        "fieldId": "152293117",
-        "condition": "equals",
-        "option": "Zero"
-      }
-    },
-    "152297010:0:2": {
-      "parentId": "152297010:0",
-      "nodeContent": {
-        "nodeType": "FsLogicLeafNode",
-        "fieldId": "152293117",
-        "condition": "equals",
-        "option": "Zero"
-      }
-    }
-  },
-  "pojo152290548": {
-    "152290548": {
-      "parentId": "152290548",
-      "nodeContent": {
-        "nodeType": "FsVirtualRootNode",
-        "fieldId": "152290548",
-        "conditional": "all"
-      }
-    },
-    "152290548:0": {
-      "parentId": "152290548",
-      "nodeContent": {
-        "nodeType": "FsLogicBranchNode",
-        "ownerFieldId": "152290548",
-        "action": "show",
-        "conditional": "all"
-      }
-    },
-    "152290548:0:1": {
-      "parentId": "152290548:0",
-      "nodeContent": {
-        "nodeType": "FsLogicLeafNode",
-        "fieldId": "152290549",
-        "condition": "equals",
-        "option": "OptionA"
-      }
-    },
-    "152290548:0:2": {
-      "parentId": "152290548:0",
-      "nodeContent": {
-        "nodeType": "FsLogicBranchNode",
-        "ownerFieldId": "152290549",
-        "action": "show",
-        "conditional": "all"
-      }
-    },
-    "152290548:0:2:3": {
-      "parentId": "152290548:0:2",
-      "nodeContent": {
-        "nodeType": "FsLogicLeafNode",
-        "fieldId": "152290545",
-        "condition": "equals",
-        "option": "OptionA"
-      }
-    }
-  },
-  "pojo152586428": {
-    "152586428": {
-      "parentId": "152586428",
-      "nodeContent": {
-        "nodeType": "FsVirtualRootNode",
-        "fieldId": "152586428",
-        "conditional": "all"
-      }
-    },
-    "152586428:0": {
-      "parentId": "152586428",
-      "nodeContent": {
-        "nodeType": "FsLogicBranchNode",
-        "ownerFieldId": "152586428",
-        "action": "show",
-        "conditional": "all"
-      }
-    },
-    "152586428:0:1": {
-      "parentId": "152586428:0",
-      "nodeContent": {
-        "nodeType": "FsLogicLeafNode",
-        "fieldId": "152290551",
-        "condition": "equals",
-        "option": "Neutral"
-      }
-    },
-    "152586428:2": {
-      "parentId": "152586428",
-      "nodeContent": {
-        "nodeType": "FsLogicBranchNode",
-        "ownerFieldId": "152586401",
-        "action": "show",
-        "conditional": "any"
-      }
-    },
-    "152586428:2:3": {
-      "parentId": "152586428:2",
-      "nodeContent": {
-        "nodeType": "FsLogicLeafNode",
-        "fieldId": "152293117",
-        "condition": "equals",
-        "option": "Zero"
-      }
-    }
-  },
-  "pojo152290549": {
-    "152290549": {
-      "parentId": "152290549",
-      "nodeContent": {
-        "nodeType": "FsVirtualRootNode",
-        "fieldId": "152290549",
-        "conditional": "all"
-      }
-    },
-    "152290549:0": {
-      "parentId": "152290549",
-      "nodeContent": {
-        "nodeType": "FsLogicBranchNode",
-        "ownerFieldId": "152290549",
-        "action": "show",
-        "conditional": "all"
-      }
-    },
-    "152290549:0:1": {
-      "parentId": "152290549:0",
-      "nodeContent": {
-        "nodeType": "FsLogicLeafNode",
-        "fieldId": "152290545",
-        "condition": "equals",
-        "option": "OptionA"
-      }
-    }
-  },
-  "pojo152290546": {
-    "152290546": {
-      "parentId": "152290546",
-      "nodeContent": {
-        "nodeType": "FsVirtualRootNode",
-        "fieldId": "152290546",
-        "conditional": "all"
-      }
-    },
-    "152290546:0": {
-      "parentId": "152290546",
-      "nodeContent": {
-        "nodeType": "FsLogicBranchNode",
-        "ownerFieldId": "152290546",
-        "action": "show",
-        "conditional": "all"
-      }
-    },
-    "152290546:0:1": {
-      "parentId": "152290546:0",
-      "nodeContent": {
-        "nodeType": "FsLogicLeafNode",
-        "fieldId": "152290547",
-        "condition": "equals",
-        "option": "OptionA"
-      }
-    },
-    "152290546:0:2": {
-      "parentId": "152290546:0",
-      "nodeContent": {
-        "nodeType": "FsLogicBranchNode",
-        "ownerFieldId": "152290547",
-        "action": "show",
-        "conditional": "all"
-      }
-    },
-    "152290546:0:2:3": {
-      "parentId": "152290546:0:2",
-      "nodeContent": {
-        "nodeType": "FsLogicLeafNode",
-        "fieldId": "152290548",
-        "condition": "equals",
-        "option": "OptionA"
-      }
-    },
-    "152290546:0:2:4": {
-      "parentId": "152290546:0:2",
-      "nodeContent": {
-        "nodeType": "FsLogicBranchNode",
-        "ownerFieldId": "152290548",
-        "action": "show",
-        "conditional": "all"
-      }
-    },
-    "152290546:0:2:4:5": {
-      "parentId": "152290546:0:2:4",
-      "nodeContent": {
-        "nodeType": "FsLogicLeafNode",
-        "fieldId": "152290549",
-        "condition": "equals",
-        "option": "OptionA"
-      }
-    },
-    "152290546:0:2:4:6": {
-      "parentId": "152290546:0:2:4",
-      "nodeContent": {
-        "nodeType": "FsLogicBranchNode",
-        "ownerFieldId": "152290549",
-        "action": "show",
-        "conditional": "all"
-      }
-    },
-    "152290546:0:2:4:6:7": {
-      "parentId": "152290546:0:2:4:6",
-      "nodeContent": {
-        "nodeType": "FsLogicLeafNode",
-        "fieldId": "152290545",
-        "condition": "equals",
-        "option": "OptionA"
-      }
-    }
-  },
-  "pojo148509470": {
-    "148509470": {
-      "parentId": "148509470",
-      "nodeContent": {
-        "nodeType": "FsVirtualRootNode",
         "fieldId": "148509470",
-        "conditional": "all"
+        "label": ["A", "equals", "True"]
       }
-    },
-    "148509470:0": {
-      "parentId": "148509470",
+    }
+  },
+  {
+    "nodeId": "148509470",
+    "parentId": "148509465",
+    "nodeContent": {
+      "nodeId": "148509465:0:2",
+      "parentId": "148509465:0",
       "nodeContent": {
+        "nodeId": "148509465:0:2",
         "nodeType": "FsLogicBranchNode",
-        "ownerFieldId": "148509470",
-        "action": "show",
-        "conditional": "all"
+        "fieldId": "148509470",
+        "label": "show if all"
       }
-    },
-    "148509470:0:1": {
-      "parentId": "148509470:0",
+    }
+  },
+  {
+    "nodeId": "148509478",
+    "parentId": "148509470",
+    "nodeContent": {
+      "nodeId": "148509465:0:2:3",
+      "parentId": "148509465:0:2",
       "nodeContent": {
+        "nodeId": "148509465:0:2:3",
         "nodeType": "FsLogicLeafNode",
         "fieldId": "148509478",
-        "condition": "equals",
-        "option": "True"
-      }
-    },
-    "148509470:0:2": {
-      "parentId": "148509470:0",
-      "nodeContent": {
-        "nodeType": "FsLogicBranchNode",
-        "ownerFieldId": "148509465",
-        "action": "show",
-        "conditional": "all"
-      }
-    },
-    "148509470:0:2:3": {
-      "parentId": "148509470:0:2",
-      "nodeContent": {
-        "nodeType": "FsLogicLeafNode",
-        "fieldId": "148509470",
-        "condition": "equals",
-        "option": "True"
-      }
-    },
-    "148509470:0:2:4": {
-      "parentId": "148509470:0:2",
-      "nodeContent": {
-        "nodeType": "FsCircularDependencyNode",
-        "sourceFieldId": "148509465",
-        "sourceNodeId": "148509470:0:2",
-        "targetFieldId": "148509470",
-        "targetNodeId": "148509470:0:2:4",
-        "ruleConflict": {
-          "conditionalA": {
-            "condition": "all",
-            "action": "show",
-            "option": undefined
-          },
-          "conditionalB": {
-            "condition": undefined,
-            "action": undefined,
-            "option": "True"
-          }
-        },
-        "dependentChainFieldIds": ["148509470", "148509465"]
-      }
-    },
-    "148509470:0:2:5": {
-      "parentId": "148509470:0:2",
-      "nodeContent": {
-        "nodeType": "FsLogicLeafNode",
-        "fieldId": "148509476",
-        "condition": "equals",
-        "option": "True"
-      }
-    },
-    "148509470:0:2:6": {
-      "parentId": "148509470:0:2",
-      "nodeContent": {
-        "nodeType": "FsLogicBranchNode",
-        "ownerFieldId": "148509476",
-        "action": "show",
-        "conditional": "all"
-      }
-    },
-    "148509470:0:2:6:7": {
-      "parentId": "148509470:0:2:6",
-      "nodeContent": {
-        "nodeType": "FsLogicLeafNode",
-        "fieldId": "148509477",
-        "condition": "equals",
-        "option": "True"
-      }
-    },
-    "148509470:0:2:6:8": {
-      "parentId": "148509470:0:2:6",
-      "nodeContent": {
-        "nodeType": "FsCircularDependencyNode",
-        "sourceFieldId": "148509465",
-        "sourceNodeId": "148509470:0:2",
-        "targetFieldId": "148509465",
-        "targetNodeId": "148509470:0:2:6:8",
-        "ruleConflict": {
-          "conditionalA": {
-            "condition": "all",
-            "action": "show",
-            "option": undefined
-          },
-          "conditionalB": {
-            "condition": "all",
-            "action": "show",
-            "option": undefined
-          }
-        },
-        "dependentChainFieldIds": ["148509470", "148509465", "148509476"]
-      }
-    },
-    "148509470:0:2:6:9": {
-      "parentId": "148509470:0:2:6",
-      "nodeContent": {
-        "nodeType": "FsLogicLeafNode",
-        "fieldId": "148509474",
-        "condition": "equals",
-        "option": "True"
-      }
-    },
-    "148509470:0:2:6:10": {
-      "parentId": "148509470:0:2:6",
-      "nodeContent": {
-        "nodeType": "FsCircularDependencyNode",
-        "sourceFieldId": "148509465",
-        "sourceNodeId": "148509470:0:2",
-        "targetFieldId": "148509465",
-        "targetNodeId": "148509470:0:2:6:10",
-        "ruleConflict": {
-          "conditionalA": {
-            "condition": "all",
-            "action": "show",
-            "option": undefined
-          },
-          "conditionalB": {
-            "condition": "all",
-            "action": "show",
-            "option": undefined
-          }
-        },
-        "dependentChainFieldIds": ["148509470", "148509465", "148509476"]
-      }
-    },
-    "148509470:0:2:11": {
-      "parentId": "148509470:0:2",
-      "nodeContent": {
-        "nodeType": "FsCircularDependencyNode",
-        "sourceFieldId": "148509465",
-        "sourceNodeId": "148509470:0:2",
-        "targetFieldId": "148509465",
-        "targetNodeId": "148509470:0:2:11",
-        "ruleConflict": {
-          "conditionalA": {
-            "condition": "all",
-            "action": "show",
-            "option": undefined
-          },
-          "conditionalB": {
-            "condition": "all",
-            "action": "show",
-            "option": undefined
-          }
-        },
-        "dependentChainFieldIds": ["148509470", "148509465", "148509476"]
-      }
-    },
-    "148509470:0:2:12": {
-      "parentId": "148509470:0:2",
-      "nodeContent": {
-        "nodeType": "FsLogicLeafNode",
-        "fieldId": "151678347",
-        "condition": "equals",
-        "option": "Neutral"
-      }
-    },
-    "148509470:0:13": {
-      "parentId": "148509470:0",
-      "nodeContent": {
-        "nodeType": "FsLogicLeafNode",
-        "fieldId": "148509475",
-        "condition": "equals",
-        "option": "True"
-      }
-    },
-    "148509470:0:14": {
-      "parentId": "148509470:0",
-      "nodeContent": {
-        "nodeType": "FsCircularDependencyNode",
-        "sourceFieldId": "148509465",
-        "sourceNodeId": "148509470:0:2",
-        "targetFieldId": "148509465",
-        "targetNodeId": "148509470:0:14",
-        "ruleConflict": {
-          "conditionalA": {
-            "condition": "all",
-            "action": "show",
-            "option": undefined
-          },
-          "conditionalB": {
-            "condition": "all",
-            "action": "show",
-            "option": undefined
-          }
-        },
-        "dependentChainFieldIds": ["148509470", "148509465", "148509476"]
-      }
-    },
-    "148509470:15": {
-      "parentId": "148509470",
-      "nodeContent": {
-        "nodeType": "FsCircularDependencyNode",
-        "sourceFieldId": "148509465",
-        "sourceNodeId": "148509470:0:2",
-        "targetFieldId": "148509465",
-        "targetNodeId": "148509470:15",
-        "ruleConflict": {
-          "conditionalA": {
-            "condition": "all",
-            "action": "show",
-            "option": undefined
-          },
-          "conditionalB": {
-            "condition": "all",
-            "action": "show",
-            "option": undefined
-          }
-        },
-        "dependentChainFieldIds": ["148509470", "148509465", "148509476"]
+        "label": ["A.0", "equals", "True"]
       }
     }
   },
-  "pojo148456742": {
-    "148456742": {
-      "parentId": "148456742",
+  {
+    "nodeId": "148509475",
+    "parentId": "148509470",
+    "nodeContent": {
+      "nodeId": "148509465:0:2:4",
+      "parentId": "148509465:0:2",
       "nodeContent": {
-        "nodeType": "FsVirtualRootNode",
-        "fieldId": "148456742",
-        "conditional": "all"
-      }
-    },
-    "148456742:0": {
-      "parentId": "148456742",
-      "nodeContent": {
-        "nodeType": "FsLogicBranchNode",
-        "ownerFieldId": "148456742",
-        "action": "show",
-        "conditional": "all"
-      }
-    },
-    "148456742:0:1": {
-      "parentId": "148456742:0",
-      "nodeContent": {
+        "nodeId": "148509465:0:2:4",
         "nodeType": "FsLogicLeafNode",
-        "fieldId": "148456741",
-        "condition": "equals",
-        "option": "OptionA"
+        "fieldId": "148509475",
+        "label": ["B.0", "equals", "True"]
       }
-    },
-    "148456742:0:2": {
-      "parentId": "148456742:0",
+    }
+  },
+  {
+    "nodeId": "148509470",
+    "parentId": "148509465",
+    "nodeContent": {
+      "nodeId": "148509470",
+      "parentId": "148509465",
       "nodeContent": {
-        "nodeType": "FsLogicBranchNode",
-        "ownerFieldId": "148456741",
-        "action": "show",
-        "conditional": "all"
-      }
-    },
-    "148456742:0:2:3": {
-      "parentId": "148456742:0:2",
-      "nodeContent": {
-        "nodeType": "FsLogicLeafNode",
-        "fieldId": "148456740",
-        "condition": "equals",
-        "option": "OptionA"
-      }
-    },
-    "148456742:0:2:4": {
-      "parentId": "148456742:0:2",
-      "nodeContent": {
-        "nodeType": "FsLogicBranchNode",
-        "ownerFieldId": "148456740",
-        "action": "show",
-        "conditional": "all"
-      }
-    },
-    "148456742:0:2:4:5": {
-      "parentId": "148456742:0:2:4",
-      "nodeContent": {
-        "nodeType": "FsLogicLeafNode",
-        "fieldId": "148456739",
-        "condition": "equals",
-        "option": "OptionA"
-      }
-    },
-    "148456742:0:2:4:6": {
-      "parentId": "148456742:0:2:4",
-      "nodeContent": {
-        "nodeType": "FsLogicBranchNode",
-        "ownerFieldId": "148456739",
-        "action": "show",
-        "conditional": "all"
-      }
-    },
-    "148456742:0:2:4:6:7": {
-      "parentId": "148456742:0:2:4:6",
-      "nodeContent": {
-        "nodeType": "FsLogicLeafNode",
-        "fieldId": "148456734",
-        "condition": "equals",
-        "option": "OptionA"
-      }
-    },
-    "148456742:0:2:4:6:8": {
-      "parentId": "148456742:0:2:4:6",
-      "nodeContent": {
-        "nodeType": "FsLogicBranchNode",
-        "ownerFieldId": "148456734",
-        "action": "show",
-        "conditional": "all"
-      }
-    },
-    "148456742:0:2:4:6:8:9": {
-      "parentId": "148456742:0:2:4:6:8",
-      "nodeContent": {
-        "nodeType": "FsLogicLeafNode",
-        "fieldId": "148456742",
-        "condition": "equals",
-        "option": "OptionA"
-      }
-    },
-    "148456742:0:2:4:6:8:10": {
-      "parentId": "148456742:0:2:4:6:8",
-      "nodeContent": {
+        "nodeId": "148509465:0:5",
         "nodeType": "FsCircularDependencyNode",
-        "sourceFieldId": "148456734",
-        "sourceNodeId": "148456742:0:2:4:6:8",
-        "targetFieldId": "148456742",
-        "targetNodeId": "148456742:0:2:4:6:8:10",
+        "fieldId": "148509470",
         "ruleConflict": {
           "conditionalA": {
             "condition": "all",
@@ -1025,19 +100,129 @@
             "option": undefined
           },
           "conditionalB": {
-            "condition": undefined,
-            "action": undefined,
-            "option": "OptionA"
+            "condition": "all",
+            "action": "show",
+            "option": undefined
           }
         },
-        "dependentChainFieldIds": [
-          "148456742",
-          "148456741",
-          "148456740",
-          "148456739",
-          "148456734"
+        "sourceFieldId": "148509470",
+        "sourceNodeId": "148509465:0",
+        "targetFieldId": "148509465",
+        "targetNodeId": "148509465:0:5",
+        "label": [
+          "Inter-dependent (not so m",
+          "all",
+          undefined,
+          "all",
+          undefined
         ]
       }
     }
+  },
+  {
+    "nodeId": "148509476-leaf",
+    "parentId": "148509465",
+    "nodeContent": {
+      "nodeId": "148509465:0:6",
+      "parentId": "148509465:0",
+      "nodeContent": {
+        "nodeId": "148509465:0:6",
+        "nodeType": "FsLogicLeafNode",
+        "fieldId": "148509476",
+        "label": ["B", "equals", "True"]
+      }
+    }
+  },
+  {
+    "nodeId": "148509476",
+    "parentId": "148509465",
+    "nodeContent": {
+      "nodeId": "148509465:0:7",
+      "parentId": "148509465:0",
+      "nodeContent": {
+        "nodeId": "148509465:0:7",
+        "nodeType": "FsLogicBranchNode",
+        "fieldId": "148509476",
+        "label": "show if all"
+      }
+    }
+  },
+  {
+    "nodeId": "148509477",
+    "parentId": "148509476",
+    "nodeContent": {
+      "nodeId": "148509465:0:7:8",
+      "parentId": "148509465:0:7",
+      "nodeContent": {
+        "nodeId": "148509465:0:7:8",
+        "nodeType": "FsLogicLeafNode",
+        "fieldId": "148509477",
+        "label": ["A.1", "equals", "True"]
+      }
+    }
+  },
+  {
+    "nodeId": "148509474",
+    "parentId": "148509476",
+    "nodeContent": {
+      "nodeId": "148509465:0:7:9",
+      "parentId": "148509465:0:7",
+      "nodeContent": {
+        "nodeId": "148509465:0:7:9",
+        "nodeType": "FsLogicLeafNode",
+        "fieldId": "148509474",
+        "label": ["B.1", "equals", "True"]
+      }
+    }
+  },
+  //   {
+  //     nodeId: "148509465",
+  //     parentId: "148509465",
+  //     nodeContent: {
+  //       nodeId: "148509465:0:10",
+  //       parentId: "148509465:0",
+  //       nodeContent: {
+  //         nodeId: "148509465:0:10",
+  //         nodeType: "FsCircularDependencyNode",
+  //         fieldId: "148509465",
+  //         ruleConflict: {
+  //           conditionalA: {
+  //             condition: "all",
+  //             action: "show",
+  //             option: undefined,
+  //           },
+  //           conditionalB: {
+  //             condition: "all",
+  //             action: "show",
+  //             option: undefined,
+  //           },
+  //         },
+  //         sourceFieldId: "148509465",
+  //         sourceNodeId: "148509465:0",
+  //         targetFieldId: "148509465",
+  //         targetNodeId: "148509465:0:10",
+  //         label: [
+  //           "Inter-dependent (not so m",
+  //           "all",
+  //           undefined,
+  //           "all",
+  //           undefined,
+  //         ],
+  //       },
+  //     },
+  //   },
+  {
+    "nodeId": "151678347",
+    "parentId": "148509465",
+    "nodeContent": {
+      "nodeId": "148509465:0:11",
+      "parentId": "148509465:0",
+      "nodeContent": {
+        "nodeId": "148509465:0:11",
+        "nodeType": "FsLogicLeafNode",
+        "fieldId": "151678347",
+        "label": ["Switzerland", "equals", "Neutral"]
+      }
+    }
   }
-}
+]

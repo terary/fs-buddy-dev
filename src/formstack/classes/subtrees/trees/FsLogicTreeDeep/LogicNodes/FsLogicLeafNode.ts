@@ -12,6 +12,7 @@ class FsLogicLeafNode
   extends AbstractLogicNode
   implements TFsFieldLogicCheckLeaf
 {
+  protected _nodeType = "FsLogicLeafNode";
   private _fieldId: string;
   private _condition: TFsLeafOperators;
 

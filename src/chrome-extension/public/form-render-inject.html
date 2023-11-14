@@ -1,6 +1,40 @@
 <html>
 	<head>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
     <style>
+      circle {
+        fill: steelblue;
+        stroke: none;
+      }
+
+      line {
+        fill: none;
+        /* stroke: red; */
+        stroke: #ccc;
+        stroke-width: 1px;
+      }
+
+      text {
+        font-size: 12px;
+        text-anchor: middle;
+      }
+
+      .linkCircular {
+        fill: none;
+        stroke: red;
+        /* stroke-opacity: 0.4; */
+        stroke-width: 3px;
+      }
+
+      .count-label {
+        background-color: blue;
+        text-wrap: wrap;
+      }
+      text.count-label {
+        background-color: blue;
+        text-wrap: wrap;
+      }
+
       .fsBuddy_obscure_field {
           opacity: 0.7;
           border: lightgray 1px solid;
@@ -305,7 +339,7 @@
       if (document.getElementById('selectFieldIdWithLogic') === null) {
         const divWithSelect = optionListToSelectElement('selectFieldIdWithLogic', handleLogicFieldIdSelected, fieldIds)
         const logicBuddyContainer = document.getElementById('fsBuddyControlPanelLogic');
-        logicBuddyContainer.appendChild(divWithSelect);
+        logicBuddyContainer.prepend(divWithSelect);
       }
       removeAllCssName('fsHidden'); // show all fields
       removeAllCssName('fsHiddenPage'); // show all fields
@@ -313,7 +347,8 @@
     }
 
     const handleGetFieldLogicDependentsResponse = (payload)=>{
-      const dependentsByFieldId = payload;
+      const { dependentsByFieldId, logicalNodeGraphMap } = payload;
+      // const logicalNodeGraphMap = payload;
       removeAllFsBuddyCss()
       removeAllCssName('fsBuddy_statusMessages')
       console.log({dependentsByFieldId})
@@ -340,7 +375,8 @@
       })
 
       const logicFocusFieldIds = Object.keys(dependentsByFieldId);
-      addCssClassToFields('fsBuddy_logic_focus', logicFocusFieldIds)
+      addCssClassToFields('fsBuddy_logic_focus', logicFocusFieldIds);
+      buildTree(logicalNodeGraphMap, 'graphLogicNodeMapContainer');
     }
 
  
@@ -652,7 +688,7 @@
     }
 
     function removeFsBuddy(){
-    sendMessageToParent('removeFsBuddyRequest')
+      sendMessageToParent('removeFsBuddyRequest')
     }
 
     function hideAllPanels(){
@@ -707,6 +743,157 @@
       removeAllCssName('fsBuddyLogicError');
     }
 
+    function buildTree(fieldGraphJson, targetDivId){
+      let width = 400, height = 440
+      const circularLinks = [];
+      const pTreeNodeGTreeNodeMap ={};
+
+      const theDataTable = fieldGraphJson; //["148604161"];
+      const leavesBranchesVirtualRootNodes = theDataTable
+                            .filter(
+                              node=> ["FsLogicLeafNode", "FsLogicBranchNode", "FsVirtualRootNode"].includes(node.nodeContent.nodeType)
+                            )
+      const problemNodes = theDataTable
+                            .filter(
+                              node=> !["FsLogicLeafNode", "FsLogicBranchNode", "FsVirtualRootNode"].includes(node.nodeContent.nodeType)
+                            )
+
+      const treeFactory = d3.stratify()
+          .id((d) => d.nodeId)
+          .parentId((d) => d.parentId);
+
+      const root = treeFactory(theDataTable);
+    
+      let treeLayout = d3.tree()
+          .size([700, 380])
+
+      treeLayout(root);
+
+      const htmlContainer = document.getElementById( targetDivId);
+      while (htmlContainer && htmlContainer.firstChild) {
+          htmlContainer.firstChild.remove()
+      }
+      
+      const svgContainer = d3.select("#" + targetDivId).append("svg:svg");
+      svgContainer.attr('height', '500');
+      svgContainer.attr('width', '700');
+      const svg = svgContainer.append('g'); 
+      svg.attr('transform', 'translate(0, 35)');
+
+      // Links
+      svg
+          .selectAll('line')
+          .data(root.links())
+          .join('line')
+          .attr('x1', function(d) {return d.source.x;})
+          .attr('y1', function(d) {return d.source.y;})
+          .attr('x2', function(d) {return d.target.x;})
+          .attr('y2', function(d) {return d.target.y;})
+
+          .attr("stroke", function (d) {
+              return 'red' ; //(d.x > 50) ? 'red' : 'blue';
+          })
+          .attr("fill", "none")   
+          .attr("stroke-width", 2);
+
+      
+      // Nodes
+      // d3.select('svg g')
+      svg
+          .selectAll('circle')
+          .data(root.descendants())
+          .join('circle')
+          .attr('cx', function(d) {
+              const {nodeContent} = d.data;
+              pTreeNodeGTreeNodeMap[nodeContent.nodeId + ""] = d;
+              return d.x;
+          })
+          .attr('cy', function(d) {return d.y;})
+          .attr('r', 10);
+
+      problemNodes.forEach(pNode=>{
+          const {sourceNodeId, targetNodeId} = pNode.nodeContent;
+          // const sourceNode = pTreeNodeGTreeNodeMap[pNode.nodeId];
+          const sourceNode = pTreeNodeGTreeNodeMap[sourceNodeId];
+          const targetNode = pTreeNodeGTreeNodeMap[targetNodeId];
+          if(sourceNode === undefined || targetNode === undefined) {
+              console.log('oops, I did it again.')
+          }
+          circularLinks.push({
+              source: {
+                  x: sourceNode.x,
+                  y: sourceNode.y,
+              },
+              target: {
+                  x: targetNode.x,
+                  y: targetNode.y,
+              }
+          });
+      })
+
+      // Circular References
+      svg
+        .selectAll('linkCircular')
+        .data(circularLinks)
+        .join('line')
+        .attr('x1', function(d) {console.log({circularSource: d});return d.source.x;})
+        .attr('y1', function(d) {return d.source.y;})
+        .attr('x2', function(d) {console.log({circularTarget: d}); return d.target.x;})
+        .attr('y2', function(d) {return d.target.y;})
+        .attr("class", "linkCircular");
+
+      // Labels
+      svg
+        .selectAll('text.label')
+        .data(root.descendants())
+        .join('text')
+        .classed('label', true)
+        .attr('x', function(d) {return d.x;})
+        .attr('y', function(d) {return d.y - 15})
+        .text(function(d) {
+          console.log(d);
+        //   return d.data.nodeContent.fieldId 
+        if(!["FsLogicLeafNode"].includes(d.data.nodeContent.nodeType)){
+            return d.data.nodeId
+        }
+        return ''
+            // return d.data.nodeContent.fieldId + '/' + d.data.nodeContent.nodeId 
+        });
+
+      // Lower Labels
+      svg
+        .selectAll('text.count-label')
+        .data(root.descendants())
+        .join('text')
+        // .text('')
+        .call(function(t){
+            t.each(function(d){ // for each one
+                t.classed('count-label', true)
+                const c = this.children
+                var self = d3.select(this);
+                const {nodeContent} = d.data;
+                self.text(''); // clear it out
+                // t.text('')
+                
+                if(Array.isArray(nodeContent.label)) {
+                    // self.text(''); // clear it out
+                    // t.text('')
+                    nodeContent.label.forEach((line,index)=>{
+                        self.append("tspan") // insert two tspans
+                        .attr("x", d.x)
+                        .attr("y", d.y +  ((index +1) * 15))
+                        .text(line);                        
+                    })
+                } else {
+                    self.text(nodeContent.label)
+                        .attr("x", d.x)
+                        .attr("y",d.y + 15);
+                }
+            })
+        });
+  }// buildTre()
+  
+
     document.addEventListener("DOMContentLoaded",()=>{
         buildFsBuddyControlPanel();
  
@@ -715,7 +902,8 @@
         sendMessageToParent('getAllFieldInfoRequest');
     })
     const fsBuddyHelper = {}
-	</script>
+
+ 	</script>
 	</head>
 	<body>
     <div id="fsBuddyControllPannel">
@@ -801,17 +989,17 @@
       </div>
       
       <div id='fsBuddyControlPanelLogic' class="fsControlPanelSubsection">
-            <h3>Logic Tool</h3>
+        <h3>Logic Tool</h3>
+        <div  id="graphContainer">
+          <div style="border: 1px solid black;"  id="graphLogicNodeMapContainer">
+          </div>
+        </div>
       </div>
       <div id='fsBuddyControlPanelFieldStatus' class="fsControlPanelSubsection">
-            <h4>Field Analysis</h4>
-            <div class="fsBuddy_statusMessages" style="background-color: white;height: 300px; overflow-y: auto;" id="fsBuddyUserMessagesDiv"></div>
-            </div>
+        <h4>Field Analysis</h4>
+        <div class="fsBuddy_statusMessages" style="background-color: white;height: 300px; overflow-y: auto;" id="fsBuddyUserMessagesDiv"></div>
+        </div>
       </div>
-      <!-- <div id='fsBuddyControlPanelUserMessages' class="fsControlPanelSubsection">
-            <h4>Form Analysis</h4>
-            <div style="height: 300px; overflow-y: auto;" id="fsBuddyUserMessagesDiv"></div>
-      </div> -->
     </div>
 	</body>
 </html>

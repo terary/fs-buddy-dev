@@ -8,7 +8,7 @@ import {
 } from "../classes/subtrees/trees/FsLogicTreeDeep";
 import { TFsFieldSection } from "../type.field";
 
-type TGraphNode = {
+export type TGraphNode = {
   nodeId: string;
   parentId: string;
   nodeContent: {
