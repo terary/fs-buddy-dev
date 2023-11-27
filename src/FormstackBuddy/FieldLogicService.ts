@@ -15,18 +15,19 @@ import {
   TLogicTreeDeepStatisticCountRecord,
   TLogicTreeDeepStatisticCountField,
 } from "../formstack/classes/subtrees/trees/FsLogicTreeDeep";
+import { TGraphNode } from "../formstack/transformers/pojoToD3TableData";
 
 class FieldLogicService {
   // FsLogicTreeDeep
-  private _fieldCollection: FsFormModel;
+  private _formModel: FsFormModel;
   constructor(formJson: TApiForm) {
-    this._fieldCollection = FsFormModel.fromApiFormJson(formJson);
+    this._formModel = FsFormModel.fromApiFormJson(formJson);
   }
 
   private getAllFieldNodes(): TTreeFieldNode[] {
     // as-in, everything except root (which is not a field)
 
-    return this._fieldCollection.getTreeContentAt().filter((fieldNode) => {
+    return this._formModel.getTreeContentAt().filter((fieldNode) => {
       if (fieldNode === null || fieldNode instanceof FsFormRootNode) {
         return;
       }
@@ -50,12 +51,12 @@ class FieldLogicService {
   }
 
   getExtendTreeForFieldId(fieldId: string) {
-    return this._fieldCollection.getDeepLogicTreeByFieldId(fieldId);
+    return this._formModel.getDeepLogicTreeByFieldId(fieldId);
   }
 
   getFormLogicStatusMessages(): TStatusRecord[] {
     const statusMessages: TStatusRecord[] = [];
-    const allFormFieldIds = this._fieldCollection.getAllFieldIds();
+    const allFormFieldIds = this._formModel.getAllFieldIds();
     const fieldUsageCounts: TSimpleDictionary<number> = {};
     const logicCounts: TLogicTreeDeepStatisticCountRecord = {
       totalNodes: 0,
@@ -69,8 +70,7 @@ class FieldLogicService {
     };
 
     allFormFieldIds.forEach((fieldId) => {
-      const logicTree =
-        this._fieldCollection.getDeepLogicTreeByFieldId(fieldId);
+      const logicTree = this._formModel.getDeepLogicTreeByFieldId(fieldId);
       if (logicTree === null) {
         return;
       }
@@ -119,7 +119,7 @@ class FieldLogicService {
     `;
 
     Object.keys(fieldUsageCounts).forEach((fieldId) => {
-      if (!this._fieldCollection.getAllFieldIds().includes(fieldId)) {
+      if (!this._formModel.getAllFieldIds().includes(fieldId)) {
         statusMessages.push(
           this.wrapAsStatusMessage(
             "error",
@@ -135,11 +135,6 @@ class FieldLogicService {
         "Checked all fieldIds in logic expression are contained in this form (don't laugh, it happens).<br />"
       )
     );
-    const circularMI =
-      this.getFieldIdsWithCircularMutuallyInclusiveReferences();
-    const circularEE =
-      this.getFieldIdsWithCircularMutuallyExclusiveReferences();
-    const circular = this.getFieldIdsWithCircularReferences();
 
     statusMessages.push(
       // fieldUsageCounts
@@ -178,24 +173,6 @@ class FieldLogicService {
         this.getFieldIdsWithCircularReferences()
       ),
       this.wrapAsStatusMessage(
-        this.getFieldIdsWithCircularMutuallyExclusiveReferences().length === 0
-          ? "info"
-          : "warn",
-        `Number of fields with Mutually Exclusive circular references:  ${
-          this.getFieldIdsWithCircularMutuallyExclusiveReferences().length
-        }`,
-        this.getFieldIdsWithCircularMutuallyExclusiveReferences()
-      ),
-      this.wrapAsStatusMessage(
-        this.getFieldIdsWithCircularMutuallyInclusiveReferences().length === 0
-          ? "info"
-          : "warn",
-        `Number of fields with Mutually Inclusive (resolvable) circular references:  ${
-          this.getFieldIdsWithCircularMutuallyInclusiveReferences().length
-        }`,
-        this.getFieldIdsWithCircularMutuallyInclusiveReferences()
-      ),
-      this.wrapAsStatusMessage(
         this.getFieldIdsWithLogicError().length === 0 ? "info" : "error",
         `Number of fields with general logic errors:  ${
           this.getFieldIdsWithLogicError().length
@@ -231,29 +208,19 @@ class FieldLogicService {
   }
 
   getFieldIdsWithCircularReferences() {
-    return this._fieldCollection.getFieldIdsWithCircularLogic();
-  }
-
-  getFieldIdsWithCircularMutuallyExclusiveReferences() {
-    return this._fieldCollection.getFieldIdsWithCircularMutuallyExclusiveLogic();
-  }
-
-  getFieldIdsWithCircularMutuallyInclusiveReferences() {
-    return this._fieldCollection.getFieldIdsWithCircularMutuallyInclusiveLogic();
+    return this._formModel.getFieldIdsWithCircularLogic();
   }
 
   getFieldIdsWithLogicError() {
-    return this._fieldCollection.getFieldIdsWithLogicError();
+    return this._formModel.getFieldIdsWithLogicError();
   }
 
   getCircularReferenceNodes(fieldId: string) {
-    return this._fieldCollection
-      .aggregateLogicTree(fieldId)
-      .getCircularLogicNodes();
+    return this._formModel.aggregateLogicTree(fieldId).getCircularLogicNodes();
   }
 
   getCircularReferenceFieldIds(fieldId: string) {
-    return this._fieldCollection
+    return this._formModel
       .aggregateLogicTree(fieldId)
       .getCircularLogicNodes()
       .map((circularNode) => circularNode.dependentChainFieldIds.slice(-2))
@@ -262,14 +229,27 @@ class FieldLogicService {
       }, []);
   }
 
+  getLogicNodeGraphMap(fieldId: string): TGraphNode[] {
+    const agTree = this._formModel.aggregateLogicTree(fieldId);
+    console.log({ agTree });
+    const pojo = agTree.toPojoAt(undefined, false);
+    console.log({ pojo });
+
+    return transformers.pojoToD3TableData(pojo, this._formModel);
+
+    // const agTree148604161 = tree5375703.aggregateLogicTree("148604161"); // (A) Big Dipper A->B->C->D->(B ^ E)
+    // const d3Map148604161 = transformers.pojoToD3TableData(
+    //   agTree148604161.toPojoAt(undefined, false),
+    //   tree5375703
+    // );
+  }
+
   getFieldIdsExtendedLogicOf(fieldId: string): string[] {
-    return this._fieldCollection
-      .aggregateLogicTree(fieldId)
-      .getDependentFieldIds();
+    return this._formModel.aggregateLogicTree(fieldId).getDependentFieldIds();
   }
 
   getStatusMessagesFieldId(fieldId: string) {
-    const agTree = this._fieldCollection.aggregateLogicTree(fieldId);
+    const agTree = this._formModel.aggregateLogicTree(fieldId);
     return agTree.getStatusMessage();
   }
 
@@ -281,7 +261,7 @@ class FieldLogicService {
         this.getFieldIdsWithLogicError()
       );
     return fieldIds.map((fieldId) => {
-      const field = this._fieldCollection.getFieldTreeByFieldId(fieldId);
+      const field = this._formModel.getFieldModel(fieldId);
       let label = circularReferenceFieldIds.includes(fieldId) ? "(Error) " : "";
 
       switch (field?.fieldType) {

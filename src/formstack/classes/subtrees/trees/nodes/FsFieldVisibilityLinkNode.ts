@@ -1,5 +1,5 @@
 import { FsFieldModel } from "../FsFieldModel";
-import { FsTreeLogic } from "../FsTreeLogic";
+import { FsFieldLogicModel } from "../FsFieldLogicModel";
 import { AbstractNode } from "./AbstractNode";
 
 type TVisibilityFunction = (values: { [fieldId: string]: any }) => boolean;

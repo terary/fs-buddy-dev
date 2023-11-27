@@ -5,7 +5,7 @@ import {
 } from "predicate-tree-advanced-poc/dist/src";
 import { TFsFieldAnyJson, TFsNode } from "../../types";
 import { FsTreeCalcString } from "./FsTreeCalcString";
-import { FsTreeLogic } from "./FsTreeLogic";
+import { FsFieldLogicModel } from "./FsFieldLogicModel";
 import { FsFieldVisibilityLinkNode } from "./nodes/FsFieldVisibilityLinkNode";
 import { AbstractFsTreeGeneric } from "./AbstractFsTreeGeneric";
 import {
@@ -28,11 +28,11 @@ import { Evaluator } from "../../Evaluator";
 
 type TSelectFields = TFsFieldRadio | TFsFieldSelect | TFsFieldCheckbox;
 
-type TSubtrees = FsTreeCalcString | FsTreeLogic;
+type TSubtrees = FsTreeCalcString | FsFieldLogicModel;
 
 type TFsFieldTreeNodeTypes =
   | FsTreeCalcString
-  | FsTreeLogic
+  | FsFieldLogicModel
   | FsFieldVisibilityLinkNode
   | FsCircularDependencyNode;
 
@@ -103,7 +103,9 @@ class FsFieldModel extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
         (subtreeId: any) =>
           this.getChildContentAt(subtreeId) instanceof objectType
       )
-      .map((subtreeId) => this.getChildContentAt(subtreeId)) as FsTreeLogic[];
+      .map((subtreeId) =>
+        this.getChildContentAt(subtreeId)
+      ) as FsFieldLogicModel[];
 
     if (logicTrees.length > 1) {
       throw new MultipleLogicTreeError(
@@ -120,8 +122,9 @@ class FsFieldModel extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
     return visualLogicTree;
   }
 
-  public getLogicTree(): FsTreeLogic | null {
-    const simpleLogicTree = this.getSingleTreeOfType<FsTreeLogic>(FsTreeLogic);
+  public getLogicTree(): FsFieldLogicModel | null {
+    const simpleLogicTree =
+      this.getSingleTreeOfType<FsFieldLogicModel>(FsFieldLogicModel);
     if (simpleLogicTree === null) {
       return null;
     }
@@ -130,18 +133,19 @@ class FsFieldModel extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
     ) as TFsFieldLogicJunction<TFsJunctionOperators>;
     const { action } = rootNodeContent;
 
-    if (["hide", "Hide"].includes(action || "")) {
-      return simpleLogicTree.getNegatedClone();
-    }
+    // if (["hide", "Hide"].includes(action || "")) {
+    //   return simpleLogicTree.getNegatedClone();
+    // }
 
     return simpleLogicTree;
   }
 
-  public x_getLogicTree(): FsTreeLogic | null {
-    const simpleLogicTree = this.getSingleTreeOfType<FsTreeLogic>(FsTreeLogic);
+  public x_getLogicTree(): FsFieldLogicModel | null {
+    const simpleLogicTree =
+      this.getSingleTreeOfType<FsFieldLogicModel>(FsFieldLogicModel);
     const visualLogicTree = this.getVisibilityLogicTree();
 
-    let newTree: FsTreeLogic;
+    let newTree: FsFieldLogicModel;
     if (visualLogicTree) {
       const visibilityFieldId = this.getVisibilityNode()?.parentNode?.fieldId;
 
@@ -150,7 +154,7 @@ class FsFieldModel extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
       // meaning this is calling a junction once after we create the tree - hence two junctions when we one only 1
 
       // @ts-ignore - conditional all is not a leaf
-      newTree = new FsTreeLogic(this.fieldId, {
+      newTree = new FsFieldLogicModel(this.fieldId, {
         conditional: "all",
         fieldJson: {}, //
         fieldId: visibilityFieldId || "_MISSING_FIELD_ID_",
@@ -248,6 +252,7 @@ class FsFieldModel extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
   static fromFieldJson(fieldJson: TFsFieldAny): FsFieldModel {
     // I think there is issues with using fieldId and the way subtree get rooted and re-rooted
     // such that fieldId is not a good rootNodeSeed
+
     const field = new FsFieldModel(`_FIELD_ID_: ${fieldJson.id}`, {
       // @ts-ignore
       fieldId: fieldJson.id,
@@ -272,9 +277,11 @@ class FsFieldModel extends AbstractFsTreeGeneric<TFsFieldTreeNodeTypes> {
 
     if (fieldJson.logic) {
       // const subtreeConstructor = (fieldJson: TFsFieldAny) =>
-      //   FsTreeLogic.fromFieldJson(fieldJson as unknown as TFsFieldAnyJson);
-      const subtreeConstructor = (fieldJson: TFsFieldAny): FsTreeLogic => {
-        return FsTreeLogic.fromFieldJson(
+      //   FsFieldLogicModel.fromFieldJson(fieldJson as unknown as TFsFieldAnyJson);
+      const subtreeConstructor = (
+        fieldJson: TFsFieldAny
+      ): FsFieldLogicModel => {
+        return FsFieldLogicModel.fromFieldJson(
           fieldJson as unknown as TFsFieldAnyJson
         );
       };

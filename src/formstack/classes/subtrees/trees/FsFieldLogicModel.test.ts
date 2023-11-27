@@ -1,6 +1,6 @@
 /* cspell:ignore unnegated */
 
-import { FsTreeLogic } from "./FsTreeLogic";
+import { FsFieldLogicModel } from "./FsFieldLogicModel";
 import { AbstractFsTreeGeneric } from "./AbstractFsTreeGeneric";
 import { TFsFieldAnyJson } from "../../types";
 import formJson5487084 from "../../../../test-dev-resources/form-json/5487084.json";
@@ -27,11 +27,13 @@ const formJson5487084FieldsById = formJson5487084.fields.reduce(
   {} as TSimpleDictionary<TFsFieldAnyJson>
 );
 
-describe("FsTreeLogic", () => {
+describe("FsFieldLogicModel", () => {
   describe(".toPojoAt()", () => {
-    let tree: FsTreeLogic;
+    let tree: FsFieldLogicModel;
     beforeEach(() => {
-      tree = FsTreeLogic.fromFieldJson(TEST_JSON_FIELD as TFsFieldAnyJson);
+      tree = FsFieldLogicModel.fromFieldJson(
+        TEST_JSON_FIELD as TFsFieldAnyJson
+      );
     });
     it("Should produce Pojo to sufficient to serial tree.", () => {
       const pojo = tree.toPojoAt(undefined, false);
@@ -40,15 +42,16 @@ describe("FsTreeLogic", () => {
       );
     });
   });
-  describe(".fromPojo()<FsTreeLogic, TFsFieldLogicNode>", () => {
+  describe(".fromPojo()<FsFieldLogicModel, TFsFieldLogicNode>", () => {
     it("Should inflate a tree from Pojo.", () => {
-      const tree = FsTreeLogic.fromPojo<FsTreeLogic, TFsFieldLogicNode>(
-        test_field_pojo as unknown as TTreePojo<TFsFieldLogicNode>
-      );
+      const tree = FsFieldLogicModel.fromPojo<
+        FsFieldLogicModel,
+        TFsFieldLogicNode
+      >(test_field_pojo as unknown as TTreePojo<TFsFieldLogicNode>);
       const rootBranch = tree.getChildContentAt(
         tree.rootNodeId
       ) as TFsFieldLogicJunction<TFsJunctionOperators>;
-      expect(tree).toBeInstanceOf(FsTreeLogic);
+      expect(tree).toBeInstanceOf(FsFieldLogicModel);
       expect(rootBranch.action).toStrictEqual("show");
       expect(rootBranch.conditional).toStrictEqual("all");
       const children = tree.getChildrenContentOf(tree.rootNodeId);
@@ -68,16 +71,17 @@ describe("FsTreeLogic", () => {
       };
 
       const ary = [{ label: "one" }, { label: "two" }];
-      const treeFromJson = FsTreeLogic.fromFieldJson(
+      const treeFromJson = FsFieldLogicModel.fromFieldJson(
         formJson5487084FieldsById[
           fieldIds
             .show_if_switzerland_is_not_neutral_and_is_not_neutral_conflict
         ]
       );
 
-      const treeFromPojo = FsTreeLogic.fromPojo<FsTreeLogic, TFsFieldLogicNode>(
-        treeFromJson.toPojoAt(undefined, false)
-      );
+      const treeFromPojo = FsFieldLogicModel.fromPojo<
+        FsFieldLogicModel,
+        TFsFieldLogicNode
+      >(treeFromJson.toPojoAt(undefined, false));
 
       //
       const pojo = treeFromPojo.toPojoAt(undefined, false);
@@ -99,13 +103,14 @@ describe("FsTreeLogic", () => {
       };
 
       const ary = [{ label: "one" }, { label: "two" }];
-      const treeFromJson = FsTreeLogic.fromFieldJson(
+      const treeFromJson = FsFieldLogicModel.fromFieldJson(
         formJson5487084FieldsById[fieldIds.hide_if_switzerland_is_neutral]
       );
 
-      const treeFromPojo = FsTreeLogic.fromPojo<FsTreeLogic, TFsFieldLogicNode>(
-        treeFromJson.toPojoAt(undefined, false)
-      );
+      const treeFromPojo = FsFieldLogicModel.fromPojo<
+        FsFieldLogicModel,
+        TFsFieldLogicNode
+      >(treeFromJson.toPojoAt(undefined, false));
 
       const pojo = treeFromPojo.toPojoAt(undefined, false);
       expect(JSON.stringify(pojo)).toStrictEqual(
@@ -115,9 +120,12 @@ describe("FsTreeLogic", () => {
   });
   describe(".clone()", () => {
     it("Should create carbon copy.  The contents are not references to original content.", () => {
-      const tree = FsTreeLogic.fromPojo<FsTreeLogic, TFsFieldLogicNode>(
+      const tree = FsFieldLogicModel.fromPojo<
+        FsFieldLogicModel,
+        TFsFieldLogicNode
+      >(
         test_field_pojo as unknown as TTreePojo<TFsFieldLogicNode>
-      ) as FsTreeLogic;
+      ) as FsFieldLogicModel;
 
       const clone = tree.cloneAt();
       const clone2 = clone.cloneAt();
@@ -140,7 +148,7 @@ describe("FsTreeLogic", () => {
       expect(tree.getChildContentAt(tree.rootNodeId)).toBe(
         tree.getChildContentAt(tree.rootNodeId)
       );
-      expect(clone).toBeInstanceOf(FsTreeLogic);
+      expect(clone).toBeInstanceOf(FsFieldLogicModel);
       expect(
         JSON.stringify(tree.getChildrenContentOf(tree.rootNodeId))
       ).toStrictEqual(
@@ -149,67 +157,60 @@ describe("FsTreeLogic", () => {
     });
   });
   describe(".negate()", () => {
-    it("Should negate a tree", () => {
-      const tree = FsTreeLogic.fromFieldJson(
-        TEST_JSON_FIELD as TFsFieldAnyJson
-      );
-      const negatedClone = tree.getNegatedClone();
-      const unnegatedClone = negatedClone.getNegatedClone();
-      expect(unnegatedClone.toPojoAt(undefined, false)).toStrictEqual(
-        tree.toPojoAt(undefined, false)
-      );
-
-      const parentNodeContent = negatedClone.getChildContentAtOrThrow(
-        negatedClone.rootNodeId
-      ) as TFsFieldLogicJunction<TFsJunctionOperators>;
-
-      expect(parentNodeContent.conditional).toEqual("any");
-      const children = negatedClone.getChildrenContentOf(
-        negatedClone.rootNodeId
-      ) as TFsFieldLogicCheckLeaf[];
-
-      const childrenOperators = children.map((child) => child.condition);
-      expect(childrenOperators).toStrictEqual([
-        "notequals",
-        "notequals",
-        "notequals",
-        "notequals",
-      ]);
-    });
-    it("Should be symmetric operation", () => {
-      const tree = FsTreeLogic.fromPojo(
-        test_field_pojo as unknown as TTreePojo<TFsFieldLogicNode>
-      ) as FsTreeLogic;
-
-      const negatedClone = tree.getNegatedClone();
-      const unnegatedClone = negatedClone.getNegatedClone();
-
-      expect(unnegatedClone.toPojoAt(undefined, false)).toStrictEqual(
-        tree.toPojoAt(undefined, false)
-      );
-
-      const parentNodeContent = negatedClone.getChildContentAtOrThrow(
-        negatedClone.rootNodeId
-      ) as TFsFieldLogicJunction<TFsJunctionOperators>;
-
-      expect(parentNodeContent.conditional).toEqual("any");
-      const children = negatedClone.getChildrenContentOf(
-        negatedClone.rootNodeId
-      ) as TFsFieldLogicCheckLeaf[];
-
-      const childrenOperators = children.map((child) => child.condition);
-      expect(childrenOperators).toStrictEqual([
-        "notequals",
-        "notequals",
-        "notequals",
-        "notequals",
-      ]);
-    });
+    it.skip("Negated clone was moved to FsLogicTreeDeepInternal", () => {});
+    // it("Should negate a tree", () => {
+    //   const tree = FsFieldLogicModel.fromFieldJson(
+    //     TEST_JSON_FIELD as TFsFieldAnyJson
+    //   );
+    //   const negatedClone = tree.getNegatedClone();
+    //   const unnegatedClone = negatedClone.getNegatedClone();
+    //   expect(unnegatedClone.toPojoAt(undefined, false)).toStrictEqual(
+    //     tree.toPojoAt(undefined, false)
+    //   );
+    //   const parentNodeContent = negatedClone.getChildContentAtOrThrow(
+    //     negatedClone.rootNodeId
+    //   ) as TFsFieldLogicJunction<TFsJunctionOperators>;
+    //   expect(parentNodeContent.conditional).toEqual("any");
+    //   const children = negatedClone.getChildrenContentOf(
+    //     negatedClone.rootNodeId
+    //   ) as TFsFieldLogicCheckLeaf[];
+    //   const childrenOperators = children.map((child) => child.condition);
+    //   expect(childrenOperators).toStrictEqual([
+    //     "notequals",
+    //     "notequals",
+    //     "notequals",
+    //     "notequals",
+    //   ]);
+    // });
+    // it("Should be symmetric operation", () => {
+    //   const tree = FsFieldLogicModel.fromPojo(
+    //     test_field_pojo as unknown as TTreePojo<TFsFieldLogicNode>
+    //   ) as FsFieldLogicModel;
+    //   const negatedClone = tree.getNegatedClone();
+    //   const unnegatedClone = negatedClone.getNegatedClone();
+    //   expect(unnegatedClone.toPojoAt(undefined, false)).toStrictEqual(
+    //     tree.toPojoAt(undefined, false)
+    //   );
+    //   const parentNodeContent = negatedClone.getChildContentAtOrThrow(
+    //     negatedClone.rootNodeId
+    //   ) as TFsFieldLogicJunction<TFsJunctionOperators>;
+    //   expect(parentNodeContent.conditional).toEqual("any");
+    //   const children = negatedClone.getChildrenContentOf(
+    //     negatedClone.rootNodeId
+    //   ) as TFsFieldLogicCheckLeaf[];
+    //   const childrenOperators = children.map((child) => child.condition);
+    //   expect(childrenOperators).toStrictEqual([
+    //     "notequals",
+    //     "notequals",
+    //     "notequals",
+    //     "notequals",
+    //   ]);
+    // });
   });
   describe("Creation", () => {
     it("Should be awesome", () => {
-      // const tree = new FsTreeLogic("_root_seed_");
-      const tree = FsTreeLogic.fromFieldJson(
+      // const tree = new FsFieldLogicModel("_root_seed_");
+      const tree = FsFieldLogicModel.fromFieldJson(
         TEST_JSON_FIELD as TFsFieldAnyJson
       );
       expect(tree).toBeInstanceOf(AbstractFsTreeGeneric);
@@ -226,9 +227,11 @@ describe("FsTreeLogic", () => {
     });
   });
   describe(".fieldJson", () => {
-    let tree: FsTreeLogic;
+    let tree: FsFieldLogicModel;
     beforeEach(() => {
-      tree = FsTreeLogic.fromFieldJson(TEST_JSON_FIELD as TFsFieldAnyJson);
+      tree = FsFieldLogicModel.fromFieldJson(
+        TEST_JSON_FIELD as TFsFieldAnyJson
+      );
     });
 
     it("Should be segment of the original json", () => {
@@ -290,7 +293,7 @@ describe("FsTreeLogic", () => {
         "147462597": "True",
       };
 
-      const tree = FsTreeLogic.fromFieldJson(
+      const tree = FsFieldLogicModel.fromFieldJson(
         TEST_JSON_FIELD as TFsFieldAnyJson
       );
       expect(tree.evaluateWithValues(valueJson)).toStrictEqual(true);
@@ -302,7 +305,7 @@ describe("FsTreeLogic", () => {
         "147462600": "NOT_TRUE",
         "147462597": "True",
       };
-      const tree = FsTreeLogic.fromFieldJson(
+      const tree = FsFieldLogicModel.fromFieldJson(
         TEST_JSON_FIELD as TFsFieldAnyJson
       );
       expect(tree.evaluateWithValues(valueJson)).toStrictEqual(false);
@@ -315,13 +318,13 @@ describe("FsTreeLogic", () => {
         "147462597": "True",
       };
 
-      const tree = FsTreeLogic.fromFieldJson(
+      const tree = FsFieldLogicModel.fromFieldJson(
         TEST_JSON_FIELD_OR as TFsFieldAnyJson
       );
       expect(tree.evaluateWithValues(valueJson)).toStrictEqual(true);
     });
     describe.skip(".evaluateShowHide(...)", () => {
-      let tree: FsTreeLogic;
+      let tree: FsFieldLogicModel;
       const valueJson = {
         "147462595": "True",
         "147462598": "True",
@@ -330,13 +333,13 @@ describe("FsTreeLogic", () => {
       };
       Object.freeze(valueJson);
       beforeEach(() => {
-        const tree = FsTreeLogic.fromFieldJson(
+        const tree = FsFieldLogicModel.fromFieldJson(
           TEST_JSON_FIELD as TFsFieldAnyJson
         );
       });
 
       it('Should return "show" given all logic evaluates to true and action="show".', () => {
-        const tree = FsTreeLogic.fromFieldJson(
+        const tree = FsFieldLogicModel.fromFieldJson(
           TEST_JSON_FIELD as TFsFieldAnyJson
         );
         expect(tree.evaluateWithValues(valueJson)).toStrictEqual(true);
@@ -346,7 +349,7 @@ describe("FsTreeLogic", () => {
         const hideLogicJson = { ...TEST_JSON_FIELD };
         // @ts-ignore
         hideLogicJson.logic.action = "hide";
-        const tree = FsTreeLogic.fromFieldJson(
+        const tree = FsFieldLogicModel.fromFieldJson(
           hideLogicJson as TFsFieldAnyJson
         );
         expect(tree.evaluateWithValues(valueJson)).toStrictEqual(true);
@@ -365,7 +368,7 @@ describe("FsTreeLogic", () => {
           ...valueJson,
           ...{ "147462595": "False" },
         };
-        const tree = FsTreeLogic.fromFieldJson(TEST_JSON_FIELD);
+        const tree = FsFieldLogicModel.fromFieldJson(TEST_JSON_FIELD);
         expect(tree.evaluateWithValues(falseValues)).toStrictEqual(false);
         expect(tree.evaluateShowHide(falseValues)).toStrictEqual(null);
       });
@@ -379,7 +382,7 @@ describe("FsTreeLogic", () => {
         "147462597": "_NOT_TRUE_",
       };
 
-      const tree = FsTreeLogic.fromFieldJson(
+      const tree = FsFieldLogicModel.fromFieldJson(
         TEST_JSON_FIELD_OR as TFsFieldAnyJson
       );
       expect(tree.evaluateWithValues(valueJson)).toStrictEqual(false);
@@ -394,7 +397,7 @@ describe("FsTreeLogic", () => {
           if (fieldJson.logic) {
             return {
               [fieldJson.id || "_FIELD_ID"]:
-                FsTreeLogic.fromFieldJson(fieldJson),
+                FsFieldLogicModel.fromFieldJson(fieldJson),
             };
           }
         })

@@ -2,7 +2,7 @@ import { IExpressionTree } from "predicate-tree-advanced-poc/dist/src";
 import { AbstractFsTreeGeneric } from "./AbstractFsTreeGeneric";
 import { TFsVisibilityModes } from "../types";
 
-abstract class AbstractFsTreeLogic<
+abstract class AbstractFsFieldLogicModel<
   T extends object
 > extends AbstractFsTreeGeneric<T> {
   protected _action!: TFsVisibilityModes;
@@ -22,4 +22,4 @@ abstract class AbstractFsTreeLogic<
   }
 }
 
-export { AbstractFsTreeLogic };
+export { AbstractFsFieldLogicModel };

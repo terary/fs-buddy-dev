@@ -1,6 +1,8 @@
 import { TApiFormFromJson } from "./TApiFormFromJson";
 import { TFsFieldAnyFromJson } from "./TFsFieldAnyFromJson";
 import { TFsFieldLogicJunctionFromJson } from "./TFsFieldLogicJunctionFromJson";
+import { pojoToD3TableData } from "./pojoToD3TableData";
+
 import { Utility } from "./Utility";
 import {
   TFsFieldLogicNodeToPojo,
@@ -14,5 +16,6 @@ export const transformers = {
     fromPojo: TFsFieldLogicNodeFromPojo,
     toPojo: TFsFieldLogicNodeToPojo,
   },
+  pojoToD3TableData,
   Utility,
 };

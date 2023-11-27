@@ -1,51 +1,58 @@
 import {
+  AbstractDirectedGraph,
+  AbstractExpressionTree,
   AbstractTree,
+  IDirectedGraph,
   IExpressionTree,
+  ITree,
+  TGenericNodeContent,
+  TNodePojo,
   TTreePojo,
 } from "predicate-tree-advanced-poc/dist/src";
-import {
-  TFsFieldLogicJunction,
-  TFsFieldLogicJunctionJson,
-  TFsLogicNode,
-  TFsJunctionOperators,
-  TSimpleDictionary,
-  TFsFieldLogicCheckLeaf,
-} from "../../types";
-import { AbstractFsTreeLogic } from "../AbstractFsTreeLogic";
+import { TSimpleDictionary } from "../../types";
+
 import { FsCircularDependencyNode } from "./LogicNodes/FsCircularDependencyNode";
 import { FsLogicBranchNode } from "./LogicNodes/FsLogicBranchNode";
 import { FsLogicLeafNode } from "./LogicNodes/FsLogicLeafNode";
 import { FsFieldModel } from "../FsFieldModel";
-import { TFsFieldAny } from "../../../../type.field";
 import { AbstractLogicNode } from "./LogicNodes/AbstractLogicNode";
 import { FsVirtualRootNode } from "./LogicNodes/FsVirtualRootNode";
 import { FsLogicErrorNode } from "./LogicNodes/FsLogicErrorNode";
-import { FsCircularMutualInclusiveNode } from "./LogicNodes/FsCircularMutualInclusiveNode";
-import { FsCircularMutualExclusiveNode } from "./LogicNodes/FsCircularMutualExclusiveNode";
-
-class FsLogicTreeDeepInternal extends AbstractFsTreeLogic<AbstractLogicNode> {
+import { AbstractLogicTree } from "./AbstractLogicTree";
+import { NegateVisitor } from "../NegateVisitor";
+import { GenericDirectedGraph } from "predicate-tree-advanced-poc/dist/src/DirectedGraph";
+// class FsLogicTreeDeepInternal extends AbstractLogicTree<AbstractLogicNode> {
+class FsLogicTreeDeepInternal extends AbstractDirectedGraph<AbstractLogicNode> {
   private _dependantFieldIdsInOrder: string[] = [];
+
+  // protected _ownerFieldId!: string;
+  // set ownerFieldId(value: string) {
+  //   this._ownerFieldId = value; // *tmc* should determine if this is being used, and remove it
+  // }
+
+  // get ownerFieldId() {
+  //   return this._ownerFieldId;
+  // }
+
   #dependantFieldIdMap: TSimpleDictionary<AbstractLogicNode> = {};
   constructor(rootNodeId?: string, nodeContent?: AbstractLogicNode) {
     super(rootNodeId, nodeContent);
-
-    // if (nodeContent !== undefined) {
-    //   const fieldId = this.extractFieldIdFromNodeContentOrThrow(nodeContent);
-    //   this.appendFieldIdNode(fieldId, nodeContent);
-    // }
   }
+
   public appendChildNodeWithContent(
     parentNodeId: string,
     nodeContent: AbstractLogicNode
   ): string {
     const fieldId = this.extractFieldIdFromNodeContentOrThrow(nodeContent);
 
-    this.appendFieldIdNode(fieldId, nodeContent);
-
     if (!this.isNodeIdExist(parentNodeId)) {
       throw new Error(
         `parentNodeId does not exists. parentNodeId: '${parentNodeId}'.`
       );
+    }
+
+    if (nodeContent instanceof FsLogicBranchNode) {
+      this.appendFieldIdNode(fieldId, nodeContent);
     }
     return super.appendChildNodeWithContent(parentNodeId, nodeContent);
   }
@@ -59,9 +66,27 @@ class FsLogicTreeDeepInternal extends AbstractFsTreeLogic<AbstractLogicNode> {
     this._dependantFieldIdsInOrder.push(fieldId);
   }
 
-  createSubtreeAt(nodeId: string): IExpressionTree<AbstractLogicNode> {
-    // *tmc* needs to make this a real thing, I guess: or add it to the abstract?
-    return new FsLogicTreeDeepInternal();
+  createSubtreeAt<Q extends IDirectedGraph<AbstractLogicNode>>(
+    parentNodeId: string
+  ): Q {
+    const subtree = new FsLogicTreeDeepInternal("_subtree_");
+
+    const subtreeParentNodeId = this.appendChildNodeWithContent(
+      parentNodeId,
+      // @ts-ignore - tree is not LogicNode
+      subtree
+    );
+
+    AbstractExpressionTree.reRootTreeAt<AbstractLogicNode>(
+      // @ts-ignore - Logic tree not AbstractExpression, reRoot is poorly typed and doesn't require most properties
+      subtree,
+      subtree.rootNodeId,
+      subtreeParentNodeId
+    );
+    subtree._rootNodeId = subtreeParentNodeId;
+    subtree._incrementor = this._incrementor;
+
+    return subtree as unknown as Q;
   }
 
   private get dependantFieldIds() {
@@ -96,6 +121,23 @@ class FsLogicTreeDeepInternal extends AbstractFsTreeLogic<AbstractLogicNode> {
     return null;
   }
 
+  protected findAllNodesOfType<T>(objectType: any): T[] {
+    const nodeIds = this.getTreeNodeIdsAt(this.rootNodeId);
+    const logicTrees = nodeIds
+      .filter(
+        (nodeId: any) => this.getChildContentAt(nodeId) instanceof objectType
+      )
+      .map((nodeId) => this.getChildContentAt(nodeId)) as T[];
+
+    return logicTrees;
+  }
+
+  getAllLeafContents(): FsLogicLeafNode[] {
+    return this.getTreeContentAt().filter(
+      (nodeContent) => nodeContent instanceof FsLogicLeafNode
+    ) as FsLogicLeafNode[];
+  }
+
   getChildContentByFieldId<T = AbstractLogicNode>(fieldId: string) {
     return this.#dependantFieldIdMap[fieldId] as T;
   }
@@ -106,18 +148,6 @@ class FsLogicTreeDeepInternal extends AbstractFsTreeLogic<AbstractLogicNode> {
     );
   }
 
-  getCircularMutuallyExclusiveLogicNodes(): FsCircularDependencyNode[] {
-    return this.findAllNodesOfType<FsCircularMutualExclusiveNode>(
-      FsCircularMutualExclusiveNode
-    );
-  }
-
-  getCircularMutuallyInclusiveLogicNodes(): FsCircularDependencyNode[] {
-    return this.findAllNodesOfType<FsCircularMutualInclusiveNode>(
-      FsCircularMutualInclusiveNode
-    );
-  }
-
   getDependantFieldIds(): string[] {
     // this can be calculated also doing something like (tree.getTreeContent().filter...).
     // This method guarantees order, filtering nodes does not guarantee order but is a
@@ -125,14 +155,79 @@ class FsLogicTreeDeepInternal extends AbstractFsTreeLogic<AbstractLogicNode> {
     return this.dependantFieldIds;
   }
 
+  // getChildrenContentOf(parentNodeId: string, shouldIncludeSubtrees?: boolean | undefined): (AbstractLogicNode | ITree<AbstractLogicNode> | null)[] {
+
+  // }
+
   getLogicErrorNodes(): FsLogicErrorNode[] {
     return this.findAllNodesOfType<FsLogicErrorNode>(FsLogicErrorNode);
   }
 
-  getAllLeafContents(): FsLogicLeafNode[] {
-    return this.getTreeContentAt().filter(
-      (nodeContent) => nodeContent instanceof FsLogicLeafNode
-    ) as FsLogicLeafNode[];
+  getNodeIdOfNodeContent(nodeContent: AbstractLogicNode): string | null {
+    const matchingNodeContent = this.getTreeNodeIdsAt(this.rootNodeId).filter(
+      (nodeId) => Object.is(this.getChildContentAt(nodeId), nodeContent)
+    );
+    if (matchingNodeContent.length === 1) {
+      return matchingNodeContent[0];
+    }
+    return null;
+  }
+
+  // cloneAt(nodeId: string): IDirectedGraph<AbstractLogicNode> {
+
+  // }
+
+  static clone(srcTree: FsLogicTreeDeepInternal): FsLogicTreeDeepInternal {
+    const clone = new FsLogicTreeDeepInternal();
+    clone.#dependantFieldIdMap = structuredClone(srcTree.#dependantFieldIdMap);
+    clone._dependantFieldIdsInOrder = srcTree._dependantFieldIdsInOrder.slice();
+    clone._nodeDictionary = srcTree._nodeDictionary;
+    const nodeCount = srcTree._incrementor.next;
+    for (let i = 0; i < nodeCount; i++) {
+      clone._incrementor.next;
+    }
+    return clone;
+  }
+  cloneAt(nodeId?: string): FsLogicTreeDeepInternal;
+  cloneAt(nodeId?: string): IDirectedGraph<AbstractLogicNode>;
+  cloneAt<T>(nodeId: string): T {
+    // this structure can not support cloneAt because orderFieldIds (it just doesn't make sense)
+    return FsLogicTreeDeepInternal.clone(this) as T;
+    // const clone = new FsLogicTreeDeepInternal();
+    // const pojo = this.toPojoAt(nodeId, false);
+    // return FsLogicTreeDeepInternal.fromPojo(pojo) as T;
+  }
+
+  // static fromPojo<P extends object, Q>(
+  //   srcPojoTree: TTreePojo<P>,
+  //   transform?: (nodeContent: TNodePojo<P>) => TGenericNodeContent<P>
+  // ): FsLogicTreeDeepInternal;
+  // static fromPojo<P extends object, Q>(
+  //   srcPojoTree: TTreePojo<P>,
+  //   transform?: (nodeContent: TNodePojo<P>) => TGenericNodeContent<P>
+  // ): IDirectedGraph<P>;
+  // static fromPojo<P extends object, Q = FsLogicTreeDeepInternal>(
+  //   srcPojoTree: TTreePojo<P>,
+  //   transform?: (nodeContent: TNodePojo<P>) => TGenericNodeContent<P>
+  // ): Q {
+  //   const aTree = AbstractDirectedGraph.fromPojo(
+  //     srcPojoTree,
+  //     transform
+  //   ) as unknown as FsLogicTreeDeepInternal; // to silence ts error
+
+  //   const tree = new FsLogicTreeDeepInternal(aTree.rootNodeId);
+  //   tree._incrementor = aTree._incrementor;
+  //   tree._nodeDictionary = aTree._nodeDictionary;
+
+  //   return AbstractDirectedGraph.fromPojo(srcPojoTree, transform) as Q;
+  // }
+
+  getNegatedCloneAt(nodeId: string): FsLogicTreeDeepInternal {
+    const visitor = new NegateVisitor();
+    const clone = this.cloneAt();
+    clone.visitAllAt(visitor, nodeId);
+
+    return clone;
   }
 
   public isExistInDependencyChain(field: FsFieldModel): boolean {
@@ -155,8 +250,16 @@ class FsLogicTreeDeepInternal extends AbstractFsTreeLogic<AbstractLogicNode> {
     nodeId?: string | undefined,
     shouldObfuscate = true
   ): TTreePojo<AbstractLogicNode> {
-    const transformer = (nodeContent: AbstractLogicNode) =>
-      nodeContent.toPojo();
+    const transformer = (nodeContent: AbstractLogicNode) => {
+      try {
+        return nodeContent && "toPojo" in nodeContent
+          ? nodeContent.toPojo()
+          : nodeContent;
+      } catch (e) {
+        console.log({ e });
+        return nodeContent;
+      }
+    };
     // @ts-ignore - doesn't like generic and the signature, I think the generic is goofed
     // return super.toPojoAt(nodeId, transformer);
     const clearPojo = super.toPojoAt(nodeId, transformer);
@@ -165,67 +268,6 @@ class FsLogicTreeDeepInternal extends AbstractFsTreeLogic<AbstractLogicNode> {
     }
     return clearPojo;
   }
-
-  static x_fromFieldJson(fieldJson: TFsFieldAny): FsLogicTreeDeepInternal {
-    // we should be receiving fieldJson.logic, but the Abstract._fieldJson is not typed properly
-    // const logicJson: TFsLogicNodeJson = fieldJson.logic;
-    // or maybe always get the whole json?
-
-    const logicJson: TFsFieldLogicJunction<TFsJunctionOperators> =
-      // @ts-ignore - what is this supposed to be ?
-      fieldJson.logic as TFsFieldLogicJunction<TFsJunctionOperators>;
-
-    const { action, conditional, checks } = logicJson;
-
-    const rootNode = new FsLogicBranchNode(
-      `${fieldJson.id}`,
-      conditional,
-      action,
-      checks as TFsFieldLogicCheckLeaf[],
-      logicJson
-    );
-
-    const tree = new FsLogicTreeDeepInternal(
-      fieldJson.id || "_calc_tree_",
-      rootNode
-    );
-    tree._action = action || null;
-    // @ts-ignore - this should resolve once I figured out the other typing issues
-    tree._fieldJson = logicJson;
-    tree._ownerFieldId = fieldJson.id || "_calc_tree_";
-
-    const { leafExpressions } = transformLogicLeafJsonToLogicLeafs(
-      tree.fieldJson as TFsFieldLogicJunctionJson
-    );
-
-    // @ts-ignore
-    leafExpressions.forEach((childNode: TFsLogicNode) => {
-      const { condition, fieldId, option } = childNode as FsLogicLeafNode;
-      const leafNode = new FsLogicLeafNode(fieldId, condition, option);
-      tree.appendChildNodeWithContent(tree.rootNodeId, leafNode);
-      // should this be done at a different level. I mean calculated?
-    });
-
-    return tree;
-  }
 }
 
 export { FsLogicTreeDeepInternal };
-
-const transformLogicLeafJsonToLogicLeafs = (
-  logicJson: TFsFieldLogicJunctionJson
-) => {
-  const { action, conditional, checks } = logicJson || {};
-  const op = conditional === "all" ? "$and" : "$or";
-  // this doesn't look right, we're not use "op", "action", "conditional" ?
-  const leafExpressions = (checks || []).map((check) => {
-    const { condition, fieldId, option } = check;
-    return {
-      fieldId: fieldId + "" || "__MISSING_ID__",
-      fieldJson: check,
-      condition: check.condition,
-      option,
-    };
-  });
-  return { leafExpressions };
-};

@@ -1,7 +1,7 @@
 import { transformers } from "../../../../transformers";
 import { TFsFieldAnyJson } from "../../../types";
 import { FsFieldModel } from "../FsFieldModel";
-import { FsTreeLogic } from "../FsTreeLogic";
+import { FsFieldLogicModel } from "../FsFieldLogicModel";
 import { FsFieldVisibilityLinkNode } from "./FsFieldVisibilityLinkNode";
 
 describe("FsFieldVisibilityLinkNode", () => {
@@ -19,7 +19,7 @@ describe("FsFieldVisibilityLinkNode", () => {
       "147462597": "True",
     };
 
-    const tree = FsTreeLogic.fromFieldJson(TEST_JSON_FIELD as TFsFieldAnyJson);
+    const tree = FsFieldLogicModel.fromFieldJson(TEST_JSON_FIELD as TFsFieldAnyJson);
     const isUltimatelyVisible = (values: {
       [fieldId: string]: any;
     }): boolean => {
@@ -41,7 +41,7 @@ describe("FsFieldVisibilityLinkNode", () => {
       "147462597": "True",
     };
 
-    const tree = FsTreeLogic.fromFieldJson(TEST_JSON_FIELD as TFsFieldAnyJson);
+    const tree = FsFieldLogicModel.fromFieldJson(TEST_JSON_FIELD as TFsFieldAnyJson);
     const isUltimatelyVisible = (values: {
       [fieldId: string]: any;
     }): boolean => {

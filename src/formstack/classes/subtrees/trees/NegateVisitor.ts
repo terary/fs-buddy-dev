@@ -10,6 +10,7 @@ import {
   TFsJunctionOperators,
   TFsLeafOperators,
 } from "../types";
+import { AbstractLogicNode } from "./FsLogicTreeDeep/LogicNodes/AbstractLogicNode";
 
 // type TFsLeafOperators =
 //   // these probably need to be confirmed
@@ -58,7 +59,7 @@ const negateJunctionOperators = (
 ): TFsJunctionOperators => (operator === "all" ? "any" : "all");
 
 class NegateVisitor<T extends object>
-  implements ITreeVisitor<TFsFieldLogicNode>
+  implements ITreeVisitor<AbstractLogicNode>
 {
   public includeSubtrees = true;
   public contentItems: any[] = [];
@@ -67,7 +68,7 @@ class NegateVisitor<T extends object>
   public uniqueVisits: any = {};
   visit(
     nodeId: string,
-    nodeContent: TGenericNodeContent<TFsFieldLogicNode>,
+    nodeContent: TGenericNodeContent<AbstractLogicNode>,
     parentId: string
   ): void {
     if (nodeContent === null) {
@@ -75,23 +76,14 @@ class NegateVisitor<T extends object>
     }
     if ("conditional" in nodeContent) {
       nodeContent.conditional = negateJunctionOperators(
+        // @ts-ignore
         nodeContent.conditional
       );
     }
     if ("condition" in nodeContent) {
+      // @ts-ignore
       nodeContent.condition = negateLeafOperators(nodeContent.condition);
     }
-    // this.contentItems.push({ ...nodeContent }); // probably not do this, need to fix tests
-    // this.contentItemsExt.push({ ...nodeContent, nodeId, parentId });
-    // if (nodeId === parentId) {
-    //   this.rootNodeIds.push(parentId);
-    // }
-    // const uniqueKey = [nodeId, parentId].sort().join(":");
-    // if (uniqueKey in this.uniqueVisits) {
-    //   this.uniqueVisits[uniqueKey] += 1;
-    // } else {
-    //   this.uniqueVisits[uniqueKey] = 1;
-    // }
   }
 }
 

@@ -34,9 +34,7 @@ class SubmissionEvaluator {
      *Get Evalua
      */
     submission.data.map((datum) => {
-      const fieldTree = this.fieldCollection.getFieldTreeByFieldId(
-        datum.fieldId
-      );
+      const fieldTree = this.fieldCollection.getFieldModel(datum.fieldId);
       const evaluator = Evaluator.getEvaluatorWithFieldJson(
         fieldTree?.fieldJson as TFsFieldAny
       );

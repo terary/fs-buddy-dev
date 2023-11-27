@@ -4,6 +4,7 @@ import type { TStatusRecord } from "../../../../Evaluator/type";
 import { transformers } from "../../../../../transformers";
 
 class FsLogicErrorNode extends AbstractLogicNode {
+  protected _nodeType = "FsLogicErrorNode";
   private _rootFieldId: string | null;
   private _parentFieldId: string | null;
   private _fieldId: string | null;

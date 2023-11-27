@@ -185,16 +185,21 @@ function handleGetFieldLogicDependentsRequest(
   const { fieldId } = payload;
   const fieldIds = fieldLogicService?.getFieldIdsExtendedLogicOf(fieldId);
   const statusMessages = fieldLogicService?.getStatusMessagesFieldId(fieldId);
+  const logicalNodeGraphMap = fieldLogicService?.getLogicNodeGraphMap(fieldId);
   const interdependentFieldIds =
     fieldLogicService?.getCircularReferenceFieldIds(fieldId);
+  console.log({ logicalNodeGraphMap });
   caller.postMessage({
     messageType: "getFieldLogicDependentsResponse",
     payload: {
-      [fieldId]: {
-        statusMessages: statusMessages,
-        dependentFieldIds: fieldIds,
-        interdependentFieldIds: interdependentFieldIds,
+      dependentsByFieldId: {
+        [fieldId]: {
+          statusMessages: statusMessages,
+          dependentFieldIds: fieldIds,
+          interdependentFieldIds: interdependentFieldIds,
+        },
       },
+      logicalNodeGraphMap,
     },
   });
 }
