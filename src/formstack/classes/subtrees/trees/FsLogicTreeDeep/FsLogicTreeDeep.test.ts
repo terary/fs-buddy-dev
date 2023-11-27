@@ -14,6 +14,9 @@ import { TTreePojo } from "predicate-tree-advanced-poc/dist/src";
 import { AbstractLogicNode } from "./LogicNodes/AbstractLogicNode";
 
 describe("FsLogicTreeDeep", () => {
+  // maybe action should be on vRoot and not children
+  // the children labels are confusing 'show'/'hide' is not applicable on descendent branches
+
   describe("Pojo Smoke test.", () => {
     it.only("Smoke Test II", () => {
       const tree5469299 = FsFormModel.fromApiFormJson(
@@ -23,18 +26,12 @@ describe("FsLogicTreeDeep", () => {
         transformers.formJson(formJson5375703 as unknown as TApiFormJson)
       );
 
-      `
-        newest version of circular reference is missing source/target stuff, I think?
-        Doesn't work see error messages
-
-`;
-
-      // const agTree148604161 = tree5375703.aggregateLogicTree("148604161"); // (A) Big Dipper A->B->C->D->(B ^ E)
-      // const pojo148604161 = agTree148604161.toPojoAt(undefined, false);
-      // const d3FieldTable148604161 = transformers.pojoToD3TableData(
-      //   agTree148604161.toPojoAt(undefined, false),
-      //   tree5375703
-      // );
+      const agTree153051795 = tree5375703.aggregateLogicTree("153051795"); //Conflict with show/hide, panel/field (parent panel)
+      const pojo153051795 = agTree153051795.toPojoAt(undefined, false);
+      const d3FieldTable153051795 = transformers.pojoToD3TableData(
+        agTree153051795.toPojoAt(undefined, false),
+        tree5375703
+      );
 
       const agTrees: { [fieldId: string]: FsLogicTreeDeep } = {};
       const pojos: { [fieldId: string]: TTreePojo<AbstractLogicNode> | null } =

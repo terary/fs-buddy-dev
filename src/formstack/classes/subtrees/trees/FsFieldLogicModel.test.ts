@@ -157,62 +157,55 @@ describe("FsFieldLogicModel", () => {
     });
   });
   describe(".negate()", () => {
-    it("Should negate a tree", () => {
-      const tree = FsFieldLogicModel.fromFieldJson(
-        TEST_JSON_FIELD as TFsFieldAnyJson
-      );
-      const negatedClone = tree.getNegatedClone();
-      const unnegatedClone = negatedClone.getNegatedClone();
-      expect(unnegatedClone.toPojoAt(undefined, false)).toStrictEqual(
-        tree.toPojoAt(undefined, false)
-      );
-
-      const parentNodeContent = negatedClone.getChildContentAtOrThrow(
-        negatedClone.rootNodeId
-      ) as TFsFieldLogicJunction<TFsJunctionOperators>;
-
-      expect(parentNodeContent.conditional).toEqual("any");
-      const children = negatedClone.getChildrenContentOf(
-        negatedClone.rootNodeId
-      ) as TFsFieldLogicCheckLeaf[];
-
-      const childrenOperators = children.map((child) => child.condition);
-      expect(childrenOperators).toStrictEqual([
-        "notequals",
-        "notequals",
-        "notequals",
-        "notequals",
-      ]);
-    });
-    it("Should be symmetric operation", () => {
-      const tree = FsFieldLogicModel.fromPojo(
-        test_field_pojo as unknown as TTreePojo<TFsFieldLogicNode>
-      ) as FsFieldLogicModel;
-
-      const negatedClone = tree.getNegatedClone();
-      const unnegatedClone = negatedClone.getNegatedClone();
-
-      expect(unnegatedClone.toPojoAt(undefined, false)).toStrictEqual(
-        tree.toPojoAt(undefined, false)
-      );
-
-      const parentNodeContent = negatedClone.getChildContentAtOrThrow(
-        negatedClone.rootNodeId
-      ) as TFsFieldLogicJunction<TFsJunctionOperators>;
-
-      expect(parentNodeContent.conditional).toEqual("any");
-      const children = negatedClone.getChildrenContentOf(
-        negatedClone.rootNodeId
-      ) as TFsFieldLogicCheckLeaf[];
-
-      const childrenOperators = children.map((child) => child.condition);
-      expect(childrenOperators).toStrictEqual([
-        "notequals",
-        "notequals",
-        "notequals",
-        "notequals",
-      ]);
-    });
+    it.skip("Negated clone was moved to FsLogicTreeDeepInternal", () => {});
+    // it("Should negate a tree", () => {
+    //   const tree = FsFieldLogicModel.fromFieldJson(
+    //     TEST_JSON_FIELD as TFsFieldAnyJson
+    //   );
+    //   const negatedClone = tree.getNegatedClone();
+    //   const unnegatedClone = negatedClone.getNegatedClone();
+    //   expect(unnegatedClone.toPojoAt(undefined, false)).toStrictEqual(
+    //     tree.toPojoAt(undefined, false)
+    //   );
+    //   const parentNodeContent = negatedClone.getChildContentAtOrThrow(
+    //     negatedClone.rootNodeId
+    //   ) as TFsFieldLogicJunction<TFsJunctionOperators>;
+    //   expect(parentNodeContent.conditional).toEqual("any");
+    //   const children = negatedClone.getChildrenContentOf(
+    //     negatedClone.rootNodeId
+    //   ) as TFsFieldLogicCheckLeaf[];
+    //   const childrenOperators = children.map((child) => child.condition);
+    //   expect(childrenOperators).toStrictEqual([
+    //     "notequals",
+    //     "notequals",
+    //     "notequals",
+    //     "notequals",
+    //   ]);
+    // });
+    // it("Should be symmetric operation", () => {
+    //   const tree = FsFieldLogicModel.fromPojo(
+    //     test_field_pojo as unknown as TTreePojo<TFsFieldLogicNode>
+    //   ) as FsFieldLogicModel;
+    //   const negatedClone = tree.getNegatedClone();
+    //   const unnegatedClone = negatedClone.getNegatedClone();
+    //   expect(unnegatedClone.toPojoAt(undefined, false)).toStrictEqual(
+    //     tree.toPojoAt(undefined, false)
+    //   );
+    //   const parentNodeContent = negatedClone.getChildContentAtOrThrow(
+    //     negatedClone.rootNodeId
+    //   ) as TFsFieldLogicJunction<TFsJunctionOperators>;
+    //   expect(parentNodeContent.conditional).toEqual("any");
+    //   const children = negatedClone.getChildrenContentOf(
+    //     negatedClone.rootNodeId
+    //   ) as TFsFieldLogicCheckLeaf[];
+    //   const childrenOperators = children.map((child) => child.condition);
+    //   expect(childrenOperators).toStrictEqual([
+    //     "notequals",
+    //     "notequals",
+    //     "notequals",
+    //     "notequals",
+    //   ]);
+    // });
   });
   describe("Creation", () => {
     it("Should be awesome", () => {

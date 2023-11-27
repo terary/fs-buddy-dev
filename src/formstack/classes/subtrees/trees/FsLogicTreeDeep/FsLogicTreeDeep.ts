@@ -19,6 +19,7 @@ import { FsLogicLeafNode } from "./LogicNodes/FsLogicLeafNode";
 import { FsVirtualRootNode } from "./LogicNodes/FsVirtualRootNode";
 import type { TLogicTreeDeepStatisticCountRecord } from "./type";
 import { FsLogicErrorNode } from "./LogicNodes/FsLogicErrorNode";
+import { NegateVisitor } from "../NegateVisitor";
 
 class FsLogicTreeDeep {
   static readonly MAX_TOTAL_NODES = 50;
@@ -117,6 +118,10 @@ class FsLogicTreeDeep {
     });
     return statusMessages;
   }
+
+  // - Need to verify the show/hide negation works as expected (also, not sure it truly negates).
+  // - The node labeling is a little cryptic
+  // Look closely at show/hide short answer formId: 5375703, field 153051795, "Conflict with show/hide, panel/field"
 
   toPojoAt(
     nodeId?: string,
@@ -336,16 +341,62 @@ class FsLogicTreeDeep {
           childNodeContent.option
         )
       );
-      return FsLogicTreeDeep.fromFormModel(
+      const t = FsLogicTreeDeep.fromFormModel(
         childNodeContent.fieldId,
         fieldCollection,
         deepTree,
         newBranchNodeId
       );
+
+      if (t === null) {
+        return t;
+      }
+      t._fsDeepLogicTree
+        .getChildrenNodeIdsOf(t._fsDeepLogicTree.rootNodeId)
+        .forEach((childNodeId) => {
+          const childNodeContent = t._fsDeepLogicTree.getChildContentAt(
+            childNodeId
+          ) as FsLogicBranchNode;
+          const { action } = childNodeContent;
+          // @ts-ignore "hide" not action
+          if (action === "Hide" || action === "hide") {
+            const negatedClone =
+              t._fsDeepLogicTree.getNegatedCloneAt(childNodeId);
+            return negatedClone;
+            // t._fsDeepLogicTree.replaceNodeContent(childNodeId, negatedClone);
+          }
+        });
+
+      // I think at this point we know it's will have 1 or two children
+      // those children will be branch
+      // if branch == 'hide', negateAt(...)
+      return t;
     });
 
     return deepTree;
   }
+
+  private static getNegatedClone(
+    sourceTree: FsLogicTreeDeepInternal
+  ): FsLogicTreeDeep {
+    const newTree = new FsLogicTreeDeep(
+      sourceTree.rootNodeId,
+      sourceTree.getChildrenContentOf(
+        sourceTree.rootNodeId
+      ) as unknown as FsVirtualRootNode
+    );
+
+    const visitor = new NegateVisitor();
+    const clone = sourceTree.cloneAt();
+    clone.visitAllAt(visitor);
+    newTree._fsDeepLogicTree = clone;
+
+    return newTree;
+  }
+
+  // if (["hide", "Hide"].includes(action || "")) {
+  //   return simpleLogicTree.getNegatedClone();
+  // }
 
   static fromFormModel(
     fieldId: string,

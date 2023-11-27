@@ -19,7 +19,8 @@ export type TGraphNode = {
   };
 };
 
-const truncate = (text = "", length = 25) => text.slice(0, length);
+const truncate = (text = "", length = 25) =>
+  text.slice(0, length) + (text.length > length ? "..." : "");
 
 const pojoToD3TableData = (
   pojo: TTreePojo<AbstractLogicNode>,
@@ -47,13 +48,20 @@ const pojoToD3TableData = (
     const fieldModel = formModel.getFieldModel(fieldId);
 
     switch (nodeContent.nodeType) {
-      case "FsLogicBranchNode":
       case "FsVirtualRootNode":
+      case "FsLogicBranchNode":
         const { action, conditional } = nodeContent as FsLogicBranchNode;
         // @ts-ignore
-        pojoNodeContent.label = `${action || "show"} '${truncate(
-          fieldModel?.label
-        )}' if ${conditional}`;
+        pojoNodeContent.label = [
+          `${action || "vRoot"}`,
+          truncate(
+            fieldModel?.fieldType === "section"
+              ? fieldModel.section_heading
+              : fieldModel?.label
+          ),
+          ` if ${conditional}`,
+        ];
+
         break;
 
       case "FsLogicLeafNode":

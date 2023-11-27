@@ -32,6 +32,10 @@ class FsLogicLeafNode
     return this._condition;
   }
 
+  set condition(value) {
+    this._condition = value;
+  }
+
   get option() {
     return this._option;
   }

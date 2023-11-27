@@ -1,6 +1,12 @@
 import {
+  AbstractDirectedGraph,
+  AbstractExpressionTree,
   AbstractTree,
+  IDirectedGraph,
   IExpressionTree,
+  ITree,
+  TGenericNodeContent,
+  TNodePojo,
   TTreePojo,
 } from "predicate-tree-advanced-poc/dist/src";
 import { TSimpleDictionary } from "../../types";
@@ -13,7 +19,10 @@ import { AbstractLogicNode } from "./LogicNodes/AbstractLogicNode";
 import { FsVirtualRootNode } from "./LogicNodes/FsVirtualRootNode";
 import { FsLogicErrorNode } from "./LogicNodes/FsLogicErrorNode";
 import { AbstractLogicTree } from "./AbstractLogicTree";
-class FsLogicTreeDeepInternal extends AbstractLogicTree<AbstractLogicNode> {
+import { NegateVisitor } from "../NegateVisitor";
+import { GenericDirectedGraph } from "predicate-tree-advanced-poc/dist/src/DirectedGraph";
+// class FsLogicTreeDeepInternal extends AbstractLogicTree<AbstractLogicNode> {
+class FsLogicTreeDeepInternal extends AbstractDirectedGraph<AbstractLogicNode> {
   private _dependantFieldIdsInOrder: string[] = [];
 
   // protected _ownerFieldId!: string;
@@ -57,9 +66,27 @@ class FsLogicTreeDeepInternal extends AbstractLogicTree<AbstractLogicNode> {
     this._dependantFieldIdsInOrder.push(fieldId);
   }
 
-  createSubtreeAt(nodeId: string): IExpressionTree<AbstractLogicNode> {
-    // *tmc* needs to make this a real thing, I guess: or add it to the abstract?
-    return new FsLogicTreeDeepInternal();
+  createSubtreeAt<Q extends IDirectedGraph<AbstractLogicNode>>(
+    parentNodeId: string
+  ): Q {
+    const subtree = new FsLogicTreeDeepInternal("_subtree_");
+
+    const subtreeParentNodeId = this.appendChildNodeWithContent(
+      parentNodeId,
+      // @ts-ignore - tree is not LogicNode
+      subtree
+    );
+
+    AbstractExpressionTree.reRootTreeAt<AbstractLogicNode>(
+      // @ts-ignore - Logic tree not AbstractExpression, reRoot is poorly typed and doesn't require most properties
+      subtree,
+      subtree.rootNodeId,
+      subtreeParentNodeId
+    );
+    subtree._rootNodeId = subtreeParentNodeId;
+    subtree._incrementor = this._incrementor;
+
+    return subtree as unknown as Q;
   }
 
   private get dependantFieldIds() {
@@ -94,6 +121,17 @@ class FsLogicTreeDeepInternal extends AbstractLogicTree<AbstractLogicNode> {
     return null;
   }
 
+  protected findAllNodesOfType<T>(objectType: any): T[] {
+    const nodeIds = this.getTreeNodeIdsAt(this.rootNodeId);
+    const logicTrees = nodeIds
+      .filter(
+        (nodeId: any) => this.getChildContentAt(nodeId) instanceof objectType
+      )
+      .map((nodeId) => this.getChildContentAt(nodeId)) as T[];
+
+    return logicTrees;
+  }
+
   getAllLeafContents(): FsLogicLeafNode[] {
     return this.getTreeContentAt().filter(
       (nodeContent) => nodeContent instanceof FsLogicLeafNode
@@ -117,6 +155,10 @@ class FsLogicTreeDeepInternal extends AbstractLogicTree<AbstractLogicNode> {
     return this.dependantFieldIds;
   }
 
+  // getChildrenContentOf(parentNodeId: string, shouldIncludeSubtrees?: boolean | undefined): (AbstractLogicNode | ITree<AbstractLogicNode> | null)[] {
+
+  // }
+
   getLogicErrorNodes(): FsLogicErrorNode[] {
     return this.findAllNodesOfType<FsLogicErrorNode>(FsLogicErrorNode);
   }
@@ -129,6 +171,63 @@ class FsLogicTreeDeepInternal extends AbstractLogicTree<AbstractLogicNode> {
       return matchingNodeContent[0];
     }
     return null;
+  }
+
+  // cloneAt(nodeId: string): IDirectedGraph<AbstractLogicNode> {
+
+  // }
+
+  static clone(srcTree: FsLogicTreeDeepInternal): FsLogicTreeDeepInternal {
+    const clone = new FsLogicTreeDeepInternal();
+    clone.#dependantFieldIdMap = structuredClone(srcTree.#dependantFieldIdMap);
+    clone._dependantFieldIdsInOrder = srcTree._dependantFieldIdsInOrder.slice();
+    clone._nodeDictionary = srcTree._nodeDictionary;
+    const nodeCount = srcTree._incrementor.next;
+    for (let i = 0; i < nodeCount; i++) {
+      clone._incrementor.next;
+    }
+    return clone;
+  }
+  cloneAt(nodeId?: string): FsLogicTreeDeepInternal;
+  cloneAt(nodeId?: string): IDirectedGraph<AbstractLogicNode>;
+  cloneAt<T>(nodeId: string): T {
+    // this structure can not support cloneAt because orderFieldIds (it just doesn't make sense)
+    return FsLogicTreeDeepInternal.clone(this) as T;
+    // const clone = new FsLogicTreeDeepInternal();
+    // const pojo = this.toPojoAt(nodeId, false);
+    // return FsLogicTreeDeepInternal.fromPojo(pojo) as T;
+  }
+
+  // static fromPojo<P extends object, Q>(
+  //   srcPojoTree: TTreePojo<P>,
+  //   transform?: (nodeContent: TNodePojo<P>) => TGenericNodeContent<P>
+  // ): FsLogicTreeDeepInternal;
+  // static fromPojo<P extends object, Q>(
+  //   srcPojoTree: TTreePojo<P>,
+  //   transform?: (nodeContent: TNodePojo<P>) => TGenericNodeContent<P>
+  // ): IDirectedGraph<P>;
+  // static fromPojo<P extends object, Q = FsLogicTreeDeepInternal>(
+  //   srcPojoTree: TTreePojo<P>,
+  //   transform?: (nodeContent: TNodePojo<P>) => TGenericNodeContent<P>
+  // ): Q {
+  //   const aTree = AbstractDirectedGraph.fromPojo(
+  //     srcPojoTree,
+  //     transform
+  //   ) as unknown as FsLogicTreeDeepInternal; // to silence ts error
+
+  //   const tree = new FsLogicTreeDeepInternal(aTree.rootNodeId);
+  //   tree._incrementor = aTree._incrementor;
+  //   tree._nodeDictionary = aTree._nodeDictionary;
+
+  //   return AbstractDirectedGraph.fromPojo(srcPojoTree, transform) as Q;
+  // }
+
+  getNegatedCloneAt(nodeId: string): FsLogicTreeDeepInternal {
+    const visitor = new NegateVisitor();
+    const clone = this.cloneAt();
+    clone.visitAllAt(visitor, nodeId);
+
+    return clone;
   }
 
   public isExistInDependencyChain(field: FsFieldModel): boolean {

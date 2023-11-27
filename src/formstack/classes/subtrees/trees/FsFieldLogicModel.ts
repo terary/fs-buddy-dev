@@ -58,12 +58,12 @@ class FsFieldLogicModel extends AbstractFsFieldLogicModel<TFsFieldLogicNode> {
     return childContent as T;
   }
 
-  getNegatedClone(): FsFieldLogicModel {
-    const visitor = new NegateVisitor();
-    const clone = this.cloneAt();
-    clone.visitAllAt(visitor);
-    return clone;
-  }
+  // getNegatedClone(): FsFieldLogicModel {
+  //   const visitor = new NegateVisitor();
+  //   const clone = this.cloneAt();
+  //   clone.visitAllAt(visitor);
+  //   return clone;
+  // }
 
   getShallowDependantFieldIds(): string[] {
     const children = this.getChildrenContentOf(

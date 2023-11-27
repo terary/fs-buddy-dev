@@ -43,6 +43,9 @@ class FsLogicBranchNode
   get conditional() {
     return this._conditional;
   }
+  set conditional(value) {
+    this._conditional = value;
+  }
 
   get action() {
     return this._action;
