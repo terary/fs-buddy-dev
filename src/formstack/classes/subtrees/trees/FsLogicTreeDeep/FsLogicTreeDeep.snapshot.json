@@ -5449,6 +5449,51 @@
           "condition": "notequals",
           "option": "Neutral"
         }
+      },
+      "153051795:0:2": {
+        "parentId": "153051795:0",
+        "nodeContent": {
+          "nodeType": "FsLogicLeafNode",
+          "fieldId": "154795826",
+          "condition": "$lte",
+          "option": 9
+        }
+      },
+      "153051795:0:3": {
+        "parentId": "153051795:0",
+        "nodeContent": {
+          "nodeType": "FsLogicBranchNode",
+          "ownerFieldId": "154795826",
+          "action": "show",
+          "conditional": "any"
+        }
+      },
+      "153051795:0:3:4": {
+        "parentId": "153051795:0:3",
+        "nodeContent": {
+          "nodeType": "FsLogicLeafNode",
+          "fieldId": "154796590",
+          "condition": "$lte",
+          "option": 13
+        }
+      },
+      "153051795:0:5": {
+        "parentId": "153051795:0",
+        "nodeContent": {
+          "nodeType": "FsLogicBranchNode",
+          "ownerFieldId": "154795680",
+          "action": "show",
+          "conditional": "any"
+        }
+      },
+      "153051795:0:5:6": {
+        "parentId": "153051795:0:5",
+        "nodeContent": {
+          "nodeType": "FsLogicLeafNode",
+          "fieldId": "154795678",
+          "condition": "notequals",
+          "option": "False"
+        }
       }
     },
     "153051796": {
@@ -5494,6 +5539,51 @@
           "fieldId": "151678347",
           "condition": "notequals",
           "option": "Neutral"
+        }
+      },
+      "153051796:2:4": {
+        "parentId": "153051796:2",
+        "nodeContent": {
+          "nodeType": "FsLogicLeafNode",
+          "fieldId": "154795826",
+          "condition": "$lte",
+          "option": 9
+        }
+      },
+      "153051796:2:5": {
+        "parentId": "153051796:2",
+        "nodeContent": {
+          "nodeType": "FsLogicBranchNode",
+          "ownerFieldId": "154795826",
+          "action": "show",
+          "conditional": "any"
+        }
+      },
+      "153051796:2:5:6": {
+        "parentId": "153051796:2:5",
+        "nodeContent": {
+          "nodeType": "FsLogicLeafNode",
+          "fieldId": "154796590",
+          "condition": "$lte",
+          "option": 13
+        }
+      },
+      "153051796:2:7": {
+        "parentId": "153051796:2",
+        "nodeContent": {
+          "nodeType": "FsLogicBranchNode",
+          "ownerFieldId": "154795680",
+          "action": "show",
+          "conditional": "any"
+        }
+      },
+      "153051796:2:7:8": {
+        "parentId": "153051796:2:7",
+        "nodeContent": {
+          "nodeType": "FsLogicLeafNode",
+          "fieldId": "154795678",
+          "condition": "notequals",
+          "option": "False"
         }
       }
     },
@@ -6222,7 +6312,83 @@
           "option": "Neutral"
         }
       }
-    }
+    },
+    "154795678": null,
+    "154795680": {
+      "154795680": {
+        "parentId": "154795680",
+        "nodeContent": {
+          "nodeType": "FsVirtualRootNode",
+          "fieldId": "154795680",
+          "conditional": "all"
+        }
+      },
+      "154795680:0": {
+        "parentId": "154795680",
+        "nodeContent": {
+          "nodeType": "FsLogicBranchNode",
+          "ownerFieldId": "154795680",
+          "action": "show",
+          "conditional": "all"
+        }
+      },
+      "154795680:0:1": {
+        "parentId": "154795680:0",
+        "nodeContent": {
+          "nodeType": "FsLogicLeafNode",
+          "fieldId": "154795678",
+          "condition": "equals",
+          "option": "False"
+        }
+      }
+    },
+    "154795826": {
+      "154795826": {
+        "parentId": "154795826",
+        "nodeContent": {
+          "nodeType": "FsVirtualRootNode",
+          "fieldId": "154795826",
+          "conditional": "all"
+        }
+      },
+      "154795826:0": {
+        "parentId": "154795826",
+        "nodeContent": {
+          "nodeType": "FsLogicBranchNode",
+          "ownerFieldId": "154795826",
+          "action": "show",
+          "conditional": "all"
+        }
+      },
+      "154795826:0:1": {
+        "parentId": "154795826:0",
+        "nodeContent": {
+          "nodeType": "FsLogicLeafNode",
+          "fieldId": "154796590",
+          "condition": "greaterthan",
+          "option": 13
+        }
+      },
+      "154795826:2": {
+        "parentId": "154795826",
+        "nodeContent": {
+          "nodeType": "FsLogicBranchNode",
+          "ownerFieldId": "154795680",
+          "action": "show",
+          "conditional": "all"
+        }
+      },
+      "154795826:2:3": {
+        "parentId": "154795826:2",
+        "nodeContent": {
+          "nodeType": "FsLogicLeafNode",
+          "fieldId": "154795678",
+          "condition": "equals",
+          "option": "False"
+        }
+      }
+    },
+    "154796590": null
   },
   "d3Mappings": {
     "148456700": null,
@@ -6234,7 +6400,7 @@
           "nodeId": "148456734",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "148456734",
-          "label": "show '(A) A->B->C-D->E->A (logi' if all"
+          "label": ["vRoot", "(A) A->B->C-D->E->A (logi...", " if all"]
         }
       },
       {
@@ -6244,7 +6410,7 @@
           "nodeId": "148456734:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148456734",
-          "label": "show '(A) A->B->C-D->E->A (logi' if all"
+          "label": ["show", "(A) A->B->C-D->E->A (logi...", " if all"]
         }
       },
       {
@@ -6254,7 +6420,7 @@
           "nodeId": "148456734:0:1",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "148456742",
-          "label": ["(B) A->B->C-D->E->A (logi", "equals", "OptionA"]
+          "label": ["(B) A->B->C-D->E->A (logi...", "equals", "OptionA"]
         }
       },
       {
@@ -6264,7 +6430,7 @@
           "nodeId": "148456734:0:2",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148456742",
-          "label": "show '(B) A->B->C-D->E->A (logi' if all"
+          "label": ["show", "(B) A->B->C-D->E->A (logi...", " if all"]
         }
       },
       {
@@ -6274,7 +6440,7 @@
           "nodeId": "148456734:0:2:3",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "148456741",
-          "label": ["(C) A->B->C-D->E->A (logi", "equals", "OptionA"]
+          "label": ["(C) A->B->C-D->E->A (logi...", "equals", "OptionA"]
         }
       },
       {
@@ -6284,7 +6450,7 @@
           "nodeId": "148456734:0:2:4",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148456741",
-          "label": "show '(C) A->B->C-D->E->A (logi' if all"
+          "label": ["show", "(C) A->B->C-D->E->A (logi...", " if all"]
         }
       },
       {
@@ -6294,7 +6460,7 @@
           "nodeId": "148456734:0:2:4:5",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "148456740",
-          "label": ["(D) A->B->C-D->E->A (logi", "equals", "OptionA"]
+          "label": ["(D) A->B->C-D->E->A (logi...", "equals", "OptionA"]
         }
       },
       {
@@ -6304,7 +6470,7 @@
           "nodeId": "148456734:0:2:4:6",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148456740",
-          "label": "show '(D) A->B->C-D->E->A (logi' if all"
+          "label": ["show", "(D) A->B->C-D->E->A (logi...", " if all"]
         }
       },
       {
@@ -6314,7 +6480,7 @@
           "nodeId": "148456734:0:2:4:6:7",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "148456739",
-          "label": ["(E) A->B->C-D->E->A (logi", "equals", "OptionA"]
+          "label": ["(E) A->B->C-D->E->A (logi...", "equals", "OptionA"]
         }
       },
       {
@@ -6324,7 +6490,7 @@
           "nodeId": "148456734:0:2:4:6:8",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148456739",
-          "label": "show '(E) A->B->C-D->E->A (logi' if all"
+          "label": ["show", "(E) A->B->C-D->E->A (logi...", " if all"]
         }
       },
       {
@@ -6334,7 +6500,7 @@
           "nodeId": "148456734:0:2:4:6:8:9",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "148456734",
-          "label": ["(A) A->B->C-D->E->A (logi", "equals", "OptionA"]
+          "label": ["(A) A->B->C-D->E->A (logi...", "equals", "OptionA"]
         }
       },
       {
@@ -6358,7 +6524,7 @@
           "sourceNodeId": "148456734:0",
           "targetFieldId": "148456734",
           "targetNodeId": "148456734:0:2:4:6:8:10",
-          "label": ["(E) A->B->C-D->E->A (logi", "all", "all"]
+          "label": ["(E) A->B->C-D->E->A (logi...", "all", "all"]
         }
       }
     ],
@@ -6370,7 +6536,7 @@
           "nodeId": "148456739",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "148456739",
-          "label": "show '(E) A->B->C-D->E->A (logi' if all"
+          "label": ["vRoot", "(E) A->B->C-D->E->A (logi...", " if all"]
         }
       },
       {
@@ -6380,7 +6546,7 @@
           "nodeId": "148456739:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148456739",
-          "label": "show '(E) A->B->C-D->E->A (logi' if all"
+          "label": ["show", "(E) A->B->C-D->E->A (logi...", " if all"]
         }
       },
       {
@@ -6390,7 +6556,7 @@
           "nodeId": "148456739:0:1",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "148456734",
-          "label": ["(A) A->B->C-D->E->A (logi", "equals", "OptionA"]
+          "label": ["(A) A->B->C-D->E->A (logi...", "equals", "OptionA"]
         }
       },
       {
@@ -6400,7 +6566,7 @@
           "nodeId": "148456739:0:2",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148456734",
-          "label": "show '(A) A->B->C-D->E->A (logi' if all"
+          "label": ["show", "(A) A->B->C-D->E->A (logi...", " if all"]
         }
       },
       {
@@ -6410,7 +6576,7 @@
           "nodeId": "148456739:0:2:3",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "148456742",
-          "label": ["(B) A->B->C-D->E->A (logi", "equals", "OptionA"]
+          "label": ["(B) A->B->C-D->E->A (logi...", "equals", "OptionA"]
         }
       },
       {
@@ -6420,7 +6586,7 @@
           "nodeId": "148456739:0:2:4",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148456742",
-          "label": "show '(B) A->B->C-D->E->A (logi' if all"
+          "label": ["show", "(B) A->B->C-D->E->A (logi...", " if all"]
         }
       },
       {
@@ -6430,7 +6596,7 @@
           "nodeId": "148456739:0:2:4:5",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "148456741",
-          "label": ["(C) A->B->C-D->E->A (logi", "equals", "OptionA"]
+          "label": ["(C) A->B->C-D->E->A (logi...", "equals", "OptionA"]
         }
       },
       {
@@ -6440,7 +6606,7 @@
           "nodeId": "148456739:0:2:4:6",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148456741",
-          "label": "show '(C) A->B->C-D->E->A (logi' if all"
+          "label": ["show", "(C) A->B->C-D->E->A (logi...", " if all"]
         }
       },
       {
@@ -6450,7 +6616,7 @@
           "nodeId": "148456739:0:2:4:6:7",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "148456740",
-          "label": ["(D) A->B->C-D->E->A (logi", "equals", "OptionA"]
+          "label": ["(D) A->B->C-D->E->A (logi...", "equals", "OptionA"]
         }
       },
       {
@@ -6460,7 +6626,7 @@
           "nodeId": "148456739:0:2:4:6:8",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148456740",
-          "label": "show '(D) A->B->C-D->E->A (logi' if all"
+          "label": ["show", "(D) A->B->C-D->E->A (logi...", " if all"]
         }
       },
       {
@@ -6470,7 +6636,7 @@
           "nodeId": "148456739:0:2:4:6:8:9",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "148456739",
-          "label": ["(E) A->B->C-D->E->A (logi", "equals", "OptionA"]
+          "label": ["(E) A->B->C-D->E->A (logi...", "equals", "OptionA"]
         }
       },
       {
@@ -6494,7 +6660,7 @@
           "sourceNodeId": "148456739:0",
           "targetFieldId": "148456739",
           "targetNodeId": "148456739:0:2:4:6:8:10",
-          "label": ["(D) A->B->C-D->E->A (logi", "all", "all"]
+          "label": ["(D) A->B->C-D->E->A (logi...", "all", "all"]
         }
       }
     ],
@@ -6506,7 +6672,7 @@
           "nodeId": "148456740",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "148456740",
-          "label": "show '(D) A->B->C-D->E->A (logi' if all"
+          "label": ["vRoot", "(D) A->B->C-D->E->A (logi...", " if all"]
         }
       },
       {
@@ -6516,7 +6682,7 @@
           "nodeId": "148456740:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148456740",
-          "label": "show '(D) A->B->C-D->E->A (logi' if all"
+          "label": ["show", "(D) A->B->C-D->E->A (logi...", " if all"]
         }
       },
       {
@@ -6526,7 +6692,7 @@
           "nodeId": "148456740:0:1",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "148456739",
-          "label": ["(E) A->B->C-D->E->A (logi", "equals", "OptionA"]
+          "label": ["(E) A->B->C-D->E->A (logi...", "equals", "OptionA"]
         }
       },
       {
@@ -6536,7 +6702,7 @@
           "nodeId": "148456740:0:2",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148456739",
-          "label": "show '(E) A->B->C-D->E->A (logi' if all"
+          "label": ["show", "(E) A->B->C-D->E->A (logi...", " if all"]
         }
       },
       {
@@ -6546,7 +6712,7 @@
           "nodeId": "148456740:0:2:3",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "148456734",
-          "label": ["(A) A->B->C-D->E->A (logi", "equals", "OptionA"]
+          "label": ["(A) A->B->C-D->E->A (logi...", "equals", "OptionA"]
         }
       },
       {
@@ -6556,7 +6722,7 @@
           "nodeId": "148456740:0:2:4",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148456734",
-          "label": "show '(A) A->B->C-D->E->A (logi' if all"
+          "label": ["show", "(A) A->B->C-D->E->A (logi...", " if all"]
         }
       },
       {
@@ -6566,7 +6732,7 @@
           "nodeId": "148456740:0:2:4:5",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "148456742",
-          "label": ["(B) A->B->C-D->E->A (logi", "equals", "OptionA"]
+          "label": ["(B) A->B->C-D->E->A (logi...", "equals", "OptionA"]
         }
       },
       {
@@ -6576,7 +6742,7 @@
           "nodeId": "148456740:0:2:4:6",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148456742",
-          "label": "show '(B) A->B->C-D->E->A (logi' if all"
+          "label": ["show", "(B) A->B->C-D->E->A (logi...", " if all"]
         }
       },
       {
@@ -6586,7 +6752,7 @@
           "nodeId": "148456740:0:2:4:6:7",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "148456741",
-          "label": ["(C) A->B->C-D->E->A (logi", "equals", "OptionA"]
+          "label": ["(C) A->B->C-D->E->A (logi...", "equals", "OptionA"]
         }
       },
       {
@@ -6596,7 +6762,7 @@
           "nodeId": "148456740:0:2:4:6:8",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148456741",
-          "label": "show '(C) A->B->C-D->E->A (logi' if all"
+          "label": ["show", "(C) A->B->C-D->E->A (logi...", " if all"]
         }
       },
       {
@@ -6606,7 +6772,7 @@
           "nodeId": "148456740:0:2:4:6:8:9",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "148456740",
-          "label": ["(D) A->B->C-D->E->A (logi", "equals", "OptionA"]
+          "label": ["(D) A->B->C-D->E->A (logi...", "equals", "OptionA"]
         }
       },
       {
@@ -6630,7 +6796,7 @@
           "sourceNodeId": "148456740:0",
           "targetFieldId": "148456740",
           "targetNodeId": "148456740:0:2:4:6:8:10",
-          "label": ["(C) A->B->C-D->E->A (logi", "all", "all"]
+          "label": ["(C) A->B->C-D->E->A (logi...", "all", "all"]
         }
       }
     ],
@@ -6642,7 +6808,7 @@
           "nodeId": "148456741",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "148456741",
-          "label": "show '(C) A->B->C-D->E->A (logi' if all"
+          "label": ["vRoot", "(C) A->B->C-D->E->A (logi...", " if all"]
         }
       },
       {
@@ -6652,7 +6818,7 @@
           "nodeId": "148456741:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148456741",
-          "label": "show '(C) A->B->C-D->E->A (logi' if all"
+          "label": ["show", "(C) A->B->C-D->E->A (logi...", " if all"]
         }
       },
       {
@@ -6662,7 +6828,7 @@
           "nodeId": "148456741:0:1",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "148456740",
-          "label": ["(D) A->B->C-D->E->A (logi", "equals", "OptionA"]
+          "label": ["(D) A->B->C-D->E->A (logi...", "equals", "OptionA"]
         }
       },
       {
@@ -6672,7 +6838,7 @@
           "nodeId": "148456741:0:2",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148456740",
-          "label": "show '(D) A->B->C-D->E->A (logi' if all"
+          "label": ["show", "(D) A->B->C-D->E->A (logi...", " if all"]
         }
       },
       {
@@ -6682,7 +6848,7 @@
           "nodeId": "148456741:0:2:3",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "148456739",
-          "label": ["(E) A->B->C-D->E->A (logi", "equals", "OptionA"]
+          "label": ["(E) A->B->C-D->E->A (logi...", "equals", "OptionA"]
         }
       },
       {
@@ -6692,7 +6858,7 @@
           "nodeId": "148456741:0:2:4",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148456739",
-          "label": "show '(E) A->B->C-D->E->A (logi' if all"
+          "label": ["show", "(E) A->B->C-D->E->A (logi...", " if all"]
         }
       },
       {
@@ -6702,7 +6868,7 @@
           "nodeId": "148456741:0:2:4:5",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "148456734",
-          "label": ["(A) A->B->C-D->E->A (logi", "equals", "OptionA"]
+          "label": ["(A) A->B->C-D->E->A (logi...", "equals", "OptionA"]
         }
       },
       {
@@ -6712,7 +6878,7 @@
           "nodeId": "148456741:0:2:4:6",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148456734",
-          "label": "show '(A) A->B->C-D->E->A (logi' if all"
+          "label": ["show", "(A) A->B->C-D->E->A (logi...", " if all"]
         }
       },
       {
@@ -6722,7 +6888,7 @@
           "nodeId": "148456741:0:2:4:6:7",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "148456742",
-          "label": ["(B) A->B->C-D->E->A (logi", "equals", "OptionA"]
+          "label": ["(B) A->B->C-D->E->A (logi...", "equals", "OptionA"]
         }
       },
       {
@@ -6732,7 +6898,7 @@
           "nodeId": "148456741:0:2:4:6:8",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148456742",
-          "label": "show '(B) A->B->C-D->E->A (logi' if all"
+          "label": ["show", "(B) A->B->C-D->E->A (logi...", " if all"]
         }
       },
       {
@@ -6742,7 +6908,7 @@
           "nodeId": "148456741:0:2:4:6:8:9",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "148456741",
-          "label": ["(C) A->B->C-D->E->A (logi", "equals", "OptionA"]
+          "label": ["(C) A->B->C-D->E->A (logi...", "equals", "OptionA"]
         }
       },
       {
@@ -6766,7 +6932,7 @@
           "sourceNodeId": "148456741:0",
           "targetFieldId": "148456741",
           "targetNodeId": "148456741:0:2:4:6:8:10",
-          "label": ["(B) A->B->C-D->E->A (logi", "all", "all"]
+          "label": ["(B) A->B->C-D->E->A (logi...", "all", "all"]
         }
       }
     ],
@@ -6778,7 +6944,7 @@
           "nodeId": "148456742",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "148456742",
-          "label": "show '(B) A->B->C-D->E->A (logi' if all"
+          "label": ["vRoot", "(B) A->B->C-D->E->A (logi...", " if all"]
         }
       },
       {
@@ -6788,7 +6954,7 @@
           "nodeId": "148456742:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148456742",
-          "label": "show '(B) A->B->C-D->E->A (logi' if all"
+          "label": ["show", "(B) A->B->C-D->E->A (logi...", " if all"]
         }
       },
       {
@@ -6798,7 +6964,7 @@
           "nodeId": "148456742:0:1",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "148456741",
-          "label": ["(C) A->B->C-D->E->A (logi", "equals", "OptionA"]
+          "label": ["(C) A->B->C-D->E->A (logi...", "equals", "OptionA"]
         }
       },
       {
@@ -6808,7 +6974,7 @@
           "nodeId": "148456742:0:2",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148456741",
-          "label": "show '(C) A->B->C-D->E->A (logi' if all"
+          "label": ["show", "(C) A->B->C-D->E->A (logi...", " if all"]
         }
       },
       {
@@ -6818,7 +6984,7 @@
           "nodeId": "148456742:0:2:3",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "148456740",
-          "label": ["(D) A->B->C-D->E->A (logi", "equals", "OptionA"]
+          "label": ["(D) A->B->C-D->E->A (logi...", "equals", "OptionA"]
         }
       },
       {
@@ -6828,7 +6994,7 @@
           "nodeId": "148456742:0:2:4",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148456740",
-          "label": "show '(D) A->B->C-D->E->A (logi' if all"
+          "label": ["show", "(D) A->B->C-D->E->A (logi...", " if all"]
         }
       },
       {
@@ -6838,7 +7004,7 @@
           "nodeId": "148456742:0:2:4:5",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "148456739",
-          "label": ["(E) A->B->C-D->E->A (logi", "equals", "OptionA"]
+          "label": ["(E) A->B->C-D->E->A (logi...", "equals", "OptionA"]
         }
       },
       {
@@ -6848,7 +7014,7 @@
           "nodeId": "148456742:0:2:4:6",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148456739",
-          "label": "show '(E) A->B->C-D->E->A (logi' if all"
+          "label": ["show", "(E) A->B->C-D->E->A (logi...", " if all"]
         }
       },
       {
@@ -6858,7 +7024,7 @@
           "nodeId": "148456742:0:2:4:6:7",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "148456734",
-          "label": ["(A) A->B->C-D->E->A (logi", "equals", "OptionA"]
+          "label": ["(A) A->B->C-D->E->A (logi...", "equals", "OptionA"]
         }
       },
       {
@@ -6868,7 +7034,7 @@
           "nodeId": "148456742:0:2:4:6:8",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148456734",
-          "label": "show '(A) A->B->C-D->E->A (logi' if all"
+          "label": ["show", "(A) A->B->C-D->E->A (logi...", " if all"]
         }
       },
       {
@@ -6878,7 +7044,7 @@
           "nodeId": "148456742:0:2:4:6:8:9",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "148456742",
-          "label": ["(B) A->B->C-D->E->A (logi", "equals", "OptionA"]
+          "label": ["(B) A->B->C-D->E->A (logi...", "equals", "OptionA"]
         }
       },
       {
@@ -6902,7 +7068,7 @@
           "sourceNodeId": "148456742:0",
           "targetFieldId": "148456742",
           "targetNodeId": "148456742:0:2:4:6:8:10",
-          "label": ["(A) A->B->C-D->E->A (logi", "all", "all"]
+          "label": ["(A) A->B->C-D->E->A (logi...", "all", "all"]
         }
       }
     ],
@@ -6914,7 +7080,7 @@
           "nodeId": "148509465",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "148509465",
-          "label": "show '' if all"
+          "label": ["vRoot", "Inter-dependent (not so m...", " if all"]
         }
       },
       {
@@ -6924,7 +7090,7 @@
           "nodeId": "148509465:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148509465",
-          "label": "show '' if all"
+          "label": ["show", "Inter-dependent (not so m...", " if all"]
         }
       },
       {
@@ -6944,7 +7110,7 @@
           "nodeId": "148509465:0:2",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148509470",
-          "label": "show 'A (inter-dependent) ' if all"
+          "label": ["show", "A (inter-dependent) ", " if all"]
         }
       },
       {
@@ -7056,7 +7222,7 @@
           "nodeId": "148509465:0:9",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148509476",
-          "label": "show 'B (inter-dependent)' if all"
+          "label": ["show", "B (inter-dependent)", " if all"]
         }
       },
       {
@@ -7170,7 +7336,7 @@
           "nodeId": "148509470",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "148509470",
-          "label": "show 'A (inter-dependent) ' if all"
+          "label": ["vRoot", "A (inter-dependent) ", " if all"]
         }
       },
       {
@@ -7180,7 +7346,7 @@
           "nodeId": "148509470:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148509470",
-          "label": "show 'A (inter-dependent) ' if all"
+          "label": ["show", "A (inter-dependent) ", " if all"]
         }
       },
       {
@@ -7200,7 +7366,7 @@
           "nodeId": "148509470:0:2",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148509465",
-          "label": "show '' if all"
+          "label": ["show", "Inter-dependent (not so m...", " if all"]
         }
       },
       {
@@ -7234,7 +7400,7 @@
           "sourceNodeId": "148509470:0",
           "targetFieldId": "148509470",
           "targetNodeId": "148509470:0:2:4",
-          "label": ["Inter-dependent (not so m", "all", "all"]
+          "label": ["Inter-dependent (not so m...", "all", "all"]
         }
       },
       {
@@ -7258,7 +7424,7 @@
           "sourceNodeId": "148509470:0:2",
           "targetFieldId": "148509465",
           "targetNodeId": "148509470:0:2:5",
-          "label": ["Inter-dependent (not so m", "all", "all"]
+          "label": ["Inter-dependent (not so m...", "all", "all"]
         }
       },
       {
@@ -7278,7 +7444,7 @@
           "nodeId": "148509470:0:2:7",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148509476",
-          "label": "show 'B (inter-dependent)' if all"
+          "label": ["show", "B (inter-dependent)", " if all"]
         }
       },
       {
@@ -7450,7 +7616,7 @@
           "nodeId": "148509474",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "148509474",
-          "label": "show 'B.1 (inter-dependent)' if all"
+          "label": ["vRoot", "B.1 (inter-dependent)", " if all"]
         }
       },
       {
@@ -7460,7 +7626,7 @@
           "nodeId": "148509474:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148509465",
-          "label": "show '' if all"
+          "label": ["show", "Inter-dependent (not so m...", " if all"]
         }
       },
       {
@@ -7480,7 +7646,7 @@
           "nodeId": "148509474:0:2",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148509470",
-          "label": "show 'A (inter-dependent) ' if all"
+          "label": ["show", "A (inter-dependent) ", " if all"]
         }
       },
       {
@@ -7592,7 +7758,7 @@
           "nodeId": "148509474:0:9",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148509476",
-          "label": "show 'B (inter-dependent)' if all"
+          "label": ["show", "B (inter-dependent)", " if all"]
         }
       },
       {
@@ -7706,7 +7872,7 @@
           "nodeId": "148509475",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "148509475",
-          "label": "show 'B.0 (inter-dependent)' if all"
+          "label": ["vRoot", "B.0 (inter-dependent)", " if all"]
         }
       },
       {
@@ -7716,7 +7882,7 @@
           "nodeId": "148509475:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148509465",
-          "label": "show '' if all"
+          "label": ["show", "Inter-dependent (not so m...", " if all"]
         }
       },
       {
@@ -7736,7 +7902,7 @@
           "nodeId": "148509475:0:2",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148509470",
-          "label": "show 'A (inter-dependent) ' if all"
+          "label": ["show", "A (inter-dependent) ", " if all"]
         }
       },
       {
@@ -7848,7 +8014,7 @@
           "nodeId": "148509475:0:9",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148509476",
-          "label": "show 'B (inter-dependent)' if all"
+          "label": ["show", "B (inter-dependent)", " if all"]
         }
       },
       {
@@ -7962,7 +8128,7 @@
           "nodeId": "148509476",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "148509476",
-          "label": "show 'B (inter-dependent)' if all"
+          "label": ["vRoot", "B (inter-dependent)", " if all"]
         }
       },
       {
@@ -7972,7 +8138,7 @@
           "nodeId": "148509476:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148509476",
-          "label": "show 'B (inter-dependent)' if all"
+          "label": ["show", "B (inter-dependent)", " if all"]
         }
       },
       {
@@ -7992,7 +8158,7 @@
           "nodeId": "148509476:0:2",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148509465",
-          "label": "show '' if all"
+          "label": ["show", "Inter-dependent (not so m...", " if all"]
         }
       },
       {
@@ -8012,7 +8178,7 @@
           "nodeId": "148509476:0:2:4",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148509470",
-          "label": "show 'A (inter-dependent) ' if all"
+          "label": ["show", "A (inter-dependent) ", " if all"]
         }
       },
       {
@@ -8242,7 +8408,7 @@
           "nodeId": "148509477",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "148509477",
-          "label": "show 'A.1 (inter-dependent)' if all"
+          "label": ["vRoot", "A.1 (inter-dependent)", " if all"]
         }
       },
       {
@@ -8252,7 +8418,7 @@
           "nodeId": "148509477:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148509465",
-          "label": "show '' if all"
+          "label": ["show", "Inter-dependent (not so m...", " if all"]
         }
       },
       {
@@ -8272,7 +8438,7 @@
           "nodeId": "148509477:0:2",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148509470",
-          "label": "show 'A (inter-dependent) ' if all"
+          "label": ["show", "A (inter-dependent) ", " if all"]
         }
       },
       {
@@ -8384,7 +8550,7 @@
           "nodeId": "148509477:0:9",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148509476",
-          "label": "show 'B (inter-dependent)' if all"
+          "label": ["show", "B (inter-dependent)", " if all"]
         }
       },
       {
@@ -8498,7 +8664,7 @@
           "nodeId": "148509478",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "148509478",
-          "label": "show 'A.0 (inter-dependent)' if all"
+          "label": ["vRoot", "A.0 (inter-dependent)", " if all"]
         }
       },
       {
@@ -8508,7 +8674,7 @@
           "nodeId": "148509478:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148509465",
-          "label": "show '' if all"
+          "label": ["show", "Inter-dependent (not so m...", " if all"]
         }
       },
       {
@@ -8528,7 +8694,7 @@
           "nodeId": "148509478:0:2",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148509470",
-          "label": "show 'A (inter-dependent) ' if all"
+          "label": ["show", "A (inter-dependent) ", " if all"]
         }
       },
       {
@@ -8640,7 +8806,7 @@
           "nodeId": "148509478:0:9",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148509476",
-          "label": "show 'B (inter-dependent)' if all"
+          "label": ["show", "B (inter-dependent)", " if all"]
         }
       },
       {
@@ -8755,7 +8921,7 @@
           "nodeId": "148604161",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "148604161",
-          "label": "show '(A) Big Dipper A->B->C->D' if all"
+          "label": ["vRoot", "(A) Big Dipper A->B->C->D...", " if all"]
         }
       },
       {
@@ -8765,7 +8931,7 @@
           "nodeId": "148604161:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148604161",
-          "label": "show '(A) Big Dipper A->B->C->D' if any"
+          "label": ["show", "(A) Big Dipper A->B->C->D...", " if any"]
         }
       },
       {
@@ -8775,7 +8941,7 @@
           "nodeId": "148604161:0:1",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "148604236",
-          "label": ["(B) Big Dipper A->B->C->D", "equals", "True"]
+          "label": ["(B) Big Dipper A->B->C->D...", "equals", "True"]
         }
       },
       {
@@ -8785,7 +8951,7 @@
           "nodeId": "148604161:0:2",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148604236",
-          "label": "show '(B) Big Dipper A->B->C->D' if all"
+          "label": ["show", "(B) Big Dipper A->B->C->D...", " if all"]
         }
       },
       {
@@ -8795,7 +8961,7 @@
           "nodeId": "148604161:0:2:3",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "148604235",
-          "label": ["(C) Big Dipper A->B->C->D", "equals", "True"]
+          "label": ["(C) Big Dipper A->B->C->D...", "equals", "True"]
         }
       },
       {
@@ -8805,7 +8971,7 @@
           "nodeId": "148604161:0:2:4",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148604235",
-          "label": "show '(C) Big Dipper A->B->C->D' if any"
+          "label": ["show", "(C) Big Dipper A->B->C->D...", " if any"]
         }
       },
       {
@@ -8815,7 +8981,7 @@
           "nodeId": "148604161:0:2:4:5",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "148604234",
-          "label": ["(D) Big Dipper A->B->C->D", "equals", "True"]
+          "label": ["(D) Big Dipper A->B->C->D...", "equals", "True"]
         }
       },
       {
@@ -8825,7 +8991,7 @@
           "nodeId": "148604161:0:2:4:6",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148604234",
-          "label": "show '(D) Big Dipper A->B->C->D' if any"
+          "label": ["show", "(D) Big Dipper A->B->C->D...", " if any"]
         }
       },
       {
@@ -8835,7 +9001,7 @@
           "nodeId": "148604161:0:2:4:6:7",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "148604236",
-          "label": ["(B) Big Dipper A->B->C->D", "equals", "True"]
+          "label": ["(B) Big Dipper A->B->C->D...", "equals", "True"]
         }
       },
       {
@@ -8859,7 +9025,7 @@
           "sourceNodeId": "148604161:0:2",
           "targetFieldId": "148604236",
           "targetNodeId": "148604161:0:2:4:6:8",
-          "label": ["(D) Big Dipper A->B->C->D", "all", "all"]
+          "label": ["(D) Big Dipper A->B->C->D...", "all", "all"]
         }
       },
       {
@@ -8881,7 +9047,7 @@
           "nodeId": "148604234",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "148604234",
-          "label": "show '(D) Big Dipper A->B->C->D' if all"
+          "label": ["vRoot", "(D) Big Dipper A->B->C->D...", " if all"]
         }
       },
       {
@@ -8891,7 +9057,7 @@
           "nodeId": "148604234:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148604234",
-          "label": "show '(D) Big Dipper A->B->C->D' if any"
+          "label": ["show", "(D) Big Dipper A->B->C->D...", " if any"]
         }
       },
       {
@@ -8901,7 +9067,7 @@
           "nodeId": "148604234:0:1",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "148604236",
-          "label": ["(B) Big Dipper A->B->C->D", "equals", "True"]
+          "label": ["(B) Big Dipper A->B->C->D...", "equals", "True"]
         }
       },
       {
@@ -8911,7 +9077,7 @@
           "nodeId": "148604234:0:2",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148604236",
-          "label": "show '(B) Big Dipper A->B->C->D' if all"
+          "label": ["show", "(B) Big Dipper A->B->C->D...", " if all"]
         }
       },
       {
@@ -8921,7 +9087,7 @@
           "nodeId": "148604234:0:2:3",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "148604235",
-          "label": ["(C) Big Dipper A->B->C->D", "equals", "True"]
+          "label": ["(C) Big Dipper A->B->C->D...", "equals", "True"]
         }
       },
       {
@@ -8931,7 +9097,7 @@
           "nodeId": "148604234:0:2:4",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148604235",
-          "label": "show '(C) Big Dipper A->B->C->D' if any"
+          "label": ["show", "(C) Big Dipper A->B->C->D...", " if any"]
         }
       },
       {
@@ -8941,7 +9107,7 @@
           "nodeId": "148604234:0:2:4:5",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "148604234",
-          "label": ["(D) Big Dipper A->B->C->D", "equals", "True"]
+          "label": ["(D) Big Dipper A->B->C->D...", "equals", "True"]
         }
       },
       {
@@ -8965,7 +9131,7 @@
           "sourceNodeId": "148604234:0",
           "targetFieldId": "148604234",
           "targetNodeId": "148604234:0:2:4:6",
-          "label": ["(C) Big Dipper A->B->C->D", "any", "any"]
+          "label": ["(C) Big Dipper A->B->C->D...", "any", "any"]
         }
       },
       {
@@ -8987,7 +9153,7 @@
           "nodeId": "148604235",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "148604235",
-          "label": "show '(C) Big Dipper A->B->C->D' if all"
+          "label": ["vRoot", "(C) Big Dipper A->B->C->D...", " if all"]
         }
       },
       {
@@ -8997,7 +9163,7 @@
           "nodeId": "148604235:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148604235",
-          "label": "show '(C) Big Dipper A->B->C->D' if any"
+          "label": ["show", "(C) Big Dipper A->B->C->D...", " if any"]
         }
       },
       {
@@ -9007,7 +9173,7 @@
           "nodeId": "148604235:0:1",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "148604234",
-          "label": ["(D) Big Dipper A->B->C->D", "equals", "True"]
+          "label": ["(D) Big Dipper A->B->C->D...", "equals", "True"]
         }
       },
       {
@@ -9017,7 +9183,7 @@
           "nodeId": "148604235:0:2",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148604234",
-          "label": "show '(D) Big Dipper A->B->C->D' if any"
+          "label": ["show", "(D) Big Dipper A->B->C->D...", " if any"]
         }
       },
       {
@@ -9027,7 +9193,7 @@
           "nodeId": "148604235:0:2:3",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "148604236",
-          "label": ["(B) Big Dipper A->B->C->D", "equals", "True"]
+          "label": ["(B) Big Dipper A->B->C->D...", "equals", "True"]
         }
       },
       {
@@ -9037,7 +9203,7 @@
           "nodeId": "148604235:0:2:4",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148604236",
-          "label": "show '(B) Big Dipper A->B->C->D' if all"
+          "label": ["show", "(B) Big Dipper A->B->C->D...", " if all"]
         }
       },
       {
@@ -9047,7 +9213,7 @@
           "nodeId": "148604235:0:2:4:5",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "148604235",
-          "label": ["(C) Big Dipper A->B->C->D", "equals", "True"]
+          "label": ["(C) Big Dipper A->B->C->D...", "equals", "True"]
         }
       },
       {
@@ -9071,7 +9237,7 @@
           "sourceNodeId": "148604235:0",
           "targetFieldId": "148604235",
           "targetNodeId": "148604235:0:2:4:6",
-          "label": ["(B) Big Dipper A->B->C->D", "any", "any"]
+          "label": ["(B) Big Dipper A->B->C->D...", "any", "any"]
         }
       },
       {
@@ -9093,7 +9259,7 @@
           "nodeId": "148604236",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "148604236",
-          "label": "show '(B) Big Dipper A->B->C->D' if all"
+          "label": ["vRoot", "(B) Big Dipper A->B->C->D...", " if all"]
         }
       },
       {
@@ -9103,7 +9269,7 @@
           "nodeId": "148604236:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148604236",
-          "label": "show '(B) Big Dipper A->B->C->D' if all"
+          "label": ["show", "(B) Big Dipper A->B->C->D...", " if all"]
         }
       },
       {
@@ -9113,7 +9279,7 @@
           "nodeId": "148604236:0:1",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "148604235",
-          "label": ["(C) Big Dipper A->B->C->D", "equals", "True"]
+          "label": ["(C) Big Dipper A->B->C->D...", "equals", "True"]
         }
       },
       {
@@ -9123,7 +9289,7 @@
           "nodeId": "148604236:0:2",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148604235",
-          "label": "show '(C) Big Dipper A->B->C->D' if any"
+          "label": ["show", "(C) Big Dipper A->B->C->D...", " if any"]
         }
       },
       {
@@ -9133,7 +9299,7 @@
           "nodeId": "148604236:0:2:3",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "148604234",
-          "label": ["(D) Big Dipper A->B->C->D", "equals", "True"]
+          "label": ["(D) Big Dipper A->B->C->D...", "equals", "True"]
         }
       },
       {
@@ -9143,7 +9309,7 @@
           "nodeId": "148604236:0:2:4",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148604234",
-          "label": "show '(D) Big Dipper A->B->C->D' if any"
+          "label": ["show", "(D) Big Dipper A->B->C->D...", " if any"]
         }
       },
       {
@@ -9153,7 +9319,7 @@
           "nodeId": "148604236:0:2:4:5",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "148604236",
-          "label": ["(B) Big Dipper A->B->C->D", "equals", "True"]
+          "label": ["(B) Big Dipper A->B->C->D...", "equals", "True"]
         }
       },
       {
@@ -9177,7 +9343,7 @@
           "sourceNodeId": "148604236:0",
           "targetFieldId": "148604236",
           "targetNodeId": "148604236:0:2:4:6",
-          "label": ["(D) Big Dipper A->B->C->D", "all", "all"]
+          "label": ["(D) Big Dipper A->B->C->D...", "all", "all"]
         }
       },
       {
@@ -9201,7 +9367,7 @@
           "nodeId": "151701616",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "151701616",
-          "label": "show '' if all"
+          "label": ["vRoot", "", " if all"]
         }
       },
       {
@@ -9211,7 +9377,7 @@
           "nodeId": "151701616:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "151701616",
-          "label": "show '' if all"
+          "label": ["show", "", " if all"]
         }
       },
       {
@@ -9221,7 +9387,7 @@
           "nodeId": "151701616:0:1",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "148456734",
-          "label": ["(A) A->B->C-D->E->A (logi", "equals", "OptionA"]
+          "label": ["(A) A->B->C-D->E->A (logi...", "equals", "OptionA"]
         }
       },
       {
@@ -9231,7 +9397,7 @@
           "nodeId": "151701616:0:2",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148456734",
-          "label": "show '(A) A->B->C-D->E->A (logi' if all"
+          "label": ["show", "(A) A->B->C-D->E->A (logi...", " if all"]
         }
       },
       {
@@ -9241,7 +9407,7 @@
           "nodeId": "151701616:0:2:3",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "148456742",
-          "label": ["(B) A->B->C-D->E->A (logi", "equals", "OptionA"]
+          "label": ["(B) A->B->C-D->E->A (logi...", "equals", "OptionA"]
         }
       },
       {
@@ -9251,7 +9417,7 @@
           "nodeId": "151701616:0:2:4",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148456742",
-          "label": "show '(B) A->B->C-D->E->A (logi' if all"
+          "label": ["show", "(B) A->B->C-D->E->A (logi...", " if all"]
         }
       },
       {
@@ -9261,7 +9427,7 @@
           "nodeId": "151701616:0:2:4:5",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "148456741",
-          "label": ["(C) A->B->C-D->E->A (logi", "equals", "OptionA"]
+          "label": ["(C) A->B->C-D->E->A (logi...", "equals", "OptionA"]
         }
       },
       {
@@ -9271,7 +9437,7 @@
           "nodeId": "151701616:0:2:4:6",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148456741",
-          "label": "show '(C) A->B->C-D->E->A (logi' if all"
+          "label": ["show", "(C) A->B->C-D->E->A (logi...", " if all"]
         }
       },
       {
@@ -9281,7 +9447,7 @@
           "nodeId": "151701616:0:2:4:6:7",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "148456740",
-          "label": ["(D) A->B->C-D->E->A (logi", "equals", "OptionA"]
+          "label": ["(D) A->B->C-D->E->A (logi...", "equals", "OptionA"]
         }
       },
       {
@@ -9291,7 +9457,7 @@
           "nodeId": "151701616:0:2:4:6:8",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148456740",
-          "label": "show '(D) A->B->C-D->E->A (logi' if all"
+          "label": ["show", "(D) A->B->C-D->E->A (logi...", " if all"]
         }
       },
       {
@@ -9301,7 +9467,7 @@
           "nodeId": "151701616:0:2:4:6:8:9",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "148456739",
-          "label": ["(E) A->B->C-D->E->A (logi", "equals", "OptionA"]
+          "label": ["(E) A->B->C-D->E->A (logi...", "equals", "OptionA"]
         }
       },
       {
@@ -9311,7 +9477,7 @@
           "nodeId": "151701616:0:2:4:6:8:10",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "148456739",
-          "label": "show '(E) A->B->C-D->E->A (logi' if all"
+          "label": ["show", "(E) A->B->C-D->E->A (logi...", " if all"]
         }
       },
       {
@@ -9321,7 +9487,7 @@
           "nodeId": "151701616:0:2:4:6:8:10:11",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "148456734",
-          "label": ["(A) A->B->C-D->E->A (logi", "equals", "OptionA"]
+          "label": ["(A) A->B->C-D->E->A (logi...", "equals", "OptionA"]
         }
       },
       {
@@ -9345,7 +9511,7 @@
           "sourceNodeId": "151701616:0:2",
           "targetFieldId": "148456734",
           "targetNodeId": "151701616:0:2:4:6:8:10:12",
-          "label": ["(E) A->B->C-D->E->A (logi", "all", "all"]
+          "label": ["(E) A->B->C-D->E->A (logi...", "all", "all"]
         }
       }
     ],
@@ -9359,7 +9525,7 @@
           "nodeId": "152139062",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "152139062",
-          "label": "show 'A (ideal)' if all"
+          "label": ["vRoot", "A (ideal)", " if all"]
         }
       },
       {
@@ -9369,7 +9535,7 @@
           "nodeId": "152139062:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152139062",
-          "label": "show 'A (ideal)' if all"
+          "label": ["show", "A (ideal)", " if all"]
         }
       },
       {
@@ -9403,7 +9569,7 @@
           "nodeId": "152139065",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "152139065",
-          "label": "show 'B (ideal)' if all"
+          "label": ["vRoot", "B (ideal)", " if all"]
         }
       },
       {
@@ -9413,7 +9579,7 @@
           "nodeId": "152139065:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152139065",
-          "label": "show 'B (ideal)' if all"
+          "label": ["show", "B (ideal)", " if all"]
         }
       },
       {
@@ -9447,7 +9613,7 @@
           "nodeId": "152290543",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "152290543",
-          "label": "show '' if all"
+          "label": ["vRoot", "", " if all"]
         }
       },
       {
@@ -9457,7 +9623,7 @@
           "nodeId": "152290543:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152290543",
-          "label": "show '' if all"
+          "label": ["show", "", " if all"]
         }
       },
       {
@@ -9467,7 +9633,7 @@
           "nodeId": "152290543:0:1",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "152290545",
-          "label": ["(A) A->B->C-D->E->A (logi", "equals", "OptionA"]
+          "label": ["(A) A->B->C-D->E->A (logi...", "equals", "OptionA"]
         }
       }
     ],
@@ -9481,7 +9647,7 @@
           "nodeId": "152290546",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "152290546",
-          "label": "show '(B) A->B->C-D->E->A (logi' if all"
+          "label": ["vRoot", "(B) A->B->C-D->E->A (logi...", " if all"]
         }
       },
       {
@@ -9491,7 +9657,7 @@
           "nodeId": "152290546:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152290546",
-          "label": "show '(B) A->B->C-D->E->A (logi' if all"
+          "label": ["show", "(B) A->B->C-D->E->A (logi...", " if all"]
         }
       },
       {
@@ -9501,7 +9667,7 @@
           "nodeId": "152290546:0:1",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "152290547",
-          "label": ["(C) A->B->C-D->E->A (logi", "equals", "OptionA"]
+          "label": ["(C) A->B->C-D->E->A (logi...", "equals", "OptionA"]
         }
       },
       {
@@ -9511,7 +9677,7 @@
           "nodeId": "152290546:0:2",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152290547",
-          "label": "show '(C) A->B->C-D->E->A (logi' if all"
+          "label": ["show", "(C) A->B->C-D->E->A (logi...", " if all"]
         }
       },
       {
@@ -9521,7 +9687,7 @@
           "nodeId": "152290546:0:2:3",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "152290548",
-          "label": ["(D) A->B->C-D->E->A (logi", "equals", "OptionA"]
+          "label": ["(D) A->B->C-D->E->A (logi...", "equals", "OptionA"]
         }
       },
       {
@@ -9531,7 +9697,7 @@
           "nodeId": "152290546:0:2:4",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152290548",
-          "label": "show '(D) A->B->C-D->E->A (logi' if all"
+          "label": ["show", "(D) A->B->C-D->E->A (logi...", " if all"]
         }
       },
       {
@@ -9541,7 +9707,7 @@
           "nodeId": "152290546:0:2:4:5",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "152290549",
-          "label": ["(E) A->B->C-D->E->A (logi", "equals", "OptionA"]
+          "label": ["(E) A->B->C-D->E->A (logi...", "equals", "OptionA"]
         }
       },
       {
@@ -9551,7 +9717,7 @@
           "nodeId": "152290546:0:2:4:6",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152290549",
-          "label": "show '(E) A->B->C-D->E->A (logi' if all"
+          "label": ["show", "(E) A->B->C-D->E->A (logi...", " if all"]
         }
       },
       {
@@ -9561,7 +9727,7 @@
           "nodeId": "152290546:0:2:4:6:7",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "152290545",
-          "label": ["(A) A->B->C-D->E->A (logi", "equals", "OptionA"]
+          "label": ["(A) A->B->C-D->E->A (logi...", "equals", "OptionA"]
         }
       }
     ],
@@ -9573,7 +9739,7 @@
           "nodeId": "152290547",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "152290547",
-          "label": "show '(C) A->B->C-D->E->A (logi' if all"
+          "label": ["vRoot", "(C) A->B->C-D->E->A (logi...", " if all"]
         }
       },
       {
@@ -9583,7 +9749,7 @@
           "nodeId": "152290547:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152290547",
-          "label": "show '(C) A->B->C-D->E->A (logi' if all"
+          "label": ["show", "(C) A->B->C-D->E->A (logi...", " if all"]
         }
       },
       {
@@ -9593,7 +9759,7 @@
           "nodeId": "152290547:0:1",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "152290548",
-          "label": ["(D) A->B->C-D->E->A (logi", "equals", "OptionA"]
+          "label": ["(D) A->B->C-D->E->A (logi...", "equals", "OptionA"]
         }
       },
       {
@@ -9603,7 +9769,7 @@
           "nodeId": "152290547:0:2",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152290548",
-          "label": "show '(D) A->B->C-D->E->A (logi' if all"
+          "label": ["show", "(D) A->B->C-D->E->A (logi...", " if all"]
         }
       },
       {
@@ -9613,7 +9779,7 @@
           "nodeId": "152290547:0:2:3",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "152290549",
-          "label": ["(E) A->B->C-D->E->A (logi", "equals", "OptionA"]
+          "label": ["(E) A->B->C-D->E->A (logi...", "equals", "OptionA"]
         }
       },
       {
@@ -9623,7 +9789,7 @@
           "nodeId": "152290547:0:2:4",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152290549",
-          "label": "show '(E) A->B->C-D->E->A (logi' if all"
+          "label": ["show", "(E) A->B->C-D->E->A (logi...", " if all"]
         }
       },
       {
@@ -9633,7 +9799,7 @@
           "nodeId": "152290547:0:2:4:5",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "152290545",
-          "label": ["(A) A->B->C-D->E->A (logi", "equals", "OptionA"]
+          "label": ["(A) A->B->C-D->E->A (logi...", "equals", "OptionA"]
         }
       }
     ],
@@ -9645,7 +9811,7 @@
           "nodeId": "152290548",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "152290548",
-          "label": "show '(D) A->B->C-D->E->A (logi' if all"
+          "label": ["vRoot", "(D) A->B->C-D->E->A (logi...", " if all"]
         }
       },
       {
@@ -9655,7 +9821,7 @@
           "nodeId": "152290548:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152290548",
-          "label": "show '(D) A->B->C-D->E->A (logi' if all"
+          "label": ["show", "(D) A->B->C-D->E->A (logi...", " if all"]
         }
       },
       {
@@ -9665,7 +9831,7 @@
           "nodeId": "152290548:0:1",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "152290549",
-          "label": ["(E) A->B->C-D->E->A (logi", "equals", "OptionA"]
+          "label": ["(E) A->B->C-D->E->A (logi...", "equals", "OptionA"]
         }
       },
       {
@@ -9675,7 +9841,7 @@
           "nodeId": "152290548:0:2",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152290549",
-          "label": "show '(E) A->B->C-D->E->A (logi' if all"
+          "label": ["show", "(E) A->B->C-D->E->A (logi...", " if all"]
         }
       },
       {
@@ -9685,7 +9851,7 @@
           "nodeId": "152290548:0:2:3",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "152290545",
-          "label": ["(A) A->B->C-D->E->A (logi", "equals", "OptionA"]
+          "label": ["(A) A->B->C-D->E->A (logi...", "equals", "OptionA"]
         }
       }
     ],
@@ -9697,7 +9863,7 @@
           "nodeId": "152290549",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "152290549",
-          "label": "show '(E) A->B->C-D->E->A (logi' if all"
+          "label": ["vRoot", "(E) A->B->C-D->E->A (logi...", " if all"]
         }
       },
       {
@@ -9707,7 +9873,7 @@
           "nodeId": "152290549:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152290549",
-          "label": "show '(E) A->B->C-D->E->A (logi' if all"
+          "label": ["show", "(E) A->B->C-D->E->A (logi...", " if all"]
         }
       },
       {
@@ -9717,7 +9883,7 @@
           "nodeId": "152290549:0:1",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "152290545",
-          "label": ["(A) A->B->C-D->E->A (logi", "equals", "OptionA"]
+          "label": ["(A) A->B->C-D->E->A (logi...", "equals", "OptionA"]
         }
       }
     ],
@@ -9731,7 +9897,7 @@
           "nodeId": "152290552",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "152290552",
-          "label": "show '' if all"
+          "label": ["vRoot", "Inter-dependent (fixed wi...", " if all"]
         }
       },
       {
@@ -9741,7 +9907,7 @@
           "nodeId": "152290552:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152290552",
-          "label": "show '' if any"
+          "label": ["show", "Inter-dependent (fixed wi...", " if any"]
         }
       },
       {
@@ -9761,7 +9927,7 @@
           "nodeId": "152290552:0:2",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152290553",
-          "label": "show 'A' if all"
+          "label": ["show", "A", " if all"]
         }
       },
       {
@@ -9873,7 +10039,7 @@
           "nodeId": "152290552:0:9",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152290556",
-          "label": "show 'B' if all"
+          "label": ["show", "B", " if all"]
         }
       },
       {
@@ -9987,7 +10153,7 @@
           "nodeId": "152290553",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "152290553",
-          "label": "show 'A' if all"
+          "label": ["vRoot", "A", " if all"]
         }
       },
       {
@@ -9997,7 +10163,7 @@
           "nodeId": "152290553:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152290553",
-          "label": "show 'A' if all"
+          "label": ["show", "A", " if all"]
         }
       },
       {
@@ -10017,7 +10183,7 @@
           "nodeId": "152290553:0:2",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152290552",
-          "label": "show '' if any"
+          "label": ["show", "Inter-dependent (fixed wi...", " if any"]
         }
       },
       {
@@ -10051,7 +10217,7 @@
           "sourceNodeId": "152290553:0",
           "targetFieldId": "152290553",
           "targetNodeId": "152290553:0:2:4",
-          "label": ["Inter-dependent (fixed wi", "all", "all"]
+          "label": ["Inter-dependent (fixed wi...", "all", "all"]
         }
       },
       {
@@ -10075,7 +10241,7 @@
           "sourceNodeId": "152290553:0:2",
           "targetFieldId": "152290552",
           "targetNodeId": "152290553:0:2:5",
-          "label": ["Inter-dependent (fixed wi", "any", "any"]
+          "label": ["Inter-dependent (fixed wi...", "any", "any"]
         }
       },
       {
@@ -10095,7 +10261,7 @@
           "nodeId": "152290553:0:2:7",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152290556",
-          "label": "show 'B' if all"
+          "label": ["show", "B", " if all"]
         }
       },
       {
@@ -10267,7 +10433,7 @@
           "nodeId": "152290554",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "152290554",
-          "label": "show 'A.0' if all"
+          "label": ["vRoot", "A.0", " if all"]
         }
       },
       {
@@ -10277,7 +10443,7 @@
           "nodeId": "152290554:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152290552",
-          "label": "show '' if any"
+          "label": ["show", "Inter-dependent (fixed wi...", " if any"]
         }
       },
       {
@@ -10297,7 +10463,7 @@
           "nodeId": "152290554:0:2",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152290553",
-          "label": "show 'A' if all"
+          "label": ["show", "A", " if all"]
         }
       },
       {
@@ -10409,7 +10575,7 @@
           "nodeId": "152290554:0:9",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152290556",
-          "label": "show 'B' if all"
+          "label": ["show", "B", " if all"]
         }
       },
       {
@@ -10523,7 +10689,7 @@
           "nodeId": "152290555",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "152290555",
-          "label": "show 'A.1' if all"
+          "label": ["vRoot", "A.1", " if all"]
         }
       },
       {
@@ -10533,7 +10699,7 @@
           "nodeId": "152290555:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152290552",
-          "label": "show '' if any"
+          "label": ["show", "Inter-dependent (fixed wi...", " if any"]
         }
       },
       {
@@ -10553,7 +10719,7 @@
           "nodeId": "152290555:0:2",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152290553",
-          "label": "show 'A' if all"
+          "label": ["show", "A", " if all"]
         }
       },
       {
@@ -10665,7 +10831,7 @@
           "nodeId": "152290555:0:9",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152290556",
-          "label": "show 'B' if all"
+          "label": ["show", "B", " if all"]
         }
       },
       {
@@ -10779,7 +10945,7 @@
           "nodeId": "152290556",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "152290556",
-          "label": "show 'B' if all"
+          "label": ["vRoot", "B", " if all"]
         }
       },
       {
@@ -10789,7 +10955,7 @@
           "nodeId": "152290556:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152290556",
-          "label": "show 'B' if all"
+          "label": ["show", "B", " if all"]
         }
       },
       {
@@ -10809,7 +10975,7 @@
           "nodeId": "152290556:0:2",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152290552",
-          "label": "show '' if any"
+          "label": ["show", "Inter-dependent (fixed wi...", " if any"]
         }
       },
       {
@@ -10829,7 +10995,7 @@
           "nodeId": "152290556:0:2:4",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152290553",
-          "label": "show 'A' if all"
+          "label": ["show", "A", " if all"]
         }
       },
       {
@@ -11059,7 +11225,7 @@
           "nodeId": "152290557",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "152290557",
-          "label": "show 'B.0' if all"
+          "label": ["vRoot", "B.0", " if all"]
         }
       },
       {
@@ -11069,7 +11235,7 @@
           "nodeId": "152290557:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152290552",
-          "label": "show '' if any"
+          "label": ["show", "Inter-dependent (fixed wi...", " if any"]
         }
       },
       {
@@ -11089,7 +11255,7 @@
           "nodeId": "152290557:0:2",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152290553",
-          "label": "show 'A' if all"
+          "label": ["show", "A", " if all"]
         }
       },
       {
@@ -11201,7 +11367,7 @@
           "nodeId": "152290557:0:9",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152290556",
-          "label": "show 'B' if all"
+          "label": ["show", "B", " if all"]
         }
       },
       {
@@ -11315,7 +11481,7 @@
           "nodeId": "152290558",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "152290558",
-          "label": "show 'B.1' if all"
+          "label": ["vRoot", "B.1", " if all"]
         }
       },
       {
@@ -11325,7 +11491,7 @@
           "nodeId": "152290558:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152290552",
-          "label": "show '' if any"
+          "label": ["show", "Inter-dependent (fixed wi...", " if any"]
         }
       },
       {
@@ -11345,7 +11511,7 @@
           "nodeId": "152290558:0:2",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152290553",
-          "label": "show 'A' if all"
+          "label": ["show", "A", " if all"]
         }
       },
       {
@@ -11457,7 +11623,7 @@
           "nodeId": "152290558:0:9",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152290556",
-          "label": "show 'B' if all"
+          "label": ["show", "B", " if all"]
         }
       },
       {
@@ -11572,7 +11738,7 @@
           "nodeId": "152290560",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "152290560",
-          "label": "show 'A (ideal)' if all"
+          "label": ["vRoot", "A (ideal)", " if all"]
         }
       },
       {
@@ -11582,7 +11748,7 @@
           "nodeId": "152290560:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152290560",
-          "label": "show 'A (ideal)' if all"
+          "label": ["show", "A (ideal)", " if all"]
         }
       },
       {
@@ -11616,7 +11782,7 @@
           "nodeId": "152290563",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "152290563",
-          "label": "show 'B (ideal)' if all"
+          "label": ["vRoot", "B (ideal)", " if all"]
         }
       },
       {
@@ -11626,7 +11792,7 @@
           "nodeId": "152290563:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152290563",
-          "label": "show 'B (ideal)' if all"
+          "label": ["show", "B (ideal)", " if all"]
         }
       },
       {
@@ -11661,7 +11827,7 @@
           "nodeId": "152290567",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "152290567",
-          "label": "show '(A) Big Dipper A->B->C->D' if all"
+          "label": ["vRoot", "(A) Big Dipper A->B->C->D...", " if all"]
         }
       },
       {
@@ -11671,7 +11837,7 @@
           "nodeId": "152290567:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152290567",
-          "label": "show '(A) Big Dipper A->B->C->D' if any"
+          "label": ["show", "(A) Big Dipper A->B->C->D...", " if any"]
         }
       },
       {
@@ -11681,7 +11847,7 @@
           "nodeId": "152290567:0:1",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "152290568",
-          "label": ["(B) Big Dipper A->B->C->D", "equals", "True"]
+          "label": ["(B) Big Dipper A->B->C->D...", "equals", "True"]
         }
       },
       {
@@ -11691,7 +11857,7 @@
           "nodeId": "152290567:0:2",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152290568",
-          "label": "show '(B) Big Dipper A->B->C->D' if all"
+          "label": ["show", "(B) Big Dipper A->B->C->D...", " if all"]
         }
       },
       {
@@ -11701,7 +11867,7 @@
           "nodeId": "152290567:0:2:3",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "152290569",
-          "label": ["(C) Big Dipper A->B->C->D", "equals", "True"]
+          "label": ["(C) Big Dipper A->B->C->D...", "equals", "True"]
         }
       },
       {
@@ -11711,7 +11877,7 @@
           "nodeId": "152290567:0:2:4",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152290569",
-          "label": "show '(C) Big Dipper A->B->C->D' if any"
+          "label": ["show", "(C) Big Dipper A->B->C->D...", " if any"]
         }
       },
       {
@@ -11721,7 +11887,7 @@
           "nodeId": "152290567:0:2:4:5",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "152290570",
-          "label": ["(D) Big Dipper A->B->C->D", "equals", "True"]
+          "label": ["(D) Big Dipper A->B->C->D...", "equals", "True"]
         }
       },
       {
@@ -11731,7 +11897,7 @@
           "nodeId": "152290567:0:2:4:6",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152290570",
-          "label": "show '(D) Big Dipper A->B->C->D' if any"
+          "label": ["show", "(D) Big Dipper A->B->C->D...", " if any"]
         }
       },
       {
@@ -11741,7 +11907,7 @@
           "nodeId": "152290567:0:2:4:6:7",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "152290568",
-          "label": ["(B) Big Dipper A->B->C->D", "equals", "True"]
+          "label": ["(B) Big Dipper A->B->C->D...", "equals", "True"]
         }
       },
       {
@@ -11765,7 +11931,7 @@
           "sourceNodeId": "152290567:0:2",
           "targetFieldId": "152290568",
           "targetNodeId": "152290567:0:2:4:6:8",
-          "label": ["(D) Big Dipper A->B->C->D", "all", "all"]
+          "label": ["(D) Big Dipper A->B->C->D...", "all", "all"]
         }
       },
       {
@@ -11787,7 +11953,7 @@
           "nodeId": "152290568",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "152290568",
-          "label": "show '(B) Big Dipper A->B->C->D' if all"
+          "label": ["vRoot", "(B) Big Dipper A->B->C->D...", " if all"]
         }
       },
       {
@@ -11797,7 +11963,7 @@
           "nodeId": "152290568:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152290568",
-          "label": "show '(B) Big Dipper A->B->C->D' if all"
+          "label": ["show", "(B) Big Dipper A->B->C->D...", " if all"]
         }
       },
       {
@@ -11807,7 +11973,7 @@
           "nodeId": "152290568:0:1",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "152290569",
-          "label": ["(C) Big Dipper A->B->C->D", "equals", "True"]
+          "label": ["(C) Big Dipper A->B->C->D...", "equals", "True"]
         }
       },
       {
@@ -11817,7 +11983,7 @@
           "nodeId": "152290568:0:2",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152290569",
-          "label": "show '(C) Big Dipper A->B->C->D' if any"
+          "label": ["show", "(C) Big Dipper A->B->C->D...", " if any"]
         }
       },
       {
@@ -11827,7 +11993,7 @@
           "nodeId": "152290568:0:2:3",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "152290570",
-          "label": ["(D) Big Dipper A->B->C->D", "equals", "True"]
+          "label": ["(D) Big Dipper A->B->C->D...", "equals", "True"]
         }
       },
       {
@@ -11837,7 +12003,7 @@
           "nodeId": "152290568:0:2:4",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152290570",
-          "label": "show '(D) Big Dipper A->B->C->D' if any"
+          "label": ["show", "(D) Big Dipper A->B->C->D...", " if any"]
         }
       },
       {
@@ -11847,7 +12013,7 @@
           "nodeId": "152290568:0:2:4:5",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "152290568",
-          "label": ["(B) Big Dipper A->B->C->D", "equals", "True"]
+          "label": ["(B) Big Dipper A->B->C->D...", "equals", "True"]
         }
       },
       {
@@ -11871,7 +12037,7 @@
           "sourceNodeId": "152290568:0",
           "targetFieldId": "152290568",
           "targetNodeId": "152290568:0:2:4:6",
-          "label": ["(D) Big Dipper A->B->C->D", "all", "all"]
+          "label": ["(D) Big Dipper A->B->C->D...", "all", "all"]
         }
       },
       {
@@ -11893,7 +12059,7 @@
           "nodeId": "152290569",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "152290569",
-          "label": "show '(C) Big Dipper A->B->C->D' if all"
+          "label": ["vRoot", "(C) Big Dipper A->B->C->D...", " if all"]
         }
       },
       {
@@ -11903,7 +12069,7 @@
           "nodeId": "152290569:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152290569",
-          "label": "show '(C) Big Dipper A->B->C->D' if any"
+          "label": ["show", "(C) Big Dipper A->B->C->D...", " if any"]
         }
       },
       {
@@ -11913,7 +12079,7 @@
           "nodeId": "152290569:0:1",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "152290570",
-          "label": ["(D) Big Dipper A->B->C->D", "equals", "True"]
+          "label": ["(D) Big Dipper A->B->C->D...", "equals", "True"]
         }
       },
       {
@@ -11923,7 +12089,7 @@
           "nodeId": "152290569:0:2",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152290570",
-          "label": "show '(D) Big Dipper A->B->C->D' if any"
+          "label": ["show", "(D) Big Dipper A->B->C->D...", " if any"]
         }
       },
       {
@@ -11933,7 +12099,7 @@
           "nodeId": "152290569:0:2:3",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "152290568",
-          "label": ["(B) Big Dipper A->B->C->D", "equals", "True"]
+          "label": ["(B) Big Dipper A->B->C->D...", "equals", "True"]
         }
       },
       {
@@ -11943,7 +12109,7 @@
           "nodeId": "152290569:0:2:4",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152290568",
-          "label": "show '(B) Big Dipper A->B->C->D' if all"
+          "label": ["show", "(B) Big Dipper A->B->C->D...", " if all"]
         }
       },
       {
@@ -11953,7 +12119,7 @@
           "nodeId": "152290569:0:2:4:5",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "152290569",
-          "label": ["(C) Big Dipper A->B->C->D", "equals", "True"]
+          "label": ["(C) Big Dipper A->B->C->D...", "equals", "True"]
         }
       },
       {
@@ -11977,7 +12143,7 @@
           "sourceNodeId": "152290569:0",
           "targetFieldId": "152290569",
           "targetNodeId": "152290569:0:2:4:6",
-          "label": ["(B) Big Dipper A->B->C->D", "any", "any"]
+          "label": ["(B) Big Dipper A->B->C->D...", "any", "any"]
         }
       },
       {
@@ -11999,7 +12165,7 @@
           "nodeId": "152290570",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "152290570",
-          "label": "show '(D) Big Dipper A->B->C->D' if all"
+          "label": ["vRoot", "(D) Big Dipper A->B->C->D...", " if all"]
         }
       },
       {
@@ -12009,7 +12175,7 @@
           "nodeId": "152290570:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152290570",
-          "label": "show '(D) Big Dipper A->B->C->D' if any"
+          "label": ["show", "(D) Big Dipper A->B->C->D...", " if any"]
         }
       },
       {
@@ -12019,7 +12185,7 @@
           "nodeId": "152290570:0:1",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "152290568",
-          "label": ["(B) Big Dipper A->B->C->D", "equals", "True"]
+          "label": ["(B) Big Dipper A->B->C->D...", "equals", "True"]
         }
       },
       {
@@ -12029,7 +12195,7 @@
           "nodeId": "152290570:0:2",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152290568",
-          "label": "show '(B) Big Dipper A->B->C->D' if all"
+          "label": ["show", "(B) Big Dipper A->B->C->D...", " if all"]
         }
       },
       {
@@ -12039,7 +12205,7 @@
           "nodeId": "152290570:0:2:3",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "152290569",
-          "label": ["(C) Big Dipper A->B->C->D", "equals", "True"]
+          "label": ["(C) Big Dipper A->B->C->D...", "equals", "True"]
         }
       },
       {
@@ -12049,7 +12215,7 @@
           "nodeId": "152290570:0:2:4",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152290569",
-          "label": "show '(C) Big Dipper A->B->C->D' if any"
+          "label": ["show", "(C) Big Dipper A->B->C->D...", " if any"]
         }
       },
       {
@@ -12059,7 +12225,7 @@
           "nodeId": "152290570:0:2:4:5",
           "nodeType": "FsLogicLeafNode",
           "fieldId": "152290570",
-          "label": ["(D) Big Dipper A->B->C->D", "equals", "True"]
+          "label": ["(D) Big Dipper A->B->C->D...", "equals", "True"]
         }
       },
       {
@@ -12083,7 +12249,7 @@
           "sourceNodeId": "152290570:0",
           "targetFieldId": "152290570",
           "targetNodeId": "152290570:0:2:4:6",
-          "label": ["(C) Big Dipper A->B->C->D", "any", "any"]
+          "label": ["(C) Big Dipper A->B->C->D...", "any", "any"]
         }
       },
       {
@@ -12106,7 +12272,7 @@
           "nodeId": "152291688",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "152291688",
-          "label": "show 'Calculation (circular)' if all"
+          "label": ["vRoot", "Calculation (circular)", " if all"]
         }
       },
       {
@@ -12116,7 +12282,7 @@
           "nodeId": "152291688:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152291688",
-          "label": "show 'Calculation (circular)' if all"
+          "label": ["show", "Calculation (circular)", " if all"]
         }
       },
       {
@@ -12140,7 +12306,7 @@
           "nodeId": "152293116",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "152293116",
-          "label": "show 'Mutually Exclusive' if all"
+          "label": ["vRoot", "Mutually Exclusive", " if all"]
         }
       },
       {
@@ -12150,7 +12316,7 @@
           "nodeId": "152293116:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152293116",
-          "label": "show 'Mutually Exclusive' if all"
+          "label": ["show", "Mutually Exclusive", " if all"]
         }
       },
       {
@@ -12183,7 +12349,7 @@
           "nodeId": "152297010",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "152297010",
-          "label": "show 'Mutually Inclusive' if all"
+          "label": ["vRoot", "Mutually Inclusive", " if all"]
         }
       },
       {
@@ -12193,7 +12359,7 @@
           "nodeId": "152297010:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152297010",
-          "label": "show 'Mutually Inclusive' if all"
+          "label": ["show", "Mutually Inclusive", " if all"]
         }
       },
       {
@@ -12225,7 +12391,7 @@
           "nodeId": "152586401",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "152586401",
-          "label": "show '' if all"
+          "label": ["vRoot", "Non - Conflict, independe...", " if all"]
         }
       },
       {
@@ -12235,7 +12401,7 @@
           "nodeId": "152586401:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152586401",
-          "label": "show '' if any"
+          "label": ["show", "Non - Conflict, independe...", " if any"]
         }
       },
       {
@@ -12257,7 +12423,7 @@
           "nodeId": "152586428",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "152586428",
-          "label": "show 'Non conflict - short answ' if all"
+          "label": ["vRoot", "Non conflict - short answ...", " if all"]
         }
       },
       {
@@ -12267,7 +12433,7 @@
           "nodeId": "152586428:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152586428",
-          "label": "show 'Non conflict - short answ' if all"
+          "label": ["show", "Non conflict - short answ...", " if all"]
         }
       },
       {
@@ -12287,7 +12453,7 @@
           "nodeId": "152586428:2",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "152586401",
-          "label": "show '' if any"
+          "label": ["show", "Non - Conflict, independe...", " if any"]
         }
       },
       {
@@ -12309,7 +12475,7 @@
           "nodeId": "153051795",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "153051795",
-          "label": "show '' if all"
+          "label": ["vRoot", "Conflict with show/hide, ...", " if all"]
         }
       },
       {
@@ -12319,7 +12485,7 @@
           "nodeId": "153051795:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "153051795",
-          "label": "hide '' if any"
+          "label": ["hide", "Conflict with show/hide, ...", " if any"]
         }
       },
       {
@@ -12331,6 +12497,56 @@
           "fieldId": "151678347",
           "label": ["Switzerland", "notequals", "Neutral"]
         }
+      },
+      {
+        "nodeId": "153051795:0:2",
+        "parentId": "153051795:0",
+        "nodeContent": {
+          "nodeId": "153051795:0:2",
+          "nodeType": "FsLogicLeafNode",
+          "fieldId": "154795826",
+          "label": ["The Number", "$lte", 9]
+        }
+      },
+      {
+        "nodeId": "153051795:0:3",
+        "parentId": "153051795:0",
+        "nodeContent": {
+          "nodeId": "153051795:0:3",
+          "nodeType": "FsLogicBranchNode",
+          "fieldId": "154795826",
+          "label": ["show", "The Number", " if any"]
+        }
+      },
+      {
+        "nodeId": "153051795:0:3:4",
+        "parentId": "153051795:0:3",
+        "nodeContent": {
+          "nodeId": "153051795:0:3:4",
+          "nodeType": "FsLogicLeafNode",
+          "fieldId": "154796590",
+          "label": ["Some Number", "$lte", 13]
+        }
+      },
+      {
+        "nodeId": "153051795:0:5",
+        "parentId": "153051795:0",
+        "nodeContent": {
+          "nodeId": "153051795:0:5",
+          "nodeType": "FsLogicBranchNode",
+          "fieldId": "154795680",
+          "label": ["show", "Conflict with show/hide, ...", " if any"]
+        }
+      },
+      {
+        "nodeId": "153051795:0:5:6",
+        "parentId": "153051795:0:5",
+        "nodeContent": {
+          "nodeId": "153051795:0:5:6",
+          "nodeType": "FsLogicLeafNode",
+          "fieldId": "154795678",
+          "label": ["binary", "notequals", "False"]
+        }
       }
     ],
     "153051796": [
@@ -12341,7 +12557,7 @@
           "nodeId": "153051796",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "153051796",
-          "label": "show 'Short Answer' if all"
+          "label": ["vRoot", "Short Answer", " if all"]
         }
       },
       {
@@ -12351,7 +12567,7 @@
           "nodeId": "153051796:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "153051796",
-          "label": "show 'Short Answer' if all"
+          "label": ["show", "Short Answer", " if all"]
         }
       },
       {
@@ -12371,7 +12587,7 @@
           "nodeId": "153051796:2",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "153051795",
-          "label": "hide '' if any"
+          "label": ["hide", "Conflict with show/hide, ...", " if any"]
         }
       },
       {
@@ -12383,6 +12599,56 @@
           "fieldId": "151678347",
           "label": ["Switzerland", "notequals", "Neutral"]
         }
+      },
+      {
+        "nodeId": "153051796:2:4",
+        "parentId": "153051796:2",
+        "nodeContent": {
+          "nodeId": "153051796:2:4",
+          "nodeType": "FsLogicLeafNode",
+          "fieldId": "154795826",
+          "label": ["The Number", "$lte", 9]
+        }
+      },
+      {
+        "nodeId": "153051796:2:5",
+        "parentId": "153051796:2",
+        "nodeContent": {
+          "nodeId": "153051796:2:5",
+          "nodeType": "FsLogicBranchNode",
+          "fieldId": "154795826",
+          "label": ["show", "The Number", " if any"]
+        }
+      },
+      {
+        "nodeId": "153051796:2:5:6",
+        "parentId": "153051796:2:5",
+        "nodeContent": {
+          "nodeId": "153051796:2:5:6",
+          "nodeType": "FsLogicLeafNode",
+          "fieldId": "154796590",
+          "label": ["Some Number", "$lte", 13]
+        }
+      },
+      {
+        "nodeId": "153051796:2:7",
+        "parentId": "153051796:2",
+        "nodeContent": {
+          "nodeId": "153051796:2:7",
+          "nodeType": "FsLogicBranchNode",
+          "fieldId": "154795680",
+          "label": ["show", "Conflict with show/hide, ...", " if any"]
+        }
+      },
+      {
+        "nodeId": "153051796:2:7:8",
+        "parentId": "153051796:2:7",
+        "nodeContent": {
+          "nodeId": "153051796:2:7:8",
+          "nodeType": "FsLogicLeafNode",
+          "fieldId": "154795678",
+          "label": ["binary", "notequals", "False"]
+        }
       }
     ],
     "153413614": [
@@ -12393,7 +12659,7 @@
           "nodeId": "153413614",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "153413614",
-          "label": "show '' if all"
+          "label": ["vRoot", "Redundant - non conflict ", " if all"]
         }
       },
       {
@@ -12403,7 +12669,7 @@
           "nodeId": "153413614:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "153413614",
-          "label": "show '' if any"
+          "label": ["show", "Redundant - non conflict ", " if any"]
         }
       },
       {
@@ -12445,7 +12711,7 @@
           "nodeId": "153413615",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "153413615",
-          "label": "show 'Short Answer' if all"
+          "label": ["vRoot", "Short Answer", " if all"]
         }
       },
       {
@@ -12455,7 +12721,7 @@
           "nodeId": "153413615:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "153413615",
-          "label": "show 'Short Answer' if all"
+          "label": ["show", "Short Answer", " if all"]
         }
       },
       {
@@ -12475,7 +12741,7 @@
           "nodeId": "153413615:2",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "153413614",
-          "label": "show '' if any"
+          "label": ["show", "Redundant - non conflict ", " if any"]
         }
       },
       {
@@ -12517,7 +12783,7 @@
           "nodeId": "154328256",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "154328256",
-          "label": "show '' if all"
+          "label": ["vRoot", "Inter-dependent (not so m...", " if all"]
         }
       },
       {
@@ -12527,7 +12793,7 @@
           "nodeId": "154328256:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "154328256",
-          "label": "show '' if all"
+          "label": ["show", "Inter-dependent (not so m...", " if all"]
         }
       },
       {
@@ -12561,7 +12827,7 @@
           "sourceNodeId": "154328256:0",
           "targetFieldId": "154328256",
           "targetNodeId": "154328256:0:2",
-          "label": ["Inter-dependent (not so m", "all", "all"]
+          "label": ["Inter-dependent (not so m...", "all", "all"]
         }
       },
       {
@@ -12595,7 +12861,7 @@
           "sourceNodeId": "154328256:0",
           "targetFieldId": "154328256",
           "targetNodeId": "154328256:0:4",
-          "label": ["Inter-dependent (not so m", "all", "all"]
+          "label": ["Inter-dependent (not so m...", "all", "all"]
         }
       },
       {
@@ -12617,7 +12883,7 @@
           "nodeId": "154328257",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "154328257",
-          "label": "show 'A (no internal logic)' if all"
+          "label": ["vRoot", "A (no internal logic)", " if all"]
         }
       },
       {
@@ -12627,7 +12893,7 @@
           "nodeId": "154328257:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "154328256",
-          "label": "show '' if all"
+          "label": ["show", "Inter-dependent (not so m...", " if all"]
         }
       },
       {
@@ -12661,7 +12927,7 @@
           "sourceNodeId": "154328257:0",
           "targetFieldId": "154328256",
           "targetNodeId": "154328257:0:2",
-          "label": ["Inter-dependent (not so m", "all", "all"]
+          "label": ["Inter-dependent (not so m...", "all", "all"]
         }
       },
       {
@@ -12695,7 +12961,7 @@
           "sourceNodeId": "154328257:0",
           "targetFieldId": "154328256",
           "targetNodeId": "154328257:0:4",
-          "label": ["Inter-dependent (not so m", "all", "all"]
+          "label": ["Inter-dependent (not so m...", "all", "all"]
         }
       },
       {
@@ -12717,7 +12983,7 @@
           "nodeId": "154328258",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "154328258",
-          "label": "show 'A.0 (no internal logic)' if all"
+          "label": ["vRoot", "A.0 (no internal logic)", " if all"]
         }
       },
       {
@@ -12727,7 +12993,7 @@
           "nodeId": "154328258:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "154328256",
-          "label": "show '' if all"
+          "label": ["show", "Inter-dependent (not so m...", " if all"]
         }
       },
       {
@@ -12761,7 +13027,7 @@
           "sourceNodeId": "154328258:0",
           "targetFieldId": "154328256",
           "targetNodeId": "154328258:0:2",
-          "label": ["Inter-dependent (not so m", "all", "all"]
+          "label": ["Inter-dependent (not so m...", "all", "all"]
         }
       },
       {
@@ -12795,7 +13061,7 @@
           "sourceNodeId": "154328258:0",
           "targetFieldId": "154328256",
           "targetNodeId": "154328258:0:4",
-          "label": ["Inter-dependent (not so m", "all", "all"]
+          "label": ["Inter-dependent (not so m...", "all", "all"]
         }
       },
       {
@@ -12817,7 +13083,7 @@
           "nodeId": "154328259",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "154328259",
-          "label": "show 'A.1 (no internal logic)' if all"
+          "label": ["vRoot", "A.1 (no internal logic)", " if all"]
         }
       },
       {
@@ -12827,7 +13093,7 @@
           "nodeId": "154328259:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "154328256",
-          "label": "show '' if all"
+          "label": ["show", "Inter-dependent (not so m...", " if all"]
         }
       },
       {
@@ -12861,7 +13127,7 @@
           "sourceNodeId": "154328259:0",
           "targetFieldId": "154328256",
           "targetNodeId": "154328259:0:2",
-          "label": ["Inter-dependent (not so m", "all", "all"]
+          "label": ["Inter-dependent (not so m...", "all", "all"]
         }
       },
       {
@@ -12895,7 +13161,7 @@
           "sourceNodeId": "154328259:0",
           "targetFieldId": "154328256",
           "targetNodeId": "154328259:0:4",
-          "label": ["Inter-dependent (not so m", "all", "all"]
+          "label": ["Inter-dependent (not so m...", "all", "all"]
         }
       },
       {
@@ -12917,7 +13183,7 @@
           "nodeId": "154328260",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "154328260",
-          "label": "show 'B (no internal logic)' if all"
+          "label": ["vRoot", "B (no internal logic)", " if all"]
         }
       },
       {
@@ -12927,7 +13193,7 @@
           "nodeId": "154328260:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "154328256",
-          "label": "show '' if all"
+          "label": ["show", "Inter-dependent (not so m...", " if all"]
         }
       },
       {
@@ -12961,7 +13227,7 @@
           "sourceNodeId": "154328260:0",
           "targetFieldId": "154328256",
           "targetNodeId": "154328260:0:2",
-          "label": ["Inter-dependent (not so m", "all", "all"]
+          "label": ["Inter-dependent (not so m...", "all", "all"]
         }
       },
       {
@@ -12995,7 +13261,7 @@
           "sourceNodeId": "154328260:0",
           "targetFieldId": "154328256",
           "targetNodeId": "154328260:0:4",
-          "label": ["Inter-dependent (not so m", "all", "all"]
+          "label": ["Inter-dependent (not so m...", "all", "all"]
         }
       },
       {
@@ -13017,7 +13283,7 @@
           "nodeId": "154328261",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "154328261",
-          "label": "show 'B.0 (no internal logic)' if all"
+          "label": ["vRoot", "B.0 (no internal logic)", " if all"]
         }
       },
       {
@@ -13027,7 +13293,7 @@
           "nodeId": "154328261:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "154328256",
-          "label": "show '' if all"
+          "label": ["show", "Inter-dependent (not so m...", " if all"]
         }
       },
       {
@@ -13061,7 +13327,7 @@
           "sourceNodeId": "154328261:0",
           "targetFieldId": "154328256",
           "targetNodeId": "154328261:0:2",
-          "label": ["Inter-dependent (not so m", "all", "all"]
+          "label": ["Inter-dependent (not so m...", "all", "all"]
         }
       },
       {
@@ -13095,7 +13361,7 @@
           "sourceNodeId": "154328261:0",
           "targetFieldId": "154328256",
           "targetNodeId": "154328261:0:4",
-          "label": ["Inter-dependent (not so m", "all", "all"]
+          "label": ["Inter-dependent (not so m...", "all", "all"]
         }
       },
       {
@@ -13117,7 +13383,7 @@
           "nodeId": "154328262",
           "nodeType": "FsVirtualRootNode",
           "fieldId": "154328262",
-          "label": "show 'B.1 (no internal logic)' if all"
+          "label": ["vRoot", "B.1 (no internal logic)", " if all"]
         }
       },
       {
@@ -13127,7 +13393,7 @@
           "nodeId": "154328262:0",
           "nodeType": "FsLogicBranchNode",
           "fieldId": "154328256",
-          "label": "show '' if all"
+          "label": ["show", "Inter-dependent (not so m...", " if all"]
         }
       },
       {
@@ -13161,7 +13427,7 @@
           "sourceNodeId": "154328262:0",
           "targetFieldId": "154328256",
           "targetNodeId": "154328262:0:2",
-          "label": ["Inter-dependent (not so m", "all", "all"]
+          "label": ["Inter-dependent (not so m...", "all", "all"]
         }
       },
       {
@@ -13195,7 +13461,7 @@
           "sourceNodeId": "154328262:0",
           "targetFieldId": "154328256",
           "targetNodeId": "154328262:0:4",
-          "label": ["Inter-dependent (not so m", "all", "all"]
+          "label": ["Inter-dependent (not so m...", "all", "all"]
         }
       },
       {
@@ -13208,6 +13474,92 @@
           "label": ["Switzerland", "equals", "Neutral"]
         }
       }
-    ]
+    ],
+    "154795678": null,
+    "154795680": [
+      {
+        "nodeId": "154795680",
+        "parentId": "",
+        "nodeContent": {
+          "nodeId": "154795680",
+          "nodeType": "FsVirtualRootNode",
+          "fieldId": "154795680",
+          "label": ["vRoot", "Conflict with show/hide, ...", " if all"]
+        }
+      },
+      {
+        "nodeId": "154795680:0",
+        "parentId": "154795680",
+        "nodeContent": {
+          "nodeId": "154795680:0",
+          "nodeType": "FsLogicBranchNode",
+          "fieldId": "154795680",
+          "label": ["show", "Conflict with show/hide, ...", " if all"]
+        }
+      },
+      {
+        "nodeId": "154795680:0:1",
+        "parentId": "154795680:0",
+        "nodeContent": {
+          "nodeId": "154795680:0:1",
+          "nodeType": "FsLogicLeafNode",
+          "fieldId": "154795678",
+          "label": ["binary", "equals", "False"]
+        }
+      }
+    ],
+    "154795826": [
+      {
+        "nodeId": "154795826",
+        "parentId": "",
+        "nodeContent": {
+          "nodeId": "154795826",
+          "nodeType": "FsVirtualRootNode",
+          "fieldId": "154795826",
+          "label": ["vRoot", "The Number", " if all"]
+        }
+      },
+      {
+        "nodeId": "154795826:0",
+        "parentId": "154795826",
+        "nodeContent": {
+          "nodeId": "154795826:0",
+          "nodeType": "FsLogicBranchNode",
+          "fieldId": "154795826",
+          "label": ["show", "The Number", " if all"]
+        }
+      },
+      {
+        "nodeId": "154795826:0:1",
+        "parentId": "154795826:0",
+        "nodeContent": {
+          "nodeId": "154795826:0:1",
+          "nodeType": "FsLogicLeafNode",
+          "fieldId": "154796590",
+          "label": ["Some Number", "greaterthan", 13]
+        }
+      },
+      {
+        "nodeId": "154795826:2",
+        "parentId": "154795826",
+        "nodeContent": {
+          "nodeId": "154795826:2",
+          "nodeType": "FsLogicBranchNode",
+          "fieldId": "154795680",
+          "label": ["show", "Conflict with show/hide, ...", " if all"]
+        }
+      },
+      {
+        "nodeId": "154795826:2:3",
+        "parentId": "154795826:2",
+        "nodeContent": {
+          "nodeId": "154795826:2:3",
+          "nodeType": "FsLogicLeafNode",
+          "fieldId": "154795678",
+          "label": ["binary", "equals", "False"]
+        }
+      }
+    ],
+    "154796590": null
   }
 }
